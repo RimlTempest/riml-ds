@@ -51,9 +51,9 @@
 5. **`registry.json`**（shadcn 互換の形）を `tools/cem` が生成し、GitHub Pages で配る。
    `npx shadcn add https://…/r/button.json` 相当の導線を将来提供できる形にしておく。
 6. **Storybook addon-mcp** を開発時に使う（ADR-0007）。
-7. **WebMCP は部品の責務ではない**が、フォーム部品は `name` / `value` / `form` の属性と
-   `ElementInternals` によるフォーム参加を保つ（ADR-0008）。これにより利用側の
-   `<form toolname>` 宣言型 WebMCP がそのまま動く。
+7. **WebMCP は部品の責務ではない**が、フォーム部品はネイティブ `<input>` / `<button>` を light DOM に持つ
+   ティア A（ADR-0012。ADR-0008 の `ElementInternals` フォーム参加から改訂）なので、`name` / `value` / `form` は
+   そのままネイティブに乗る。これにより利用側の `<form toolname>` 宣言型 WebMCP がそのまま動く。
 8. **llms.txt は作らない**（DESIGN.md と AGENTS.md で足りる。効果が示されたら再検討）。
 
 ## 理由

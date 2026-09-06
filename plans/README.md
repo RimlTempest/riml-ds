@@ -4,23 +4,33 @@
 （executor は会話の文脈を持たない前提）。テンプレートは qrcc の
 `.claude/skills/improve/references/plan-template.md`。
 
-**Planned at**: `0014780`（2026-09-07）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
+**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
 `system/guidelines/**`, `.claude/skills/riml-ds-*`）が仕様の正で、計画はそれを手順に落としたもの。
 矛盾を見つけたら計画側を直すのではなく STOP して advisor に返す。
+
+## ユーザー決定（計画の前提）
+
+- **PE 方針はハイブリッド（ティア A / B / C）** — ADR-0012。フォーム・ナビ部品はネイティブ要素を light DOM に持つ
+- **npm scope は `@rimltempest/riml-ds-*`**（ユーザー名 scope。org は作らない）
+- **タグ / 変数のプレフィックスは `rd-` / `--rd-`**
+- **GitHub リポジトリは plan 010（Pages）の直前まで private**。ADR-0011 決定 1 の注記を参照。public 化はユーザーが行う
+- リポジトリ名 `riml-ds`、npm は public、完全に新しいブランド、Figma は持たない（コードが唯一の正）
 
 ## 実行順序と依存
 
 ```
-001 scaffold ──┬── 002 tokens ── 003 css ── 004 elements ──┬── 005 storybook/a11y/VRT ──┐
-               │                                           └── 006 frameworks ──────────┼── 007 release ── 008 agent ── 009 components+
-               └── 010 devops(ci/pages) ───────────────────────────────────────────────┘
+001 scaffold ──┬── 002 tokens ── 003 css ── 004 elements ──┬── 005 storybook/a11y/VRT/pe ──┬── 007 release ── 008 agent
+               │                                           └── 006 frameworks ─────────────┤                      │
+               │                                                                           └── 009 components+    │
+               └── 010 devops(ci/pages) ── 配線は 001 直後、Pages は 008 の後 ─────────────────────────────────────┘
 ```
 
-- 001 は単独で先に終わらせる（全計画の前提）。010 は 001 の直後に並行できる
+- 001 は単独で先に終わらせる（全計画の前提）。010 の `ci.yml` 骨格は 001 の直後に並行できる
+  （まだ無い script は `hashFiles` でスキップ）。Pages と public 化は 008 の後
 - 002 → 003 → 004 は直列（下の層が上の層の入力）
-- 005 と 006 は 004 の後に並行できる
+- 005 と 006 は 004 の後に並行できる（`e2e/pe` は 005、`e2e/<fw>` は 006）
 - 007 は 005 と 006 の両方をマージしてから。008 は 007 の後
-- 009 は 008 の後、部品ごとに小さな plan に割って回す（この索引に 009a, 009b … と足す）
+- 009 は 005 と 006 の後（wave 2 の 4 部品。以降は 009a, 009b … と足す）
 
 レーンとの対応は `docs/parallel-lanes.md` / `scripts/lanes.tsv`。
 
@@ -30,14 +40,14 @@
 | --- | ----------------------------------------------------------------------------- | ---- | ---- | -------- | ---- |
 | 001 | [足場・ツールチェーン・lint プラグイン](001-scaffold-and-toolchain.md)         | P1   | L    | —        | TODO |
 | 002 | [トークン（DTCG + Terrazzo + AAA lint + DESIGN.md 生成）](002-tokens.md)      | P1   | L    | 001      | TODO |
-| 003 | [基盤 CSS（@rimltempest/riml-ds-css）と stylelint](003-foundation-css.md)                 | P1   | M    | 002      | TODO |
-| 004 | [Lit 部品の土台と最初の 5 部品](004-elements-infra-and-first-five.md)         | P1   | L    | 003      | TODO |
-| 005 | [Storybook・a11y ゲート・VRT・addon-mcp](005-storybook-a11y-vrt.md)           | P1   | L    | 004      | TODO |
-| 006 | [フレームワーク包装（React/Vue/Svelte/Astro）](006-framework-wrappers.md)     | P1   | L    | 004      | TODO |
-| 007 | [ガバナンスと公開（changesets・release.yml・予算）](007-governance-and-release.md) | P1 | M    | 005, 006 | TODO |
-| 008 | [AI ネイティブ層（@rimltempest/riml-ds-mcp・registry.json・Pages）](008-agent-native-layer.md) | P1 | M   | 007      | TODO |
-| 009 | [部品バックログ（追加部品の進め方）](009-component-backlog.md)                 | P2   | —    | 008      | TODO |
-| 010 | [CI・Pages・Dependabot・不変条件ガード](010-devops-ci-and-guard.md)            | P1   | M    | 001      | TODO |
+| 003 | [基盤 CSS（@rimltempest/riml-ds-css）と stylelint](003-foundation-css.md) | P1 | M | 002 | TODO（`7bf04e8` で改訂） |
+| 004 | [Lit 部品の土台と最初の 4 部品（A/A/B/C）](004-elements-infra-and-first-five.md) | P0 | L | 003 | TODO（`7bf04e8` で改訂） |
+| 005 | [Storybook・a11y ゲート・VRT・JS 無し検証・addon-mcp](005-storybook-a11y-vrt.md) | P1 | L | 004 | TODO（`7bf04e8` で改訂） |
+| 006 | [フレームワーク包装（React/Vue/Svelte/Astro）](006-framework-wrappers.md) | P1 | L | 004 | TODO |
+| 007 | [ガバナンスと公開（changesets・api-diff・release.yml）](007-governance-and-release.md) | P1 | M | 005, 006 | TODO |
+| 008 | [AI ネイティブ層（@rimltempest/riml-ds-mcp・design-md）](008-agent-native-layer.md) | P1 | M | 007 | TODO |
+| 009 | [部品バックログ wave 2（select/checkbox/disclosure/toast）](009-component-backlog.md) | P2 | L | 005, 006 | TODO |
+| 010 | [CI・Pages・Dependabot・不変条件ガード・public 化](010-devops-ci-and-guard.md) | P1 | M | 001（Pages は 008） | TODO |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
@@ -69,3 +79,18 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - **PR ごとの Storybook プレビュー**: GitHub Pages は 1 環境。main のみ配信（ADR-0011）
 - **npm トークンを GitHub Secrets に置く**: Trusted Publishing（OIDC）。初回 publish だけユーザーが
   手元で行う（`docs/publishing.md`）
+- **ティア A / B の SSR に Declarative Shadow DOM / `@lit-labs/ssr` を使う**: ティア A は light DOM の
+  HTML そのものが SSR 出力。ティア B は `:not(:defined)` の CSS fallback で足りる（ADR-0012）
+- **全部品を light DOM にする**: 包含が要る部品（dialog / toast / tooltip）は shadow のほうが安全。
+  ティア C を残す（ADR-0012）
+- **npm org（`@riml-ds`）**: ユーザー名 scope `@rimltempest/riml-ds-*` で足りる。org は管理対象が増える
+- **`@wc-toolkit/*` の生成器を使う**: React（`@lit/react`）以外は入力（CEM）から自前で出すほうが
+  RSC 用の markup コンポーネントとティア情報を扱いやすい（plan 006）
+- **Customizable `<select>`（`appearance: base-select`）**: Baseline 未到達。rd-select はネイティブ
+  `<select>` を包むティア A（plan 009）
+- **semantic-release**: コミットメッセージから版を決めると `0.x` の破壊的変更を意図的に扱えない。
+  changesets（plan 007）
+- **Renovate**: Dependabot の groups で足りる。設定を 1 つ増やさない（plan 010）
+- **MCP の HTTP トランスポート**: stdio だけ。ホストしない = 費用ゼロ（ADR-0011 / plan 008）
+- **PR ごとの Pages プレビュー・Chromatic・CodeQL 手動設定**: Pages は 1 環境。CodeQL は public 化後に
+  default setup（plan 010）

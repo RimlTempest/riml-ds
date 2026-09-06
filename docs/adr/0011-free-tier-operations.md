@@ -16,6 +16,10 @@ GitHub の public リポジトリは Actions の実行時間が無制限、Pages
 ## 決定
 
 1. **GitHub リポジトリは public。** Actions 無制限・Pages・CodeQL を使う。
+   > **注記（2026-09-07、ユーザー決定）**: 最初の実装期間中は **private** で進め、plan 010（CI / Pages）の
+   > Pages 配線の直前に public へ切り替える。private の間は Actions 2,000 分/月に収める（`release.yml` の
+   > `paths` フィルタ、`affected.sh`、Docker ジョブの `timeout-minutes`）。切替はユーザーが
+   > `gh repo edit --visibility public` で行う（plan 010 Step 5）。
 2. **Storybook / registry.json / DESIGN.md の配布は GitHub Pages**（`https://rimltempest.github.io/riml-ds/`）。
    カスタムドメインは任意（後で `ds.riml4i.com` を CNAME しても費用ゼロ）。
 3. **VRT は Playwright + Docker、ベースラインをコミット**（ADR-0007）。Chromatic は使わない。

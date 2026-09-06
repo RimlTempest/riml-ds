@@ -5,6 +5,7 @@ feat/css	feat/tokens	system/css,tools/lint/stylelint-plugin	基盤 CSS: layers /
 feat/elements	feat/css	library/elements,tools/cem	Lit 部品と CEM 生成。最初の 4 部品（PE ティア A/A/B/C）。.size-limit.json を新規作成（所有は feat/release）
 feat/storybook	feat/elements	apps/storybook,e2e/vrt,e2e/a11y,e2e/pe,e2e/Dockerfile,e2e/package.json,e2e/playwright.config.ts,scripts/vrt.sh,.mcp.json	Storybook 10、a11y ゲート、VRT、JS 無し検証、addon-mcp
 feat/frameworks	feat/elements	tools/cem/src/wrappers,library/react,library/vue,library/svelte,library/astro,e2e/react,e2e/vue,e2e/svelte,e2e/astro	CEM から生成するラッパーと各フレームワークの e2e
-feat/release	feat/frameworks,feat/storybook	.changeset,.github/workflows/release.yml,.size-limit.json,knip.json	changesets・Trusted Publishing・publint/attw/size-limit/knip
+feat/release	feat/frameworks,feat/storybook	.changeset,.github/workflows/release.yml,.size-limit.json,knip.json,scripts/release-check.sh,tools/cem/src/core/api-diff.ts	changesets・Trusted Publishing・publint/attw/size-limit/knip
 feat/agent	feat/release	tools/mcp,skills,AGENTS.md	MCP サーバ・利用側 skill・registry.json 配布
-chore/devops	chore/scaffold	.github/workflows/ci.yml,.github/workflows/pages.yml,.github/dependabot.yml,.github/PULL_REQUEST_TEMPLATE.md	CI・Pages・Dependabot・不変条件ガード
+feat/elements-wave2	feat/storybook,feat/frameworks	library/elements/src/select,library/elements/src/checkbox,library/elements/src/disclosure,library/elements/src/toast,library/elements/src/_shared/field.ts,library/elements/src/experimental,library/elements/scripts,e2e/pe/build-pages.ts	部品 wave 2（plan 009）: select / checkbox / disclosure / toast と scaffold
+chore/devops	chore/scaffold	.github/workflows/ci.yml,.github/workflows/pages.yml,.github/dependabot.yml,.github/PULL_REQUEST_TEMPLATE.md,scripts/ci-local.sh,scripts/pages-build.sh	CI・Pages・Dependabot・不変条件ガード・public 化手順（plan 010）
