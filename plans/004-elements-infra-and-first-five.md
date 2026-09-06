@@ -1,4 +1,4 @@
-# Plan 004: `@riml-ds/elements` の基盤と最初の 5 部品（button / text-field / live-region / skip-link / dialog）
+# Plan 004: `@rimltempest/riml-ds-elements` の基盤と最初の 5 部品（button / text-field / live-region / skip-link / dialog）
 
 > **Executor instructions**: Follow this plan step by step. Run every
 > verification command and confirm the expected result before moving to the
@@ -56,7 +56,7 @@
   - `system/guidelines/accessibility.md`、`system/guidelines/writing.md`（文言）
   - `docs/testing.md`：`fixture()` は `library/elements/test/fixture.ts` に 1 つ、テスト名は日本語、
     `*.logic.test.ts` → `*.logic.ts` → `*.test.ts` → `*.element.ts` の順
-  - `docs/publishing.md` §サイズ予算：`@riml-ds/elements/button/define`（lit 込み）**12 KB brotli**、`dialog/define` 14 KB
+  - `docs/publishing.md` §サイズ予算：`@rimltempest/riml-ds-elements/button/define`（lit 込み）**12 KB brotli**、`dialog/define` 14 KB
 - バージョン（2026-09-07 に `npm view` で確認）：`lit` 3.3.3、`tslib` 2.8.1、
   `@custom-elements-manifest/analyzer` 0.11.0、`@vitest/browser-playwright` 4.1.11（vitest 4.1.11 と同版）、
   `playwright` 1.63.0、`@guidepup/virtual-screen-reader` 0.32.1、`size-limit` 13.0.3 + `@size-limit/esbuild` 13.0.3
@@ -72,8 +72,8 @@
 | node テスト        | `bun run test -- --project node`                                | pass                                       |
 | browser テスト     | `bun run test -- --project browser`                             | pass（Chromium 起動）                      |
 | Playwright 導入    | `bunx playwright install chromium`（ローカルのみ。CI は Docker）| 1 回                                       |
-| CEM 生成           | `bun run gen`（root → `bun run --filter @riml-ds/elements gen`） | `library/elements/custom-elements.json`    |
-| ビルド             | `bun run --filter @riml-ds/elements build`                      | `library/elements/dist/**/*.js` + `.d.ts`  |
+| CEM 生成           | `bun run gen`（root → `bun run --filter @rimltempest/riml-ds-elements gen`） | `library/elements/custom-elements.json`    |
+| ビルド             | `bun run --filter @rimltempest/riml-ds-elements build`                      | `library/elements/dist/**/*.js` + `.d.ts`  |
 | サイズ             | `bunx size-limit`                                               | 予算内                                     |
 | 総合               | `bun run check && bun run test`                                 | exit 0                                     |
 
@@ -121,7 +121,7 @@
 
 ```json
 {
-  "name": "@riml-ds/elements",
+  "name": "@rimltempest/riml-ds-elements",
   "version": "0.0.0",
   "description": "riml-ds の Web Components（Lit）。唯一のソース",
   "type": "module",
@@ -145,7 +145,7 @@
     "test": "vitest run --project browser --project node --dir library/elements"
   },
   "dependencies": { "lit": "3.3.3", "tslib": "2.8.1" },
-  "peerDependencies": { "@riml-ds/tokens": "workspace:*" },
+  "peerDependencies": { "@rimltempest/riml-ds-tokens": "workspace:*" },
   "publishConfig": { "access": "public", "provenance": true }
 }
 ```
@@ -215,7 +215,7 @@ function isLitLike(el: HTMLElement): el is HTMLElement & { updateComplete: Promi
 ### Step 2: デコレータ emit の計測と `importHelpers` の決定
 
 `src/_spike/probe.element.ts`（**一時ファイル**。`@property() accessor a = 1` を 3 つ持つ最小 class）を作り
-`bun run --filter @riml-ds/elements build`。`dist/_spike/probe.element.js` を確認：
+`bun run --filter @rimltempest/riml-ds-elements build`。`dist/_spike/probe.element.js` を確認：
 
 - `importHelpers: true` で `import { __esDecorate, __runInitializers } from "tslib"` になっていること（インラインされていない）
 - `tslib` は `dependencies`（ESM 解決で `tslib/tslib.es6.mjs` が選ばれる。`node -e "import('tslib').then(m=>console.log(Object.keys(m).length))"`）
@@ -225,7 +225,7 @@ function isLitLike(el: HTMLElement): el is HTMLElement & { updateComplete: Promi
 
 ```json
 [
-  { "name": "@riml-ds/elements/button/define (lit 込み)", "path": "library/elements/dist/button/button.define.js", "limit": "12 KB", "brotli": true }
+  { "name": "@rimltempest/riml-ds-elements/button/define (lit 込み)", "path": "library/elements/dist/button/button.define.js", "limit": "12 KB", "brotli": true }
 ]
 ```
 
@@ -238,7 +238,7 @@ brotli サイズを記録する。判断基準：`probe` 単体で `tslib` あ�
 
 ### Step 3: `tools/cem` — analyzer 設定と `@status` プラグイン、registry
 
-`tools/cem/package.json`（`@riml-ds/cem`、private、`type: module`、devDeps `@custom-elements-manifest/analyzer@0.11.0`）。
+`tools/cem/package.json`（`@rimltempest/riml-ds-cem`、private、`type: module`、devDeps `@custom-elements-manifest/analyzer@0.11.0`）。
 `bin` は作らない（`cem` は elements 側の devDeps として直接呼ぶ方が単純 → **`library/elements` の devDeps に
 `@custom-elements-manifest/analyzer@0.11.0` を置き**、`tools/cem` はプラグインと registry 生成器だけ持つ）。
 
@@ -266,7 +266,7 @@ JSDoc タグを読む。**`@status` / `@summary` / `@state` を class 宣言に 
 `dependsOn` は JSDoc `@dependency rd-live-region` タグから（dialog → live-region。**このタグも status-tag.js で拾う**）。
 `Manifest` 型は `custom-elements-manifest/schema.d.ts`（analyzer の依存 `custom-elements-manifest` パッケージ）から import。
 `tools/cem/src/registry.ts`（CLI）：`library/elements/custom-elements.json` → `tools/cem/registry.json`（**コミットする**。
-plan 008 の MCP / Pages が配る）。root `package.json`：`"gen": "bun run --filter @riml-ds/elements gen && bun run tools/cem/src/registry.ts"`。
+plan 008 の MCP / Pages が配る）。root `package.json`：`"gen": "bun run --filter @rimltempest/riml-ds-elements gen && bun run tools/cem/src/registry.ts"`。
 
 `tools/cem/test/status-tag.test.ts`（node）：最小 `.element.ts` を `tmpdir` に書き analyzer の `create()` API で解析 →
 `status`、`summary`、`cssStates`、`dependsOn` が出る（3 件）。`tools/cem/test/registry.test.ts`：手書き manifest → registry（2 件）。
@@ -393,10 +393,10 @@ backdrop click／閉じた後 opener に focus／`label` が `aria-labelledby` �
 `bun run gen` → `library/elements/custom-elements.json`（5 部品、各 `status`、`summary`、`slots`、`cssParts`、`cssProperties`、
 `events`、`cssStates`）。`tools/cem/registry.json`（5 行）。両方コミット（**`custom-elements.json` はコミットする**：ラッパー生成・MCP・
 Storybook の入力。`docs/architecture.md` §3 の「生成物の未コミット」ガードは `library/*/src/generated/` の話）。
-`bun run --filter @riml-ds/elements build` → `dist/`。`bunx size-limit` → button ≤ 12 KB、dialog ≤ 14 KB。超えたら
+`bun run --filter @rimltempest/riml-ds-elements build` → `dist/`。`bunx size-limit` → button ≤ 12 KB、dialog ≤ 14 KB。超えたら
 （1）`importHelpers` の判断を見直す、（2）styles の重複を削る、（3）それでも超えたら **STOP**（予算は docs/publishing.md の合意事項）。
 
-`library/elements/README.md`：使い方（`import '@riml-ds/elements/button/define'` と `tokens.css` + `css` の読み込み）、
+`library/elements/README.md`：使い方（`import '@rimltempest/riml-ds-elements/button/define'` と `tokens.css` + `css` の読み込み）、
 5 部品の一覧表（`registry.json` から手で転記。plan 008 で自動化）、ビルドの決定（Step 2）。
 
 **Verify**: `bun run check` exit 0、`bun run test` exit 0、`bun run guard` exit 0、`bunx size-limit` exit 0、
@@ -417,7 +417,7 @@ Storybook の入力。`docs/architecture.md` §3 の「生成物の未コミッ�
 - [ ] `library/elements/custom-elements.json` に 5 部品・`status` 付き、`tools/cem/registry.json` に 5 行
 - [ ] `library/elements/package.json` の `exports` に 10 サブパス + `custom-elements.json` + `package.json`、`.` 無し
 - [ ] `bunx size-limit` exit 0（button ≤12 KB、dialog ≤14 KB brotli）
-- [ ] `bun run guard` exit 0（`library/elements` が `lit` / `tslib` / `@riml-ds/tokens` 以外に依存していない）
+- [ ] `bun run guard` exit 0（`library/elements` が `lit` / `tslib` / `@rimltempest/riml-ds-tokens` 以外に依存していない）
 - [ ] `*.stories.ts` が**存在しない**（plan 005）
 - [ ] `plans/README.md` の 004 行が更新されている
 

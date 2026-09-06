@@ -6,5 +6,5 @@
 - このリポジトリを**使う側**のエージェントは `skills/riml-ds/SKILL.md` を読む
   （`npx skills add RimlTempest/riml-ds` で導入できる）。
 - コンポーネントの API は `library/elements/custom-elements.json`（Custom Elements Manifest）が正。
-  `bunx @riml-ds/mcp` で MCP サーバとして同じ情報を引ける。
+  `bunx @rimltempest/riml-ds-mcp` で MCP サーバとして同じ情報を引ける。
 - トークンは `system/tokens/dist/tokens.json`（DTCG）が正。CSS 変数名は `--rd-<category>-<role>-<variant>`。

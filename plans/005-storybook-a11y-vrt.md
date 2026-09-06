@@ -103,7 +103,7 @@ axe（AAA タグ）・markuplint（描画後 DOM）・VRT（ライト/ダーク 
 
 ### Step 1: Storybook 骨格と modes decorator
 
-`apps/storybook/package.json`（`@riml-ds/storybook`、private、scripts `dev: storybook dev -p 6006 --no-open`、`build: storybook build`、
+`apps/storybook/package.json`（`@rimltempest/riml-ds-storybook`、private、scripts `dev: storybook dev -p 6006 --no-open`、`build: storybook build`、
 `render: bun run scripts/render.ts`）。devDeps：`storybook`、`@storybook/web-components-vite`、`@storybook/addon-docs`、`@storybook/addon-a11y`、
 `@storybook/addon-vitest`、`@storybook/addon-mcp`、`vite`、`lit`（story の `html`）。
 
@@ -121,7 +121,7 @@ const config: StorybookConfig = {
 export default config
 ```
 
-`.storybook/preview.ts`：`import '@riml-ds/css/layers.css'`、`import '@riml-ds/tokens/tokens.css'`、`import '@riml-ds/css'`（**この順**。
+`.storybook/preview.ts`：`import '@rimltempest/riml-ds-css/layers.css'`、`import '@rimltempest/riml-ds-tokens/tokens.css'`、`import '@rimltempest/riml-ds-css'`（**この順**。
 `skills/riml-ds/SKILL.md` §import order と一致させる）、5 部品の `define` を import、`parameters.a11y = { test: 'error', options: { runOnly: { type: 'tag', values: ['wcag2a','wcag2aa','wcag2aaa','wcag21a','wcag21aa','wcag22aa','best-practice'] } } }`、
 `decorators: [withModes]`、`globalTypes`（`scheme: light|dark`、`contrast: no-preference|more`、`density: default|compact`、`dir: ltr|rtl`、`motion: reduce|no-preference`）。
 
@@ -132,9 +132,9 @@ Storybook 上では `parameters.docs.description.story` に「Playwright の emu
 `Dark` story は `globals: { scheme: 'dark' }`、`Dense` は `density: 'compact'`、`RTL` は `dir: 'rtl'`。
 `.storybook/preview-head.html`：`<meta name="color-scheme" content="light dark">`。
 
-`stories/Foundations/Tokens.mdx`：`@riml-ds/tokens/tokens.md` を `?raw` で import して表示、`Layers.mdx`（`@riml-ds/css` の役割）。
+`stories/Foundations/Tokens.mdx`：`@rimltempest/riml-ds-tokens/tokens.md` を `?raw` で import して表示、`Layers.mdx`（`@rimltempest/riml-ds-css` の役割）。
 
-root `package.json`：`"storybook": "bun run --filter @riml-ds/storybook dev"`、`"storybook:build": "bun run --filter @riml-ds/storybook build"`。
+root `package.json`：`"storybook": "bun run --filter @rimltempest/riml-ds-storybook dev"`、`"storybook:build": "bun run --filter @rimltempest/riml-ds-storybook build"`。
 
 **Verify**: `bun run storybook:build` → `apps/storybook/storybook-static/index.html` 生成（story はまだ Foundations のみ）
 
@@ -236,13 +236,13 @@ axe 違反で test が落ちる。
 `<template shadowrootmode="open">` を含む HTML を markuplint が解釈できるか確認：markuplint は `template` 内も解析する。`.markuplintrc.json`（root、plan 001）に
 `"nodeRules": [{ "selector": "template[shadowrootmode]", "rules": { "required-h1": false } }]` が必要なら **`.markuplintrc.json` は `chore/scaffold` 所有 → 報告して advisor 判断**。
 
-root `package.json`：`"render": "bun run storybook:build && bun run --filter @riml-ds/storybook render"`、`"lint:html": "bun run --cwd tools/markuplint lint"`。
+root `package.json`：`"render": "bun run storybook:build && bun run --filter @rimltempest/riml-ds-storybook render"`、`"lint:html": "bun run --cwd tools/markuplint lint"`。
 
 **Verify**: `bun run render` → `apps/storybook/rendered/*.html` 40+ ファイル。`bun run lint:html` exit 0（違反は部品のバグとして報告）
 
 ### Step 6: Playwright VRT（Docker）と a11y e2e
 
-`e2e/package.json`（`@riml-ds/e2e`、private、devDeps `@playwright/test@1.63.0`、`@axe-core/playwright@4.13.0`、`http-server@14.1.1`）。
+`e2e/package.json`（`@rimltempest/riml-ds-e2e`、private、devDeps `@playwright/test@1.63.0`、`@axe-core/playwright@4.13.0`、`http-server@14.1.1`）。
 `e2e/playwright.config.ts`：`testDir: '.'`、`projects`：`vrt-light-360` / `vrt-light-1024` / `vrt-dark-360` / `vrt-dark-1024`（`use: { colorScheme, viewport }`）、
 `forced-colors`（`use: { forcedColors: 'active' }`、`testMatch: 'vrt/forced.spec.ts'`）、`reduced-motion`（`reducedMotion: 'reduce'`）、`a11y`（`testDir: 'a11y'`）。
 `webServer: { command: 'bunx http-server ../apps/storybook/storybook-static -p 6007 -s', port: 6007, reuseExistingServer: true }`。

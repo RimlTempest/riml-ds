@@ -107,7 +107,7 @@ library/elements/src/<name>/
 tools/*                 … node。lit を import しない
 ```
 
-`library/elements` は `lit` と `@riml-ds/tokens` 以外に依存しない。
+`library/elements` は `lit` と `@rimltempest/riml-ds-tokens` 以外に依存しない。
 `system/*` は `library/*` を import しない（CI の `guard` で落ちる）。
 
 ## 6. TypeScript 設定

@@ -43,17 +43,17 @@ system/tokens → system/css → library/elements → library/{react,vue,svelte,
 ```
 
 - `system/*` は `library/*` を import しない。
-- `library/elements` は `lit` + `@riml-ds/tokens` だけ。`@lit-labs/*` は ADR を書いてから。
+- `library/elements` は `lit` + `@rimltempest/riml-ds-tokens` だけ。`@lit-labs/*` は ADR を書いてから。
 - ラッパーは `custom-elements.json` だけを読む。`library/elements/src` を読まない。
 - `tools/*` はどこからも import されない。
-- パッケージ間は `@riml-ds/<name>` の公開サブパス経由のみ。相対パスで隣に手を伸ばさない。
+- パッケージ間は `@rimltempest/riml-ds-<name>` の公開サブパス経由のみ。相対パスで隣に手を伸ばさない。
 
 ## 3. 変更の種類ごとの手順
 
 ### トークンを足す / 変える
 
 1. `system/tokens/src/**` を編集（`$description` 必須）
-2. `bun run --filter @riml-ds/tokens check` → `build`
+2. `bun run --filter @rimltempest/riml-ds-tokens check` → `build`
 3. `bun run gen`（DESIGN.md フロントマター）
 4. Storybook の `Tokens` docs と 6 条件 story を確認、VRT 差分を見る
 5. `.changeset`：名前の追加は minor、名前の変更・削除は major、値の変更は minor

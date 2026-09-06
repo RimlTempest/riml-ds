@@ -1,4 +1,4 @@
-# Plan 002: `@riml-ds/tokens` — DTCG トークン、Terrazzo ビルド、AAA lint、DESIGN.md フロントマター生成
+# Plan 002: `@rimltempest/riml-ds-tokens` — DTCG トークン、Terrazzo ビルド、AAA lint、DESIGN.md フロントマター生成
 
 > **Executor instructions**: Follow this plan step by step. Run every
 > verification command and confirm the expected result before moving to the
@@ -64,8 +64,8 @@ qrcc と noter は最終的にこのパッケージだけを入れて色・余�
 | Purpose          | Command                                                     | Expected on success                         |
 | ---------------- | ----------------------------------------------------------- | ------------------------------------------- |
 | Install          | `bun install`                                               | exit 0                                      |
-| Token lint       | `bun run --filter @riml-ds/tokens check`                    | `terrazzo check` exit 0                     |
-| Token build      | `bun run --filter @riml-ds/tokens build`                    | `system/tokens/dist/{tokens.css,tokens.js,tokens.d.ts,tokens.json,tokens.md}` |
+| Token lint       | `bun run --filter @rimltempest/riml-ds-tokens check`                    | `terrazzo check` exit 0                     |
+| Token build      | `bun run --filter @rimltempest/riml-ds-tokens build`                    | `system/tokens/dist/{tokens.css,tokens.js,tokens.d.ts,tokens.json,tokens.md}` |
 | DESIGN.md 生成   | `bun run design-md`                                         | `DESIGN.md` のフロントマターだけ書き換わる   |
 | DESIGN.md lint   | `bunx @google/design.md lint DESIGN.md`                     | exit 0                                      |
 | Tests            | `bun run test`                                              | all pass                                    |
@@ -114,7 +114,7 @@ qrcc と noter は最終的にこのパッケージだけを入れて色・余�
 
 ```json
 {
-  "name": "@riml-ds/tokens",
+  "name": "@rimltempest/riml-ds-tokens",
   "version": "0.0.0",
   "description": "riml-ds のデザイントークン（DTCG 2025.10）。tokens.css / tokens.js / tokens.json",
   "type": "module",
@@ -307,7 +307,7 @@ Step 4 の `postbuild.ts` が `:root` と `@media (prefers-color-scheme: dark)` 
 `core/duplicate-values` の `ignore` オプションが無ければ、ルールを `'warn'` にして Step 5 の自前テストで
 「semantic 同士の重複は許容、base 同士の重複は error」を固定する。
 
-**Verify**: `bun run --filter @riml-ds/tokens check` → exit 0（コントラスト違反が出たら **palette の L を直す**。
+**Verify**: `bun run --filter @rimltempest/riml-ds-tokens check` → exit 0（コントラスト違反が出たら **palette の L を直す**。
 semantic の alias 先を変えて逃げない）。`bunx terrazzo build` → `dist/tokens.raw.css` が生成される
 
 ### Step 4: `scripts/postbuild.ts` — `tokens.css` / `tokens.js` / `tokens.json` / `tokens.md` / `themes/*.css`
@@ -329,7 +329,7 @@ semantic の alias 先を変えて逃げない）。`bunx terrazzo build` → `d
 - `emitMd(tokensJson)` — 表（名前 / CSS 変数 / light / dark / 説明）。Storybook Docs が読む
 - `tokens.raw.*` は削除
 
-**Verify**: `bun run --filter @riml-ds/tokens build` → Step 2 のテスト `build.test.ts` が緑。
+**Verify**: `bun run --filter @rimltempest/riml-ds-tokens build` → Step 2 のテスト `build.test.ts` が緑。
 `grep -c 'light-dark(' system/tokens/dist/tokens.css` → semantic 色の数（15 前後）以上。
 `grep -n 'clamp(' system/tokens/dist/tokens.css | head -3` → `--rd-type-body-font-size: clamp(1rem, 0.96rem + 0.2vw, 1.125rem)`。
 `command ls system/tokens/dist/themes` → `noter.css qrcc.css`
@@ -356,7 +356,7 @@ semantic の alias 先を変えて逃げない）。`bunx terrazzo build` → `d
 
 ### Step 6: `tools/design-md` — DESIGN.md フロントマター生成
 
-`tools/design-md/package.json`（`@riml-ds/design-md`、**private: true**、`bin` 無し、`scripts.generate: "bun run src/cli.ts"`、
+`tools/design-md/package.json`（`@rimltempest/riml-ds-design-md`、**private: true**、`bin` 無し、`scripts.generate: "bun run src/cli.ts"`、
 devDeps `yaml` 2.9.0）。`tsconfig.json` は `types: ["bun"]`、`emitDeclarationOnly: true`。
 
 `src/core/frontmatter.ts`（純関数）：`buildFrontmatter(tokensJson, { theme?: string }): Result<DesignMdFrontmatter, MapError>`。
@@ -380,8 +380,8 @@ devDeps `yaml` 2.9.0）。`tsconfig.json` は `types: ["bun"]`、`emitDeclaratio
 `test/frontmatter.test.ts` / `test/replace.test.ts`：写像の網羅（`DESIGN.md` の現在のフロントマターの全キーが出力に含まれる）、
 本文不変（`replace` 前後で `---` 以降が一致）、`--check` の exit code。
 
-root `package.json`：`"design-md": "bun run --filter @riml-ds/design-md generate"`、
-`"lint:tokens": "bun run --filter @riml-ds/tokens check"`、`"build": "bun run --filter './system/*' build"`、
+root `package.json`：`"design-md": "bun run --filter @rimltempest/riml-ds-design-md generate"`、
+`"lint:tokens": "bun run --filter @rimltempest/riml-ds-tokens check"`、`"build": "bun run --filter './system/*' build"`、
 `check` に `&& bun run lint:tokens` を追加。root `tsconfig.json` の `references` に `./system/tokens` と `./tools/design-md`。
 
 **Verify**: `bun run build && bun run design-md && git diff --stat DESIGN.md` → 変更はフロントマター行だけ
@@ -390,7 +390,7 @@ root `package.json`：`"design-md": "bun run --filter @riml-ds/design-md generat
 
 ### Step 7: README と総合確認
 
-`system/tokens/README.md`：導入（`bun add @riml-ds/tokens`、`import '@riml-ds/tokens/tokens.css'`）、モードの切替
+`system/tokens/README.md`：導入（`bun add @rimltempest/riml-ds-tokens`、`import '@rimltempest/riml-ds-tokens/tokens.css'`）、モードの切替
 （`color-scheme`、`[data-density="compact"]`、`prefers-contrast` は自動）、`tokens.js` の使い方、テーマ CSS。
 **`docs/tokens.md` の内容を複製しない**（リンクする）。
 
@@ -407,7 +407,7 @@ root `package.json`：`"design-md": "bun run --filter @riml-ds/design-md generat
 
 ## Done criteria
 
-- [ ] `bun run --filter @riml-ds/tokens check` exit 0（`a11y/min-contrast` AAA 含む）
+- [ ] `bun run --filter @rimltempest/riml-ds-tokens check` exit 0（`a11y/min-contrast` AAA 含む）
 - [ ] `bun run build` で `system/tokens/dist/{tokens.css,tokens.js,tokens.d.ts,tokens.json,tokens.md,themes/qrcc.css,themes/noter.css}` が生成される
 - [ ] `grep -c 'light-dark(' system/tokens/dist/tokens.css` ≥ 15、`grep -c '\[data-theme' system/tokens/dist/tokens.css` = 0
 - [ ] `bun run test` exit 0、`contrast.test.ts` が 3 モードすべてで pass

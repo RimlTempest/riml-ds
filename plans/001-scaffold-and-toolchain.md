@@ -45,7 +45,7 @@ Web Components 向けに必要な差分（`class` の例外、`dom` lib、`.js` 
     `import/no-default-export`（`*.stories.ts` と設定ファイルだけ免除）。
   - `docs/adr/0005-class-exception-for-elements.md` §影響 —
     「oxlint プラグイン `tools/lint/oxlint-plugin/index.js`：`no-class` は `filename.endsWith('.element.ts')` で免除」。
-  - `docs/architecture.md` §1 — ディレクトリ配置。`tools/lint/ @riml-ds/lint`、`tools/markuplint/ (private)`。
+  - `docs/architecture.md` §1 — ディレクトリ配置。`tools/lint/ @rimltempest/riml-ds-lint`、`tools/markuplint/ (private)`。
   - `docs/testing.md` — 「Vitest は**ルートの `vitest.config.ts` 1 つ**で `projects` を分ける
     （`node` / `browser` / `storybook`）。パッケージごとに config を持たない。」
   - `CLAUDE.md` §絶対に守ること（移植元 qrcc と同文）：`any` / `as` / `!` / `class` / `enum` を書かない、
@@ -299,13 +299,13 @@ tools/markuplint/node_modules/
 
 **Verify**: Step 4 の後にまとめて `bun run typecheck` → exit 0
 
-### Step 4: `tools/lint`（`@riml-ds/lint`）— oxlint プラグイン・stylelint 設定・browserslist
+### Step 4: `tools/lint`（`@rimltempest/riml-ds-lint`）— oxlint プラグイン・stylelint 設定・browserslist
 
 `tools/lint/package.json`：
 
 ```json
 {
-  "name": "@riml-ds/lint",
+  "name": "@rimltempest/riml-ds-lint",
   "version": "0.0.0",
   "description": "riml-ds の共有 lint 設定（oxlint プラグイン / stylelint / browserslist）",
   "type": "module",
@@ -446,7 +446,7 @@ Step 6 のテストで「`padding-left: 4px` は落ちる」「`padding-inline: 
 
 ```json
 {
-  "name": "@riml-ds/markuplint-runner",
+  "name": "@rimltempest/riml-ds-markuplint-runner",
   "version": "0.0.0",
   "private": true,
   "description": "markuplint を TypeScript 6 に固定して動かす隔離ワークスペース（ADR-0006）。riml-ds では JSX ではなく Storybook が描画した HTML（getHTML({serializableShadowRoots:true}) の出力）を検査する。",
@@ -658,9 +658,9 @@ commit-msg:
 
 1. `class` は `library/elements/src/**/*.element.ts` 以外に無い
    （`grep -rlE '^\s*(export\s+)?(abstract\s+)?class\s' --include='*.ts' --exclude='*.d.ts' --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=generated system library tools scripts apps e2e 2>/dev/null | grep -v '\.element\.ts$'` が空）
-2. `system/**` が `library/**` を import していない（`grep -rn "@riml-ds/\(elements\|react\|vue\|svelte\|astro\)" system/` が空）
-3. `library/elements` の依存は `lit` と `@riml-ds/tokens` だけ（`library/elements/package.json` が
-   存在するとき、`dependencies` のキーが `lit` / `tslib` / `@riml-ds/tokens` の部分集合。`jq` が無ければ `bun -e` で読む）
+2. `system/**` が `library/**` を import していない（`grep -rn "@rimltempest/riml-ds-\(elements\|react\|vue\|svelte\|astro\)" system/` が空）
+3. `library/elements` の依存は `lit` と `@rimltempest/riml-ds-tokens` だけ（`library/elements/package.json` が
+   存在するとき、`dependencies` のキーが `lit` / `tslib` / `@rimltempest/riml-ds-tokens` の部分集合。`jq` が無ければ `bun -e` で読む）
 4. 生成物がコミットされていない（`git ls-files 'library/*/src/generated/**' '**/dist/**' 'system/tokens/dist/**'` が空）
 5. `wrangler.jsonc` が存在しない（このリポジトリは Worker を持たない。誤コピー防止）
 6. `.npmrc` に `_authToken` が無い

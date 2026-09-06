@@ -22,7 +22,7 @@
 
 ## 境界
 
-- [ ] `library/elements` は `lit` と `@riml-ds/tokens` 以外に依存していない
+- [ ] `library/elements` は `lit` と `@rimltempest/riml-ds-tokens` 以外に依存していない
 - [ ] `system/*` から `library/*` を import していない
 - [ ] `*.logic.ts` が DOM の実体（`document` / `window`）に触っていない
 - [ ] 他パッケージの内部パス（`../../react/src`）に手を伸ばしていない

@@ -7,7 +7,7 @@
 
 | コマンド                        | 対象                                   | 基準                                        |
 | ------------------------------- | -------------------------------------- | ------------------------------------------- |
-| `bun run --filter @riml-ds/tokens check` | トークンの色の対                  | AAA 7:1 / 非テキスト 3:1                    |
+| `bun run --filter @rimltempest/riml-ds-tokens check` | トークンの色の対                  | AAA 7:1 / 非テキスト 3:1                    |
 | `bun run test:storybook`        | 全 story（addon-vitest + addon-a11y）  | axe タグ `wcag2a wcag2aa wcag2aaa wcag21a wcag21aa wcag22aa best-practice`、`test: 'error'` |
 | `bun run test`（elements）      | 実 DOM の振る舞い、virtual screen reader | 読み上げ順・名前・状態                    |
 | `bun run a11y`                  | e2e（Playwright + `@axe-core/playwright`）| フレームワーク別アプリで同じタグ         |

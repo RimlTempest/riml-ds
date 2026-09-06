@@ -30,12 +30,12 @@
 | --- | ----------------------------------------------------------------------------- | ---- | ---- | -------- | ---- |
 | 001 | [足場・ツールチェーン・lint プラグイン](001-scaffold-and-toolchain.md)         | P1   | L    | —        | TODO |
 | 002 | [トークン（DTCG + Terrazzo + AAA lint + DESIGN.md 生成）](002-tokens.md)      | P1   | L    | 001      | TODO |
-| 003 | [基盤 CSS（@riml-ds/css）と stylelint](003-foundation-css.md)                 | P1   | M    | 002      | TODO |
+| 003 | [基盤 CSS（@rimltempest/riml-ds-css）と stylelint](003-foundation-css.md)                 | P1   | M    | 002      | TODO |
 | 004 | [Lit 部品の土台と最初の 5 部品](004-elements-infra-and-first-five.md)         | P1   | L    | 003      | TODO |
 | 005 | [Storybook・a11y ゲート・VRT・addon-mcp](005-storybook-a11y-vrt.md)           | P1   | L    | 004      | TODO |
 | 006 | [フレームワーク包装（React/Vue/Svelte/Astro）](006-framework-wrappers.md)     | P1   | L    | 004      | TODO |
 | 007 | [ガバナンスと公開（changesets・release.yml・予算）](007-governance-and-release.md) | P1 | M    | 005, 006 | TODO |
-| 008 | [AI ネイティブ層（@riml-ds/mcp・registry.json・Pages）](008-agent-native-layer.md) | P1 | M   | 007      | TODO |
+| 008 | [AI ネイティブ層（@rimltempest/riml-ds-mcp・registry.json・Pages）](008-agent-native-layer.md) | P1 | M   | 007      | TODO |
 | 009 | [部品バックログ（追加部品の進め方）](009-component-backlog.md)                 | P2   | —    | 008      | TODO |
 | 010 | [CI・Pages・Dependabot・不変条件ガード](010-devops-ci-and-guard.md)            | P1   | M    | 001      | TODO |
 

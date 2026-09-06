@@ -6,7 +6,7 @@ ADR-0010 の配線。正は 3 つ：`tokens.json`、`custom-elements.json`、`sy
 
 ```bash
 npx skills add RimlTempest/riml-ds          # skills/riml-ds/SKILL.md を .claude/skills/ に
-bun add @riml-ds/tokens @riml-ds/css @riml-ds/react   # フレームワークに合わせて
+bun add @rimltempest/riml-ds-tokens @rimltempest/riml-ds-css @rimltempest/riml-ds-react   # フレームワークに合わせて
 ```
 
 `.mcp.json`：
@@ -14,7 +14,7 @@ bun add @riml-ds/tokens @riml-ds/css @riml-ds/react   # フレームワークに
 ```json
 {
   "mcpServers": {
-    "riml-ds": { "command": "bunx", "args": ["@riml-ds/mcp"] }
+    "riml-ds": { "command": "bunx", "args": ["@rimltempest/riml-ds-mcp"] }
   }
 }
 ```
@@ -22,13 +22,13 @@ bun add @riml-ds/tokens @riml-ds/css @riml-ds/react   # フレームワークに
 `DESIGN.md` を利用側に置く：
 
 ```bash
-bunx @riml-ds/mcp design-md --theme qrcc > DESIGN.md
+bunx @rimltempest/riml-ds-mcp design-md --theme qrcc > DESIGN.md
 ```
 
-（`@riml-ds/mcp` は CLI としても動く。`design-md` サブコマンドは `tokens.json` + テーマ差分から
+（`@rimltempest/riml-ds-mcp` は CLI としても動く。`design-md` サブコマンドは `tokens.json` + テーマ差分から
 フロントマターを生成し、本文は riml-ds の DESIGN.md を継承する。）
 
-## `@riml-ds/mcp`
+## `@rimltempest/riml-ds-mcp`
 
 | 種別     | 名前                        | 内容                                                                 |
 | -------- | --------------------------- | -------------------------------------------------------------------- |
@@ -42,7 +42,7 @@ bunx @riml-ds/mcp design-md --theme qrcc > DESIGN.md
 | tool     | `get_element(tag)`          | 上の resource と同じ + フレームワーク別の使用例（React / Vue / Svelte / Astro） |
 | tool     | `check_contrast(fg, bg)`    | 2 トークン（または生の色）のコントラスト比と AAA / AA 判定            |
 | tool     | `suggest_component(intent)` | 用途文 → 候補部品と理由（CEM の `@summary` と guidelines の対応表から。LLM は使わない） |
-| tool     | `lint_css(source)`          | stylelint（`@riml-ds/lint` の設定）を文字列に対して実行              |
+| tool     | `lint_css(source)`          | stylelint（`@rimltempest/riml-ds-lint` の設定）を文字列に対して実行              |
 
 実装は生成物を読むだけ。`tokens.json` と `custom-elements.json` はパッケージに同梱し、
 ネットワークに出ない。
@@ -64,5 +64,5 @@ bunx @riml-ds/mcp design-md --theme qrcc > DESIGN.md
 ```
 bun run gen && git diff --exit-code   # CEM / ラッパー / registry.json / DESIGN.md フロントマターが最新
 bunx @google/design.md lint DESIGN.md
-bun run --filter @riml-ds/mcp test    # resource / tool のスナップショット
+bun run --filter @rimltempest/riml-ds-mcp test    # resource / tool のスナップショット
 ```

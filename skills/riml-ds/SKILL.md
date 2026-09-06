@@ -1,12 +1,12 @@
 ---
 name: riml-ds
-description: riml-ds（@riml-ds/*）を使うアプリで UI を書く・直す前に読む。トークン（--rd-*）と部品（<rd-*>）の使い方、React / Vue / Svelte / Astro 別の導入と落とし穴、禁止事項（生値・独自ボタン・aria-live の自作）、MCP の登録、レビュー観点。「ボタンを置きたい」「色を指定したい」「ダークモード対応」「フォームを作る」「riml-ds に無い部品が要る」で発火。
+description: riml-ds（@rimltempest/riml-ds-*）を使うアプリで UI を書く・直す前に読む。トークン（--rd-*）と部品（<rd-*>）の使い方、React / Vue / Svelte / Astro 別の導入と落とし穴、禁止事項（生値・独自ボタン・aria-live の自作）、MCP の登録、レビュー観点。「ボタンを置きたい」「色を指定したい」「ダークモード対応」「フォームを作る」「riml-ds に無い部品が要る」で発火。
 ---
 
 # riml-ds を使う
 
-対応バージョン: `@riml-ds/*` 0.x（初回リリースまでは main の状態）。
-見た目の判断は riml-ds の `DESIGN.md`、部品 API は `@riml-ds/elements/custom-elements.json` が正。
+対応バージョン: `@rimltempest/riml-ds-*` 0.x（初回リリースまでは main の状態）。
+見た目の判断は riml-ds の `DESIGN.md`、部品 API は `@rimltempest/riml-ds-elements/custom-elements.json` が正。
 分からないことは **MCP（`riml-ds`）に聞く**：`get_element("rd-button")`、`search_tokens("本文の色")`、
 `check_contrast(...)`、`suggest_component("確認して削除する操作")`。
 
@@ -24,18 +24,18 @@ description: riml-ds（@riml-ds/*）を使うアプリで UI を書く・直す�
 ## 1. 導入
 
 ```bash
-bun add @riml-ds/tokens @riml-ds/css @riml-ds/elements
-# フレームワーク別（任意）: @riml-ds/react | @riml-ds/vue | @riml-ds/svelte | @riml-ds/astro
+bun add @rimltempest/riml-ds-tokens @rimltempest/riml-ds-css @rimltempest/riml-ds-elements
+# フレームワーク別（任意）: @rimltempest/riml-ds-react | @rimltempest/riml-ds-vue | @rimltempest/riml-ds-svelte | @rimltempest/riml-ds-astro
 ```
 
 ルート CSS（最初に読み込む）：
 
 ```css
-@import "@riml-ds/css/layers.css";      /* @layer の順序宣言 */
-@import "@riml-ds/tokens/tokens.css";   /* --rd-*（light-dark 込み） */
-@import "@riml-ds/css/base.css";        /* reset + base */
+@import "@rimltempest/riml-ds-css/layers.css";      /* @layer の順序宣言 */
+@import "@rimltempest/riml-ds-tokens/tokens.css";   /* --rd-*（light-dark 込み） */
+@import "@rimltempest/riml-ds-css/base.css";        /* reset + base */
 /* ブランドテーマがあれば */
-@import "@riml-ds/tokens/themes/qrcc.css";
+@import "@rimltempest/riml-ds-tokens/themes/qrcc.css";
 
 @layer app {  /* rd.overrides より後に宣言されるので必ず勝つ */
   /* アプリの CSS */
@@ -47,7 +47,7 @@ bun add @riml-ds/tokens @riml-ds/css @riml-ds/elements
 `.mcp.json`：
 
 ```json
-{ "mcpServers": { "riml-ds": { "command": "bunx", "args": ["@riml-ds/mcp"] } } }
+{ "mcpServers": { "riml-ds": { "command": "bunx", "args": ["@rimltempest/riml-ds-mcp"] } } }
 ```
 
 ## 2. 部品の使い方
@@ -77,10 +77,10 @@ bun add @riml-ds/tokens @riml-ds/css @riml-ds/elements
 ### 登録
 
 ```ts
-import '@riml-ds/elements/button/define'      // 使う部品ごとに 1 行。副作用 import
+import '@rimltempest/riml-ds-elements/button/define'      // 使う部品ごとに 1 行。副作用 import
 ```
 
-SSR（TanStack Start / Astro）では `:not(:defined)` の間のレイアウトを `@riml-ds/css/base.css` が
+SSR（TanStack Start / Astro）では `:not(:defined)` の間のレイアウトを `@rimltempest/riml-ds-css/base.css` が
 固定する。定義前に見た目を触らない。
 
 ## 3. フレームワーク別
@@ -88,13 +88,13 @@ SSR（TanStack Start / Astro）では `:not(:defined)` の間のレイアウト�
 ### React 19（TanStack Start / Next）
 
 ```tsx
-import { RdButton, RdTextField } from '@riml-ds/react'
+import { RdButton, RdTextField } from '@rimltempest/riml-ds-react'
 <RdButton variant="primary" onRdPress={() => save()}>保存</RdButton>
 ```
 
-- `@riml-ds/react` は `@lit/react` の `createComponent` を CEM から生成したもの。
+- `@rimltempest/riml-ds-react` は `@lit/react` の `createComponent` を CEM から生成したもの。
   イベントは `onRdPress` の形で型が付く。
-- RSC からは描画できない。`'use client'` の境界の内側で使う（`@riml-ds/react` の各 export は
+- RSC からは描画できない。`'use client'` の境界の内側で使う（`@rimltempest/riml-ds-react` の各 export は
   `'use client'` 付き）。
 - SSR は Declarative Shadow DOM。`renderToString` では shadow が出ないので、
   レイアウトは `:not(:defined)` の CSS が受ける。ハイドレーション後に define が走る。
@@ -111,17 +111,17 @@ vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.startsWith('r
 <rd-text-field :label="t('email')" v-model="email" required />
 ```
 
-`@riml-ds/vue` はプラグイン（型 + `v-model` の `value` / `input` 対応）。
+`@rimltempest/riml-ds-vue` はプラグイン（型 + `v-model` の `value` / `input` 対応）。
 非文字列のプロパティは `.prop`（`:items.prop="list"`）。
 
 ### Svelte 5
 
-摩擦なし。`import '@riml-ds/elements/button/define'` して `<rd-button>` を書く。
-型は `@riml-ds/svelte` の `svelteHTML` 拡張。イベントは `onrd-press={…}`。
+摩擦なし。`import '@rimltempest/riml-ds-elements/button/define'` して `<rd-button>` を書く。
+型は `@rimltempest/riml-ds-svelte` の `svelteHTML` 拡張。イベントは `onrd-press={…}`。
 
 ### Astro 5
 
-`client:*` 不要。`@riml-ds/astro` の integration が `tokens.css` と `layers.css` を注入する。
+`client:*` 不要。`@rimltempest/riml-ds-astro` の integration が `tokens.css` と `layers.css` を注入する。
 インタラクションが要るページで define を `<script>` から import。
 
 ## 4. ダーク・密度・強制テーマ
@@ -153,7 +153,7 @@ vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.startsWith('r
 | ---------------------------------------- | ---------------------------------------------------------------- |
 | 見た目が素の HTML                        | `tokens.css` / `base.css` の読み込み順。`layers.css` を最初に      |
 | 部品が描画されない                       | `define` を import していない                                     |
-| React で属性が文字列で渡る               | `@riml-ds/react` を使う（生の `<rd-x>` は boolean が `"false"` になる）|
+| React で属性が文字列で渡る               | `@rimltempest/riml-ds-react` を使う（生の `<rd-x>` は boolean が `"false"` になる）|
 | Vue で「Unknown custom element」         | `isCustomElement` 未設定                                         |
 | フォームに値が載らない                   | `name` 属性が無い                                                |
 | ダークで色が変わらない                   | `<meta name="color-scheme">` が `light` 固定                       |

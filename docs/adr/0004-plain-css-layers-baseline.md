@@ -15,7 +15,7 @@ Sass は使っていない。2026 年の Baseline Widely には `@layer`、ネ�
 ## 決定
 
 1. **CSS はプレーン。前処理なし。** Lit の `css\`\`` タグと `.css` ファイルの 2 形態だけ。
-2. **カスケードレイヤーを固定順で宣言する**（`@riml-ds/css/layers.css`）：
+2. **カスケードレイヤーを固定順で宣言する**（`@rimltempest/riml-ds-css/layers.css`）：
    ```css
    @layer rd.reset, rd.tokens, rd.base, rd.components, rd.utilities, rd.overrides;
    ```
@@ -39,7 +39,7 @@ Sass は使っていない。2026 年の Baseline Widely には `@layer`、ネ�
 
 - ビルドを挟まないので、利用側のどのバンドラでも同じ CSS が届く。デバッグでソースマップの
   往復もない。
-- `@layer` により、Shadow DOM の外（`@riml-ds/css`）と中（部品）で優先順位を宣言的に揃えられる。
+- `@layer` により、Shadow DOM の外（`@rimltempest/riml-ds-css`）と中（部品）で優先順位を宣言的に揃えられる。
 - 生値禁止は「トークンを守らせる唯一の実効手段」。レビューで見つけるのは不可能で、
   ここを lint に任せるとエージェントの出力も自動で矯正される。
 - Baseline を線引きにすると、「動くか」を個別に調べる時間が消える。MDN のバッジという

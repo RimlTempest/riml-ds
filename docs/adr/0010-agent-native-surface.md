@@ -38,10 +38,10 @@
 
 1. **`DESIGN.md`** をリポジトリルートに置く。フロントマターは `tools/design-md` が `tokens.json`
    から生成し、本文は Google の節順で手書き。CI で `design.md lint` と「フロントマターが最新か」
-   を検証。利用側リポジトリへは `@riml-ds/tokens/DESIGN.md` としても配る（コピーして
+   を検証。利用側リポジトリへは `@rimltempest/riml-ds-tokens/DESIGN.md` としても配る（コピーして
    `themes/<brand>` の差分を当てる CLI `riml-ds design-md --theme qrcc`）。
 2. **`AGENTS.md`** はルートに 1 つ。CLAUDE.md は AGENTS.md への参照 + Claude 固有の skill 表。
-3. **`@riml-ds/mcp`**（stdio、`bunx @riml-ds/mcp`）：リソース `tokens://`、`elements://<name>`、
+3. **`@rimltempest/riml-ds-mcp`**（stdio、`bunx @rimltempest/riml-ds-mcp`）：リソース `tokens://`、`elements://<name>`、
    `guidelines://<topic>`、ツール `search_tokens`、`get_element`、`check_contrast`、
    `suggest_component`（用途 → 部品名と使い方）。**依存は MCP SDK だけ**、実装は生成物を
    読むだけの薄いもの。

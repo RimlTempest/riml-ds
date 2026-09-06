@@ -31,7 +31,7 @@ W3C Design Tokens Community Group の Format Module は 2025-10 に初の Stable
    CSS 出力ではライトとダークを **1 つの `light-dark()`** に畳み、`prefers-contrast: more` と
    `[data-density]` は `@media` / 属性セレクタの上書きにする。
 5. **ブランドテーマ**（qrcc / noter …）は `themes/<brand>/*.tokens.json` として semantic の差分
-   だけを持つ。生成物は `@riml-ds/tokens/themes/<brand>.css`。
+   だけを持つ。生成物は `@rimltempest/riml-ds-tokens/themes/<brand>.css`。
 6. 色は **oklch** で書く（`colorSpace: "oklch"`）。出力時に `hex` フォールバックを併記する。
 
 ## 理由

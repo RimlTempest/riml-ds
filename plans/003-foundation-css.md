@@ -1,4 +1,4 @@
-# Plan 003: `@riml-ds/css` — レイヤー・リセット・ベース・ユーティリティ・印刷・強制配色、stylelint 独自ルール
+# Plan 003: `@rimltempest/riml-ds-css` — レイヤー・リセット・ベース・ユーティリティ・印刷・強制配色、stylelint 独自ルール
 
 > **Executor instructions**: Follow this plan step by step. Run every
 > verification command and confirm the expected result before moving to the
@@ -51,7 +51,7 @@ Baseline Newly は `@supports` の中だけ、palette トークン直参照禁�
   - `system/guidelines/accessibility.md`（フォーカスリング 3px / offset 2px / 3:1、ターゲット 44px、行長 80ch、
     `prefers-reduced-motion` 既定オフ、`.rd-visually-hidden` の正しい書き方）
   - `system/guidelines/motion-and-responsive.md`（流動タイポ、コンテナクエリ、モーションは opt-in）
-  - `docs/architecture.md` §1：`system/css/ @riml-ds/css  layers / reset / base / utilities / print / forced-colors`
+  - `docs/architecture.md` §1：`system/css/ @rimltempest/riml-ds-css  layers / reset / base / utilities / print / forced-colors`
 - 規約：CSS は**プレーン**（PostCSS ビルド無し。配るのは書いたままの `.css`）。`px` は罫線と outline だけ。
 
 ## Commands you will need
@@ -60,7 +60,7 @@ Baseline Newly は `@supports` の中だけ、palette トークン直参照禁�
 | -------------- | -------------------------------------------------------------- | ------------------------------------- |
 | CSS lint       | `bun run lint:css`                                             | exit 0                                |
 | Tests          | `bun run test`                                                 | all pass                              |
-| CSS 構文検査   | `bun run --filter @riml-ds/css build`                          | `dist/` にコピー + `index.css` 結合    |
+| CSS 構文検査   | `bun run --filter @rimltempest/riml-ds-css build`                          | `dist/` にコピー + `index.css` 結合    |
 | 総合           | `bun run check`                                                | exit 0                                |
 
 ## Suggested executor toolkit
@@ -123,13 +123,13 @@ Baseline Newly は `@supports` の中だけ、palette トークン直参照禁�
 
 **Verify**: `bun run test -- tools/lint` → `stylelint-plugin.test.ts` 9 件 pass、既存の `stylelint-config.test.ts` も pass
 
-### Step 2: `@riml-ds/css` パッケージと `layers.css` / `reset.css`
+### Step 2: `@rimltempest/riml-ds-css` パッケージと `layers.css` / `reset.css`
 
 `system/css/package.json`：
 
 ```json
 {
-  "name": "@riml-ds/css",
+  "name": "@rimltempest/riml-ds-css",
   "version": "0.0.0",
   "description": "riml-ds の基盤 CSS。@layer の順序、リセット、ベース、ユーティリティ、印刷、強制配色",
   "type": "module",
@@ -147,7 +147,7 @@ Baseline Newly は `@supports` の中だけ、palette トークン直参照禁�
   },
   "files": ["dist", "README.md"],
   "scripts": { "build": "bun run scripts/build.ts", "test": "vitest run --project node --dir system/css" },
-  "peerDependencies": { "@riml-ds/tokens": "workspace:*" },
+  "peerDependencies": { "@rimltempest/riml-ds-tokens": "workspace:*" },
   "publishConfig": { "access": "public", "provenance": true }
 }
 ```
@@ -155,8 +155,8 @@ Baseline Newly は `@supports` の中だけ、palette トークン直参照禁�
 `peerDependencies` の `workspace:*` は changesets が publish 時に実バージョンへ置換する（plan 007）。
 `scripts/build.ts`：`src/*.css` を `dist/` にコピーし、`dist/index.css` を **`@import` ではなく結合**で作る
 （順序：layers → reset → base → utilities → print → forced-colors。`tokens.css` は含めない — 利用側が
-`@riml-ds/tokens/tokens.css` を別に読む。理由：テーマ差し替えをトークン側で完結させる）。
-ファイル冒頭に `/* @riml-ds/css <version> — generated, do not edit */`。
+`@rimltempest/riml-ds-tokens/tokens.css` を別に読む。理由：テーマ差し替えをトークン側で完結させる）。
+ファイル冒頭に `/* @rimltempest/riml-ds-css <version> — generated, do not edit */`。
 
 `src/layers.css`：
 
@@ -212,7 +212,7 @@ Baseline を `docs/baseline.md` で確認。Newly なら `@supports` へ）、`i
 `:focus-visible { outline-color: Highlight; }`、`button, [role="button"] { border: var(--rd-border-width-default) solid ButtonText; }`、
 `img { forced-color-adjust: none; }` は**書かない**（写真以外に副作用）。
 
-**Verify**: `bun run lint:css` → exit 0。`bun run --filter @riml-ds/css build` → `system/css/dist/index.css` が存在し、
+**Verify**: `bun run lint:css` → exit 0。`bun run --filter @rimltempest/riml-ds-css build` → `system/css/dist/index.css` が存在し、
 `grep -c '@layer' system/css/dist/index.css` ≥ 6
 
 ### Step 5: テスト（構造と不変条件）
@@ -233,7 +233,7 @@ Baseline を `docs/baseline.md` で確認。Newly なら `@supports` へ）、`i
 
 ### Step 6: README と配線
 
-`system/css/README.md`：読み込み順（`layers.css` → `@riml-ds/tokens/tokens.css` → `index.css` の残り、または
+`system/css/README.md`：読み込み順（`layers.css` → `@rimltempest/riml-ds-tokens/tokens.css` → `index.css` の残り、または
 `index.css` 1 本 + `tokens.css`。**tokens.css は index.css に含まれない**と明記）、各ファイルの役割、
 `rd.overrides` の使い方（利用側は `@layer rd.overrides { … }` か、`layers.css` の後に自分の `@layer app;` を宣言）。
 `skills/riml-ds/SKILL.md` §CSS import order と矛盾しないことを目で確認（矛盾したら STOP）。
@@ -253,7 +253,7 @@ root `tsconfig.json` に `{ "path": "./system/css" }`（`system/css/tsconfig.jso
 
 - [ ] `bun run lint:css` exit 0（`system/css/src/*.css` が対象に入っている。`stylelint --print-config` で確認不要、
       `bun run lint:css -- --formatter verbose` の集計に 6 ファイル）
-- [ ] `bun run --filter @riml-ds/css build` で `dist/index.css` + 6 ファイル
+- [ ] `bun run --filter @rimltempest/riml-ds-css build` で `dist/index.css` + 6 ファイル
 - [ ] `grep -c '!important' system/css/dist/index.css` = 0、`grep -cE '#[0-9a-fA-F]{3,8}' system/css/dist/index.css` = 0
 - [ ] `bun run test` exit 0、新規 14 件
 - [ ] `tools/lint/stylelint.config.js` の `plugins` が 2 要素、`rules` に `riml-ds/` 3 本

@@ -14,7 +14,7 @@ cd ../../library/elements && npm publish --access public
 
 その後 npmjs.com の各パッケージ → Settings → **Trusted Publisher** に
 `RimlTempest/riml-ds` / workflow `release.yml` を登録する。
-`@riml-ds` スコープの npm org はユーザーが Web UI で作る（無料、public のみ）。
+npm はユーザー名スコープ `@rimltempest`（既存）を使い、パッケージ名は `riml-ds-<name>`。org は作らない（ユーザー決定 2026-09-07）。
 
 ## 以後（自動）
 
@@ -40,11 +40,11 @@ bunx sherif
 
 | パッケージ / 入口                        | 予算（brotli） |
 | ---------------------------------------- | -------------- |
-| `@riml-ds/tokens/tokens.css`             | 6 KB           |
-| `@riml-ds/css`（全部）                   | 8 KB           |
-| `@riml-ds/elements/button/define`（lit 込み）| 12 KB      |
-| `@riml-ds/elements/dialog/define`        | 14 KB          |
-| `@riml-ds/react`（button のみ import）   | 13 KB          |
+| `@rimltempest/riml-ds-tokens/tokens.css`             | 6 KB           |
+| `@rimltempest/riml-ds-css`（全部）                   | 8 KB           |
+| `@rimltempest/riml-ds-elements/button/define`（lit 込み）| 12 KB      |
+| `@rimltempest/riml-ds-elements/dialog/define`        | 14 KB          |
+| `@rimltempest/riml-ds-react`（button のみ import）   | 13 KB          |
 
 超えたら CI が落ちる。上げるときは PR で理由を書く。
 
@@ -52,7 +52,7 @@ bunx sherif
 
 ```jsonc
 {
-  "name": "@riml-ds/elements",
+  "name": "@rimltempest/riml-ds-elements",
   "type": "module",
   "sideEffects": ["./dist/**/define.js"],
   "customElements": "custom-elements.json",

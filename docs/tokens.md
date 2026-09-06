@@ -112,7 +112,7 @@ system/tokens/
 ## 変更手順
 
 1. `src/` を編集
-2. `bun run --filter @riml-ds/tokens check`（lint）と `build`
+2. `bun run --filter @rimltempest/riml-ds-tokens check`（lint）と `build`
 3. `bun run design-md`（DESIGN.md のフロントマター再生成）
 4. Storybook で `Tokens` docs と 6 条件の story を見る
 5. VRT の差分を確認（値の変更は必ず差分が出る。意図どおりか見る）

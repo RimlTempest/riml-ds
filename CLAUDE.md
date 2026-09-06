@@ -8,7 +8,7 @@ qrcc / noter をはじめ、riml のプロダクト群が共有する **デザ�
 - **コンポーネントライブラリ**（`library/`）: システムの実装。Lit の Web Components を
   唯一のソースにし、React / Vue / Svelte / Astro 向けは **Custom Elements Manifest から生成**する。
 
-npm 公開スコープ `@riml-ds/*`、カスタム要素の接頭辞 `rd-`、CSS 変数の接頭辞 `--rd-`。
+npm 公開スコープ `@rimltempest/riml-ds-*`、カスタム要素の接頭辞 `rd-`、CSS 変数の接頭辞 `--rd-`。
 **無料で運用しきる**（GitHub Actions 公開リポジトリ枠・GitHub Pages・npm 公開パッケージのみ。
 有料 SaaS のビジュアルリグレッションや Figma 連携は使わない）。
 
@@ -49,7 +49,7 @@ npm 公開スコープ `@riml-ds/*`、カスタム要素の接頭辞 `rd-`、CSS
   で動きは既定オフ、色だけで状態を伝えない（`docs/accessibility.md`）。
 - **実装より先に失敗するテストを書く。**
 - **自分のレーンが所有していないファイルを編集しない**（`scripts/lanes.tsv`）。
-- **`library/elements` は他のパッケージに依存しない**（`lit` と `@riml-ds/tokens` の CSS だけ）。
+- **`library/elements` は他のパッケージに依存しない**（`lit` と `@rimltempest/riml-ds-tokens` の CSS だけ）。
   逆方向（`system/*` → `library/*`）の依存も禁止。
 
 ## コマンド

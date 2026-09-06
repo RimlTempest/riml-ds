@@ -25,7 +25,7 @@ description: riml-ds の CSS 規約。system/css や部品の *.styles.ts を書
 ## 1. レイヤー
 
 ```css
-/* @riml-ds/css/layers.css — 利用側が最初に読み込む */
+/* @rimltempest/riml-ds-css/layers.css — 利用側が最初に読み込む */
 @layer rd.reset, rd.tokens, rd.base, rd.components, rd.utilities, rd.overrides;
 ```
 

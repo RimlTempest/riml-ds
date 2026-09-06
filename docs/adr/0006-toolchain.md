@@ -53,8 +53,8 @@ no-enum）は oxlint の JS プラグイン（alpha）で書いた実績があ�
 ## 影響
 
 - `.oxlintrc.json` はルートに 1 つ。`jsPlugins: ["./tools/lint/oxlint-plugin/index.js"]`。
-- `tools/lint` は `@riml-ds/lint` として公開し、利用側が同じ stylelint 設定を
-  `extends: "@riml-ds/lint/stylelint"` で使えるようにする。
+- `tools/lint` は `@rimltempest/riml-ds-lint` として公開し、利用側が同じ stylelint 設定を
+  `extends: "@rimltempest/riml-ds-lint/stylelint"` で使えるようにする。
 - oxlint JS プラグインが alpha のまま壊れた場合の退路：同じルールを **ast-grep**（YAML）で
   書き直す。ルールは `tools/lint/rules/*.yml` にも二重に置き、CI で両方回す（片方が壊れても
   もう片方が守る）。

@@ -31,7 +31,7 @@ bunx changeset
 
 ```md
 ---
-"@riml-ds/elements": minor
+"@rimltempest/riml-ds-elements": minor
 ---
 
 `rd-button` に `size` 属性（sm / md / lg）を追加。既定は md で見た目は変わらない。

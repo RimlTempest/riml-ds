@@ -9,20 +9,20 @@ riml-ds は「デザインシステム」と「コンポーネントライブラ
 
 ```
 system/                      デザインシステム（判断）
-  tokens/     @riml-ds/tokens   DTCG 2025.10 JSON → tokens.css / tokens.ts / tokens.json / tokens.md
-  css/        @riml-ds/css      layers / reset / base / utilities / print / forced-colors
+  tokens/     @rimltempest/riml-ds-tokens   DTCG 2025.10 JSON → tokens.css / tokens.ts / tokens.json / tokens.md
+  css/        @rimltempest/riml-ds-css      layers / reset / base / utilities / print / forced-colors
   guidelines/ (非パッケージ)    a11y・モーション・レスポンシブ・文言。DESIGN.md の本文の出典
 library/                     コンポーネントライブラリ（実装）
-  elements/   @riml-ds/elements Lit Web Components（唯一のソース）+ custom-elements.json
-  react/      @riml-ds/react    CEM から生成した React ラッパーと型
-  vue/        @riml-ds/vue      CEM から生成した Vue 型 + プラグイン
-  svelte/     @riml-ds/svelte   CEM から生成した Svelte 型
-  astro/      @riml-ds/astro    Astro integration（CSS 注入と define の読み込み）
+  elements/   @rimltempest/riml-ds-elements Lit Web Components（唯一のソース）+ custom-elements.json
+  react/      @rimltempest/riml-ds-react    CEM から生成した React ラッパーと型
+  vue/        @rimltempest/riml-ds-vue      CEM から生成した Vue 型 + プラグイン
+  svelte/     @rimltempest/riml-ds-svelte   CEM から生成した Svelte 型
+  astro/      @rimltempest/riml-ds-astro    Astro integration（CSS 注入と define の読み込み）
 tools/                       ビルド・検査・エージェント連携
-  lint/       @riml-ds/lint     stylelint / oxlint プラグイン / markuplint / browserslist の共有設定
-  cem/        @riml-ds/cem      CEM analyzer 設定と生成器（ラッパー・docs・registry.json）
+  lint/       @rimltempest/riml-ds-lint     stylelint / oxlint プラグイン / markuplint / browserslist の共有設定
+  cem/        @rimltempest/riml-ds-cem      CEM analyzer 設定と生成器（ラッパー・docs・registry.json）
   design-md/  (private)         tokens.json → DESIGN.md フロントマター
-  mcp/        @riml-ds/mcp      tokens.json + custom-elements.json を配る MCP サーバ（stdio）
+  mcp/        @rimltempest/riml-ds-mcp      tokens.json + custom-elements.json を配る MCP サーバ（stdio）
   markuplint/ (private)         TypeScript 6 に固定した markuplint の隔離ランナー（ADR-0006）
 apps/
   storybook/  (private)         Storybook 10（web-components-vite）。docs / a11y / story tests / MCP
@@ -41,7 +41,7 @@ system/tokens ──▶ system/css ──▶ library/elements ──▶ library/
 ```
 
 - `system/*` は `library/*` を知らない。
-- `library/elements` の依存は `lit` と `@riml-ds/tokens`（CSS 変数名）だけ。
+- `library/elements` の依存は `lit` と `@rimltempest/riml-ds-tokens`（CSS 変数名）だけ。
 - ラッパーは `library/elements` の `custom-elements.json` **だけ**を入力にする。
   ソースを読まない（ソースを読むと「生成物が正」でなくなる）。
 - `tools/*` はどこからも import されない（CLI として呼ばれる）。
@@ -81,7 +81,7 @@ library/elements/src/<name>/<name>.element.ts   Lit の class（薄い殻。ADR-
 ```
 
 - 1 コンポーネント = 1 ディレクトリ。`index.ts` は class を re-export するだけで **define しない**。
-  利用側は `@riml-ds/elements/button` （class のみ）か `@riml-ds/elements/button/define`（登録込み）を選ぶ。
+  利用側は `@rimltempest/riml-ds-elements/button` （class のみ）か `@rimltempest/riml-ds-elements/button/define`（登録込み）を選ぶ。
 - スタイルはコンストラクタブル・スタイルシートで全インスタンス共有。トークンは light DOM の
   `tokens.css` を参照するだけで、shadow 内にトークン値をコピーしない。
 - 状態は `class` の付け替えではなく `ElementInternals.states`（`:state(open)` など）。
@@ -95,7 +95,7 @@ library/elements/src/<name>/<name>.element.ts   Lit の class（薄い殻。ADR-
 | `custom-elements.json`| コンポーネント API の正                                 | `cem analyze`                       |
 | `tokens.json`         | トークンの正（解決済み DTCG）                           | `terrazzo build`                    |
 | `registry.json`       | 部品の索引（名前・状態・依存・ファイル）                | `tools/cem`                         |
-| `@riml-ds/mcp`        | 上 3 つを MCP のリソース／ツールとして配る              | 手書き（小さい）                    |
+| `@rimltempest/riml-ds-mcp`        | 上 3 つを MCP のリソース／ツールとして配る              | 手書き（小さい）                    |
 | `skills/riml-ds`      | 利用側エージェントの手順（導入・禁止・レビュー観点）    | 手書き                              |
 | Storybook `/mcp`      | 開発中の story 一覧・docs・テスト実行                   | `@storybook/addon-mcp`              |
 
@@ -127,7 +127,7 @@ library/elements/src/<name>/<name>.element.ts   Lit の class（薄い殻。ADR-
 
 段階的に。詳細は [migration.md](migration.md)。
 
-1. `@riml-ds/tokens` + `@riml-ds/css` を導入し、`--qrcc-*` / `--noter-*` を `--rd-*` の別名にする
+1. `@rimltempest/riml-ds-tokens` + `@rimltempest/riml-ds-css` を導入し、`--qrcc-*` / `--noter-*` を `--rd-*` の別名にする
 2. `themes/qrcc` / `themes/noter` で現在の色味を再現し、視覚差分ゼロで切り替える
-3. 共通コンポーネント（button / field / live-region / skip-link）を `@riml-ds/react` に置き換える
+3. 共通コンポーネント（button / field / live-region / skip-link）を `@rimltempest/riml-ds-react` に置き換える
 4. アプリ固有の部品はアプリに残す。汎用化できるものだけ `library/elements` に昇格させる

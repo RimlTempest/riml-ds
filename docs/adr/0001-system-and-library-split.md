@@ -19,7 +19,7 @@ qrcc（TanStack Start + React）と noter（同）は、それぞれ `--qrcc-*` 
 
 同じリポジトリ（Bun workspaces）に **`system/` と `library/` の 2 領域**を置き、
 
-- `system/` = デザインシステム。トークン（`@riml-ds/tokens`）、基盤 CSS（`@riml-ds/css`）、
+- `system/` = デザインシステム。トークン（`@rimltempest/riml-ds-tokens`）、基盤 CSS（`@rimltempest/riml-ds-css`）、
   ガイドライン（prose）。**フレームワークも Web Components も知らない。**
 - `library/` = コンポーネントライブラリ。`system/` を消費して部品を実装する。
   `library/elements`（Lit）と、そこから生成する各フレームワーク向けパッケージ。
@@ -28,7 +28,7 @@ qrcc（TanStack Start + React）と noter（同）は、それぞれ `--qrcc-*` 
 
 ## 理由
 
-- **片方だけ採用できる。** qrcc が既存の React 実装を維持しつつ `@riml-ds/tokens` だけ
+- **片方だけ採用できる。** qrcc が既存の React 実装を維持しつつ `@rimltempest/riml-ds-tokens` だけ
   乗り換える移行が可能（[migration.md](../migration.md)）。
 - **判断の寿命は実装より長い。** フレームワークが変わってもトークンとガイドラインは残る。
 - **エージェントにとって境界が明瞭。** 「見た目を変える → `system/`」「動きを変える → `library/`」。
@@ -38,7 +38,7 @@ qrcc（TanStack Start + React）と noter（同）は、それぞれ `--qrcc-*` 
 
 ## 捨てた選択肢
 
-- **単一パッケージ `@riml-ds/ui` に全部入れる** — トークンだけ欲しい相手に Lit が付いてくる。
+- **単一パッケージ `@rimltempest/riml-ds-ui` に全部入れる** — トークンだけ欲しい相手に Lit が付いてくる。
 - **リポジトリを 2 つに分ける** — 変更の同時性が失われ、無料枠の CI を 2 倍消費する。
 - **Figma を「システム」、コードを「ライブラリ」とする** — ユーザー決定により Figma は持たない
   （ADR-0003）。コードが唯一の正。
@@ -47,6 +47,6 @@ qrcc（TanStack Start + React）と noter（同）は、それぞれ `--qrcc-*` 
 
 - ディレクトリ名は `system/` / `library/` に固定。`packages/` は作らない（意図が消える）。
 - `tools/lint` の依存方向チェック（`scripts/guard.sh`）：`system/**` の import 文に
-  `@riml-ds/elements|react|vue|svelte|astro` または `../library` が現れたら失敗。
+  `@rimltempest/riml-ds-elements|react|vue|svelte|astro` または `../library` が現れたら失敗。
 - ガイドラインの本文は `system/guidelines/`。DESIGN.md はそれを要約したものであり、
   矛盾したら `system/guidelines/` を正とする。

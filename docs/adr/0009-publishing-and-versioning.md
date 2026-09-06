@@ -6,7 +6,7 @@
 
 ## 文脈
 
-利用者は qrcc / noter（自分）から始まり、npm 公開（ユーザー決定：public scope）で第三者に
+利用者は qrcc / noter（自分）から始まり、npm 公開（ユーザー決定：`@rimltempest/riml-ds-*` の public パッケージ）で第三者に
 広がる可能性がある。Web Components の「破壊的変更」は TypeScript の型だけでは捕まらない
 （属性名・イベント名・slot 名・CSS parts・CSS 変数は文字列）。
 
@@ -39,7 +39,7 @@ npm はクラシックトークンを 2025-11 に廃止し、CI からの publis
 
 CEM の `@status` タグに 4 段階：
 
-- `experimental` — 名前も API も変わり得る。`@riml-ds/elements/experimental/*` からのみ export。
+- `experimental` — 名前も API も変わり得る。`@rimltempest/riml-ds-elements/experimental/*` からのみ export。
   semver の対象外。
 - `stable` — 上表に従う。
 - `deprecated` — 1 メジャー後に削除。CEM の `@deprecated` に **代替と削除予定バージョン** を書く。
@@ -51,8 +51,8 @@ experimental → stable の条件：story 8 種（ADR-0007）、AAA の自動検
 
 ### バージョニング
 
-- **全パッケージを同じバージョンで固定（fixed）**。`@riml-ds/tokens@2.x` と
-  `@riml-ds/elements@2.x` は組み合わせ保証。changesets の `fixed` を使う。
+- **全パッケージを同じバージョンで固定（fixed）**。`@rimltempest/riml-ds-tokens@2.x` と
+  `@rimltempest/riml-ds-elements@2.x` は組み合わせ保証。changesets の `fixed` を使う。
 - major は年 1 回まで。deprecated 期間は最短 1 メジャー。
 - `0.x` の間（最初の外部利用者が出るまで）は minor を major 扱いにする。
 
