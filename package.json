@@ -1,8 +1,15 @@
 {
   "name": "riml-ds",
   "private": true,
+  "workspaces": [
+    "system/*",
+    "library/*",
+    "tools/*",
+    "apps/*",
+    "e2e*",
+    "!tools/markuplint"
+  ],
   "type": "module",
-  "workspaces": ["system/*", "library/*", "tools/*", "apps/*", "e2e*", "!tools/markuplint"],
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
@@ -33,6 +40,9 @@
     "typescript": "7.0.2",
     "vitest": "4.1.11"
   },
-  "engines": { "bun": ">=1.4.0", "node": ">=26" },
+  "engines": {
+    "bun": ">=1.4.0",
+    "node": ">=26"
+  },
   "packageManager": "bun@1.4.0"
 }

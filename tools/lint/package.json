@@ -2,15 +2,28 @@
   "name": "@rimltempest/riml-ds-lint",
   "version": "0.0.0",
   "description": "riml-ds の共有 lint 設定（oxlint プラグイン / stylelint / browserslist）",
-  "type": "module",
   "license": "MIT",
+  "files": [
+    "oxlint-plugin",
+    "stylelint.config.js",
+    "browserslist",
+    "README.md"
+  ],
+  "type": "module",
   "exports": {
     "./oxlint-plugin": "./oxlint-plugin/index.js",
     "./stylelint": "./stylelint.config.js",
     "./browserslist": "./browserslist"
   },
-  "files": ["oxlint-plugin", "stylelint.config.js", "browserslist", "README.md"],
-  "scripts": { "test": "vitest run --project node --dir tools/lint" },
-  "peerDependencies": { "oxlint": ">=1.80", "stylelint": ">=17" },
-  "publishConfig": { "access": "public", "provenance": true }
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "test": "vitest run --project node --dir tools/lint"
+  },
+  "peerDependencies": {
+    "oxlint": ">=1.80",
+    "stylelint": ">=17"
+  }
 }

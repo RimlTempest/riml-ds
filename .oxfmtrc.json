@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "semi": false,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "arrowParens": "always",
+  "experimentalOperatorPosition": "start",
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/src/generated/**",
+    "**/storybook-static/**",
+    "**/custom-elements.json",
+    ".agents/skills/**",
+    ".claude/skills/**",
+    "skills-lock.json",
+    "e2e/__screenshots__/**",
+    "docs/**",
+    "plans/**",
+    "system/guidelines/**",
+    "skills/**",
+    "DESIGN.md",
+    "README.md",
+    "AGENTS.md",
+    "CLAUDE.md"
+  ]
+}
