@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.output/
+coverage/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+storybook-static/
+test-results/
+playwright-report/
+.claude/worktrees/
+# 生成物（ソースは system/tokens/src と library/elements/src）
+system/tokens/dist/
+library/elements/custom-elements.json
+library/react/src/generated/
+library/vue/src/generated/
+library/svelte/src/generated/
