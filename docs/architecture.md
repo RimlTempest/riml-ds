@@ -68,8 +68,10 @@ tools/design-md                     ─ generate ────────▶  DE
 
 ```
 library/elements/src/<name>/<name>.element.ts   Lit の class（薄い殻。ADR-0005）
+                          <name>.contract.ts    ティア A/B：マークアップ契約（必要な子・MarkupTree・markup()）
                           <name>.logic.ts       純関数（状態遷移・値の検証・ARIA 属性の計算）
-                          <name>.styles.ts      css`` タグ。--rd-* のみ参照
+                          <name>.css            ティア A/B：light DOM のスタイル（@layer rd.components）
+                          <name>.styles.ts      ティア B/C：css`` タグ（shadow）。--rd-* のみ参照
                           <name>.define.ts      customElements.define('rd-<name>', ...) だけ
                           <name>.stories.ts     Storybook（docs + a11y + interaction）
                           <name>.test.ts        Vitest browser（実 DOM）
@@ -80,12 +82,14 @@ library/elements/src/<name>/<name>.element.ts   Lit の class（薄い殻。ADR-
                                apps/storybook の args / docs 表
 ```
 
+- 部品は PE ティア（A / B / C）を JSDoc `@pe` で宣言する（ADR-0012）。ティア A はネイティブ要素を
+  light DOM の子として包み、JS 無しで動く。RSC / SSR はこの HTML をそのまま出す。
 - 1 コンポーネント = 1 ディレクトリ。`index.ts` は class を re-export するだけで **define しない**。
   利用側は `@rimltempest/riml-ds-elements/button` （class のみ）か `@rimltempest/riml-ds-elements/button/define`（登録込み）を選ぶ。
-- スタイルはコンストラクタブル・スタイルシートで全インスタンス共有。トークンは light DOM の
+- ティア B/C のスタイルはコンストラクタブル・スタイルシートで全インスタンス共有。ティア A は `.css` ファイル。トークンは light DOM の
   `tokens.css` を参照するだけで、shadow 内にトークン値をコピーしない。
 - 状態は `class` の付け替えではなく `ElementInternals.states`（`:state(open)` など）。
-- フォーム部品は `formAssociated = true`。ネイティブの `<form>` と検証 API に乗る。
+- フォーム部品はティア A。ネイティブ要素が form に参加し、部品は `:state()` と文言を足す（`formAssociated` は使わない）。
 
 ### エージェント連携（[ADR-0010](adr/0010-agent-native-surface.md)）
 
@@ -109,7 +113,7 @@ library/elements/src/<name>/<name>.element.ts   Lit の class（薄い殻。ADR-
 | `terrazzo check`       | DTCG 準拠、命名、重複、説明、**コントラスト 7:1**      | lefthook / CI                        |
 | Vitest browser         | 実 DOM の振る舞い・キーボード・`:state()`             | CI                                   |
 | addon-vitest + a11y    | 全 story を実ブラウザで描画し axe（AAA タグ）で検査    | CI                                   |
-| Playwright             | キーボード導線・フォーカス順・スクリーンショット比較    | CI（Docker イメージ固定）            |
+| Playwright             | キーボード導線・フォーカス順・スクリーンショット比較・**JS 無し（ティア A/B）** | CI（Docker イメージ固定）  |
 | publint / attw / size-limit | exports・型解決・サイズ予算                      | CI（publish 前）                     |
 | knip / sherif          | 未使用 export・依存の不整合                           | CI                                   |
 | CI `guard`             | 不変条件（依存の向き、routes 無し、生成物の未コミット）| CI                                   |
@@ -117,7 +121,7 @@ library/elements/src/<name>/<name>.element.ts   Lit の class（薄い殻。ADR-
 ## 4. 配布
 
 - ESM のみ。バンドルしない・minify しない（Lit の公開ガイド）。`exports` は部品ごと。
-- `sideEffects` は `*/define.js` と `*.css` だけ true。
+- `sideEffects` は `*/define.js` と `*.css` だけ true。ティア A/B は `<name>/style.css` も配る。
 - `package.json` の `customElements` フィールドが `custom-elements.json` を指す。
 - changesets でバージョンと CHANGELOG。npm は Trusted Publishing（OIDC）で publish し、
   provenance は自動付与（[ADR-0009](adr/0009-publishing-and-versioning.md)）。

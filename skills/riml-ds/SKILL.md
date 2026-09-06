@@ -52,53 +52,77 @@ bun add @rimltempest/riml-ds-tokens @rimltempest/riml-ds-css @rimltempest/riml-d
 
 ## 2. 部品の使い方
 
-```html
-<rd-button variant="primary" type="submit">保存</rd-button>
-<rd-button variant="ghost"><svg slot="icon-start" aria-hidden="true">…</svg>閉じる</rd-button>
+部品には PE ティアがある（`custom-elements.json` の `pe`）。**ティア A（フォーム・ボタン・リンク）はネイティブ要素を
+子として書く**。JS が無くても送信・検証・ラベルが動き、RSC からもそのまま出せる（ADR-0012）。
 
-<form>
-  <rd-text-field label="メール" name="email" type="email" required hint="確認メールを送ります"></rd-text-field>
-  <rd-button type="submit">送信</rd-button>
+```html
+<!-- ティア A：ネイティブ要素を包む。JS 無しで動く -->
+<rd-button><button type="submit">保存</button></rd-button>
+<rd-button variant="ghost"><button type="button"><svg aria-hidden="true">…</svg>閉じる</button></rd-button>
+
+<form method="post" action="/save">
+  <rd-text-field hint="確認メールを送ります">
+    <label for="email">メール</label>
+    <input id="email" name="email" type="email" required autocomplete="email">
+  </rd-text-field>
+  <rd-button><button type="submit">送信</button></rd-button>
 </form>
 
-<rd-dialog id="confirm" label="削除の確認">
+<!-- ティア B：内容は slot。JS 無しでも読める（inline で表示される） -->
+<rd-dialog id="confirm">
+  <h2 slot="label">削除の確認</h2>
   <p>削除すると元に戻せません。</p>
-  <rd-button slot="actions" variant="danger">削除</rd-button>
+  <rd-button slot="actions" variant="danger"><button type="button">削除</button></rd-button>
 </rd-dialog>
+
+<!-- ティア C：無くても害が無い -->
 <rd-live-region></rd-live-region>   <!-- ページに 1 つ -->
-<rd-skip-link href="#main">本文へ</rd-skip-link>
+
+<!-- スキップリンクは部品ではなく CSS クラス -->
+<a class="rd-skip-link" href="#main">本文へ移動</a>
 ```
 
-- 部品は **ネイティブフォーム**に参加する。`FormData`、`required`、`checkValidity()` がそのまま使える。
+- ティア A は **ネイティブフォーム**そのもの。`FormData`、`required`、`checkValidity()`、`:user-invalid` がそのまま使える。
+  部品は「インラインのエラー文言」「`:state()`」「カウンタ」などを**足すだけ**。
+- ティア A の CSS は `@rimltempest/riml-ds-elements/<name>/style.css`（または `styles.css` 一括）を読み込む。
+  `define` を読まなくても見た目は出る。
 - 状態は `:state()`：`rd-dialog:state(open) { … }`、`rd-text-field:state(invalid) { … }`。
-- 上書きは `::part(control)` と `--rd-<component>-*` 変数だけ。shadow の中の class を狙わない。
+- 上書きは（ティア B/C）`::part(control)` と `--rd-<component>-*` 変数だけ。shadow の中の class を狙わない。
+  ティア A は light DOM なので `@layer rd.overrides` から通常の CSS で上書きできる。
 - 独自イベントは `rd-*`（`rd-press`、`rd-dismiss`）。`input` / `change` / `click` はネイティブのまま届く。
-
-### 登録
-
-```ts
-import '@rimltempest/riml-ds-elements/button/define'      // 使う部品ごとに 1 行。副作用 import
-```
-
-SSR（TanStack Start / Astro）では `:not(:defined)` の間のレイアウトを `@rimltempest/riml-ds-css/base.css` が
-固定する。定義前に見た目を触らない。
+- 契約に合わない子（`<input>` が無い等）は `console.error` + `:state(malformed)`。markuplint の riml-ds プリセットも落とす。
 
 ## 3. フレームワーク別
 
 ### React 19（TanStack Start / Next）
 
 ```tsx
+// サーバーコンポーネント（RSC）でも使える：イベントを渡さない限り 'use client' 不要
 import { RdButton, RdTextField } from '@rimltempest/riml-ds-react'
-<RdButton variant="primary" onRdPress={() => save()}>保存</RdButton>
+<form action={saveAction}>
+  <RdTextField label="メール" name="email" type="email" required hint="確認メールを送ります" />
+  <RdButton type="submit">保存</RdButton>
+</form>
+
+// クライアントコンポーネント：controlled と独自イベント
+'use client'
+import { RdTextField, RdButton } from '@rimltempest/riml-ds-react/client'
+const [email, setEmail] = useState('')
+<RdTextField label="メール" name="email" value={email} onInput={(e) => setEmail(e.currentTarget.value)} />
+<RdButton onRdPress={() => save()}>保存</RdButton>
 ```
 
-- `@rimltempest/riml-ds-react` は `@lit/react` の `createComponent` を CEM から生成したもの。
-  イベントは `onRdPress` の形で型が付く。
-- RSC からは描画できない。`'use client'` の境界の内側で使う（`@rimltempest/riml-ds-react` の各 export は
-  `'use client'` 付き）。
-- SSR は Declarative Shadow DOM。`renderToString` では shadow が出ないので、
-  レイアウトは `:not(:defined)` の CSS が受ける。ハイドレーション後に define が走る。
-- `ref` はホスト要素。`ref.current.focus()` は `delegatesFocus` で内部に届く。
+- `@rimltempest/riml-ds-react` の既定 export はマークアップ契約から生成した**純粋な HTML を出す部品**。
+  `<RdTextField label name>` が `<rd-text-field><label for><input …></rd-text-field>` に展開される。
+  サーバーで描画でき、JS 無しでも動く。
+- `@rimltempest/riml-ds-react/client` は `'use client'` 付き。イベント props（`onRdPress`、`onInput`）と
+  controlled（`value`）／uncontrolled（`defaultValue`）は `<input>` と同じ意味論。
+  controlled は親が値を拒否すれば要素の値も戻る（ラッパーが再同期する）。
+- controlled が「難しい」わけではない。RSC がイベントを持てないのは `<input>` も同じ。
+- `renderToString` / RSC の出力は light DOM の HTML そのもの。ハイドレーション後に `define` が走って
+  `:state()` とインライン文言が有効になる。それまでの見た目は `style.css` が受ける。
+- `ref` はホスト要素。ティア A はネイティブ要素が子なので `ref.current.querySelector('input')` が届く。
+  ティア B/C は `delegatesFocus` で `ref.current.focus()` が内部に届く。
 
 ### Vue 3.5
 

@@ -45,6 +45,8 @@ npm 公開スコープ `@rimltempest/riml-ds-*`、カスタム要素の接頭辞
   これらを変える／消すのは破壊的変更。`@deprecated` を 1 メジャー挟む（ADR-0009）。
 - **Baseline「Widely available」にない機能は `@supports` / 機能検出で段階的に使う。**
   一覧は `docs/baseline.md`。「Wait」の列にあるものは使わない。
+- **フォーム・ボタン・リンクの部品はティア A：light DOM でネイティブ要素を包む。** shadow に
+  `<input>` / `<button>` を描かない。JS 無しで動くこと（ADR-0012）。ティアは JSDoc `@pe` で宣言する。
 - **AAA を既定にする。** 本文コントラスト 7:1、ターゲット 44×44、`prefers-reduced-motion`
   で動きは既定オフ、色だけで状態を伝えない（`docs/accessibility.md`）。
 - **実装より先に失敗するテストを書く。**

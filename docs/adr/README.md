@@ -16,6 +16,8 @@
 | 0009 | [公開 API の定義・semver・ライフサイクル・Trusted Publishing](0009-publishing-and-versioning.md) | Accepted |
 | 0010 | [エージェント向けの面（DESIGN.md / CEM / MCP / skills）](0010-agent-native-surface.md)     | Accepted |
 | 0011 | [無料枠で運用する（GitHub Pages、有料 SaaS なし）](0011-free-tier-operations.md)          | Accepted |
+| 0012 | [Progressive Enhancement を 3 ティアで規約化し、フォーム・ナビ部品は light DOM でネイティブ要素を包む](0012-progressive-enhancement-tiers.md) | Accepted |
+| 0012 | [Progressive Enhancement を 3 ティアで規約化し、フォーム・ナビ部品は light DOM でネイティブ要素を包む](0012-progressive-enhancement-tiers.md) | Accepted |
 
 ## 書式
 

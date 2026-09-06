@@ -1,6 +1,6 @@
 ---
 name: riml-ds-element
-description: riml-ds の部品（Lit Web Components）の作り方。library/elements に部品を足す・直す前に読む。ファイル構成（element/logic/styles/define/stories/test）、rd- プレフィックス、ElementInternals と form-associated、:state()、delegatesFocus、JSDoc（@slot/@csspart/@cssprop/@event/@status）による CEM、story 8 種。「部品を追加する」「フォーム部品にする」「イベント名をどうする」「ラッパーに反映されない」「CEM に出ない」で発火。
+description: riml-ds の部品（Lit Web Components）の作り方。library/elements に部品を足す・直す前に読む。PE ティア A/B/C（ADR-0012。フォーム部品は light DOM でネイティブ要素を包む）、ファイル構成（contract/logic/element/css|styles/define/stories/test）、rd- プレフィックス、ElementInternals、:state()、delegatesFocus、JSDoc（@slot/@csspart/@cssprop/@event/@status）による CEM、story 8 種。「部品を追加する」「フォーム部品にする」「イベント名をどうする」「ラッパーに反映されない」「CEM に出ない」で発火。
 ---
 
 # riml-ds 部品規約
@@ -11,23 +11,50 @@ description: riml-ds の部品（Lit Web Components）の作り方。library/ele
 [system/guidelines/accessibility.md](../../../system/guidelines/accessibility.md)。
 CSS は `riml-ds-css`、TS は `riml-ds-typescript`、テストは `riml-ds-tdd`。
 
-## 1. ファイル構成（1 部品 = 1 ディレクトリ）
+## 1. まず PE ティアを決める（ADR-0012）
+
+| ティア | 定義                                 | 対象                                     | 構造                                                      |
+| ------ | ------------------------------------ | ---------------------------------------- | --------------------------------------------------------- |
+| **A**  | JS 無しで**動く**                    | フォーム部品・ボタン・リンク・ナビ        | **light DOM**。ネイティブ要素を子として包む。shadow 無し。スタイルは `<name>.css` |
+| **B**  | JS 無しで**内容が見える**            | dialog・disclosure・tabs・menu           | shadow は枠だけ。内容はすべて slot。`<name>.css` に `:not(:defined)` の見え方 |
+| **C**  | JS 無しで**無くても害が無い**        | live-region・tooltip・skeleton           | shadow 完結。`<name>.styles.ts`                           |
+
+フォームに参加する部品・リンク・ボタンは **A 以外を選べない**（guard が落とす）。JSDoc `@pe A` で宣言する。
+JS が不要なもの（スキップリンクなど）は**部品にしない**（`@rimltempest/riml-ds-css` のクラスで出す）。
+
+## 1.1 ファイル構成（1 部品 = 1 ディレクトリ）
 
 ```
-library/elements/src/button/
-  button.logic.ts        純関数。属性 → 状態・aria の集合。DOM を触らない
-  button.logic.test.ts   node
-  button.element.ts      class RdButton extends LitElement（薄い殻）
-  button.styles.ts       css``（riml-ds-css）
-  button.define.ts       customElements.define('rd-button', RdButton) だけ
-  button.test.ts         Vitest browser（実 DOM）
-  button.sr.test.ts      仮想スクリーンリーダー（任意だが対話部品は必須）
-  button.stories.ts      CSF3 + play
-  index.ts               export { RdButton } from './button.element.js'（define しない）
+library/elements/src/text-field/          ティア A の例
+  text-field.contract.ts   マークアップ契約：必要な子（役割 → セレクタ）と MarkupTree（純データ）。markup(props) → HTML 文字列
+  text-field.logic.ts      純関数。属性・ネイティブ要素の validity → 状態・文言。DOM を触らない
+  text-field.logic.test.ts node
+  text-field.element.ts    class RdTextField extends LitElement（薄い殻。createRenderRoot() { return this }）
+  text-field.css           @layer rd.components { rd-text-field > input { … } }（JS 無しでも当たる）
+  text-field.define.ts     customElements.define('rd-text-field', RdTextField) だけ
+  text-field.test.ts       Vitest browser（実 DOM）
+  text-field.sr.test.ts    仮想スクリーンリーダー（対話部品は必須）
+  text-field.stories.ts    CSF3 + play。render は markup(args) から
+  index.ts                 export { RdTextField } from './text-field.element.js'; export { contract, markup } from './text-field.contract.js'
+
+library/elements/src/live-region/         ティア C の例
+  live-region.logic.ts / .logic.test.ts / .element.ts / .styles.ts / .define.ts / .test.ts / .sr.test.ts / .stories.ts / index.ts
 ```
 
-`package.json` の `exports`：`"./button"`（class）と `"./button/define"`（登録込み）。
-実験的なら `src/experimental/button/` と `"./experimental/button"`。
+ティア B は A の構成に `<name>.styles.ts`（shadow の枠）を足し、`.css` には `:not(:defined)` の見え方だけ書く。
+
+`package.json` の `exports`：`"./text-field"`（class + contract）、`"./text-field/define"`（登録込み）、
+`"./text-field/style.css"`（A/B）。実験的なら `src/experimental/<name>/` と `"./experimental/<name>"`。
+
+### ティア A の `*.element.ts` で守ること
+
+- `createRenderRoot() { return this }`。`static styles` を**書かない**（light DOM には効かない）。
+- `firstUpdated` で契約の子を `this.querySelector(contract.roles.control)` で掴む。無ければ
+  `console.error('[rd-text-field] <input> が必要')` + `states.add('malformed')`。**自分で `<input>` を作らない**。
+- 既存の子を消さない。`render()` が返すのは**強化ノード**（`<p part="error">` など）だけで、末尾に追加される。
+- `static formAssociated` を**書かない**。form 参加者はネイティブ要素。`attachInternals()` は `states` のためだけ。
+- ネイティブの `input` / `change` / `invalid` を聞いて `:state()` と文言を更新する。値を持たない（`el.value` は
+  ネイティブ要素へ委譲する getter/setter）。
 
 ## 2. 命名
 
@@ -46,7 +73,7 @@ library/elements/src/button/
 ネイティブイベント（`input`、`change`、`click`）は**透過**させ、同名の独自イベントを出さない。
 独自イベントは「ネイティブに無い意味」だけ（`rd-dismiss`、`rd-announce`）。
 
-## 3. `*.element.ts` の骨格
+## 3. `*.element.ts` の骨格（ティア C の例：shadow あり）
 
 ```ts
 /**
@@ -54,6 +81,7 @@ library/elements/src/button/
  *
  * @summary 操作の起点。primary は画面に 1 つ
  * @status stable
+ * @pe C
  *
  * @slot - ラベル。省略不可
  * @slot icon-start - ラベルの前のアイコン（aria-hidden を付ける）
@@ -93,20 +121,21 @@ export class RdButton extends LitElement {
 }
 ```
 
-JSDoc の `@summary` / `@status` / `@slot` / `@csspart` / `@cssprop` / `@event` / `@state` は
+JSDoc の `@summary` / `@status` / `@pe` / `@slot` / `@csspart` / `@cssprop` / `@event` / `@state` は
 **CEM に載る唯一の経路**。書かなければラッパー・Storybook・MCP に出ない。
 
 ## 4. a11y の必須実装
 
-- **ラベル**：`label` 属性（テキスト系）か既定 slot（ボタン系）。空なら
+- **ラベル**：ティア A はネイティブ `<label for>`（契約で必須）。ティア B/C は `label` 属性か既定 slot。空なら
   `console.error('[rd-x] accessible name is required')` + `states.add('unlabeled')`。
 - **`delegatesFocus: true`**。フォーカスリングは内部の `[part='control']:focus-visible`。
 - **無効**は `aria-disabled`（`disabled` 属性を内部 `<button>` に渡さない）。フォーカス可能のまま。
 - **読み込み中**は `aria-busy` + 視覚表示 + 操作の無視。`disabled` にしない。
-- **フォーム部品**：`static formAssociated = true`、`#internals.setFormValue(value)`、
+- **フォーム部品はティア A**（ネイティブ要素が form に参加する）。`formAssociated` は使わない。以下はティア B/C で
+  独自に値を持つ部品にだけ：`static formAssociated = true`、`#internals.setFormValue(value)`、
   `setValidity({ valueMissing: true }, message, anchor)`、`formResetCallback()`、
   `formDisabledCallback(disabled)`。エラー表示は `:user-invalid` 以降。
-- **ラベル参照**：`labelledBy: Element[]` プロパティ → `#internals.ariaLabelledByElements`
+- **ラベル参照（ティア B/C）**：`labelledBy: Element[]` プロパティ → `#internals.ariaLabelledByElements`
   （ID 文字列の `aria-labelledby` は受け取らない）。
 - **ライブリージョン**：部品に `aria-live` を書かない。`rd-live-region` の `announce()` へ。
 - **キーボード**：Enter / Space（ボタン）、Esc（閉じる）。矢印はリスト系だけ。
@@ -120,7 +149,8 @@ JSDoc の `@summary` / `@status` / `@slot` / `@csspart` / `@cssprop` / `@event` 
 
 ## 6. 完了条件
 
-- [ ] `bun run gen` で `custom-elements.json` に部品が出る（`@status` 付き）
+- [ ] `bun run gen` で `custom-elements.json` に部品が出る（`@status` / `@pe` 付き）
+- [ ] ティア A/B：`e2e/pe` の JS 無しテスト（送信できる／内容が見える）が通る
 - [ ] `library/react/src/generated/<Name>.ts` が生成され `e2e/react` で描画・操作できる
 - [ ] story 8 種、addon-a11y（AAA）が通る
 - [ ] `*.logic.test.ts` / `*.test.ts` / `*.sr.test.ts`

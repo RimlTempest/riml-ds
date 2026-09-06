@@ -31,6 +31,8 @@ UI を書く」「Web Components を 1 つ書いて全部で使う」の 3 つ�
    Astro integration、そして各フレームワークの e2e。
 4. SSR は **Declarative Shadow DOM + クライアント描画へのフォールバック**。`@lit-labs/ssr` は
    Labs を出るまで採用しない。`:not(:defined)` で定義前のレイアウトを固定して FOUC を抑える。
+   **→ ADR-0012 で改訂**：ティア A/B の部品はマークアップが純粋な HTML（light DOM にネイティブ要素）なので
+   DSD を要さない。この項はティア C にだけ残る。
 
 ## 理由
 

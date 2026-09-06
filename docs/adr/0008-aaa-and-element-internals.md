@@ -58,6 +58,9 @@ Baseline 外。
 - **AA を既定にして AAA は任意** — 既存 2 リポジトリの基準を下げることになる。
 - **Light DOM（shadow を使わない）で ID 参照を通す** — スタイルのカプセル化が消え、
   利用側の CSS と衝突する。フォーム部品だけ light DOM にする案も、境界が二重になり保守不能。
+  **→ ADR-0012 で部分的に改訂**：Progressive Enhancement のため、フォーム・ナビ部品（ティア A）は
+  light DOM でネイティブ要素を包む。境界は `@pe` の宣言と guard で固定する。§4 の `labelledBy` は
+  ティア B/C にだけ要る。
 - **Reference Target に依存** — Baseline 外。Chrome のみ。
 - **各部品が `aria-live` を持つ** — 多重読み上げの実害を noter で経験済み。
 

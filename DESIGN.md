@@ -174,19 +174,23 @@ riml-ds は RimlTempest のプロダクト（qrcc、noter、以降のもの）�
 すべての部品は `<rd-*>` の Web Components（Lit）。React / Vue / Svelte 向けは同じ要素の
 薄いラッパー。API は `library/elements/custom-elements.json` が正。
 
-最初の 5 部品（plan 004）：
+部品は **Progressive Enhancement のティア**を 1 つ持つ（ADR-0012）。ティア A（フォーム・ボタン・
+リンク）は light DOM でネイティブ要素を包み、**JS が無くても動く**。ティア B（dialog など）は
+JS が無くても内容が読める。ティア C（live-region など）は無くても害が無い。
+
+最初の部品（plan 004）：
 
 | 部品              | 役割                                            | 主要な API                                      |
 | ----------------- | ----------------------------------------------- | ----------------------------------------------- |
-| `rd-button`       | 操作の起点。`variant`: primary / secondary / ghost / danger | `type`, `disabled`, `loading`, slot `icon-start` |
-| `rd-text-field`   | 1 行テキスト入力。ラベル必須、form-associated   | `label`, `name`, `value`, `required`, `hint`, `error` |
-| `rd-live-region`  | 読み上げの集約点。ページに 1 つ                 | `announce(text, { politeness })`                |
-| `rd-skip-link`    | 本文へのスキップ                                | `href`                                          |
-| `rd-dialog`       | モーダル。ネイティブ `<dialog>` を包む          | `open`, `label`, `showModal()`, `close()`, `:state(open)` |
+| `rd-button`（A）      | 操作の起点。子のネイティブ `<button>` を包む。`variant`: primary / secondary / ghost / danger | `variant`, `loading`, `rd-press` |
+| `rd-text-field`（A）  | 1 行テキスト入力。子の `<label for>` + `<input>` を包む。インラインのエラー文言と `:state(invalid)` を足す | `hint`, `error`, `:state(invalid)` |
+| `rd-dialog`（B）      | モーダル。ネイティブ `<dialog>` を枠にし内容は slot | `open`, `dismissible`, `show()`, `close()`, `:state(open)` |
+| `rd-live-region`（C） | 読み上げの集約点。ページに 1 つ                 | `announce(text, { politeness })`                |
+| `.rd-skip-link`（CSS）| 本文へのスキップ。部品ではなく `@rimltempest/riml-ds-css` のクラス | `<a class="rd-skip-link" href="#main">` |
 
 部品の共通ルール：
 
-- ラベルの無い対話部品は**作れない**（`label` 属性が空なら `console.error` と `:state(unlabeled)`）。
+- ラベルの無い対話部品は**作れない**（ティア A は `<label for>` が無い、B/C は `label` 属性が空なら `console.error` と `:state(unlabeled)`）。
 - 読み込み中は `aria-busy` と視覚的な進行表示を両方出す。`disabled` にしない
   （フォーカスが飛んで場所を失う）。
 - 無効状態は `aria-disabled` を使い、フォーカス可能に留める（理由をツールチップで示せる）。

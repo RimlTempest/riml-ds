@@ -50,7 +50,18 @@ shadow 内でも `@layer rd.components { :host { … } }` で書く。レイヤ�
 `color-mix()` は許可されるが、引数は必ずトークン：
 `color-mix(in oklch, var(--rd-color-accent-default), transparent 8%)`。
 
-## 3. 部品の `*.styles.ts` の型
+## 3. 部品の CSS はティアで置き場が決まる（ADR-0012）
+
+| ティア | 置き場                  | 形                                                                 |
+| ------ | ----------------------- | ------------------------------------------------------------------ |
+| A      | `<name>.css`（light DOM） | `@layer rd.components { rd-text-field { display: block } rd-text-field > input { … } rd-text-field > input:user-invalid { … } }` |
+| B      | `<name>.css` + `<name>.styles.ts` | `.css` は `rd-dialog:not(:defined) { display: block }` など定義前の見え方だけ。枠は `styles.ts` |
+| C      | `<name>.styles.ts`（shadow） | 下の型                                                          |
+
+ティア A のセレクタは **`rd-<name> > <native>` の 1 段**に留める（利用側のクラスや ID を仮定しない）。
+`rd-<name>` 自身に `display` を必ず書く（未定義でも `inline` にならない）。stylelint は `.css` も `css` タグ付きテンプレート も同じ規則で見る。
+
+### 3.1 ティア C の `*.styles.ts` の型
 
 ```ts
 import { css } from 'lit'
