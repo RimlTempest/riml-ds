@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(bun run check)",
+      "Bash(bun run test)",
+      "Bash(bun run test:*)",
+      "Bash(bun run typecheck)",
+      "Bash(bun run lint)",
+      "Bash(bun run lint:*)",
+      "Bash(bun run fmt)",
+      "Bash(bun run fmt:check)",
+      "Bash(bun run build)",
+      "Bash(bun run gen)",
+      "Bash(bun run a11y)",
+      "Bash(bun run vrt)",
+      "Bash(bun run e2e)",
+      "Bash(bun run wt:*)",
+      "Bash(bun run --filter:*)",
+      "Bash(bun install)",
+      "Bash(bunx oxlint:*)",
+      "Bash(bunx oxfmt:*)",
+      "Bash(bunx tsgo:*)",
+      "Bash(bunx stylelint:*)",
+      "Bash(bunx terrazzo:*)",
+      "Bash(bunx publint:*)",
+      "Bash(bunx knip:*)",
+      "Bash(bunx changeset:*)",
+      "Bash(mise exec:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git worktree list)",
+      "Bash(gh pr view:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)"
+    ],
+    "deny": [
+      "Bash(npm publish:*)",
+      "Bash(bunx changeset publish:*)",
+      "Bash(bun publish:*)",
+      "Bash(npm login:*)",
+      "Bash(gh secret:*)",
+      "Read(./**/.env)",
+      "Read(./**/.env.*)"
+    ]
+  }
+}
