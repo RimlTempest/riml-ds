@@ -1,0 +1,15 @@
+{
+  "name": "@rimltempest/riml-ds-markuplint-runner",
+  "version": "0.0.0",
+  "private": true,
+  "description": "markuplint を TypeScript 6 に固定して動かす隔離ワークスペース（ADR-0006）。riml-ds では JSX ではなく Storybook が描画した HTML（getHTML({serializableShadowRoots:true}) の出力）を検査する。",
+  "type": "module",
+  "scripts": {
+    "lint": "markuplint --config ../../.markuplintrc.json '../../apps/storybook/rendered/**/*.html' --allow-empty-input"
+  },
+  "dependencies": {
+    "@markuplint/html-parser": "4.18.3",
+    "markuplint": "4.18.3",
+    "typescript": "6.0.3"
+  }
+}

@@ -2,7 +2,7 @@
   "name": "riml-ds",
   "private": true,
   "type": "module",
-  "workspaces": ["system/*", "library/*", "tools/*", "apps/*", "e2e*"],
+  "workspaces": ["system/*", "library/*", "tools/*", "apps/*", "e2e*", "!tools/markuplint"],
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
