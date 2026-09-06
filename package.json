@@ -1,0 +1,38 @@
+{
+  "name": "riml-ds",
+  "private": true,
+  "type": "module",
+  "workspaces": ["system/*", "library/*", "tools/*", "apps/*", "e2e*"],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --build",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "oxlint --type-aware --fix",
+    "lint:css": "stylelint --config tools/lint/stylelint.config.js --allow-empty-input 'system/css/src/**/*.css' 'library/elements/src/**/*.styles.ts' 'apps/storybook/**/*.css'",
+    "fmt": "oxfmt .",
+    "fmt:check": "oxfmt --check .",
+    "check": "bun run fmt:check && bun run lint && bun run lint:css && bun run typecheck && bunx sherif",
+    "guard": "./scripts/guard.sh",
+    "wt": "./scripts/wt.sh",
+    "prepare": "lefthook install",
+    "postinstall": "bun install --cwd tools/markuplint --frozen-lockfile || bun install --cwd tools/markuplint",
+    "clean": "find . -maxdepth 3 -name node_modules -type d -prune -exec rm -rf {} + && bun install"
+  },
+  "devDependencies": {
+    "@types/bun": "1.4.0",
+    "lefthook": "2.1.12",
+    "oxfmt": "0.66.0",
+    "oxlint": "1.81.0",
+    "oxlint-tsgolint": "7.0.2001",
+    "postcss-lit": "1.4.1",
+    "sherif": "1.13.0",
+    "stylelint": "17.15.0",
+    "stylelint-config-standard": "40.0.0",
+    "stylelint-declaration-strict-value": "1.12.1",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11"
+  },
+  "engines": { "bun": ">=1.4.0", "node": ">=26" },
+  "packageManager": "bun@1.4.0"
+}
