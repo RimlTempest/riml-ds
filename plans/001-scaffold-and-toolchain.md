@@ -382,6 +382,11 @@ export default {
           '': ['inherit', 'initial', 'unset', 'revert', 'revert-layer', 'currentColor',
                'transparent', 'none', 'auto', '0', '100%', 'fit-content', 'max-content',
                'min-content', '1px', '-1px'],
+          // 強制配色モード（@media (forced-colors: active)）ではシステム色だけを使う
+          '/color$/': ['inherit', 'currentColor', 'transparent', 'Canvas', 'CanvasText', 'LinkText',
+            'VisitedText', 'ActiveText', 'ButtonFace', 'ButtonText', 'ButtonBorder', 'Field', 'FieldText',
+            'Highlight', 'HighlightText', 'SelectedItem', 'SelectedItemText', 'Mark', 'MarkText',
+            'GrayText', 'AccentColor', 'AccentColorText'],
           'font-weight': ['inherit', 'bolder', 'lighter'],
           'z-index': ['auto', '-1', '0', '1'],
           'line-height': ['normal', 'inherit', '1'],
@@ -594,10 +599,11 @@ Node API で呼ぶ）：
 | `a{--foo:1px}`                                             | `custom-property-pattern` で error               |
 | `a{width:10px}`                                            | `property-disallowed-list` で error              |
 | `a{inline-size:100%}`                                      | error 0                                          |
+| `@media (forced-colors: active){a{border-color:ButtonText}}` | error 0（システム色は許可）                     |
 | `` css`:host{color:var(--rd-color-text-default)}` `` を `x.styles.ts` として | error 0（postcss-lit が効いている） |
 | `` css`:host{color:red}` `` を `x.styles.ts` として        | error ≥ 1                                        |
 
-**Verify**: `bun run test` → 2 ファイル、全件 pass（件数はテーブル通り 9 + 9）
+**Verify**: `bun run test` → 2 ファイル、全件 pass（件数はテーブル通り 9 + 10）
 
 ### Step 9: lefthook
 
@@ -676,16 +682,16 @@ in-scope 外のファイルが無い。`command ls system library tools apps e2e
 ## Test plan
 
 - `tools/lint/test/oxlint-plugin.test.ts` — 上表 9 件。テスト名は日本語（`it('*.element.ts では class を許す')`）
-- `tools/lint/test/stylelint-config.test.ts` — 上表 9 件
+- `tools/lint/test/stylelint-config.test.ts` — 上表 10 件
 - `scripts/guard.test.ts`（node project）— `guard.sh` を一時ディレクトリの偽リポジトリで走らせ、
   「`.element.ts` 以外の class で落ちる」「`_authToken` で落ちる」の 2 件（`spawnSync('bash', …)`）
-- 実行：`bun run test` → 3 ファイル 20 件 pass
+- 実行：`bun run test` → 3 ファイル 21 件 pass
 
 ## Done criteria
 
 - [ ] `mise install && bun install` exit 0（`postinstall` 込み）
 - [ ] `bun run check` exit 0
-- [ ] `bun run test` exit 0、20 件 pass
+- [ ] `bun run test` exit 0、21 件 pass
 - [ ] `bun run guard` exit 0
 - [ ] `bunx lefthook run pre-commit` exit 0、`git commit -m "bad"` が拒否される
 - [ ] `node -e "import('./tools/lint/oxlint-plugin/index.js').then(m=>console.log(Object.keys(m.default.rules).length))"` → `4`

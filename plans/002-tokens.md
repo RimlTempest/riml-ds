@@ -170,7 +170,7 @@ qrcc と noter は最終的にこのパッケージだけを入れて色・余�
 - `color.palette.*` は公開 API ではない（`$extensions.riml-ds.status: "internal"`。semantic からの alias 専用）
 
 `src/base/dimension.tokens.json`：`dimension.1`〜`16`（`{ value: 0.25, unit: "rem" }` … DESIGN.md spacing）、
-`radius.sm/md/lg/full`、`border.hairline` `{ value: 1, unit: "px" }`、`sizing.target-min` 2.75rem、
+`radius.sm/md/lg/full`、`border.width.default` `{ value: 1, unit: "px" }`（CSS: `--rd-border-width-default`。部品の `*.styles.ts` が参照する名前）、`sizing.target-min` 2.75rem、
 `sizing.measure-max` `{ value: 80, unit: "ch" }`（DTCG dimension は `ch` を許さない場合 `$type: "string"` にせず
 **`{ value: 80, unit: "ch" }` で通るか Step 3 の `terrazzo check` で確認**。落ちたら `type.measure` を
 `$type: "number"` の 80 にして CSS 側で `ch` を付ける）。
@@ -182,8 +182,8 @@ qrcc と noter は最終的にこのパッケージだけを入れて色・余�
 clamp の 3 値を持たせる。CSS 出力の `clamp()` は Step 4 の `postbuild.ts` が `fluid` から合成する）。
 `line.height.body` 1.6 / `heading` 1.2 / `heading-2` 1.25 / `small` 1.5（`$type: "number"`）。
 
-`src/base/motion.tokens.json`：`duration.fast` `{ value: 120, unit: "ms" }`、`duration.base` 200ms、
-`easing.standard`（`$type: "cubicBezier"`, `[0.2, 0, 0, 1]`）。
+`src/base/motion.tokens.json`：`motion.duration.fast` `{ value: 120, unit: "ms" }`、`motion.duration.base` 200ms（CSS: `--rd-motion-duration-fast`）、
+`motion.easing.standard`（`$type: "cubicBezier"`, `[0.2, 0, 0, 1]`）。
 `src/base/layer.tokens.json`：`layer.base` 0、`layer.raised` 10、`layer.overlay` 100、`layer.toast` 1000（`$type: "number"`）。
 
 **Verify**: `bunx terrazzo check`（cwd `system/tokens`）→ まだ resolver が無いので失敗してよい。Step 3 で通す

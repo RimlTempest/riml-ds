@@ -1,10 +1,10 @@
 # branch	depends_on	owned_paths	summary
 chore/scaffold	-	package.json,bun.lock,bunfig.toml,mise.toml,tsconfig.base.json,tsconfig.json,.oxlintrc.json,.oxfmtrc.json,lefthook.yml,vitest.config.ts,.markuplintrc.json,.gitignore,.npmrc,tools/lint,tools/markuplint,scripts	足場: ワークスペース・ツールチェーン・lint 設定・worktree 補助。全レーンの先行条件
 feat/tokens	chore/scaffold	system/tokens,tools/design-md,DESIGN.md	DTCG トークンと Terrazzo ビルド、AAA lint、DESIGN.md フロントマター生成
-feat/css	feat/tokens	system/css	基盤 CSS: layers / reset / base / utilities / print / forced-colors
+feat/css	feat/tokens	system/css,tools/lint/stylelint-plugin	基盤 CSS: layers / reset / base / utilities / print / forced-colors
 feat/elements	feat/css	library/elements,tools/cem	Lit 部品と CEM 生成。最初の 5 部品
 feat/storybook	feat/elements	apps/storybook,e2e/vrt,e2e/a11y,e2e/Dockerfile,.mcp.json	Storybook 10、a11y ゲート、VRT、addon-mcp
-feat/frameworks	feat/elements	library/react,library/vue,library/svelte,library/astro,e2e/react,e2e/vue,e2e/svelte,e2e/astro	CEM から生成するラッパーと各フレームワークの e2e
+feat/frameworks	feat/elements	tools/cem/src/wrappers,library/react,library/vue,library/svelte,library/astro,e2e/react,e2e/vue,e2e/svelte,e2e/astro	CEM から生成するラッパーと各フレームワークの e2e
 feat/release	feat/frameworks,feat/storybook	.changeset,.github/workflows/release.yml,.size-limit.json,knip.json	changesets・Trusted Publishing・publint/attw/size-limit/knip
 feat/agent	feat/release	tools/mcp,skills,AGENTS.md	MCP サーバ・利用側 skill・registry.json 配布
-chore/devops	chore/scaffold	.github/workflows/ci.yml,.github/workflows/pages.yml,.github/dependabot.yml,.github/PULL_REQUEST_TEMPLATE.md,scripts/affected.sh,scripts/guard.sh	CI・Pages・Dependabot・不変条件ガード
+chore/devops	chore/scaffold	.github/workflows/ci.yml,.github/workflows/pages.yml,.github/dependabot.yml,.github/PULL_REQUEST_TEMPLATE.md	CI・Pages・Dependabot・不変条件ガード
