@@ -133,5 +133,5 @@ library/elements/src/<name>/<name>.element.ts   Lit の class（薄い殻。ADR-
 
 1. `@rimltempest/riml-ds-tokens` + `@rimltempest/riml-ds-css` を導入し、`--qrcc-*` / `--noter-*` を `--rd-*` の別名にする
 2. `themes/qrcc` / `themes/noter` で現在の色味を再現し、視覚差分ゼロで切り替える
-3. 共通コンポーネント（button / field / live-region / skip-link）を `@rimltempest/riml-ds-react` に置き換える
+3. 共通コンポーネント（button / field / live-region / dialog。スキップリンクは `.rd-skip-link` の CSS）を `@rimltempest/riml-ds-react` に置き換える
 4. アプリ固有の部品はアプリに残す。汎用化できるものだけ `library/elements` に昇格させる

@@ -23,7 +23,7 @@
 
 ## 段階 3: 共通部品
 
-`rd-button` / `rd-text-field` / `rd-live-region` / `rd-skip-link` / `rd-dialog` を `@rimltempest/riml-ds-react` で
+`rd-button` / `rd-text-field` / `rd-live-region` / `rd-dialog`（スキップリンクは `.rd-skip-link`） を `@rimltempest/riml-ds-react` で
 置き換える。1 部品 1 PR。既存の a11y e2e がそのまま通ることを条件にする。
 
 ## 段階 4: 独自部品の整理
