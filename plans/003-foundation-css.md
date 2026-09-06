@@ -19,7 +19,7 @@
 - **Risk**: LOW（プレーン CSS と stylelint プラグイン。未知の API は無い）
 - **Depends on**: 002
 - **Category**: direction
-- **Planned at**: commit `0014780`, 2026-09-07（plan 002 のマージ後に着手する）
+- **Planned at**: commit `0014780`, 2026-09-07（plan 002 のマージ後に着手する）（ADR-0012 反映で `50516ae` に改訂：`.rd-skip-link` 追加）
 
 ## Why this matters
 
@@ -201,7 +201,10 @@ Baseline を `docs/baseline.md` で確認。Newly なら `@supports` へ）、`i
 
 - `.rd-visually-hidden:not(:focus):not(:active) { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }`
   （`1px` は許可値。`clip` は非推奨なので `clip-path`）
-- `.rd-skip-link` のスタイルは部品 `rd-skip-link`（plan 004）側。ここには置かない
+- `.rd-skip-link`（ADR-0012 §6。**スキップリンクは部品にしない**。JS 無しで動くのは `<a href="#main">` そのものだから）：
+  `.rd-skip-link { position: absolute; inset-block-start: var(--rd-space-2); inset-inline-start: var(--rd-space-2); z-index: var(--rd-layer-toast); padding: var(--rd-space-2) var(--rd-space-3); background: var(--rd-color-surface-default); color: var(--rd-color-text-default); border-radius: var(--rd-radius-md); }`
+  `.rd-skip-link:not(:focus):not(:focus-within) { /* .rd-visually-hidden と同じ 5 宣言 */ }`
+  （フォーカス時だけ現れる。`--rd-layer-toast` は plan 002 の `layer.toast`（1000）。トークンが無ければ STOP。利用側は `<a class="rd-skip-link" href="#main">本文へ</a>` を `<body>` 直下に置く）
 - `.rd-stack > * + * { margin-block-start: var(--rd-space-4); }`、`.rd-cluster { display: flex; flex-wrap: wrap; gap: var(--rd-space-2); }`
 - `[hidden]:not([hidden="until-found"]) { display: none; }`
 
@@ -226,10 +229,11 @@ Baseline を `docs/baseline.md` で確認。Newly なら `@supports` へ）、`i
 - `src/*.css` の各ファイルが `@layer rd.<name>` を 1 つだけ持つ（`layers.css` を除く）
 - 使っている `var(--rd-*)` がすべて `system/tokens/dist/tokens.css` に定義されている（**未定義変数の検出**。
   これが落ちたら STOP 条件「トークンが足りない」）
+- `dist/index.css` に `.rd-skip-link` があり、`:not(:focus)` 系のセレクタで隠れる規則を持つ（ADR-0012 の不変条件）
 
 `system/css/test/render.test.ts` は **plan 005（Storybook の `Foundations` story + VRT）に委ねる**。ここでは DOM を立てない。
 
-**Verify**: `bun run test` → `system/css` 5 件 pass
+**Verify**: `bun run test` → `system/css` 6 件 pass
 
 ### Step 6: README と配線
 
@@ -246,8 +250,8 @@ root `tsconfig.json` に `{ "path": "./system/css" }`（`system/css/tsconfig.jso
 ## Test plan
 
 - `tools/lint/test/stylelint-plugin.test.ts` — 9 件（3 ルール × 落ちる/通る）
-- `system/css/test/build.test.ts` — 5 件
-- 実行：`bun run test` → 全 pass（plan 002 までの件数 + 14）
+- `system/css/test/build.test.ts` — 6 件
+- 実行：`bun run test` → 全 pass（plan 002 までの件数 + 15）
 
 ## Done criteria
 
@@ -255,7 +259,7 @@ root `tsconfig.json` に `{ "path": "./system/css" }`（`system/css/tsconfig.jso
       `bun run lint:css -- --formatter verbose` の集計に 6 ファイル）
 - [ ] `bun run --filter @rimltempest/riml-ds-css build` で `dist/index.css` + 6 ファイル
 - [ ] `grep -c '!important' system/css/dist/index.css` = 0、`grep -cE '#[0-9a-fA-F]{3,8}' system/css/dist/index.css` = 0
-- [ ] `bun run test` exit 0、新規 14 件
+- [ ] `bun run test` exit 0、新規 15 件
 - [ ] `tools/lint/stylelint.config.js` の `plugins` が 2 要素、`rules` に `riml-ds/` 3 本
 - [ ] `bun run check` exit 0、`bun run guard` exit 0
 - [ ] `plans/README.md` の 003 行が更新されている
@@ -274,5 +278,5 @@ root `tsconfig.json` に `{ "path": "./system/css" }`（`system/css/tsconfig.jso
   四半期ごと。`riml-ds-architecture` skill の「Baseline review」手順
 - `index.css` を結合で作っているのは HTTP リクエスト数のため。利用側がバンドラを持つなら個別 import でよい
 - レビュー観点：`reset.css` に見た目の決定（色・余白）が入っていないこと、`base.css` に `@media (prefers-color-scheme)`
-  が無いこと（ダークはトークン側）、`utilities.css` が増えていないこと（ユーティリティ CSS フレームワークにしない）
+  が無いこと（ダークはトークン側）、`utilities.css` が増えていないこと（ユーティリティ CSS フレームワークにしない。`.rd-skip-link` は ADR-0012 が定めた例外）
 - 見送り：`@scope`（Newly）。部品は shadow DOM で閉じるので不要。`:has()` は Widely なので使ってよい
