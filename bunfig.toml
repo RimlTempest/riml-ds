@@ -1,0 +1,6 @@
+[install]
+exact = true
+linkWorkspacePackages = true
+# markuplint など、自分自身の位置から parser を解決するツールが isolated
+# レイアウトだと解決に失敗するため hoisted を明示する。
+linker = "hoisted"
