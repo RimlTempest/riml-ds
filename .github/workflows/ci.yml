@@ -5,7 +5,7 @@
 #     パッケージ判定はジョブ内で使う側が読む）
 #   - **ブラウザはダウンロードしない**（ADR-0011 §6）。Chromium が要るジョブは
 #     Playwright の公式イメージを `container:` に指定して、その中の Chromium を使う。
-#     `playwright install` はこのファイルのどこにも書かない
+#     ブラウザを取得するステップはこのファイルに 1 つも置かない
 #   - Docker ジョブには短い `timeout-minutes` を置く（private の間は Actions 2,000 分/月）
 #
 # 手元で同じものを回す口は `bun run ci:local`（`scripts/ci-local.sh`）。
@@ -140,7 +140,7 @@ jobs:
     if: needs.changes.outputs.ts == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Chromium はこのイメージに入っている。`playwright install` は絶対に書かない（ADR-0011 §6）
+    # Chromium はこのイメージに入っている。ブラウザを取得するステップは置かない（ADR-0011 §6）
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
     steps:
