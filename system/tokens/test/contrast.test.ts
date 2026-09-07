@@ -47,8 +47,28 @@ const cases: readonly Case[] = tokensJson.flatMap((leaf) =>
 )
 
 describe('コントラスト（WCAG 2.2 AAA）', () => {
-  it('contrastAgainst を持つトークンが 12 個ある（テキスト 10 + 非テキスト 2）', () => {
-    expect(new Set(cases.map((entry) => entry.foreground)).size).toBe(12)
+  it('contrastAgainst を持つトークンが 15 個ある（テキスト 11 + 非テキスト 4）', () => {
+    expect(new Set(cases.map((entry) => entry.foreground)).size).toBe(15)
+  })
+
+  it('ライトの本文色は既定・浮いた面・窪んだ面のどれの上でも 7:1 以上（brand.md §3）', () => {
+    // surface.raised / sunken は contrastAgainst に無いので、ここで固定する。
+    const text = byId.get('color.text.default')
+    expect(text).toBeDefined()
+    if (text === undefined) {
+      return
+    }
+    const surfaces = ['color.surface.default', 'color.surface.raised', 'color.surface.sunken']
+    const ratios = surfaces.map((id) => {
+      const surface = byId.get(id)
+      return {
+        id,
+        enough:
+          surface !== undefined
+          && ratio(toCss(valueIn(text, 'light')), toCss(valueIn(surface, 'light'))) >= 7,
+      }
+    })
+    expect(ratios).toEqual(surfaces.map((id) => ({ id, enough: true })))
   })
 
   it('qrcc テーマの本文と面はライト・ダークとも 7:1 以上（移行時に既定より落ちない）', () => {
