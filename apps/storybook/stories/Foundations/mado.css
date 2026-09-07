@@ -17,8 +17,9 @@
     grid-area: 1 / 1;
   }
 
+  /* 帯（2.75rem）より下から重ねる。後ろの窓のタイトルは隠さない */
   .sb-stacked > :nth-child(2) {
-    margin-block-start: var(--rd-space-8);
-    margin-inline-start: var(--rd-space-8);
+    margin-block-start: var(--rd-space-16);
+    margin-inline-start: var(--rd-space-16);
   }
 }

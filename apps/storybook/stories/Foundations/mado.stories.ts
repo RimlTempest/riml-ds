@@ -153,14 +153,11 @@ export const Stacked: Story = {
       <div class="sb-mado sb-stacked">
         <section class="rd-window">
           ${title('後ろの窓')}
-          <div class="rd-window-body">
-            <p>影はぼかさない。右下にそのまま落ちる。</p>
-            <p>だから重ねると紙が積まれたように見える。</p>
-          </div>
+          <div class="rd-window-body"><p>影はぼかさない。右下にそのまま落ちる。</p></div>
         </section>
         <section class="rd-window">
           ${title('前の窓')}
-          <div class="rd-window-body"><p>手前の窓。</p></div>
+          <div class="rd-window-body"><p>だから重ねると紙が積まれたように見える。</p></div>
         </section>
       </div>`,
 }
