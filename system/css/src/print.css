@@ -15,5 +15,25 @@
       background: Canvas;
       color: CanvasText;
     }
+
+    /* 見出しの直後・表や図やコードの途中で紙を割らない（system/guidelines/motion-and-responsive.md §印刷） */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      break-after: avoid;
+    }
+
+    table,
+    figure,
+    pre,
+    blockquote,
+    img,
+    tr,
+    li {
+      break-inside: avoid;
+    }
   }
 }

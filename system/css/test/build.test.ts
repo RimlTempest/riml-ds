@@ -111,6 +111,12 @@ describe('@rimltempest/riml-ds-css の build', () => {
     )
   })
 
+  it('print.css は見出し直後と表・図・コードの途中で改ページしない', () => {
+    const print = read(srcFile('print.css'))
+    expect(print).toMatch(/break-after:\s*avoid/)
+    expect(print).toMatch(/break-inside:\s*avoid/)
+  })
+
   it('.rd-skip-link はフォーカスされるまで隠れる（ADR-0012 §6）', () => {
     const root = parse(read(distIndex))
     const rules: Rule[] = []
