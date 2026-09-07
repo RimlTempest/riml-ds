@@ -1,0 +1,285 @@
+# PR ごとのゲート（plan 010、ADR-0011）。
+#
+# 無料枠で回しきるための決めごと：
+#   - 変更の無いところは走らせない（`changes` の paths-filter。`scripts/affected.sh` の
+#     パッケージ判定はジョブ内で使う側が読む）
+#   - **ブラウザはダウンロードしない**（ADR-0011 §6）。Chromium が要るジョブは
+#     Playwright の公式イメージを `container:` に指定して、その中の Chromium を使う。
+#     `playwright install` はこのファイルのどこにも書かない
+#   - Docker ジョブには短い `timeout-minutes` を置く（private の間は Actions 2,000 分/月）
+#
+# 手元で同じものを回す口は `bun run ci:local`（`scripts/ci-local.sh`）。
+# **ゲートを足すときは ci.yml と ci-local.sh の両方に足す。**
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # 手動実行では paths-filter を無視して全ジョブを走らせる
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# paths-filter は pull_request で GitHub API の listFiles を呼ぶため、
+# 既定の制限された GITHUB_TOKEN では "Resource not accessible by integration" になる。
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  changes:
+    name: 変更の判定
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      ts: ${{ steps.filter.outputs.ts }}
+      css: ${{ steps.filter.outputs.css }}
+      elements: ${{ steps.filter.outputs.elements }}
+      stories: ${{ steps.filter.outputs.stories }}
+      e2e: ${{ steps.filter.outputs.e2e }}
+      agent: ${{ steps.filter.outputs.agent }}
+      library: ${{ steps.filter.outputs.library }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            ts:
+              - 'system/**'
+              - 'library/**'
+              - 'tools/**'
+              - 'scripts/**'
+              - 'apps/**'
+              - 'e2e/**'
+              - 'tsconfig*.json'
+              - '.oxlintrc.json'
+              - 'package.json'
+              - 'bun.lock'
+            css:
+              - '**/*.css'
+              - '**/*.styles.ts'
+              - 'system/tokens/**'
+            elements:
+              - 'library/elements/**'
+            stories:
+              - '**/*.stories.ts'
+              - 'apps/storybook/**'
+            e2e:
+              - 'e2e/**'
+              - 'library/**'
+              - 'system/**'
+            library:
+              - 'library/**'
+            agent:
+              - 'system/tokens/**'
+              - 'library/elements/**'
+              - 'system/guidelines/**'
+              - 'DESIGN.md'
+              - 'tools/**'
+
+  guard:
+    name: 不変条件の検査
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # guard.sh のレーン所有権検査（14）と CEM の鮮度検査（15）は
+      # `origin/main...HEAD` の差分を読むので、全履歴と origin/main の ref が要る
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      # bash + git + node（ubuntu-latest に同梱）だけで動く。bun install は要らない
+      - run: bash scripts/guard.sh
+
+  fmt-lint:
+    name: fmt + lint (oxfmt / oxlint / stylelint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: jdx/mise-action@v3
+        with: { cache: true }
+      - run: bun install --frozen-lockfile
+      - run: bun run fmt:check
+      - run: bun run lint
+      - run: bun run lint:css
+
+  typecheck:
+    name: typecheck (TypeScript 7)
+    needs: changes
+    if: needs.changes.outputs.ts == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: jdx/mise-action@v3
+        with: { cache: true }
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+
+  test-node:
+    name: test (node + react)
+    needs: changes
+    if: needs.changes.outputs.ts == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: jdx/mise-action@v3
+        with: { cache: true }
+      - run: bun install --frozen-lockfile
+      # node は環境 node、react は jsdom。どちらもブラウザを要らない
+      - run: bun run test -- --project node --project react
+
+  test-browser:
+    name: test (browser + storybook)
+    needs: changes
+    if: needs.changes.outputs.ts == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Chromium はこのイメージに入っている。`playwright install` は絶対に書かない（ADR-0011 §6）
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+    steps:
+      - uses: actions/checkout@v5
+      # e2e/Dockerfile と同じ層。fonts-noto-cjk が無いと日本語が豆腐になり VRT が壊れる。
+      # unzip は mise が bun の zip を展開するのに要る
+      - run: |
+          apt-get update
+          apt-get install -y --no-install-recommends fonts-noto-cjk unzip
+          rm -rf /var/lib/apt/lists/*
+      - uses: jdx/mise-action@v3
+        with: { cache: true }
+      - run: bun install --frozen-lockfile
+      # browser project は library/elements/dist を読む
+      - run: bun run build
+      - run: bun run test -- --project browser --project storybook
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-browser-report
+          path: |
+            e2e/test-results/
+            e2e/playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  markuplint:
+    name: markuplint (描画後の HTML)
+    needs: changes
+    if: needs.changes.outputs.stories == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # `bun run render` は Playwright で story を描画する
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+    steps:
+      - uses: actions/checkout@v5
+      - run: |
+          apt-get update
+          apt-get install -y --no-install-recommends fonts-noto-cjk unzip
+          rm -rf /var/lib/apt/lists/*
+      - uses: jdx/mise-action@v3
+        with: { cache: true }
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      # `render` は中で storybook:build を呼ぶ（二重にビルドしない）
+      - run: bun run render
+      - run: bun run lint:html
+
+  a11y-vrt-pe:
+    name: a11y + VRT + JS 無し (Playwright)
+    needs: changes
+    if: needs.changes.outputs.e2e == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # ベースラインは e2e/Dockerfile（同じタグ + fonts-noto-cjk）の中で撮ったもの。
+    # `scripts/vrt.sh` は docker run するので、既に container の中にいる CI では経由しない
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+    steps:
+      - uses: actions/checkout@v5
+      - run: |
+          apt-get update
+          apt-get install -y --no-install-recommends fonts-noto-cjk unzip
+          rm -rf /var/lib/apt/lists/*
+      - uses: jdx/mise-action@v3
+        with: { cache: true }
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: bun run storybook:build
+      # --project 指定なし = vrt(4) / forced / reduced / a11y / pe / pe-axe を全部
+      - run: bunx playwright test -c e2e/playwright.config.ts
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-report
+          path: |
+            e2e/test-results/
+            e2e/playwright-report/
+            **/*-diff.png
+          retention-days: 7
+          if-no-files-found: ignore
+
+  frameworks:
+    name: e2e (react / vue / svelte / astro)
+    needs: changes
+    if: (needs.changes.outputs.e2e == 'true' && needs.changes.outputs.library == 'true') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+    steps:
+      - uses: actions/checkout@v5
+      - run: |
+          apt-get update
+          apt-get install -y --no-install-recommends fonts-noto-cjk unzip
+          rm -rf /var/lib/apt/lists/*
+      - uses: jdx/mise-action@v3
+        with: { cache: true }
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: bun run e2e:frameworks
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: frameworks-report
+          path: |
+            e2e/test-results/
+            e2e/playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  release-check:
+    name: publish 前のゲート (publint / attw / size-limit / knip)
+    needs: changes
+    if: needs.changes.outputs.ts == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: jdx/mise-action@v3
+        with: { cache: true }
+      - run: bun install --frozen-lockfile
+      - run: bun run release:check
+
+  agent-surface:
+    name: エージェント向けの面 (CEM / registry / DESIGN.md / MCP)
+    needs: changes
+    if: needs.changes.outputs.agent == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: jdx/mise-action@v3
+        with: { cache: true }
+      - run: bun install --frozen-lockfile
+      # 生成物（custom-elements.json / registry.json）が最新か（docs/agent-integration.md §CI）
+      - run: bun run gen
+      - run: git diff --exit-code
+      # 版は tools/mcp の devDependencies と揃える（上げるときは同じ PR で両方）
+      - run: bunx @google/design.md@0.4.0 lint DESIGN.md
+      - run: bun run test -- --project node tools/mcp
