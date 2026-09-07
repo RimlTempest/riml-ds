@@ -1,0 +1,47 @@
+{
+  "name": "@rimltempest/riml-ds-react",
+  "version": "0.0.0",
+  "description": "riml-ds の React 19 ラッパー。CEM とマークアップ契約から生成する",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
+    },
+    "./jsx": {
+      "types": "./dist/generated/jsx.d.ts",
+      "default": "./dist/generated/jsx.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run --root ../.. --project react library/react"
+  },
+  "devDependencies": {
+    "@rimltempest/riml-ds-elements": "workspace:*",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "peerDependencies": {
+    "@rimltempest/riml-ds-elements": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
