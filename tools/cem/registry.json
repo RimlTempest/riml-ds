@@ -9,6 +9,15 @@
     "dependsOn": []
   },
   {
+    "name": "checkbox",
+    "tag": "rd-checkbox",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "真偽を 1 つ。ラベルと <input type=checkbox> は利用側が書く",
+    "files": ["checkbox/index.js", "checkbox/checkbox.define.js", "checkbox/checkbox.css"],
+    "dependsOn": []
+  },
+  {
     "name": "dialog",
     "tag": "rd-dialog",
     "pe": "B",

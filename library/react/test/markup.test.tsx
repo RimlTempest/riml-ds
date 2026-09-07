@@ -37,6 +37,12 @@ describe('既定 export の部品', () => {
 
   it('ティア C（rd-live-region）は既定 export に無い', () => {
     // JS 無しで意味が無いのでマークアップ部品を生成しない（/client にだけ出る）
-    expect(Object.keys(index)).toEqual(['RdButton', 'RdDialog', 'RdSelect', 'RdTextField'])
+    expect(Object.keys(index)).toEqual([
+      'RdButton',
+      'RdCheckbox',
+      'RdDialog',
+      'RdSelect',
+      'RdTextField',
+    ])
   })
 })

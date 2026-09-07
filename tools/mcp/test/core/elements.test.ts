@@ -21,6 +21,7 @@ describe('listElements', () => {
     }
     expect(result.value.map((element) => element.tag)).toEqual([
       'rd-button',
+      'rd-checkbox',
       'rd-dialog',
       'rd-live-region',
       'rd-select',

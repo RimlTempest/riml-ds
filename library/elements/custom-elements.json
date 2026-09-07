@@ -159,6 +159,251 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/checkbox/checkbox.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-checkbox",
+          "declaration": {
+            "name": "RdCheckbox",
+            "module": "/src/checkbox/checkbox.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/checkbox/checkbox.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "真偽を 1 つ。`<label>` が包む `<input type=\"checkbox\">` に状態と文言を足す\n（ティア A、ADR-0012）。送信・検証・ラベル付けはブラウザが素で行う。\n`switch` 属性は見た目と役割だけを変える。JS が無ければチェックボックスとして動く。",
+          "name": "RdCheckbox",
+          "cssProperties": [
+            {
+              "description": "枠と文言の間隔。既定 var(--rd-space-2)",
+              "name": "--rd-checkbox-gap"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "補足文言",
+              "name": "hint"
+            },
+            {
+              "description": "エラー文言",
+              "name": "error"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "hint",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "hint"
+            },
+            {
+              "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "error"
+            },
+            {
+              "kind": "field",
+              "name": "switch",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "switch",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "indeterminate",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "indeterminate"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#control",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLInputElement | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#touched",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#binding",
+              "privacy": "private",
+              "type": {
+                "text": "Binding | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "チェック状態はネイティブ要素が持つ。部品は委譲するだけ"
+            },
+            {
+              "kind": "method",
+              "name": "checkValidity",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#listeners",
+              "privacy": "private",
+              "type": {
+                "text": "Listeners"
+              },
+              "default": "{ change: () => this.#setTouched(true), blur: () => this.#setTouched(true), invalid: (event) => { event.preventDefault() this.#setTouched(true) }, }"
+            },
+            {
+              "kind": "field",
+              "name": "#setTouched",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#view",
+              "privacy": "private"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "hint",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "hint"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "error"
+            },
+            {
+              "name": "switch",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "switch"
+            },
+            {
+              "name": "indeterminate",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "indeterminate"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "checked",
+              "description": "チェックが入っている"
+            },
+            {
+              "name": "indeterminate",
+              "description": "中間状態"
+            },
+            {
+              "name": "switch",
+              "description": "switch 属性が付いている"
+            },
+            {
+              "name": "invalid",
+              "description": "検証に通っていない（操作後、または error 属性がある）"
+            },
+            {
+              "name": "errored",
+              "description": "error 属性で文言を強制表示している"
+            },
+            {
+              "name": "hinted",
+              "description": "hint がある"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子（<label> と <input type=checkbox>）が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "真偽を 1 つ。ラベルと <input type=checkbox> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-checkbox",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdCheckbox",
+          "declaration": {
+            "name": "RdCheckbox",
+            "module": "src/checkbox/checkbox.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/dialog/dialog.define.ts",
       "declarations": [],
       "exports": [
@@ -640,11 +885,6 @@
             {
               "kind": "field",
               "name": "#write",
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "#applyDefaultValue",
               "privacy": "private"
             },
             {
