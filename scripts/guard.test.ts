@@ -142,3 +142,98 @@ describe('scripts/guard.sh', () => {
     ).not.toBe(0)
   })
 })
+
+// plan 010: レーン所有権（14）と CEM の鮮度（15）は `main` からの差分を読む。
+// 偽の git リポジトリを作り、base コミットと head コミットの差分で検査させる。
+const runGuardOnBranch = (
+  branch: string,
+  base: (dir: string) => void,
+  head: (dir: string) => void,
+): number => {
+  const dir = mkdtempSync(join(tmpdir(), 'riml-ds-guard-'))
+  const git = (...args: readonly string[]): void => {
+    const result = spawnSync('git', [...args], { cwd: dir, encoding: 'utf8' })
+    if ((result.status ?? 1) !== 0) {
+      throw new Error(`git ${args.join(' ')}: ${result.stderr}`)
+    }
+  }
+  git('init', '-q', '-b', 'main')
+  git('config', 'user.email', 'guard@example.test')
+  git('config', 'user.name', 'guard')
+  base(dir)
+  git('add', '-A')
+  git('commit', '-q', '-m', 'base')
+  git('checkout', '-q', '-b', branch)
+  head(dir)
+  git('add', '-A')
+  git('commit', '-q', '-m', 'head')
+  const result = spawnSync('bash', [guardPath], {
+    cwd: dir,
+    encoding: 'utf8',
+    // CI（GitHub Actions）で走らせたときに実際の PR ブランチ名を拾わないようにする
+    env: { ...process.env, GITHUB_HEAD_REF: '' },
+  })
+  return result.status ?? 1
+}
+
+const lanes = [
+  '# branch\tdepends_on\towned_paths\tsummary',
+  'feat/tokens\t-\tsystem/tokens,tools/design-md\tトークン',
+  '',
+].join('\n')
+
+describe('scripts/guard.sh レーン所有権（docs/parallel-lanes.md）', () => {
+  it('所有していないパスを変えると落ちる', () => {
+    expect(
+      runGuardOnBranch(
+        'feat/tokens',
+        (dir) => {
+          write(dir, 'scripts/lanes.tsv', lanes)
+        },
+        (dir) => {
+          write(dir, 'library/react/src/wrapper.ts', 'export const wrapper = 1\n')
+        },
+      ),
+    ).not.toBe(0)
+  })
+
+  it('所有するパスだけなら通る', () => {
+    expect(
+      runGuardOnBranch(
+        'feat/tokens',
+        (dir) => {
+          write(dir, 'scripts/lanes.tsv', lanes)
+        },
+        (dir) => {
+          write(dir, 'system/tokens/src/color.tokens.json', '{}\n')
+        },
+      ),
+    ).toBe(0)
+  })
+})
+
+describe('scripts/guard.sh CEM の鮮度', () => {
+  const seed = (dir: string): void => {
+    write(dir, 'scripts/lanes.tsv', lanes)
+    write(dir, 'library/elements/custom-elements.json', '{ "modules": [] }\n')
+    write(dir, 'tools/cem/registry.json', '[]\n')
+  }
+
+  it('*.element.ts を変えて custom-elements.json / registry.json を更新しないと落ちる', () => {
+    expect(
+      runGuardOnBranch('work', seed, (dir) => {
+        write(dir, 'library/elements/src/x/x.element.ts', tierC)
+      }),
+    ).not.toBe(0)
+  })
+
+  it('*.element.ts と一緒に生成物を更新すれば通る', () => {
+    expect(
+      runGuardOnBranch('work', seed, (dir) => {
+        write(dir, 'library/elements/src/x/x.element.ts', tierC)
+        write(dir, 'library/elements/custom-elements.json', '{ "modules": [1] }\n')
+        write(dir, 'tools/cem/registry.json', '[\n]\n')
+      }),
+    ).toBe(0)
+  })
+})

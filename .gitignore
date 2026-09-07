@@ -26,3 +26,6 @@ library/astro/src/generated/
 apps/storybook/rendered/
 apps/storybook/.storybook/generated/
 e2e/pe/pages/
+# GitHub Pages に出すもの（scripts/pages-build.sh が毎回作り直す）
+pages/
+*.local

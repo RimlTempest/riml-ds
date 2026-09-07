@@ -46,6 +46,8 @@
     "api-diff": "bun run tools/cem/src/api-diff.ts",
     "release:check": "bun run build && bun run gen && bun run design-md && git diff --exit-code -- library/elements/custom-elements.json tools/cem/registry.json DESIGN.md && bash scripts/release-check.sh && bunx size-limit && bunx knip && bunx sherif",
     "guard": "./scripts/guard.sh",
+    "ci:local": "bash scripts/ci-local.sh",
+    "pages:build": "bash scripts/pages-build.sh",
     "wt": "./scripts/wt.sh",
     "prepare": "lefthook install",
     "postinstall": "bun install --cwd tools/markuplint --frozen-lockfile || bun install --cwd tools/markuplint; bun run gen:argtypes",

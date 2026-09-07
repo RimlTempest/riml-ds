@@ -1,0 +1,67 @@
+# 依存の更新（plan 010）。週 1 でまとめて上げ、CI（ci.yml）が緑ならマージする
+# （docs/governance.md §定期作業）。
+#
+# エコシステムは `bun`（bun.lock を直接読む。npm ではない）。ルートの 1 つで
+# workspaces（system/* library/* tools/* apps/* e2e/*）を全部見る。
+# `tools/markuplint` は workspaces から外した隔離環境で lockfile を持たないため対象外
+# （markuplint / TypeScript 6 の版は手で上げる。ADR-0006）。
+version: 2
+
+updates:
+  - package-ecosystem: 'bun'
+    directory: '/'
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    # 1 PR = 1 ツールチェーン。関連する版がばらけると CI の切り分けができない
+    groups:
+      storybook:
+        patterns:
+          - 'storybook'
+          - '@storybook/*'
+      vitest:
+        patterns:
+          - 'vitest'
+          - '@vitest/*'
+      playwright:
+        # Playwright は e2e/Dockerfile のタグと ci.yml の container: も同じ版に揃える。
+        # PR テンプレの「依存の更新」の項目で確認する
+        patterns:
+          - 'playwright'
+          - '@playwright/test'
+          - '@axe-core/playwright'
+      lit:
+        patterns:
+          - 'lit'
+          - '@lit/*'
+      lint:
+        patterns:
+          - 'oxlint'
+          - 'oxlint-tsgolint'
+          - 'oxfmt'
+          - 'stylelint*'
+          - 'markuplint*'
+      minor-and-patch:
+        patterns:
+          - '*'
+        update-types:
+          - 'minor'
+          - 'patch'
+    ignore:
+      # @storybook/addon-vitest の peer に縛られる。major は手で（plans/README.md「見送り」）
+      - dependency-name: 'vitest'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@vitest/*'
+        update-types: ['version-update:semver-major']
+      # TypeScript は mise.toml / tsgo 側で管理する
+      - dependency-name: 'typescript'
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        patterns:
+          - '*'
