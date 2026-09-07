@@ -1,61 +1,17 @@
 # 依存の更新（plan 010）。週 1 でまとめて上げ、CI（ci.yml）が緑ならマージする
 # （docs/governance.md §定期作業）。
 #
-# エコシステムは `bun`（bun.lock を直接読む。npm ではない）。ルートの 1 つで
-# workspaces（system/* library/* tools/* apps/* e2e/*）を全部見る。
-# `tools/markuplint` は workspaces から外した隔離環境で lockfile を持たないため対象外
-# （markuplint / TypeScript 6 の版は手で上げる。ADR-0006）。
+# **エコシステムは `github-actions` だけ。`bun` は外した。** Dependabot に同梱された bun が
+# このリポジトリの lockfile を読めず、
+# `Unsupported bun.lock 'lockfileVersion' 2 in /bun.lock. The bun version Dependabot runs supports up to 1.`
+# で必ず落ちるため。
+# `npm` に替える手も無い。package-lock.json を置いていないので読むものが無い。
+# そのためライブラリの依存は当面手で上げる（`bun outdated` で見て `bun update`。
+# 上げた結果は ci.yml が検査する）。
+# Dependabot が lockfileVersion 2 を読めるようになったら `bun` の block を戻す。
 version: 2
 
 updates:
-  - package-ecosystem: 'bun'
-    directory: '/'
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 5
-    # 1 PR = 1 ツールチェーン。関連する版がばらけると CI の切り分けができない
-    groups:
-      storybook:
-        patterns:
-          - 'storybook'
-          - '@storybook/*'
-      vitest:
-        patterns:
-          - 'vitest'
-          - '@vitest/*'
-      playwright:
-        # Playwright は e2e/Dockerfile のタグと ci.yml の container: も同じ版に揃える。
-        # PR テンプレの「依存の更新」の項目で確認する
-        patterns:
-          - 'playwright'
-          - '@playwright/test'
-          - '@axe-core/playwright'
-      lit:
-        patterns:
-          - 'lit'
-          - '@lit/*'
-      lint:
-        patterns:
-          - 'oxlint'
-          - 'oxlint-tsgolint'
-          - 'oxfmt'
-          - 'stylelint*'
-          - 'markuplint*'
-      minor-and-patch:
-        patterns:
-          - '*'
-        update-types:
-          - 'minor'
-          - 'patch'
-    ignore:
-      # @storybook/addon-vitest の peer に縛られる。major は手で（plans/README.md「見送り」）
-      - dependency-name: 'vitest'
-        update-types: ['version-update:semver-major']
-      - dependency-name: '@vitest/*'
-        update-types: ['version-update:semver-major']
-      # TypeScript は mise.toml / tsgo 側で管理する
-      - dependency-name: 'typescript'
-
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
