@@ -1,7 +1,7 @@
 # 013: テーマ × スキームの解決と、`themes/qrcc` に qrcc の実色を入れる
 
 **優先度**: P1（qrcc 実導入の前提）　**規模**: M　**依存**: 012（マージ済みであること）　**レーン**: `feat/theme-scheme`
-**計画時の main**: `dfb3dbe`（012 マージ後に着手する。Drift check で差分が出る前提）
+**計画時の main**: `dfb3dbe`（012 は既にマージ済み。Drift check で 012 由来の差分が出る前提）
 
 > **Drift check（最初に実行）**:
 > `git diff --stat dfb3dbe..HEAD -- system/tokens`
@@ -44,7 +44,8 @@ qrcc のブランド色は **青（accent hue 255 / 中性色 hue 265）**、rim
 - `bun run build`（tokens）→ `bun run design-md` → `bun run gen` の後に `git status` が汚れないこと
 - `.changeset/*.md` は手書き。fixed group
 - 触ってよいパス（`scripts/lanes.tsv` の `feat/theme-scheme`）: `system/tokens/**`（src / scripts / test / terrazzo.config.ts / README.md）、
-  `.changeset`、生成物の再出力 `DESIGN.md`（フロントマターのみ）。`docs/**`, `plans/README.md`, `skills/**`, `.claude/**`,
+  `tools/mcp/test/core/tokens.test.ts`（葉の数 91 を固定しているテスト。トークンを 4 つ足すので **95** に更新する）、
+  `.changeset`、生成物の再出力 `DESIGN.md`（フロントマターのみ。dimension の葉は載らないが color は載る）。`docs/**`, `plans/README.md`, `skills/**`, `.claude/**`,
   `system/css/**`, `library/**`, `tools/**` は触らない
 
 ## 現状のコード（抜粋。読んでから触る）
