@@ -1,0 +1,27 @@
+{
+  "focus": {
+    "ring": {
+      "width": {
+        "$type": "dimension",
+        "$value": {
+          "value": 3,
+          "unit": "px"
+        },
+        "$description": "フォーカスリングの太さ（WCAG 2.4.13）"
+      },
+      "offset": {
+        "$type": "dimension",
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$description": "フォーカスリングと部品の隙間"
+      },
+      "color": {
+        "$type": "color",
+        "$value": "{color.focus.ring}",
+        "$description": "フォーカスリングの色"
+      }
+    }
+  }
+}

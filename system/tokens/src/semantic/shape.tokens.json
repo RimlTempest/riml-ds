@@ -1,0 +1,33 @@
+{
+  "radius": {
+    "$type": "dimension",
+    "sm": {
+      "$value": {
+        "value": 0.25,
+        "unit": "rem"
+      },
+      "$description": "小さい部品（チップ・バッジ）の角丸"
+    },
+    "md": {
+      "$value": {
+        "value": 0.5,
+        "unit": "rem"
+      },
+      "$description": "既定の角丸（ボタン・入力欄）"
+    },
+    "lg": {
+      "$value": {
+        "value": 0.75,
+        "unit": "rem"
+      },
+      "$description": "大きい面（カード・ダイアログ）の角丸"
+    },
+    "full": {
+      "$value": {
+        "value": 9999,
+        "unit": "px"
+      },
+      "$description": "完全な丸（アバター・ピル）"
+    }
+  }
+}

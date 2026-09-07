@@ -1,0 +1,177 @@
+{
+  "color": {
+    "$type": "color",
+    "surface": {
+      "default": {
+        "$value": "{color.palette.neutral.0}",
+        "$description": "ページと部品の既定の背景"
+      },
+      "raised": {
+        "$value": "{color.palette.neutral.100}",
+        "$description": "浮いた面（カード・ポップオーバー）の背景"
+      },
+      "sunken": {
+        "$value": "{color.palette.neutral.200}",
+        "$description": "窪んだ面（入力欄の背景・コード領域）の背景"
+      }
+    },
+    "text": {
+      "default": {
+        "$value": "{color.palette.neutral.800}",
+        "$description": "本文と見出しの既定の文字色",
+        "$extensions": {
+          "riml-ds": {
+            "contrastAgainst": "color.surface.default"
+          }
+        }
+      },
+      "muted": {
+        "$value": "{color.palette.neutral.600}",
+        "$description": "補助テキスト（説明文・単位）の文字色",
+        "$extensions": {
+          "riml-ds": {
+            "contrastAgainst": "color.surface.default"
+          }
+        }
+      },
+      "on-accent": {
+        "$value": "{color.palette.neutral.0}",
+        "$description": "アクセント面の上に置く文字色",
+        "$extensions": {
+          "riml-ds": {
+            "contrastAgainst": ["color.accent.default", "color.accent.hover"]
+          }
+        }
+      },
+      "on-status": {
+        "$value": "{color.palette.neutral.0}",
+        "$description": "意味色の面の上に置く文字色",
+        "$extensions": {
+          "riml-ds": {
+            "contrastAgainst": [
+              "color.status.danger.default",
+              "color.status.warning.default",
+              "color.status.success.default",
+              "color.status.info.default"
+            ]
+          }
+        }
+      }
+    },
+    "border": {
+      "default": {
+        "$value": "{color.palette.neutral.500}",
+        "$description": "部品と面の既定の境界線",
+        "$extensions": {
+          "riml-ds": {
+            "contrastAgainst": "color.surface.default",
+            "nonText": true
+          }
+        }
+      },
+      "strong": {
+        "$value": "{color.palette.neutral.600}",
+        "$description": "強調したい境界線（区切り・選択中の枠）",
+        "$extensions": {
+          "riml-ds": {
+            "contrastAgainst": "color.surface.default",
+            "nonText": true
+          }
+        }
+      }
+    },
+    "accent": {
+      "default": {
+        "$value": "{color.palette.accent.600}",
+        "$description": "主要な操作の面。ページに 1 色だけ"
+      },
+      "hover": {
+        "$value": "{color.palette.accent.700}",
+        "$description": "主要な操作の hover / pressed の面"
+      },
+      "text": {
+        "$value": "{color.palette.accent.600}",
+        "$description": "リンクとアクセント色の文字",
+        "$extensions": {
+          "riml-ds": {
+            "contrastAgainst": "color.surface.default"
+          }
+        }
+      }
+    },
+    "focus": {
+      "ring": {
+        "$value": "{color.palette.accent.600}",
+        "$description": "フォーカスリングの色",
+        "$extensions": {
+          "riml-ds": {
+            "contrastAgainst": "color.surface.default",
+            "nonText": true
+          }
+        }
+      }
+    },
+    "status": {
+      "danger": {
+        "default": {
+          "$value": "{color.palette.danger.600}",
+          "$description": "危険を表す面の色"
+        },
+        "text": {
+          "$value": "{color.palette.danger.600}",
+          "$description": "危険を表す文字色",
+          "$extensions": {
+            "riml-ds": {
+              "contrastAgainst": "color.surface.default"
+            }
+          }
+        }
+      },
+      "warning": {
+        "default": {
+          "$value": "{color.palette.warning.600}",
+          "$description": "注意を表す面の色"
+        },
+        "text": {
+          "$value": "{color.palette.warning.600}",
+          "$description": "注意を表す文字色",
+          "$extensions": {
+            "riml-ds": {
+              "contrastAgainst": "color.surface.default"
+            }
+          }
+        }
+      },
+      "success": {
+        "default": {
+          "$value": "{color.palette.success.600}",
+          "$description": "成功を表す面の色"
+        },
+        "text": {
+          "$value": "{color.palette.success.600}",
+          "$description": "成功を表す文字色",
+          "$extensions": {
+            "riml-ds": {
+              "contrastAgainst": "color.surface.default"
+            }
+          }
+        }
+      },
+      "info": {
+        "default": {
+          "$value": "{color.palette.info.600}",
+          "$description": "補足を表す面の色"
+        },
+        "text": {
+          "$value": "{color.palette.info.600}",
+          "$description": "補足を表す文字色",
+          "$extensions": {
+            "riml-ds": {
+              "contrastAgainst": "color.surface.default"
+            }
+          }
+        }
+      }
+    }
+  }
+}

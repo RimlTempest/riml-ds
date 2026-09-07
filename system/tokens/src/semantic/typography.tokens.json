@@ -1,0 +1,94 @@
+{
+  "type": {
+    "$type": "typography",
+    "body": {
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": {
+          "value": 1,
+          "unit": "rem"
+        },
+        "fontWeight": "{font.weight.regular}",
+        "lineHeight": "{line.height.body}"
+      },
+      "$description": "本文の既定の組み。段落・ラベル・ボタンの文字",
+      "$extensions": {
+        "riml-ds": {
+          "fluid": {
+            "min": "1rem",
+            "preferred": "0.96rem + 0.2vw",
+            "max": "1.125rem"
+          }
+        }
+      }
+    },
+    "heading": {
+      "1": {
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": {
+            "value": 1.75,
+            "unit": "rem"
+          },
+          "fontWeight": "{font.weight.bold}",
+          "lineHeight": "{line.height.heading}"
+        },
+        "$description": "ページに 1 つの大見出し",
+        "$extensions": {
+          "riml-ds": {
+            "fluid": {
+              "min": "1.75rem",
+              "preferred": "1.4rem + 1.5vw",
+              "max": "2.5rem"
+            }
+          }
+        }
+      },
+      "2": {
+        "$value": {
+          "fontFamily": "{font.family.sans}",
+          "fontSize": {
+            "value": 1.375,
+            "unit": "rem"
+          },
+          "fontWeight": "{font.weight.bold}",
+          "lineHeight": "{line.height.heading-2}"
+        },
+        "$description": "節の見出し",
+        "$extensions": {
+          "riml-ds": {
+            "fluid": {
+              "min": "1.375rem",
+              "preferred": "1.2rem + 0.9vw",
+              "max": "1.875rem"
+            }
+          }
+        }
+      }
+    },
+    "small": {
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": {
+          "value": 0.875,
+          "unit": "rem"
+        },
+        "fontWeight": "{font.weight.regular}",
+        "lineHeight": "{line.height.small}"
+      },
+      "$description": "補助テキスト。本文より小さくしてよい下限（14px）"
+    },
+    "mono": {
+      "$value": {
+        "fontFamily": "{font.family.mono}",
+        "fontSize": {
+          "value": 0.9375,
+          "unit": "rem"
+        },
+        "fontWeight": "{font.weight.regular}",
+        "lineHeight": "{line.height.small}"
+      },
+      "$description": "コードと桁を揃えたい値の組み"
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "color": {
+    "$type": "color",
+    "surface": {
+      "default": {
+        "$value": "{color.palette.neutral.900}"
+      },
+      "raised": {
+        "$value": "{color.palette.neutral.800}"
+      },
+      "sunken": {
+        "$value": "{color.palette.neutral.900}"
+      }
+    },
+    "text": {
+      "default": {
+        "$value": "{color.palette.neutral.0}"
+      },
+      "muted": {
+        "$value": "{color.palette.neutral.300}"
+      },
+      "on-accent": {
+        "$value": "{color.palette.neutral.900}"
+      },
+      "on-status": {
+        "$value": "{color.palette.neutral.900}"
+      }
+    },
+    "border": {
+      "default": {
+        "$value": "{color.palette.neutral.500}"
+      },
+      "strong": {
+        "$value": "{color.palette.neutral.300}"
+      }
+    },
+    "accent": {
+      "default": {
+        "$value": "{color.palette.accent.400}"
+      },
+      "hover": {
+        "$value": "{color.palette.accent.300}"
+      },
+      "text": {
+        "$value": "{color.palette.accent.400}"
+      }
+    },
+    "focus": {
+      "ring": {
+        "$value": "{color.palette.accent.400}"
+      }
+    },
+    "status": {
+      "danger": {
+        "default": {
+          "$value": "{color.palette.danger.400}"
+        },
+        "text": {
+          "$value": "{color.palette.danger.400}"
+        }
+      },
+      "warning": {
+        "default": {
+          "$value": "{color.palette.warning.400}"
+        },
+        "text": {
+          "$value": "{color.palette.warning.400}"
+        }
+      },
+      "success": {
+        "default": {
+          "$value": "{color.palette.success.400}"
+        },
+        "text": {
+          "$value": "{color.palette.success.400}"
+        }
+      },
+      "info": {
+        "default": {
+          "$value": "{color.palette.info.400}"
+        },
+        "text": {
+          "$value": "{color.palette.info.400}"
+        }
+      }
+    }
+  }
+}

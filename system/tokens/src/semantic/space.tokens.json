@@ -1,0 +1,37 @@
+{
+  "space": {
+    "$type": "dimension",
+    "1": {
+      "$value": "{dimension.1}",
+      "$description": "最小の間隔（4px）"
+    },
+    "2": {
+      "$value": "{dimension.2}",
+      "$description": "小さい間隔（8px）"
+    },
+    "3": {
+      "$value": "{dimension.3}",
+      "$description": "やや小さい間隔（12px）"
+    },
+    "4": {
+      "$value": "{dimension.4}",
+      "$description": "標準の間隔（16px）"
+    },
+    "6": {
+      "$value": "{dimension.6}",
+      "$description": "大きい間隔（24px）"
+    },
+    "8": {
+      "$value": "{dimension.8}",
+      "$description": "節の間隔（32px）"
+    },
+    "12": {
+      "$value": "{dimension.12}",
+      "$description": "節どうしの間隔（48px）"
+    },
+    "16": {
+      "$value": "{dimension.16}",
+      "$description": "ページ単位の間隔（64px）"
+    }
+  }
+}
