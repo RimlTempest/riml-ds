@@ -28,6 +28,26 @@
 - [ ] DESIGN.md / guidelines の該当節を更新したか
 - [ ] レーンの所有範囲内か（`scripts/lanes.tsv`）
 
+## CI とリポジトリ設定
+
+PR ごとのゲートは `.github/workflows/ci.yml`（plan 010）。ジョブは `guard` / `fmt-lint` / `typecheck` / `test-node` /
+`test-browser` / `markuplint` / `a11y-vrt-pe` / `frameworks` / `release-check` / `agent-surface`。ブラウザを使うジョブは
+Playwright の公式イメージを `container:` にし、ブラウザをダウンロードしない（ADR-0011）。手元で同じものを回すのは
+`bun run ci:local`（ゲートを足すときは両方に足す）。main へのマージで `pages.yml` が Storybook / `r/registry.json` / `DESIGN.md` を
+GitHub Pages に出す。
+
+GitHub の UI でだけ設定できるもの（一人運用なので強制はしないが、既定にしておく）：
+
+- **Branch protection（`main`）**: 上の 10 ジョブを required status checks に。`Require linear history` は **off**
+  （レーンごとの履歴を残す `--no-ff` マージ運用）。squash / rebase マージは無効にし、merge commit だけを許す。
+- **Actions → Workflow permissions**: Read and write + 「Allow GitHub Actions to create and approve pull requests」
+  （`release.yml` の Version PR に要る。`docs/publishing.md`）。
+- **Pages**: Source は GitHub Actions。公開リポジトリでないと無料で使えない。
+- **Dependabot**: `.github/dependabot.yml`（`bun` エコシステム、週 1、ツールチェーンごとに group）。Playwright の更新は
+  `e2e/Dockerfile` のタグ・`ci.yml` の `container:`・`@playwright/test` を**同じ PR で**揃える。`tools/markuplint` は
+  lockfile を持たないので対象外（手で上げる）。
+- CodeQL は公開後に default setup を有効にする（ワークフローは足さない）。
+
 ## 定期作業
 
 | 周期     | 作業                                                     |
