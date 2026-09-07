@@ -14,6 +14,19 @@
         ],
         "$description": "本文と見出しの既定の書体。OS の UI 書体に合わせる"
       },
+      "display": {
+        "$value": [
+          "Zen Maru Gothic",
+          "M PLUS Rounded 1c",
+          "Hiragino Maru Gothic ProN",
+          "Kosugi Maru",
+          "Arial Rounded MT Bold",
+          "Nunito",
+          "system-ui",
+          "sans-serif"
+        ],
+        "$description": "見出しとタイトルバーの丸ゴシック系スタック。フォントは同梱しない（入っていれば効く）"
+      },
       "mono": {
         "$value": [
           "ui-monospace",
