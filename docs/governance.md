@@ -43,16 +43,18 @@ GitHub の UI でだけ設定できるもの（一人運用なので強制はし
 - **Actions → Workflow permissions**: Read and write + 「Allow GitHub Actions to create and approve pull requests」
   （`release.yml` の Version PR に要る。`docs/publishing.md`）。
 - **Pages**: Source は GitHub Actions。公開リポジトリでないと無料で使えない。
-- **Dependabot**: `.github/dependabot.yml`（`bun` エコシステム、週 1、ツールチェーンごとに group）。Playwright の更新は
+- **Dependabot**: `.github/dependabot.yml` は **`github-actions` だけ**。`bun` エコシステムは Dependabot 同梱の bun が
+  `bun.lock` の lockfileVersion 2 を読めず必ず落ちるので外した（対応されたら戻す。理由は同ファイルのコメント）。
+  ライブラリの依存は当面手で上げる: `bun outdated` → `bun update <pkg>` → CI。Playwright の更新は
   `e2e/Dockerfile` のタグ・`ci.yml` の `container:`・`@playwright/test` を**同じ PR で**揃える。`tools/markuplint` は
-  lockfile を持たないので対象外（手で上げる）。
+  lockfile を持たないので同じく手で上げる。
 - CodeQL は公開後に default setup を有効にする（ワークフローは足さない）。
 
 ## 定期作業
 
 | 周期     | 作業                                                     |
 | -------- | -------------------------------------------------------- |
-| 週       | Dependabot の PR をまとめてマージ（CI が通れば）          |
+| 週       | Dependabot（actions）の PR をマージ。`bun outdated` を見て依存を上げる |
 | 四半期   | `docs/baseline.md` の見直し（Newly → Widely の `@supports` 除去） |
 | 四半期   | axe / Storybook / Lit / Terrazzo のメジャー追従           |
 | リリース | 手動 a11y 一巡（VoiceOver / NVDA）                       |
