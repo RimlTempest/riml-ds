@@ -1,0 +1,42 @@
+{
+  "name": "@rimltempest/riml-ds-mcp",
+  "version": "0.1.0",
+  "description": "riml-ds の MCP サーバ（stdio）と design-md CLI。トークン・部品・ガイドラインを同梱データから配る",
+  "license": "MIT",
+  "bin": {
+    "riml-ds-mcp": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run --root ../.. --project node tools/mcp"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "@rimltempest/riml-ds-elements": "workspace:*",
+    "@rimltempest/riml-ds-lint": "workspace:*",
+    "@rimltempest/riml-ds-tokens": "workspace:*",
+    "colorjs.io": "0.7.1",
+    "stylelint": "17.15.0",
+    "stylelint-config-standard": "40.0.0",
+    "stylelint-declaration-strict-value": "1.12.1",
+    "yaml": "2.9.0",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@google/design.md": "0.4.0",
+    "@rimltempest/riml-ds-design-md": "workspace:*",
+    "tsdown": "0.23.0"
+  }
+}

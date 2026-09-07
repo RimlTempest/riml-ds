@@ -50,6 +50,10 @@
     "tools/design-md": {
       "entry": ["test/**/*.ts"]
     },
+    "tools/mcp": {
+      "entry": ["test/**/*.ts"],
+      "ignoreDependencies": ["stylelint-config-standard", "stylelint-declaration-strict-value"]
+    },
     "tools/lint": {
       "entry": ["test/**/*.ts"],
       "ignoreDependencies": ["estree"]

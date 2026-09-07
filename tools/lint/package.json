@@ -5,6 +5,7 @@
   "license": "MIT",
   "files": [
     "oxlint-plugin",
+    "stylelint-plugin",
     "stylelint.config.js",
     "browserslist",
     "README.md"
@@ -13,7 +14,8 @@
   "exports": {
     "./oxlint-plugin": "./oxlint-plugin/index.js",
     "./stylelint": "./stylelint.config.js",
-    "./browserslist": "./browserslist"
+    "./browserslist": "./browserslist",
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
@@ -21,6 +23,11 @@
   },
   "scripts": {
     "test": "vitest run --root ../.. --project node tools/lint"
+  },
+  "dependencies": {
+    "postcss-lit": "1.4.1",
+    "stylelint-config-standard": "40.0.0",
+    "stylelint-declaration-strict-value": "1.12.1"
   },
   "peerDependencies": {
     "oxlint": ">=1.80",

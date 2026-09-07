@@ -5,10 +5,13 @@ description: riml-ds（@rimltempest/riml-ds-*）を使うアプリで UI を書�
 
 # riml-ds を使う
 
-対応バージョン: `@rimltempest/riml-ds-*` 0.x（初回リリースまでは main の状態）。
+対応バージョン: `@rimltempest/riml-ds-*` 0.1.x（全パッケージ同じ番号で上がる）。
 見た目の判断は riml-ds の `DESIGN.md`、部品 API は `@rimltempest/riml-ds-elements/custom-elements.json` が正。
-分からないことは **MCP（`riml-ds`）に聞く**：`get_element("rd-button")`、`search_tokens("本文の色")`、
-`check_contrast(...)`、`suggest_component("確認して削除する操作")`。
+分からないことは **MCP（`riml-ds`）に聞く**。tool は 5 つ：`search_tokens("本文の色")`、
+`get_element("rd-button")`、`check_contrast("color.text.default", "color.surface.default")`、
+`suggest_component("確認して削除する操作")`、`lint_css("a { color: #fff }")`。
+resource は `riml-ds://tokens`、`riml-ds://tokens/{path}`、`riml-ds://elements`、
+`riml-ds://elements/{tag}`、`riml-ds://guidelines/{topic}`、`riml-ds://design-md`。
 
 ## 0. まずこれだけ
 
@@ -48,6 +51,12 @@ bun add @rimltempest/riml-ds-tokens @rimltempest/riml-ds-css @rimltempest/riml-d
 
 ```json
 { "mcpServers": { "riml-ds": { "command": "bunx", "args": ["@rimltempest/riml-ds-mcp"] } } }
+```
+
+同じ CLI でアプリの `DESIGN.md`（見た目の正。エージェントが最初に読む）を置ける：
+
+```bash
+bunx @rimltempest/riml-ds-mcp design-md --theme qrcc > DESIGN.md   # ブランドテーマ込み
 ```
 
 ## 2. 部品の使い方
