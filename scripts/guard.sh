@@ -76,9 +76,57 @@ if [ -f docs/adr/README.md ]; then
   fi
 fi
 
+# 8. PE ティアの不変条件（ADR-0012 §影響）と *.element.ts の行数（ADR-0005）
+for file in library/elements/src/*/*.element.ts; do
+  [ -e "$file" ] || continue
+  dir="$(dirname "$file")"
+  name="$(basename "$file" .element.ts)"
+  tier="$(sed -n 's/^[[:space:]]*\*[[:space:]]*@pe[[:space:]]\{1,\}\([ABC]\).*$/\1/p' "$file" | head -1)"
+  lines="$(wc -l < "$file" | tr -d ' ')"
+
+  if [ "$lines" -gt 150 ]; then
+    report "$file" "*.element.ts must stay at or under 150 lines (ADR-0005); it has $lines"
+  fi
+
+  case "$tier" in
+    A)
+      # ティア A は light DOM。shadow を作らず、スタイルは <name>.css に置く
+      if grep -qE 'static[[:space:]]+(override[[:space:]]+)?styles|shadowRootOptions|attachShadow' "$file"; then
+        report "$file" "tier A renders into light DOM: no static styles / shadowRootOptions / attachShadow (ADR-0012)"
+      fi
+      [ -f "$dir/$name.css" ] || report "$file" "tier A needs $name.css in @layer rd.components (ADR-0012)"
+      [ -f "$dir/$name.contract.ts" ] || report "$file" "tier A needs $name.contract.ts (markup contract, ADR-0012)"
+      ;;
+    B)
+      [ -f "$dir/$name.css" ] || report "$file" "tier B needs $name.css for the :not(:defined) appearance (ADR-0012)"
+      ;;
+    C)
+      if [ -f "$dir/$name.css" ]; then
+        report "$dir/$name.css" "tier C is shadow-only: styles belong in $name.styles.ts (ADR-0012)"
+      fi
+      ;;
+    *)
+      report "$file" "missing JSDoc @pe A|B|C (ADR-0012)"
+      ;;
+  esac
+done
+
+# 9. フォーム参加要素・リンク・ボタンを包む契約はティア A 以外を選べない（ADR-0012 §1）
+for contract_file in library/elements/src/*/*.contract.ts; do
+  [ -e "$contract_file" ] || continue
+  case "$contract_file" in *.test.ts) continue ;; esac
+  dir="$(dirname "$contract_file")"
+  name="$(basename "$contract_file" .contract.ts)"
+  roles="$(grep -A6 -E '^[[:space:]]*roles:' "$contract_file" || true)"
+  if printf '%s' "$roles" | grep -qE '(input|textarea|select|button|a\[href\])'; then
+    if ! grep -qE '^[[:space:]]*\*[[:space:]]*@pe[[:space:]]+A' "$dir/$name.element.ts" 2>/dev/null; then
+      report "$contract_file" "a contract wrapping form / link / button elements must be @pe A (ADR-0012)"
+    fi
+  fi
+done
+
 # plan 002 以降が足す検査の予約席:
 # - system/tokens/dist/tokens.css が生値を含まない（plan 002）
-# - library/elements/src/**/*.element.ts が 150 行を超えない（plan 004）
 # - 公開パッケージの exports に dist 以外が現れない（plan 007）
 
 exit "$failed"

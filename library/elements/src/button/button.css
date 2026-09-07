@@ -1,0 +1,117 @@
+@layer rd.components {
+  rd-button {
+    display: inline-block;
+  }
+
+  rd-button > button,
+  rd-button > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--rd-space-2);
+    min-block-size: var(--rd-sizing-target-min);
+    min-inline-size: var(--rd-sizing-target-min);
+    padding-inline: var(--rd-button-padding-inline, var(--rd-space-4));
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: transparent;
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-accent-default);
+    color: var(--rd-color-text-on-accent);
+    font: inherit;
+    line-height: var(--rd-line-height-body);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  rd-button[variant='secondary'] > button,
+  rd-button[variant='secondary'] > a {
+    border-color: var(--rd-color-border-strong);
+    background: var(--rd-color-surface-raised);
+    color: var(--rd-color-text-default);
+  }
+
+  rd-button[variant='ghost'] > button,
+  rd-button[variant='ghost'] > a {
+    background: transparent;
+    color: var(--rd-color-accent-text);
+  }
+
+  rd-button[variant='danger'] > button,
+  rd-button[variant='danger'] > a {
+    background: var(--rd-color-status-danger-default);
+    color: var(--rd-color-text-on-status);
+  }
+
+  /* :state() が使えるブラウザでは属性ではなく状態を主にする（riml-ds-css §0） */
+  @supports selector(:state(secondary)) {
+    rd-button:state(secondary) > button,
+    rd-button:state(secondary) > a {
+      border-color: var(--rd-color-border-strong);
+      background: var(--rd-color-surface-raised);
+      color: var(--rd-color-text-default);
+    }
+
+    rd-button:state(ghost) > button,
+    rd-button:state(ghost) > a {
+      background: transparent;
+      color: var(--rd-color-accent-text);
+    }
+
+    rd-button:state(danger) > button,
+    rd-button:state(danger) > a {
+      background: var(--rd-color-status-danger-default);
+      color: var(--rd-color-text-on-status);
+    }
+
+    rd-button:state(loading) > button,
+    rd-button:state(loading) > a {
+      cursor: progress;
+    }
+  }
+
+  rd-button > [aria-busy='true'] {
+    cursor: progress;
+  }
+
+  rd-button > button:focus-visible,
+  rd-button > a:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* disabled はネイティブに任せる。部品は disabled 属性を持たない */
+  rd-button > button:disabled {
+    border-color: GrayText;
+    background: transparent;
+    color: GrayText;
+    cursor: not-allowed;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    rd-button > button,
+    rd-button > a {
+      transition:
+        background-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard),
+        color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+    }
+  }
+
+  @media (forced-colors: active) {
+    rd-button > button,
+    rd-button > a {
+      border-color: ButtonText;
+      color: ButtonText;
+    }
+
+    rd-button > button:focus-visible,
+    rd-button > a:focus-visible {
+      outline-color: Highlight;
+    }
+
+    rd-button > button:disabled {
+      border-color: GrayText;
+      color: GrayText;
+    }
+  }
+}

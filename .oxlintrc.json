@@ -51,6 +51,8 @@
       // 純関数・ドメイン層では throw しない。失敗は Result で返す
       "files": [
         "library/elements/src/**/*.logic.ts",
+        "library/elements/src/**/*.contract.ts",
+        "library/elements/src/_shared/**/*.ts",
         "system/tokens/src/**/*.ts",
         "tools/*/src/core/**/*.ts",
         "system/tokens/scripts/core/**/*.ts",

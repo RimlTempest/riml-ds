@@ -1,0 +1,76 @@
+{
+  "name": "@rimltempest/riml-ds-elements",
+  "version": "0.0.0",
+  "description": "riml-ds の Web Components（Lit）。唯一のソース",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "custom-elements.json",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "./dist/**/*.define.js",
+    "./dist/**/*.css"
+  ],
+  "exports": {
+    "./button": {
+      "types": "./dist/button/index.d.ts",
+      "default": "./dist/button/index.js"
+    },
+    "./button/define": {
+      "types": "./dist/button/button.define.d.ts",
+      "default": "./dist/button/button.define.js"
+    },
+    "./button/style.css": "./dist/button/button.css",
+    "./text-field": {
+      "types": "./dist/text-field/index.d.ts",
+      "default": "./dist/text-field/index.js"
+    },
+    "./text-field/define": {
+      "types": "./dist/text-field/text-field.define.d.ts",
+      "default": "./dist/text-field/text-field.define.js"
+    },
+    "./text-field/style.css": "./dist/text-field/text-field.css",
+    "./dialog": {
+      "types": "./dist/dialog/index.d.ts",
+      "default": "./dist/dialog/index.js"
+    },
+    "./dialog/define": {
+      "types": "./dist/dialog/dialog.define.d.ts",
+      "default": "./dist/dialog/dialog.define.js"
+    },
+    "./dialog/style.css": "./dist/dialog/dialog.css",
+    "./live-region": {
+      "types": "./dist/live-region/index.d.ts",
+      "default": "./dist/live-region/index.js"
+    },
+    "./live-region/define": {
+      "types": "./dist/live-region/live-region.define.d.ts",
+      "default": "./dist/live-region/live-region.define.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./custom-elements.json": "./custom-elements.json",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && bun run scripts/copy-css.ts",
+    "gen": "cem analyze --config custom-elements.config.js",
+    "test": "vitest run --root ../.. --project node --project browser library/elements"
+  },
+  "dependencies": {
+    "lit": "3.3.3",
+    "tslib": "2.8.1"
+  },
+  "devDependencies": {
+    "@custom-elements-manifest/analyzer": "0.11.0"
+  },
+  "peerDependencies": {
+    "@rimltempest/riml-ds-tokens": "workspace:*"
+  },
+  "customElements": "custom-elements.json"
+}

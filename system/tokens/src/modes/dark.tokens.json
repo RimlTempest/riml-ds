@@ -12,6 +12,15 @@
         "$value": "{color.palette.neutral.900}"
       }
     },
+    "overlay": {
+      "default": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.16, 0.01, 200],
+          "alpha": 0.6
+        }
+      }
+    },
     "text": {
       "default": {
         "$value": "{color.palette.neutral.0}"

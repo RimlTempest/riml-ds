@@ -12,12 +12,12 @@ tools/markuplint/node_modules/
 !.env.example
 storybook-static/
 test-results/
+.vitest-attachments/
 playwright-report/
 .claude/worktrees/
 LANE.md
 # 生成物（ソースは system/tokens/src と library/elements/src）
 system/tokens/dist/
-library/elements/custom-elements.json
 library/react/src/generated/
 library/vue/src/generated/
 library/svelte/src/generated/

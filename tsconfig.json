@@ -1,9 +1,23 @@
 {
   "files": [],
   "references": [
-    { "path": "./tools/lint" },
-    { "path": "./system/tokens" },
-    { "path": "./system/css" },
-    { "path": "./tools/design-md" }
+    {
+      "path": "./tools/lint"
+    },
+    {
+      "path": "./system/tokens"
+    },
+    {
+      "path": "./system/css"
+    },
+    {
+      "path": "./tools/design-md"
+    },
+    {
+      "path": "./tools/cem"
+    },
+    {
+      "path": "./library/elements/tsconfig.test.json"
+    }
   ]
 }
