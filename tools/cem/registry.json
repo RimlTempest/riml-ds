@@ -27,6 +27,15 @@
     "dependsOn": []
   },
   {
+    "name": "select",
+    "tag": "rd-select",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "1 つ選ぶ。ラベルと <select> は利用側が書く",
+    "files": ["select/index.js", "select/select.define.js", "select/select.css"],
+    "dependsOn": []
+  },
+  {
     "name": "text-field",
     "tag": "rd-text-field",
     "pe": "A",

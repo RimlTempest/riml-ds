@@ -1,0 +1,83 @@
+@layer rd.components {
+  rd-select {
+    display: block;
+  }
+
+  rd-select > label {
+    display: block;
+    margin-block-end: var(--rd-select-gap, var(--rd-space-1));
+    color: var(--rd-color-text-default);
+  }
+
+  /* 矢印はネイティブのまま（`appearance: none` にすると自前で描くことになり、
+     customizable <select> は Baseline 外。docs/baseline.md） */
+  rd-select > select {
+    display: block;
+    inline-size: 100%;
+    min-block-size: var(--rd-sizing-target-min);
+    padding-block: var(--rd-space-2);
+    padding-inline: var(--rd-space-3);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-strong);
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-surface-default);
+    color: var(--rd-color-text-default);
+    font: inherit;
+    line-height: var(--rd-line-height-body);
+    appearance: auto;
+  }
+
+  rd-select > select:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* JS が無くても検証表示が出る。操作前には怒らない（:user-invalid） */
+  rd-select > select:user-invalid {
+    border-color: var(--rd-color-status-danger-default);
+  }
+
+  @supports selector(:state(invalid)) {
+    rd-select:state(invalid) > select {
+      border-color: var(--rd-color-status-danger-default);
+    }
+  }
+
+  rd-select > [part='hint'] {
+    margin-block: var(--rd-select-gap, var(--rd-space-1)) 0;
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+  }
+
+  /* 色だけに頼らない：太字と縦罫で「エラー」を形でも示す（accessibility.md 9） */
+  rd-select > [part='error'] {
+    margin-block: var(--rd-select-gap, var(--rd-space-1)) 0;
+    padding-inline-start: var(--rd-space-2);
+    border-inline-start: var(--rd-focus-ring-width) solid var(--rd-color-status-danger-default);
+    color: var(--rd-color-status-danger-text);
+    font: var(--rd-type-small);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    rd-select > select {
+      transition: border-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+    }
+  }
+
+  @media (forced-colors: active) {
+    rd-select > select {
+      border-color: FieldText;
+    }
+
+    rd-select > select:focus-visible {
+      outline-color: Highlight;
+    }
+
+    rd-select > [part='error'] {
+      border-inline-start-color: MarkText;
+      color: MarkText;
+    }
+  }
+}

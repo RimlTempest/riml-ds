@@ -23,6 +23,7 @@ describe('listElements', () => {
       'rd-button',
       'rd-dialog',
       'rd-live-region',
+      'rd-select',
       'rd-text-field',
     ])
     expect(result.value[0]).toMatchObject({ pe: 'A', status: 'stable' })

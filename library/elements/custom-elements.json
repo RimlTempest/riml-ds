@@ -493,6 +493,243 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/select/select.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-select",
+          "declaration": {
+            "name": "RdSelect",
+            "module": "/src/select/select.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/select/select.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "1 つ選ぶ。子の `<label for>` と `<select>` を包む（ティア A、ADR-0012）。\n送信・検証・ラベル付けはブラウザが素で行い、JS が無ければネイティブの吹き出しが出る（退行しない）。\n見た目はネイティブのまま（customizable `<select>` は Baseline 外。docs/baseline.md）。",
+          "name": "RdSelect",
+          "cssProperties": [
+            {
+              "description": "ラベル・選択欄・文言の間隔。既定 var(--rd-space-1)",
+              "name": "--rd-select-gap"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "補足文言",
+              "name": "hint"
+            },
+            {
+              "description": "エラー文言",
+              "name": "error"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "hint",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "hint"
+            },
+            {
+              "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "error"
+            },
+            {
+              "kind": "field",
+              "name": "defaultValue",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#control",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLSelectElement | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#touched",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#binding",
+              "privacy": "private",
+              "type": {
+                "text": "Binding | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "description": "値はネイティブ要素が持つ。部品は委譲するだけ（`value` 属性は初期選択）"
+            },
+            {
+              "kind": "method",
+              "name": "checkValidity",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "reportValidity",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#listeners",
+              "privacy": "private",
+              "type": {
+                "text": "Listeners"
+              },
+              "default": "{ change: () => this.#setTouched(true), blur: () => this.#setTouched(true), invalid: (event) => { event.preventDefault() this.#setTouched(true) }, }"
+            },
+            {
+              "kind": "field",
+              "name": "#write",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#applyDefaultValue",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#setTouched",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#view",
+              "privacy": "private"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "hint",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "hint"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "error"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "defaultValue"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "invalid",
+              "description": "検証に通っていない（操作後、または error 属性がある）"
+            },
+            {
+              "name": "errored",
+              "description": "error 属性で文言を強制表示している"
+            },
+            {
+              "name": "hinted",
+              "description": "hint がある"
+            },
+            {
+              "name": "filled",
+              "description": "空でない選択肢を選んでいる"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子（<label for> と <select>）が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "1 つ選ぶ。ラベルと <select> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-select",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdSelect",
+          "declaration": {
+            "name": "RdSelect",
+            "module": "src/select/select.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/text-field/text-field.define.ts",
       "declarations": [],
       "exports": [
