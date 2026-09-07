@@ -186,7 +186,8 @@ jobs:
         with: { cache: true }
       - run: bun install --frozen-lockfile
       - run: bun run build
-      # `render` は中で storybook:build を呼ぶ（二重にビルドしない）
+      # `render` は中で storybook:build を呼ぶ（二重にビルドしない）。
+      # input[type=checkbox][role=switch] は HTML-AAM で checked が aria-checked に写るので wai-aria を外している（ARIA in HTML。.markuplintrc.json の nodeRules）
       - run: bun run render
       - run: bun run lint:html
 

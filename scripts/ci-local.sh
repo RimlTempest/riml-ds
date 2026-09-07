@@ -98,6 +98,8 @@ if [ "$run_container" = 1 ]; then
       echo "==> test-browser: browser + storybook project" >&2
       bun run test -- --project browser --project storybook
 
+      # input[type=checkbox][role=switch] は HTML-AAM で checked が aria-checked に写るので
+      # wai-aria を外している（ARIA in HTML。.markuplintrc.json の nodeRules）
       echo "==> markuplint: 描画後の HTML" >&2
       bun run render
       bun run lint:html

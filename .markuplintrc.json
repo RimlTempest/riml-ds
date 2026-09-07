@@ -52,6 +52,12 @@
   },
   "nodeRules": [
     {
+      "selector": "input[type=\"checkbox\"][role=\"switch\"]",
+      "rules": {
+        "wai-aria": false
+      }
+    },
+    {
       "selector": "template[shadowrootmode] *",
       "rules": {
         "id-duplication": false
