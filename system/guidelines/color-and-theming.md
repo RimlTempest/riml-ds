@@ -35,7 +35,11 @@ qrcc / noter のテーマは移行のためだけに存在する（[migration.md
 - テキストは 2 段（`text.default` / `text.muted`）+ 意味色。3 段目（`subtle`）を作らない。
 - アクセントは**1 色**。「セカンダリカラー」は作らない。強調の階層は太さ・サイズ・余白で作る。
 - 意味色は 4 つ（danger / warning / success / info）。それぞれ `text` / `surface` / `border` の 3 役割。
-- hover は `color-mix(in oklch, var(--rd-color-accent-default), transparent 8%)` のように
-  `color-mix()` で作る。hover 専用のトークンを増やさない。pressed は 16%。
-- 影の色は `color.shadow`（`neutral.900` の 12% / 24%）。黒（`#000`）を使わない。
-- グラデーションを置かない。
+- hover は **hover トークン**（`color.accent.hover` / `color.status.*.hover` / `color.surface.hover`）を使う。
+  トークンに無い面の hover が要るなら `color-mix(in oklch, var(--rd-color-accent-default), transparent 8%)` の形で
+  作ってよいが、引数はトークンだけ。pressed は色ではなく `translate: 0 0.0625rem`（影の方向に沈む）で示す。
+- 影は**硬い**（ぼかし 0、右下に 0.25rem / 0.5rem のオフセット）。色は `color.shadow`（インク色 `neutral.900` 系の
+  16% / 24%）。黒（`#000`）を使わない。値は [brand.md §5](../../docs/brand.md) が正。
+- **`color.brand.*`（primary / signature）は装飾専用**。文字色・アイコン色に使わない（AAA を満たさない）。
+  帯（chrome）の上の文字は `color.chrome.text` だけ。
+- グラデーションは、タイトル帯の 3 つの丸（`radial-gradient` の塗り）以外に置かない。

@@ -49,6 +49,11 @@ shadow 内でも `@layer rd.components { :host { … } }` で書く。レイヤ�
 
 `color-mix()` は許可されるが、引数は必ずトークン：
 `color-mix(in oklch, var(--rd-color-accent-default), transparent 8%)`。
+hover にはまず hover トークン（`--rd-color-accent-hover` / `--rd-color-status-*-hover` / `--rd-color-surface-hover`）を使う。
+
+`--rd-color-brand-primary` / `--rd-color-brand-signature` は **装飾専用**（帯の丸・アクセントの塗り）。
+`color:` に書かない。stylelint は止めないが、レビューと `docs/brand.md` §3 の決まりで落ちる。
+ピル・帯・硬い影・点線の値は `docs/brand.md` §5–§7、窓のマークアップは `patterns.css`（`.rd-window`）を使う。
 
 ## 3. 部品の CSS はティアで置き場が決まる（ADR-0012）
 
