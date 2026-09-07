@@ -52,7 +52,9 @@
       "files": [
         "library/elements/src/**/*.logic.ts",
         "system/tokens/src/**/*.ts",
-        "tools/*/src/core/**/*.ts"
+        "tools/*/src/core/**/*.ts",
+        "system/tokens/scripts/core/**/*.ts",
+        "tools/*/scripts/core/**/*.ts"
       ],
       "rules": { "riml-ds/no-throw-in-domain": "error" }
     },
