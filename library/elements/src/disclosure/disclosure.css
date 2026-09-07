@@ -1,0 +1,57 @@
+@layer rd.components {
+  rd-disclosure {
+    display: block;
+  }
+
+  rd-disclosure > details {
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-surface-default);
+    color: var(--rd-color-text-default);
+  }
+
+  /* マーカー（三角）はネイティブのまま残す。開閉が色だけでなく形でも分かる（accessibility.md 9） */
+  rd-disclosure > details > summary {
+    min-block-size: var(--rd-sizing-target-min);
+    padding-block: var(--rd-space-2);
+    padding-inline: var(--rd-disclosure-padding, var(--rd-space-3));
+    border-radius: var(--rd-radius-md);
+    font-weight: var(--rd-font-weight-bold);
+    line-height: var(--rd-line-height-body);
+    cursor: pointer;
+  }
+
+  rd-disclosure > details > summary:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  rd-disclosure > details > :not(summary) {
+    margin-block: 0;
+    padding-block: 0 var(--rd-space-2);
+    padding-inline: var(--rd-disclosure-padding, var(--rd-space-3));
+  }
+
+  rd-disclosure > details[open] > summary {
+    border-end-end-radius: 0;
+    border-end-start-radius: 0;
+  }
+
+  @supports selector(:state(open)) {
+    rd-disclosure:state(open) > details > summary {
+      background: var(--rd-color-surface-sunken);
+    }
+  }
+
+  @media (forced-colors: active) {
+    rd-disclosure > details {
+      border-color: CanvasText;
+    }
+
+    rd-disclosure > details > summary:focus-visible {
+      outline-color: Highlight;
+    }
+  }
+}

@@ -629,6 +629,154 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/disclosure/disclosure.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-disclosure",
+          "declaration": {
+            "name": "RdDisclosure",
+            "module": "/src/disclosure/disclosure.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/disclosure/disclosure.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "折りたたみ。子の `<details>` / `<summary>` を包む（ティア A、ADR-0012）。\n開閉はブラウザが素で行い、JS が無くても動く。部品が足すのは `:state(open)` と\n`rd-toggle` イベント、そして `open` プロパティからの操作だけ。",
+          "name": "RdDisclosure",
+          "cssProperties": [
+            {
+              "description": "見出しと本文の内側の余白。既定 var(--rd-space-3)",
+              "name": "--rd-disclosure-padding"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "open",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "open",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#details",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLDetailsElement | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#ready",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#binding",
+              "privacy": "private",
+              "type": {
+                "text": "Binding | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#listeners",
+              "privacy": "private",
+              "type": {
+                "text": "Listeners"
+              },
+              "default": "{ // `<details name>` の排他で他が閉じたときも toggle が飛ぶ toggle: () => { const open = this.#details?.open ?? false this.open = open this.dispatchEvent( new CustomEvent('rd-toggle', { bubbles: true, composed: true, detail: { open } }), ) }, }"
+            },
+            {
+              "kind": "field",
+              "name": "#applyOpen",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ open: boolean }>"
+              },
+              "description": "開閉したときに発火",
+              "name": "rd-toggle"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "open"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "open",
+              "description": "開いている"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子（<details> と <summary>）が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "折りたたみ。<details> と <summary> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-disclosure",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdDisclosure",
+          "declaration": {
+            "name": "RdDisclosure",
+            "module": "src/disclosure/disclosure.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/live-region/live-region.define.ts",
       "declarations": [],
       "exports": [

@@ -27,6 +27,19 @@
     "dependsOn": []
   },
   {
+    "name": "disclosure",
+    "tag": "rd-disclosure",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "折りたたみ。<details> と <summary> は利用側が書く",
+    "files": [
+      "disclosure/index.js",
+      "disclosure/disclosure.define.js",
+      "disclosure/disclosure.css"
+    ],
+    "dependsOn": []
+  },
+  {
     "name": "live-region",
     "tag": "rd-live-region",
     "pe": "C",

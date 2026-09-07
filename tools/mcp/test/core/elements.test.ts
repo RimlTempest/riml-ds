@@ -23,6 +23,7 @@ describe('listElements', () => {
       'rd-button',
       'rd-checkbox',
       'rd-dialog',
+      'rd-disclosure',
       'rd-live-region',
       'rd-select',
       'rd-text-field',
