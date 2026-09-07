@@ -97,7 +97,7 @@ axe（AAA タグ）・markuplint（描画後 DOM）・VRT（ライト/ダーク 
 
 ## Git workflow
 
-- Branch: `feat/storybook`（`bun run wt add feat/storybook`）
+- Branch: `feat/storybook`（`bun run wt new feat/storybook`）
 - 例：`feat(storybook): add storybook 10 with a11y and vitest addons`、`feat(storybook): add rd-button stories`、
   `feat(e2e): add playwright vrt in docker`、`chore(guard): cap a11y exclusions`
 - push しない

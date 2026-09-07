@@ -100,7 +100,7 @@ RSC / SSR / JS 無しで同じ HTML が出る。
 
 ## Git workflow
 
-- Branch: `feat/frameworks`（`bun run wt add feat/frameworks`）
+- Branch: `feat/frameworks`（`bun run wt new feat/frameworks`）
 - 例：`feat(cem): add markup-tree to jsx transformer`、`feat(react): add generated markup components and client wrappers`、
   `feat(vue): add plugin and generated types`、`test(e2e): add react app exercising controlled resync`
 - push しない

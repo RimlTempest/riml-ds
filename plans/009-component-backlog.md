@@ -94,7 +94,7 @@ plan 004 / 005 / 006 と同じ。加えて：
 
 ## Git workflow
 
-- Branch: `feat/elements-wave2`（`bun run wt add feat/elements-wave2`。`scripts/lanes.tsv` に行を足す：所有は `library/elements/src/{select,checkbox,disclosure,toast,_shared/field.ts,experimental},library/elements/scripts,e2e/pe/build-pages.ts`）
+- Branch: `feat/elements-wave2`（`bun run wt new feat/elements-wave2`。`scripts/lanes.tsv` に行を足す：所有は `library/elements/src/{select,checkbox,disclosure,toast,_shared/field.ts,experimental},library/elements/scripts,e2e/pe/build-pages.ts`）
 - 部品 1 つ = コミット 3〜4（contract → logic → element+css → stories）。`feat(elements): add rd-select (experimental, tier A)` など
 - push しない
 

@@ -91,7 +91,7 @@
 
 ## Git workflow
 
-- Branch: `feat/release`（`bun run wt add feat/release`）
+- Branch: `feat/release`（`bun run wt new feat/release`）
 - 例：`chore(release): add changesets with fixed versioning`、`feat(cem): add api-diff for breaking change detection`、
   `ci(release): add trusted publishing workflow`、`chore(release): add knip and size budgets`
 - push しない。**タグを打たない**

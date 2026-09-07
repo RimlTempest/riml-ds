@@ -101,7 +101,7 @@ qrcc と noter は最終的にこのパッケージだけを入れて色・余�
 
 ## Git workflow
 
-- Branch: `feat/tokens`（`bun run wt add feat/tokens` — plan 001 で `scripts/wt.sh` が動くようになっている）
+- Branch: `feat/tokens`（`bun run wt new feat/tokens` — plan 001 で `scripts/wt.sh` が動くようになっている）
 - Conventional Commits、Step ごと。例：`feat(tokens): add base color scale in oklch`、
   `feat(design-md): generate DESIGN.md frontmatter from tokens.json`
 - push しない

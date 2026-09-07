@@ -80,7 +80,7 @@ guidelines）をネットワーク無しで引けるようにする（ADR-0010�
 
 ## Git workflow
 
-- Branch: `feat/agent`（`bun run wt add feat/agent`）
+- Branch: `feat/agent`（`bun run wt new feat/agent`）
 - 例：`feat(mcp): add token and element resources`、`feat(mcp): add search_tokens and get_element tools`、`feat(mcp): add design-md subcommand`、
   `docs(skills): finalize consumer skill for 0.1`
 - push しない

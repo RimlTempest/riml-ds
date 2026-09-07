@@ -91,7 +91,7 @@ Baseline Newly は `@supports` の中だけ、palette トークン直参照禁�
 
 ## Git workflow
 
-- Branch: `feat/css`（`bun run wt add feat/css`）
+- Branch: `feat/css`（`bun run wt new feat/css`）
 - 例：`feat(css): add cascade layer order and reset`、`feat(lint): add stylelint rule riml-ds/motion-in-media`
 - push しない
 

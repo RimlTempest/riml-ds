@@ -111,7 +111,7 @@ PE ティア、`:state()`、JSDoc → CEM）が以降のすべての部品と、
 
 ## Git workflow
 
-- Branch: `feat/elements`（`bun run wt add feat/elements`）
+- Branch: `feat/elements`（`bun run wt new feat/elements`）
 - コミット単位：基盤 → fixture → `_shared/markup` → 部品 1 つずつ（contract → logic → element）→ CEM → guard → size-limit
 - 例：`feat(elements): add package skeleton and vitest browser project`、`feat(elements): add markup tree renderer`、
   `feat(elements): add rd-button (tier A)`、`feat(cem): add analyzer config and jsdoc tag plugin`、`chore(guard): enforce pe tiers`
