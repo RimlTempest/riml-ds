@@ -2,7 +2,7 @@ import { spawnSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'postcss'
-import type { AtRule, ChildNode, Declaration, Rule } from 'postcss'
+import type { AtRule, Declaration, Root, Rule } from 'postcss'
 import { beforeAll, describe, expect, it } from 'vitest'
 
 const pkgDir = fileURLToPath(new URL('..', import.meta.url))
@@ -23,18 +23,16 @@ const MOTION_PROPS = new Set([
 
 const read = (path: string): string => readFileSync(path, 'utf8')
 
-/** 祖先に `@media (prefers-reduced-motion: no-preference)` があるか */
-const insideNoPreference = (node: ChildNode): boolean => {
-  for (let current = node.parent; current !== undefined; current = current.parent) {
-    if (
-      current.type === 'atrule'
-      && current.name === 'media'
-      && /prefers-reduced-motion\s*:\s*no-preference/.test(current.params)
-    ) {
-      return true
-    }
-  }
-  return false
+/** `@media (prefers-reduced-motion: no-preference)` の中にある宣言を集める */
+const declsUnderNoPreference = (root: Root): ReadonlySet<Declaration> => {
+  const allowed = new Set<Declaration>()
+  root.walkAtRules('media', (atRule) => {
+    if (!/prefers-reduced-motion\s*:\s*no-preference/.test(atRule.params)) return
+    atRule.walkDecls((decl) => {
+      allowed.add(decl)
+    })
+  })
+  return allowed
 }
 
 describe('@rimltempest/riml-ds-css の build', () => {
@@ -68,11 +66,12 @@ describe('@rimltempest/riml-ds-css の build', () => {
 
   it('index.css のモーションはすべて prefers-reduced-motion: no-preference の中', () => {
     const root = parse(read(distIndex))
+    const allowed = declsUnderNoPreference(root)
     const bare: string[] = []
     root.walkDecls((decl: Declaration) => {
       if (!MOTION_PROPS.has(decl.prop)) return
       if (decl.value.trim() === 'none') return
-      if (insideNoPreference(decl)) return
+      if (allowed.has(decl)) return
       bare.push(`${decl.prop}: ${decl.value}`)
     })
     expect(bare).toEqual([])
@@ -82,7 +81,9 @@ describe('@rimltempest/riml-ds-css の build', () => {
     for (const name of SOURCES) {
       const root = parse(read(srcFile(name)))
       const layers: AtRule[] = []
-      root.walkAtRules('layer', (atRule) => layers.push(atRule))
+      root.walkAtRules('layer', (atRule) => {
+        layers.push(atRule)
+      })
       expect(layers).toHaveLength(1)
       expect(layers[0]?.params).toMatch(/^rd\.[a-z]+$/)
     }
@@ -106,7 +107,9 @@ describe('@rimltempest/riml-ds-css の build', () => {
   it('.rd-skip-link はフォーカスされるまで隠れる（ADR-0012 §6）', () => {
     const root = parse(read(distIndex))
     const rules: Rule[] = []
-    root.walkRules(/\.rd-skip-link/, (rule) => rules.push(rule))
+    root.walkRules(/\.rd-skip-link/, (rule) => {
+      rules.push(rule)
+    })
     expect(rules.length).toBeGreaterThanOrEqual(2)
 
     const hidden = rules.find((rule) => rule.selector.includes(':not(:focus'))

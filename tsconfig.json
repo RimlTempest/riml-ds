@@ -3,6 +3,7 @@
   "references": [
     { "path": "./tools/lint" },
     { "path": "./system/tokens" },
+    { "path": "./system/css" },
     { "path": "./tools/design-md" }
   ]
 }
