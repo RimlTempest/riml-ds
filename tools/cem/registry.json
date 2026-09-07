@@ -9,6 +9,24 @@
     "dependsOn": []
   },
   {
+    "name": "live-region",
+    "tag": "rd-live-region",
+    "pe": "C",
+    "status": "stable",
+    "summary": "読み上げの集約点。ページに 1 つだけ置く",
+    "files": ["live-region/index.js", "live-region/live-region.define.js"],
+    "dependsOn": []
+  },
+  {
+    "name": "dialog",
+    "tag": "rd-dialog",
+    "pe": "B",
+    "status": "stable",
+    "summary": "モーダル。見出しは slot=\"label\" に必ず置く",
+    "files": ["dialog/index.js", "dialog/dialog.define.js", "dialog/dialog.css"],
+    "dependsOn": []
+  },
+  {
     "name": "text-field",
     "tag": "rd-text-field",
     "pe": "A",
@@ -19,15 +37,6 @@
       "text-field/text-field.define.js",
       "text-field/text-field.css"
     ],
-    "dependsOn": []
-  },
-  {
-    "name": "dialog",
-    "tag": "rd-dialog",
-    "pe": "B",
-    "status": "stable",
-    "summary": "モーダル。見出しは slot=\"label\" に必ず置く",
-    "files": ["dialog/index.js", "dialog/dialog.define.js", "dialog/dialog.css"],
     "dependsOn": []
   }
 ]
