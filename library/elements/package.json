@@ -90,6 +90,19 @@
       "default": "./dist/checkbox/checkbox.define.js"
     },
     "./experimental/checkbox/style.css": "./dist/checkbox/checkbox.css",
+    "./experimental/meter": {
+      "types": "./dist/experimental/meter/index.d.ts",
+      "default": "./dist/experimental/meter/index.js"
+    },
+    "./experimental/meter/contract": {
+      "types": "./dist/meter/meter.contract.d.ts",
+      "default": "./dist/meter/meter.contract.js"
+    },
+    "./experimental/meter/define": {
+      "types": "./dist/meter/meter.define.d.ts",
+      "default": "./dist/meter/meter.define.js"
+    },
+    "./experimental/meter/style.css": "./dist/meter/meter.css",
     "./experimental/disclosure": {
       "types": "./dist/experimental/disclosure/index.d.ts",
       "default": "./dist/experimental/disclosure/index.js"

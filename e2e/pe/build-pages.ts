@@ -13,6 +13,7 @@ import { buttonMarkup } from '../../library/elements/src/button/index.js'
 import { checkboxMarkup } from '../../library/elements/src/checkbox/index.js'
 import { dialogMarkup } from '../../library/elements/src/dialog/index.js'
 import { disclosureMarkup } from '../../library/elements/src/disclosure/index.js'
+import { meterMarkup } from '../../library/elements/src/meter/index.js'
 import { selectMarkup } from '../../library/elements/src/select/index.js'
 import { textFieldMarkup } from '../../library/elements/src/text-field/index.js'
 
@@ -31,6 +32,7 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/select/select.css', 'select.css'],
   ['library/elements/src/checkbox/checkbox.css', 'checkbox.css'],
   ['library/elements/src/disclosure/disclosure.css', 'disclosure.css'],
+  ['library/elements/src/meter/meter.css', 'meter.css'],
 ]
 
 const STYLESHEETS = CSS_SOURCES.map(
@@ -118,6 +120,16 @@ const PAGES: Readonly<Record<string, string>> = {
   'dialog.html': page(
     'ダイアログ',
     `      ${dialogMarkup({ label: '確認', children: '<p>保存しますか？</p>' })}`,
+  ),
+  'meter.html': page(
+    'メーター',
+    `      ${meterMarkup({
+      id: 'disk',
+      label: 'ディスク使用量',
+      value: '3.2',
+      max: '10',
+      text: '3.2 GB / 10 GB',
+    })}`,
   ),
   'live-region.html': page('ライブリージョン', '      <rd-live-region></rd-live-region>'),
   'echo.html': page('送信済み', '      <p>フォームはネイティブに送信された。</p>'),
