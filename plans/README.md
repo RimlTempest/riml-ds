@@ -55,7 +55,7 @@
 | 011 | [ラッパー生成器の追随（experimental 分離・select v-model・契約サブパス）](011-wrappers-experimental-and-contract-subpath.md) | P2 | M | 009, 010 | DONE（マージ `#plan-011`。`WrapperSpec` に `status`/`subpath`、experimental は react `./experimental` + `./client/experimental`・vue `./experimental`（`rdExperimentalComponents`、プラグインと `GlobalComponents` は stable のみ）・svelte `./experimental`・astro `./experimental/<name>.astro`。Vue `onInput` が select/textarea でも emit。elements に `./<name>/contract`（6 部品）、mcp は contract から例を作り `lit` 非依存（`LitElement` 0 件、bundle 44 kB）、experimental の例は `./experimental` から import。テスト 474→486、e2e 21→22。逸脱: Vue e2e は `vue.spec.ts` に置いた、`bun.lock` は変更不要（frozen で no changes）。follow-up: `LitElement` 0 件を release-check に入れるか） |
 | 012 | [小さな追随（mcp の lit 混入ゲート・underline-offset トークン・印刷の改ページ）](012-small-follow-ups.md) | P3 | S | 011 | DONE |
 | 013 | [テーマ × スキームの解決と themes/qrcc に qrcc の実色を入れる](013-theme-scheme-and-qrcc-palette.md) | P1 | M | 012 | DONE |
-| 014 | [既定ブランドを riml の色にし「まど」の形・影・文字をトークンへ](014-riml-brand-tokens.md) | P1 | M | 013 | TODO |
+| 014 | [既定ブランドを riml の色にし「まど」の形・影・文字をトークンへ](014-riml-brand-tokens.md) | P1 | M | 013 | DONE（`0c941c3`。palette 26 段（+neutral.700 / accent.500 / signature.400・500）、`brand.*` / `chrome.*` / `font.family.display`、radius 8/12/16、硬い影。contrastAgainst 15、葉 104、テスト 568 → 594、8 モード AAA を L 調整なしで通過。noter は旧既定 26 段。VRT 319/321 更新） |
 | 015 | [「まど」を部品に当てる（.rd-window・ピルのボタン・rd-meter）](015-mado-components.md) | P1 | L | 014 | TODO |
 | 016 | [Storybook のブランド切替と Foundations Brand / Mado](016-brand-showcase.md) | P2 | S | 015 | TODO |
 
@@ -126,3 +126,14 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - `tokens.json` の各トークンは `modes` を持つようになったので、テストの検体は文字列注入ではなく実在する
   `"theme-<brand>":{…}` の値を置換して作る
 - 全体テスト 490 → 568（tokens 89 → 167）。VRT 321 差分ゼロ
+
+### 014 の実行メモ（2026-09-08）
+
+- **VRT はこの規模の色変更を検知しなかった。** `bun run vrt` は旧ベースラインのまま 321 枚 pass し、`vrt:update` も 1 枚も書き換えなかった
+  （Playwright 既定の `threshold` 0.2（YIQ）に収まる）。`--update-snapshots=all` で撮り直した。**016 で `toHaveScreenshot` の
+  `threshold` / `maxDiffPixelRatio` を絞る**（016 Step 1.5 に追加）
+- `splitThemes` は既定と同値の変数を書かないので `themes/<brand>.css` の行数は「段数 − 同値の段」。Done criteria に行数を書くなら
+  同値を差し引く（014 の「27 以上」は誤り。正しくは 24）
+- `core/duplicate-values` は base 層だけ見る。テーマ内の同値（qrcc の `neutral.700` = `800`）は通る
+- design-md のフロントマターは `text: "{colors.neutral-700}"`、見出しの `fontFamily` は display スタックの実値
+- `bun.lock` の workspace version が 0.1.0 のままだった（`chore(release)` が lock を更新していなかった）→ main で同期

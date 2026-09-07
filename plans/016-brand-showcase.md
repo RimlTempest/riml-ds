@@ -88,6 +88,14 @@ const applyTheme = (root: HTMLElement, theme: unknown): void => {
 `withModes` で `applyTheme(root, context.globals['theme'])`。`modeGlobalTypes.theme`: `title: 'ブランド'`、`icon: 'paintbrush'`、
 `items: ['riml', 'qrcc', 'noter']`、`initialModeGlobals.theme = 'riml'`。
 
+## Step 1.5 — VRT の感度を上げる
+
+014 で全 321 枚の色が変わったのに `bun run vrt` は旧ベースラインで pass した（Playwright 既定 `threshold: 0.2` は YIQ の色差で、
+cream ↔ 白・navy ↔ 黒の差はこれに収まる）。`e2e/playwright.config.ts` の `expect.toHaveScreenshot` に
+`{ threshold: 0.05, maxDiffPixelRatio: 0.001 }` を置く。**先に red**: 現ベースラインの 1 枚（例 `components-button--variants`）を
+一時的に `sips` 等で 1 色だけ変えて `bun run vrt` が落ちることを確認してから戻す（コミットしない）。
+フォントのアンチエイリアス差で偽陽性が出たら `maxDiffPixelRatio` だけを 0.005 まで緩める（`threshold` は上げない）。
+
 ## Step 2 — Foundations / Brand
 
 `apps/storybook/stories/Foundations/brand.stories.ts`（`title: 'Foundations/Brand'`）。描くのは `--rd-*` 変数の**見本**で、値は書かない
