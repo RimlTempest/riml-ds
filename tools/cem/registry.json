@@ -69,5 +69,14 @@
       "text-field/text-field.css"
     ],
     "dependsOn": []
+  },
+  {
+    "name": "toast",
+    "tag": "rd-toast",
+    "pe": "C",
+    "status": "experimental",
+    "summary": "一時的な通知。読み上げは rd-live-region に委譲する",
+    "files": ["toast/index.js", "toast/toast.define.js"],
+    "dependsOn": ["rd-live-region"]
   }
 ]

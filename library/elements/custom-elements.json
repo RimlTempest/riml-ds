@@ -1328,6 +1328,240 @@
           }
         }
       ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/toast/toast.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-toast",
+          "declaration": {
+            "name": "RdToast",
+            "module": "/src/toast/toast.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/toast/toast.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "一時的な通知。表示だけを持ち、**読み上げは `rd-live-region` に委譲する**（ADR-0008 §6）。\nshadow 完結（ティア C、ADR-0012）で、JS が無ければ何も出ない（害が無い）。\n`popover` があれば最前面（top layer）に、無ければ固定配置で右下に出る。",
+          "name": "RdToast",
+          "cssParts": [
+            {
+              "description": "通知の枠",
+              "name": "control"
+            },
+            {
+              "description": "文言",
+              "name": "message"
+            },
+            {
+              "description": "閉じるボタン",
+              "name": "close"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, serializable: true }"
+            },
+            {
+              "kind": "field",
+              "name": "open",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "open",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#toast",
+              "privacy": "private",
+              "type": {
+                "text": "Toast | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#paused",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#warned",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#count",
+              "privacy": "private",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "#timer",
+              "privacy": "private",
+              "type": {
+                "text": "ReturnType<typeof setTimeout> | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "method",
+              "name": "show",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "input",
+                  "type": {
+                    "text": "ShowInput"
+                  }
+                }
+              ],
+              "description": "文言を出し、`rd-live-region` に読み上げを委譲する。空（空白だけ）の文言は無視する"
+            },
+            {
+              "kind": "method",
+              "name": "close",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#announce",
+              "privacy": "private",
+              "description": "読み上げは持たない。ページの `rd-live-region` に渡す（無ければ 1 回だけ警告する）"
+            },
+            {
+              "kind": "field",
+              "name": "#applyPopover",
+              "privacy": "private",
+              "description": "二重に呼ぶと InvalidStateError になるので、実際の表示状態と食い違うときだけ切り替える"
+            },
+            {
+              "kind": "field",
+              "name": "#restartTimer",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#pause",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#resume",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#setPaused",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "name": "rd-dismiss",
+              "type": {
+                "text": "CustomEvent<{ id: number }>"
+              },
+              "description": "閉じたときに発火"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "open"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "open",
+              "description": "表示中"
+            },
+            {
+              "name": "info",
+              "description": "tone=info（既定）"
+            },
+            {
+              "name": "success",
+              "description": "tone=success"
+            },
+            {
+              "name": "warning",
+              "description": "tone=warning"
+            },
+            {
+              "name": "danger",
+              "description": "tone=danger。読み上げだけ assertive になる"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "一時的な通知。読み上げは rd-live-region に委譲する",
+          "status": "experimental",
+          "pe": "C",
+          "dependsOn": [
+            "rd-live-region"
+          ],
+          "tagName": "rd-toast",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdToast",
+          "declaration": {
+            "name": "RdToast",
+            "module": "src/toast/toast.element.ts"
+          }
+        }
+      ]
     }
   ]
 }
