@@ -27,7 +27,7 @@
   },
   "scripts": {
     "build": "bun run scripts/build.ts",
-    "test": "vitest run --project node --dir system/css"
+    "test": "vitest run --root ../.. --project node system/css"
   },
   "devDependencies": {
     "postcss": "8.5.28"
