@@ -78,6 +78,16 @@
       },
       "$description": "補助テキスト。本文より小さくしてよい下限（14px）"
     },
+    "link": {
+      "underline-offset": {
+        "$type": "dimension",
+        "$value": {
+          "value": 0.15,
+          "unit": "em"
+        },
+        "$description": "リンクの下線と文字の隙間。ディセンダーに重ならない最小値"
+      }
+    },
     "mono": {
       "$value": {
         "fontFamily": "{font.family.mono}",
