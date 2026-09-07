@@ -44,9 +44,29 @@ ${body}
 </html>
 `
 
+/** `play` の途中を掴まないよう、Storybook の描画完了まで待つ（`e2e/stories.ts` と同じ判定） */
+const waitForStoryFinished = async (tab: Page, id: string): Promise<void> => {
+  await tab.waitForFunction((storyId) => {
+    const preview: unknown = Reflect.get(window, '__STORYBOOK_PREVIEW__')
+    const renders =
+      typeof preview === 'object' && preview !== null
+        ? Reflect.get(preview, 'storyRenders')
+        : undefined
+    if (!Array.isArray(renders)) {
+      return false
+    }
+    const done = new Set(['finished', 'completed', 'errored', 'aborted'])
+    return renders.some(
+      (render: unknown) =>
+        Reflect.get(render, 'id') === storyId && done.has(String(Reflect.get(render, 'phase'))),
+    )
+  }, id)
+}
+
 const renderOne = async (tab: Page, id: string): Promise<void> => {
   await tab.goto(`http://localhost:${PORT}/iframe.html?id=${id}&viewMode=story`)
   await tab.locator('#storybook-root').waitFor()
+  await waitForStoryFinished(tab, id)
   const body = await tab.evaluate(
     () =>
       document.querySelector('#storybook-root')?.getHTML({ serializableShadowRoots: true }) ?? '',

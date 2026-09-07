@@ -3,7 +3,7 @@ chore/scaffold	-	package.json,bun.lock,bunfig.toml,mise.toml,tsconfig.base.json,
 feat/tokens	chore/scaffold	system/tokens,tools/design-md,DESIGN.md	DTCG トークンと Terrazzo ビルド、AAA lint、DESIGN.md フロントマター生成
 feat/css	feat/tokens	system/css,tools/lint/stylelint-plugin	基盤 CSS: layers / reset / base / utilities / print / forced-colors
 feat/elements	feat/css	library/elements,tools/cem	Lit 部品と CEM 生成。最初の 4 部品（PE ティア A/A/B/C）。.size-limit.json を新規作成（所有は feat/release）
-feat/storybook	feat/elements	apps/storybook,e2e/vrt,e2e/a11y,e2e/pe,e2e/Dockerfile,e2e/package.json,e2e/playwright.config.ts,scripts/vrt.sh,.mcp.json	Storybook 10、a11y ゲート、VRT、JS 無し検証、addon-mcp
+feat/storybook	feat/elements	apps/storybook,e2e/vrt,e2e/a11y,e2e/pe,e2e/Dockerfile,e2e/package.json,e2e/playwright.config.ts,e2e/stories.ts,e2e/axe-tags.ts,scripts/vrt.sh,.mcp.json	Storybook 10、a11y ゲート、VRT、JS 無し検証、addon-mcp
 feat/frameworks	feat/elements	tools/cem/src/wrappers,library/react,library/vue,library/svelte,library/astro,e2e/react,e2e/vue,e2e/svelte,e2e/astro	CEM から生成するラッパーと各フレームワークの e2e
 feat/release	feat/frameworks,feat/storybook	.changeset,.github/workflows/release.yml,.size-limit.json,knip.json,scripts/release-check.sh,tools/cem/src/core/api-diff.ts	changesets・Trusted Publishing・publint/attw/size-limit/knip
 feat/agent	feat/release	tools/mcp,skills,AGENTS.md	MCP サーバ・利用側 skill・registry.json 配布

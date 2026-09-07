@@ -5,7 +5,7 @@
  */
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from 'lit'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, within } from 'storybook/test'
 
 const meta: Meta = {
   title: 'Foundations/SkipLink',
@@ -26,9 +26,11 @@ type Story = StoryObj
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
+    // Tab / Enter の導線は `e2e/a11y/keyboard.spec.ts` が実キー入力で見る。
+    // ここでフォーカスを動かすと、その e2e が「押す前の状態」から始められない。
     const link = within(canvasElement).getByRole('link', { name: '本文へ' })
-    await userEvent.tab()
-    await expect(link).toHaveFocus()
+    await expect(link).toHaveAttribute('href', '#sb-main')
+    await expect(within(canvasElement).getByRole('heading', { name: '本文' })).toBeVisible()
   },
 }
 
