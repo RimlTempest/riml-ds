@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist/types",
+    "emitDeclarationOnly": true,
+    "types": ["bun"],
+    // `custom-elements-manifest` は main が schema.json で types を持たない。
+    // 型だけ使う（`import type`）ので schema.d.ts を直接指す。
+    "paths": {
+      "custom-elements-manifest/schema": ["../../node_modules/custom-elements-manifest/schema.d.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}

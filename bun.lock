@@ -61,6 +61,13 @@
         "culori": "4.0.2",
       },
     },
+    "tools/cem": {
+      "name": "@rimltempest/riml-ds-cem",
+      "version": "0.0.0",
+      "devDependencies": {
+        "custom-elements-manifest": "1.0.0",
+      },
+    },
     "tools/design-md": {
       "name": "@rimltempest/riml-ds-design-md",
       "version": "0.0.0",
@@ -343,6 +350,8 @@
     "@oxlint/binding-win32-x64-msvc": ["@oxlint/binding-win32-x64-msvc@1.81.0", "", { "os": "win32", "cpu": "x64" }, "sha512-IZuUCwGw9emG5JtCp+fYGB+Z4OWEoeEcM8R5BA1pYw63/ieYFVdcU2ylxTpHbVHSenZnsYE+ZZ20uHAJszQ4cA=="],
 
     "@polka/url": ["@polka/url@1.0.0-next.29", "", {}, "sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww=="],
+
+    "@rimltempest/riml-ds-cem": ["@rimltempest/riml-ds-cem@workspace:tools/cem"],
 
     "@rimltempest/riml-ds-css": ["@rimltempest/riml-ds-css@workspace:system/css"],
 

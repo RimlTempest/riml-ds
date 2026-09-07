@@ -14,6 +14,9 @@
       "path": "./tools/design-md"
     },
     {
+      "path": "./tools/cem"
+    },
+    {
       "path": "./library/elements/tsconfig.test.json"
     }
   ]
