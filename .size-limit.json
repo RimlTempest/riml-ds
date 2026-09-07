@@ -1,5 +1,17 @@
 [
   {
+    "name": "@rimltempest/riml-ds-tokens/tokens.css",
+    "path": "system/tokens/dist/tokens.css",
+    "limit": "6 KB",
+    "brotli": true
+  },
+  {
+    "name": "@rimltempest/riml-ds-css（全部）",
+    "path": "system/css/dist/index.css",
+    "limit": "8 KB",
+    "brotli": true
+  },
+  {
     "name": "@rimltempest/riml-ds-elements/button/define (lit 込み)",
     "path": "library/elements/dist/button/button.define.js",
     "limit": "12 KB"

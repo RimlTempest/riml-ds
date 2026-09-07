@@ -155,8 +155,40 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
   done
 fi
 
+# 13. 公開パッケージは publishConfig で publish のされ方を宣言する（ADR-0009 / plan 007）。
+#     access: public でないと scope 付きパッケージは private 扱いで publish が落ちる。
+#     provenance: true が無いと Trusted Publishing の来歴が付かない。
+scan_pkg_dirs=""
+for dir in system library tools apps; do
+  [ -d "$dir" ] && scan_pkg_dirs="$scan_pkg_dirs $dir"
+done
+if [ -n "$scan_pkg_dirs" ]; then
+  # shellcheck disable=SC2086
+  manifests=$(find $scan_pkg_dirs -maxdepth 2 -name package.json -not -path '*/node_modules/*' 2>/dev/null | sort)
+  for manifest in $manifests; do
+    message=$(node -e '
+      const fs = require("node:fs")
+      const pkg = JSON.parse(fs.readFileSync(process.argv[1], "utf8"))
+      if (pkg.private === true) { console.log(""); process.exit(0) }
+      const config = pkg.publishConfig ?? {}
+      const problems = []
+      if (typeof pkg.name !== "string" || !pkg.name.startsWith("@rimltempest/riml-ds-")) {
+        problems.push(`name must start with @rimltempest/riml-ds- (got ${pkg.name})`)
+      }
+      if (config.access !== "public") { problems.push("publishConfig.access must be \"public\"") }
+      if (config.provenance !== true) { problems.push("publishConfig.provenance must be true") }
+      console.log(problems.join("; "))
+    ' "$manifest")
+    if [ -n "$message" ]; then
+      report "$manifest" "$message"
+    fi
+  done
+fi
+
 # plan 002 以降が足す検査の予約席:
 # - system/tokens/dist/tokens.css が生値を含まない（plan 002）
-# - 公開パッケージの exports に dist 以外が現れない（plan 007）
+#   （「公開パッケージの exports に dist 以外が現れない」は入れない：svelte / astro は
+#     src/generated の .svelte / .astro をそのまま配るのが正しい形。ADR-0009 の
+#     パッケージ形態の表は dist だけを前提にしていない）
 
 exit "$failed"

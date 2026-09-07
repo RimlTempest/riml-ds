@@ -1,0 +1,82 @@
+{
+  "$schema": "https://unpkg.com/knip@6.34.0/schema.json",
+  "ignoreExportsUsedInFile": true,
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/*.ts"],
+      "ignoreDependencies": [
+        "@storybook/addon-vitest",
+        "@axe-core/playwright",
+        "http-server",
+        "publint",
+        "@arethetypeswrong/cli"
+      ]
+    },
+    "system/tokens": {
+      "entry": ["terrazzo.config.ts", "scripts/*.ts", "test/**/*.ts"]
+    },
+    "system/css": {
+      "entry": ["scripts/*.ts", "test/**/*.ts"]
+    },
+    "library/elements": {
+      "entry": [
+        "src/*/index.ts",
+        "src/*/*.define.ts",
+        "src/*/*.stories.ts",
+        "src/**/*.test.ts",
+        "test/**/*.ts",
+        "scripts/*.ts",
+        "custom-elements.config.js"
+      ],
+      "ignoreDependencies": [
+        "@rd-argtypes",
+        "@rd-shadow",
+        "@storybook/web-components-vite",
+        "storybook"
+      ]
+    },
+    "library/react": {
+      "entry": ["test/**/*.tsx"]
+    },
+    "library/vue": {},
+    "library/svelte": {
+      "entry": ["src/generated/index.js"],
+      "ignoreDependencies": ["svelte"]
+    },
+    "library/astro": {},
+    "tools/cem": {
+      "entry": ["src/*.ts", "src/wrappers/index.ts", "src/plugins/*.js", "test/**/*.ts"]
+    },
+    "tools/design-md": {
+      "entry": ["test/**/*.ts"]
+    },
+    "tools/lint": {
+      "entry": ["test/**/*.ts"],
+      "ignoreDependencies": ["estree"]
+    },
+    "apps/storybook": {
+      "entry": [".storybook/*.ts", "scripts/*.ts", "stories/**/*.ts"],
+      "ignoreDependencies": ["@rimltempest/riml-ds-elements", "http-server"]
+    },
+    "e2e": {
+      "entry": ["*.config.ts", "stories.ts", "axe-tags.ts"],
+      "ignoreDependencies": ["@axe-core/playwright", "http-server"]
+    },
+    "e2e/react": {
+      "entry": ["src/entry-*.tsx", "src/*.tsx"],
+      "ignoreDependencies": ["@rimltempest/riml-ds-css"]
+    },
+    "e2e/vue": {
+      "entry": ["src/entry-*.ts"],
+      "ignoreDependencies": ["@rimltempest/riml-ds-css"]
+    },
+    "e2e/svelte": {
+      "entry": ["src/entry-*.js"],
+      "ignoreDependencies": ["@rimltempest/riml-ds-css"]
+    },
+    "e2e/astro": {}
+  },
+  "ignoreIssues": {
+    "tools/cem/src/wrappers/core/common.ts": ["exports"]
+  }
+}

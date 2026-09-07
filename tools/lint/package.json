@@ -1,6 +1,6 @@
 {
   "name": "@rimltempest/riml-ds-lint",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "riml-ds の共有 lint 設定（oxlint プラグイン / stylelint / browserslist）",
   "license": "MIT",
   "files": [

@@ -1,0 +1,77 @@
+# npm への publish（ADR-0009）。トークンは持たない：npm Trusted Publishing（OIDC）で出す。
+#
+# リポジトリは plan 010 まで private で、Actions は月 2,000 分しかない（ADR-0011）。
+# そのため PR ごとには走らせず、
+#   - `.changeset/**` か `**/package.json` か CHANGELOG が変わった main への push
+#   - 手動実行（workflow_dispatch）
+# だけに絞る。前者は「changeset を含む PR のマージ」と「Version PR のマージ」の両方を拾う。
+#
+# 分岐は `changesets/action/select-mode` に任せる（公式の automating ガイドと同じ形）:
+#   mode == version  → changeset が残っている。Version PR を作る／更新するだけ
+#   mode == publish  → 出せるものがある。ゲートを通してから publish
+#   mode == none     → 何もしない
+# ジョブは 1 つに保つ（Actions 分の節約。ADR-0011）。
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.changeset/**'
+      - 'package.json'
+      - '**/package.json'
+      - 'CHANGELOG.md'
+      - '**/CHANGELOG.md'
+  workflow_dispatch:
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  release:
+    name: version / publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write # Version PR のコミットとタグ
+      pull-requests: write # Version PR の作成・更新
+      id-token: write # npm Trusted Publishing（OIDC）。npm のトークンは Secrets に置かない
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          # version は GitHub API 経由で push するので、git の資格情報は残さない
+          persist-credentials: false
+
+      - uses: jdx/mise-action@v3
+        with:
+          cache: true
+
+      # mise.toml が固定する node 26.8.1 に同梱の npm は 12.x で、
+      # Trusted Publishing の要件（npm >= 11.5.1）を満たす。npm の入れ直しは不要。
+      - run: bun install --frozen-lockfile
+
+      - id: mode
+        uses: changesets/action/select-mode@v2
+
+      # changeset が残っている → Version PR を作る／更新する
+      - if: steps.mode.outputs.mode == 'version'
+        uses: changesets/action/version@v2
+        with:
+          commit-message: 'chore(release): version packages'
+          pr-title: 'chore(release): version packages'
+
+      # publish 前のゲート（docs/publishing.md）:
+      # build / gen-diff / publint / attw / size-limit / knip / sherif
+      - if: steps.mode.outputs.mode == 'publish'
+        run: bun run release:check
+
+      # Version PR がマージされた → publish。
+      # provenance は各 package.json の publishConfig.provenance で付く（フラグ不要）。
+      - if: steps.mode.outputs.mode == 'publish'
+        uses: changesets/action/publish@v2
+        with:
+          create-github-releases: true
