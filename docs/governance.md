@@ -50,6 +50,14 @@ GitHub の UI でだけ設定できるもの（一人運用なので強制はし
   lockfile を持たないので同じく手で上げる。
 - CodeQL は公開後に default setup を有効にする（ワークフローは足さない）。
 
+## ローカルの hook（lefthook）
+
+`mise.toml` は lefthook を pin しているが、Homebrew などで別版（例: 1.10.x）が先に PATH にあると
+そちらが hook を走らせる。設定（`lefthook.yml`）は両版で同じ挙動なので放置してよいが、
+「hook が走らない / 見慣れない出力」のときは `which lefthook` と `lefthook version` を見る。
+`git merge` の既定メッセージは `commit-msg` の Conventional Commits 検査で落ちるので、
+マージは常に `-m "chore: merge … (#plan-NNN)"` を付ける。
+
 ## 定期作業
 
 | 周期     | 作業                                                     |

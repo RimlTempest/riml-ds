@@ -25,7 +25,7 @@ system/tokens/
       high-contrast.tokens.json
       compact.tokens.json      space / sizing を 0.75 倍
     themes/
-      qrcc/color.tokens.json   ブランド差分（移行用）
+      qrcc/color.tokens.json   ブランド差分（移行用）。color.palette.* だけを上書きする
       noter/color.tokens.json
     component/                 必要になった部品だけ（例: button.tokens.json）
   terrazzo.config.ts
@@ -82,7 +82,7 @@ system/tokens/
 | ファイル      | 中身                                                                       | 消費者                    |
 | ------------- | -------------------------------------------------------------------------- | ------------------------- |
 | `tokens.css`  | `@layer rd.tokens { :root { color-scheme: light dark; --rd-…: light-dark(…, …) } }` + `@media (prefers-contrast: more)` + `[data-density="compact"]` | すべて |
-| `themes/<brand>.css` | semantic の上書きだけ                                              | 移行中のアプリ            |
+| `themes/<brand>.css` | palette の上書きだけ（light / dark を `light-dark()` に畳む）      | 移行中のアプリ            |
 | `tokens.ts`   | `as const` のリテラル型                                                    | TS 利用側、部品           |
 | `tokens.json` | 解決済み DTCG（alias 展開、モードごとの値を `$extensions.riml-ds.modes` に）| DESIGN.md 生成、MCP       |
 | `tokens.md`   | 表                                                                         | Storybook Docs            |
@@ -96,6 +96,19 @@ system/tokens/
 切替は `color-scheme`。強制する場合は `<html style="color-scheme: dark">` か
 `<meta name="color-scheme" content="dark">`。JS のトグルは `document.documentElement.style.colorScheme`
 を書くだけ。`[data-theme]` は使わない。
+
+### テーマ（ブランド）× スキーム
+
+`riml-ds.resolver.json` の解決順は base → semantic → **theme → scheme** → contrast → density。
+テーマは `color.palette.*` **だけ**を上書きする（invariants テストが固定する）。semantic は `{color.palette.…}` の
+alias なので、palette を差し替えればライトもダークも高コントラストも追随し、テーマ側で 4 モード分の色を
+書く必要が無い。`themes/<brand>.css` は light / dark の 2 permutation を畳んだ差分（`light-dark()`）で、
+基準（riml-ds 既定）と同じ値は出さない。
+
+新しいブランドを足す手順: `src/themes/<brand>/color.tokens.json` に palette の差分を書く →
+`terrazzo.config.ts` の permutation に `{ theme, scheme }` の 2 行を足す → `scripts/postbuild.ts` の
+`modes` に `theme-<brand>` / `theme-<brand>-dark` を足す → `test/tokens-json.ts` の `MODES` と
+`test/contrast.test.ts` の `CHECKED_MODES` に足す（テーマでも 7:1 / 3:1 を固定する）。
 
 ## Lint（`terrazzo check`）
 
@@ -118,6 +131,9 @@ system/tokens/
   `color.border.subtle`（3:1 を要求しない、`nonText` なし）を **別名で足す**。default を薄くしない
 - **ダークの `color.surface.sunken` は `neutral.900`（= `surface.default`）**。palette に 900 より暗い段が無い。
   段を足すのは DESIGN.md の palette 追加＝デザイン判断
+- **`color.surface.hover` と `color.status.danger.hover`**（plan 013）は qrcc の移行で必要になった semantic。
+  hover は「1 段だけ動く」（light: neutral.200 / dark: neutral.800、danger は 700 / 300）で、
+  `color.text.on-status` は `danger.hover` に対しても 7:1 を要求する（`contrastAgainst`）
 - **DESIGN.md の `typography.*.fontSize` は clamp の最小値**（`1rem` など）。`@google/design.md` 0.4.0 が
   `clamp()` を dimension と認めないため。流体の 3 値は `tokens.css` と `tokens.json`
   （`$extensions["riml-ds"].fluid`）にある
