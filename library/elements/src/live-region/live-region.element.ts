@@ -7,6 +7,9 @@ import {
 } from './live-region.logic.js'
 import { styles } from './live-region.styles.js'
 
+/** `serializable: true` が無いと `getHTML({ serializableShadowRoots: true })` に shadow の中身が出ない */
+const SHADOW_OPTIONS = { ...LitElement.shadowRootOptions, serializable: true }
+
 export type AnnounceOptions = { readonly politeness?: Politeness }
 
 /**
@@ -23,6 +26,8 @@ export type AnnounceOptions = { readonly politeness?: Politeness }
  */
 export class RdLiveRegion extends LitElement {
   static override styles = styles
+
+  static override shadowRootOptions = SHADOW_OPTIONS
 
   #queue: AnnouncementQueue = emptyQueue
 

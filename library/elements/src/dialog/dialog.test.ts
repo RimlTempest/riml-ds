@@ -58,12 +58,12 @@ it('Esc で閉じ、rd-dismiss { reason: "esc" } が上がる', async () => {
   expect(event instanceof CustomEvent ? event.detail : undefined).toEqual({ reason: 'esc' })
 })
 
-it('dismissible=false なら Esc を無視する', async () => {
+it('persistent 属性だけで Esc を無視する（プロパティで倒さなくてよい）', async () => {
   const el = await fixtureOf(
     RdDialog,
-    '<rd-dialog dismissible="false"><h2 slot="label">確認</h2></rd-dialog>',
+    '<rd-dialog persistent><h2 slot="label">確認</h2></rd-dialog>',
   )
-  el.dismissible = false
+  expect(el.persistent).toBe(true)
   el.show()
   await el.updateComplete
   const cancel = new Event('cancel', { cancelable: true })

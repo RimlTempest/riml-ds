@@ -19,7 +19,7 @@ riml-ds の Web Components（Lit 3）。部品の実装はここだけに書く�
 | ---------------- | ------ | ------------------------------------------------- | -------------------------------------------------------------- |
 | `rd-button`      | A      | 子の `<button>` / `<a href>` を包む               | `variant`, `loading`, `rd-press`, `:state(loading)`            |
 | `rd-text-field`  | A      | 子の `<label for>` + `<input>` を包む             | `hint`, `error`, `value`, `checkValidity()`, `:state(invalid)` |
-| `rd-dialog`      | B      | ネイティブ `<dialog>` を枠にし内容は slot         | `open`, `dismissible`, `show()`, `close()`, `rd-dismiss`       |
+| `rd-dialog`      | B      | ネイティブ `<dialog>` を枠にし内容は slot         | `open`, `persistent`, `show()`, `close()`, `rd-dismiss`        |
 | `rd-live-region` | C      | 読み上げの集約点。ページに 1 つ                   | `announce(text, { politeness })`, `rd-announce`                |
 | `.rd-skip-link`  | —      | 本文へのスキップ。**部品ではない**（ADR-0012 §6） | `@rimltempest/riml-ds-css` のクラス                            |
 

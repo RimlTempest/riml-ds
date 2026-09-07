@@ -12,7 +12,7 @@ export const contract = {
   required: ['label'],
   tree: {
     tag: 'rd-dialog',
-    attrs: { open: '$open', dismissible: '$dismissible' },
+    attrs: { open: '$open', persistent: '$persistent' },
     children: [
       { tag: 'h2', slot: 'label', children: [{ prop: 'label' }] },
       // children は生 HTML。利用側が組み立てた信頼済みの断片だけを渡す（renderMarkup はエスケープしない）
@@ -26,7 +26,8 @@ export type DialogMarkupProps = {
   /** 本文とアクション。**エスケープされない**ので信頼済みの HTML 断片だけを渡す */
   readonly children: string
   readonly open?: boolean
-  readonly dismissible?: boolean
+  /** Esc と背面クリックで閉じない。既定は false（閉じられる） */
+  readonly persistent?: boolean
 }
 
 export const markup = (props: DialogMarkupProps): string => renderMarkup(contract.tree, props)

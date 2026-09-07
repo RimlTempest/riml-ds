@@ -56,3 +56,12 @@ it('同じ文言を続けて出すと読み直され、空文字は無視して 
     politeness: 'polite',
   })
 })
+
+it('shadow が serializable で、描画後の HTML に読み上げノードが出る', async () => {
+  const el = await fixtureOf(RdLiveRegion, '<rd-live-region></rd-live-region>')
+  el.announce('保存しました')
+  await el.updateComplete
+  const html = el.getHTML({ serializableShadowRoots: true })
+  expect(html).toContain('part="polite"')
+  expect(html).toContain('保存しました')
+})

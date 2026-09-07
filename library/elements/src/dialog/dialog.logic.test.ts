@@ -7,24 +7,24 @@ import {
 } from './dialog.logic.js'
 
 describe('decideClose', () => {
-  it('dismissible なら理由つきで閉じる', () => {
-    expect(decideClose({ dismissible: true, reason: 'esc' })).toEqual({
+  it('既定（persistent でない）なら理由つきで閉じる', () => {
+    expect(decideClose({ persistent: false, reason: 'esc' })).toEqual({
       kind: 'close',
       reason: 'esc',
     })
-    expect(decideClose({ dismissible: true, reason: 'backdrop' })).toEqual({
+    expect(decideClose({ persistent: false, reason: 'backdrop' })).toEqual({
       kind: 'close',
       reason: 'backdrop',
     })
   })
 
-  it('dismissible でなければ esc も backdrop も止める', () => {
-    expect(decideClose({ dismissible: false, reason: 'esc' })).toEqual({ kind: 'blocked' })
-    expect(decideClose({ dismissible: false, reason: 'backdrop' })).toEqual({ kind: 'blocked' })
+  it('persistent なら esc も backdrop も止める', () => {
+    expect(decideClose({ persistent: true, reason: 'esc' })).toEqual({ kind: 'blocked' })
+    expect(decideClose({ persistent: true, reason: 'backdrop' })).toEqual({ kind: 'blocked' })
   })
 
-  it('api（show/close メソッド）は dismissible に関係なく閉じる', () => {
-    expect(decideClose({ dismissible: false, reason: 'api' })).toEqual({
+  it('api（show/close メソッド）は persistent でも閉じる', () => {
+    expect(decideClose({ persistent: true, reason: 'api' })).toEqual({
       kind: 'close',
       reason: 'api',
     })

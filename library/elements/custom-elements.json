@@ -227,13 +227,13 @@
             },
             {
               "kind": "field",
-              "name": "dismissible",
+              "name": "persistent",
               "privacy": "public",
               "type": {
                 "text": "boolean"
               },
-              "default": "true",
-              "attribute": "dismissible",
+              "default": "false",
+              "attribute": "persistent",
               "reflects": true
             },
             {
@@ -342,12 +342,12 @@
               "fieldName": "open"
             },
             {
-              "name": "dismissible",
+              "name": "persistent",
               "type": {
                 "text": "boolean"
               },
-              "default": "true",
-              "fieldName": "dismissible"
+              "default": "false",
+              "fieldName": "persistent"
             }
           ],
           "cssStates": [
@@ -416,6 +416,15 @@
             }
           ],
           "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, serializable: true }",
+              "type": {
+                "text": "object"
+              }
+            },
             {
               "kind": "field",
               "name": "#queue",

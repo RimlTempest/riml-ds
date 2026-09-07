@@ -49,18 +49,14 @@ test('dialog: opener から Enter で開き、Esc で閉じてフォーカスが
   await expect(opener).toBeFocused()
 })
 
-test('dialog: dismissible=false は Esc で閉じない', async ({ page }) => {
+test('dialog: persistent は Esc で閉じない', async ({ page }) => {
   await page.goto(storyUrl('components-dialog--persistent'))
   await waitForStoryFinished(page, 'components-dialog--persistent')
-  // play が dismissible をプロパティで倒すまで待つ（属性では false を表せない）
   await expect
     .poll(async () =>
-      page.evaluate(() => {
-        const dialog = document.querySelector('rd-dialog')
-        return dialog === null ? undefined : Reflect.get(dialog, 'dismissible')
-      }),
+      page.evaluate(() => document.querySelector('rd-dialog')?.hasAttribute('persistent')),
     )
-    .toBe(false)
+    .toBe(true)
   await page.keyboard.press('Escape')
   await expect
     .poll(async () =>

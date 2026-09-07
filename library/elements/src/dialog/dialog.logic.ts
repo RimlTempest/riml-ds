@@ -8,14 +8,18 @@ export type CloseDecision =
   | { readonly kind: 'blocked' }
   | { readonly kind: 'close'; readonly reason: DismissReason }
 
-/** `dismissible=false` は Esc と背面クリックだけを止める。`show()`/`close()` は常に効く */
+/**
+ * `persistent` は Esc と背面クリックだけを止める。`show()`/`close()` は常に効く。
+ * 既定 false の名前にしてあるのは、boolean 属性が HTML では「無い = false」しか表せないため。
+ * 既定 true の名前だと `markup()` が属性を省くだけで既定に戻ってしまう（plan 009 Step 0 で反転した）。
+ */
 export const decideClose = (input: {
-  readonly dismissible: boolean
+  readonly persistent: boolean
   readonly reason: DismissReason
 }): CloseDecision =>
-  input.dismissible || input.reason === 'api'
-    ? { kind: 'close', reason: input.reason }
-    : { kind: 'blocked' }
+  input.persistent && input.reason !== 'api'
+    ? { kind: 'blocked' }
+    : { kind: 'close', reason: input.reason }
 
 export const computeStates = (input: {
   readonly open: boolean
