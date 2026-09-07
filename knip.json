@@ -79,8 +79,5 @@
       "ignoreDependencies": ["@rimltempest/riml-ds-css"]
     },
     "e2e/astro": {}
-  },
-  "ignoreIssues": {
-    "tools/cem/src/wrappers/core/common.ts": ["exports"]
   }
 }
