@@ -9,13 +9,16 @@
     line-height: var(--rd-type-body-line-height);
   }
 
+  /* 見出しは丸ゴシック系の display スタック（docs/brand.md §6）。フォントは同梱しない */
   h1 {
+    font-family: var(--rd-type-heading-1-font-family);
     font-size: var(--rd-type-heading-1-font-size);
     font-weight: var(--rd-type-heading-1-font-weight);
     line-height: var(--rd-type-heading-1-line-height);
   }
 
   h2 {
+    font-family: var(--rd-type-heading-2-font-family);
     font-size: var(--rd-type-heading-2-font-size);
     font-weight: var(--rd-type-heading-2-font-weight);
     line-height: var(--rd-type-heading-2-line-height);
@@ -35,6 +38,13 @@
   p,
   li {
     max-inline-size: var(--rd-sizing-measure-max);
+  }
+
+  /* 区切りは点線（docs/brand.md §7.6）。面の切り替えで区切れるときは線を引かない */
+  hr {
+    margin-block: var(--rd-space-4);
+    border-width: 0;
+    border-block-start: 0.125rem dotted var(--rd-color-border-default);
   }
 
   a {

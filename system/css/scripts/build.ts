@@ -7,7 +7,15 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 
 /** 結合の順序。@layer の宣言が必ず先頭に来る */
-const ORDER = ['layers', 'reset', 'base', 'utilities', 'print', 'forced-colors'] as const
+const ORDER = [
+  'layers',
+  'reset',
+  'base',
+  'patterns',
+  'utilities',
+  'print',
+  'forced-colors',
+] as const
 
 const srcPath = (name: string): string =>
   fileURLToPath(new URL(`../src/${name}.css`, import.meta.url))
