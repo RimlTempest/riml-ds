@@ -32,6 +32,8 @@
   },
   "devDependencies": {
     "@guidepup/virtual-screen-reader": "0.32.1",
+    "@size-limit/esbuild": "13.0.3",
+    "@size-limit/file": "13.0.3",
     "@types/bun": "1.4.0",
     "@vitest/browser-playwright": "4.1.11",
     "lefthook": "2.1.12",
@@ -41,6 +43,7 @@
     "playwright": "1.63.0",
     "postcss-lit": "1.4.1",
     "sherif": "1.13.0",
+    "size-limit": "13.0.3",
     "stylelint": "17.15.0",
     "stylelint-config-standard": "40.0.0",
     "stylelint-declaration-strict-value": "1.12.1",
