@@ -11,3 +11,27 @@
 - 状態を表す語は統一：読み込み中 / 保存済み / 未保存 / オフライン / 再接続中。
 - 英語の UI 文言（`lang="en"` の利用側）では sentence case。Title Case は使わない。
 - 絵文字を UI 文言に使わない（読み上げが崩れる）。アイコンは SVG に `aria-hidden`、意味は文言で。
+
+## フォーム検証の文言（ティア A のフォーム部品が使う）
+
+ブラウザの `validationMessage` は UI 言語依存で、日本語ページでも英語になり得る。部品は `ValidityState` の
+フラグを見て下の表の文言に置き換える（`*.logic.ts` の純関数。`{…}` は該当属性の値）。優先順位は
+**`error` 属性 > `customError`（`setCustomValidity` の文言そのまま）> この表 > ネイティブ `validationMessage`**。
+すべて「何が起きたか」+「どうすればいいか」の 2 文、敬体、句点で終える。
+
+| フラグ                        | 文言                                                                    |
+| ----------------------------- | ----------------------------------------------------------------------- |
+| `valueMissing`                | 未入力です。入力してください。                                           |
+| `typeMismatch`（`type=email`）| メールアドレスの形式ではありません。`name@example.com` の形で入力してください。 |
+| `typeMismatch`（`type=url`）  | URL の形式ではありません。`https://example.com` の形で入力してください。    |
+| `tooShort`                    | 短すぎます。{minlength} 文字以上で入力してください。                      |
+| `tooLong`                     | 長すぎます。{maxlength} 文字以内で入力してください。                      |
+| `patternMismatch`             | 形式が違います。{title} の形で入力してください。（`title` が無ければ「指定の形式で入力してください。」） |
+| `rangeUnderflow`              | 小さすぎます。{min} 以上で入力してください。                              |
+| `rangeOverflow`               | 大きすぎます。{max} 以下で入力してください。                              |
+| `stepMismatch`                | {step} 刻みの値ではありません。{step} 刻みで入力してください。             |
+| `badInput`                    | 読み取れませんでした。入力し直してください。                              |
+
+- 複数フラグが同時に立ったら**表の上から最初の 1 つ**だけを出す。
+- 文言は `aria-live` に載せない（ADR-0008 §6。読み上げは `aria-describedby` と `:user-invalid` に任せる）。
+- 英語 UI（`lang="en"`）の利用側はこの表を使わず、ネイティブ `validationMessage` をそのまま出す。

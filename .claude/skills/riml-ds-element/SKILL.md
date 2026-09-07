@@ -95,10 +95,26 @@ export class RdButton extends LitElement {
   static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true }
   static formAssociated = true              // type=submit を form に届けるため
 
-  @property() accessor variant: ButtonVariant = 'primary'
-  @property() accessor type: 'button' | 'submit' | 'reset' = 'button'
-  @property({ type: Boolean, reflect: true }) accessor loading = false
-  @property({ type: Boolean, reflect: true }) accessor disabled = false
+  // 反応的プロパティは static properties + declare + constructor 代入（ADR-0005 §4 追記）。
+  // `@property() accessor` は Vite 8 / rolldown が変換できず Vitest browser で SyntaxError になるので使わない。
+  static override properties: PropertyDeclarations = {   // import { type PropertyDeclarations } from 'lit'
+    variant: {},
+    type: {},
+    loading: { type: Boolean, reflect: true },
+    disabled: { type: Boolean, reflect: true },
+  }
+  declare variant: ButtonVariant
+  declare type: 'button' | 'submit' | 'reset'
+  declare loading: boolean
+  declare disabled: boolean
+
+  constructor() {
+    super()
+    this.variant = 'primary'
+    this.type = 'button'
+    this.loading = false
+    this.disabled = false
+  }
 
   #internals = this.attachInternals()
 
