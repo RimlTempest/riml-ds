@@ -24,6 +24,8 @@
     "fmt": "oxfmt .",
     "fmt:check": "oxfmt --check .",
     "check": "bun run fmt:check && bun run lint && bun run lint:css && bun run typecheck && bun run lint:tokens && bunx sherif",
+    "storybook": "bun run --filter @rimltempest/riml-ds-storybook dev",
+    "storybook:build": "bun run --filter @rimltempest/riml-ds-storybook build",
     "guard": "./scripts/guard.sh",
     "wt": "./scripts/wt.sh",
     "prepare": "lefthook install",

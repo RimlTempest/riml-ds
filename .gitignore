@@ -21,3 +21,5 @@ system/tokens/dist/
 library/react/src/generated/
 library/vue/src/generated/
 library/svelte/src/generated/
+apps/storybook/rendered/
+e2e/pe/pages/
