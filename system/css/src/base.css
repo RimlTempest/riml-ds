@@ -40,6 +40,7 @@
   a {
     color: var(--rd-color-accent-text);
     text-decoration: underline;
+    text-underline-offset: var(--rd-type-link-underline-offset);
   }
 
   /* フォーカスリング 3px / offset 2px / 背景に 3:1（WCAG 2.4.13） */

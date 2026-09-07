@@ -104,6 +104,13 @@ describe('@rimltempest/riml-ds-css の build', () => {
     expect([...used].filter((name) => !defined.has(name))).toEqual([])
   })
 
+  it('a の下線は text-underline-offset をトークンで指定する（plan 003 の見送りを回収）', () => {
+    const base = read(srcFile('base.css'))
+    expect(base).toMatch(
+      /a\s*\{[^}]*text-underline-offset:\s*var\(--rd-type-link-underline-offset\)/,
+    )
+  })
+
   it('.rd-skip-link はフォーカスされるまで隠れる（ADR-0012 §6）', () => {
     const root = parse(read(distIndex))
     const rules: Rule[] = []
