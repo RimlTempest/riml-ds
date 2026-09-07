@@ -1,0 +1,89 @@
+@layer rd.components {
+  /* 太いピルのトラック（docs/brand.md §7.5）。塗りは --rd-meter-fill（部品が書く）で決まる。
+     ネイティブの ::-webkit-meter-* は使わない（appearance: none + 背景で描く） */
+  rd-meter {
+    display: block;
+
+    --rd-meter-color: var(--rd-color-accent-default);
+  }
+
+  rd-meter[tone='success'] {
+    --rd-meter-color: var(--rd-color-status-success-default);
+  }
+
+  rd-meter[tone='warning'] {
+    --rd-meter-color: var(--rd-color-status-warning-default);
+  }
+
+  rd-meter[tone='danger'] {
+    --rd-meter-color: var(--rd-color-status-danger-default);
+  }
+
+  rd-meter > label {
+    display: block;
+    margin-block-end: var(--rd-space-1);
+    color: var(--rd-color-text-default);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  rd-meter > meter,
+  rd-meter > progress {
+    display: block;
+    appearance: none;
+    inline-size: 100%;
+    block-size: var(--rd-space-4);
+    border-width: 0;
+    border-radius: var(--rd-radius-full);
+    background: linear-gradient(
+      to right,
+      var(--rd-meter-color) calc(var(--rd-meter-fill, 0) * 100%),
+      var(--rd-color-surface-sunken) 0
+    );
+  }
+
+  /* RTL は逆から塗る。グラデーションの向きは論理プロパティで書けない */
+  [dir='rtl'] rd-meter > meter,
+  [dir='rtl'] rd-meter > progress {
+    background: linear-gradient(
+      to left,
+      var(--rd-meter-color) calc(var(--rd-meter-fill, 0) * 100%),
+      var(--rd-color-surface-sunken) 0
+    );
+  }
+
+  /* Blink / WebKit は `appearance: none` でもネイティブの内側（緑・黄・赤の棒）を別に描くので消す。
+     ここだけベンダ接頭辞を使う（他のエンジンでは何も起きない。docs/baseline.md の例外） */
+  rd-meter > meter::-webkit-meter-inner-element,
+  rd-meter > progress::-webkit-progress-bar {
+    display: none;
+  }
+
+  /* Gecko の <progress> は ::-moz-progress-bar が値の棒。背景で描くので透かす */
+  rd-meter > progress::-moz-progress-bar {
+    background: transparent;
+  }
+
+  rd-meter > meter:focus-visible,
+  rd-meter > progress:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* 強制配色では自前の塗り（グラデーション）が消えるので、ネイティブ表示に戻す
+     （checkbox の switch と同じ扱い。ADR-0004 §9） */
+  @media (forced-colors: active) {
+    rd-meter > meter,
+    rd-meter > progress {
+      appearance: auto;
+      border-width: var(--rd-border-width-default);
+      border-style: solid;
+      border-color: CanvasText;
+      background-image: none;
+    }
+
+    rd-meter > meter::-webkit-meter-inner-element,
+    rd-meter > progress::-webkit-progress-bar {
+      display: revert;
+    }
+  }
+}

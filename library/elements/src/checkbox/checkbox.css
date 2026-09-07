@@ -45,26 +45,25 @@
     font-weight: var(--rd-font-weight-bold);
   }
 
-  /* switch の見た目。`:state()` は Newly なので @supports の中だけ（docs/baseline.md） */
+  /* switch の見た目（docs/brand.md §7.4）。太いピルのトラックと丸いつまみ。
+     `:state()` は Newly なので @supports の中だけ（docs/baseline.md） */
   @supports selector(:state(switch)) {
     rd-checkbox:state(switch) input {
       position: relative;
       appearance: none;
-      inline-size: var(--rd-space-8);
-      block-size: var(--rd-space-4);
-      border-width: var(--rd-border-width-default);
-      border-style: solid;
-      border-color: var(--rd-color-border-strong);
+      inline-size: var(--rd-space-12);
+      block-size: var(--rd-space-6);
+      border-width: 0;
       border-radius: var(--rd-radius-full);
       background: var(--rd-color-surface-sunken);
     }
 
     rd-checkbox:state(switch) input::before {
       position: absolute;
-      inset-block-start: 0;
-      inset-inline-start: 0;
-      inline-size: var(--rd-space-3);
-      block-size: var(--rd-space-3);
+      inset-block-start: calc((var(--rd-space-6) - var(--rd-space-4)) / 2);
+      inset-inline-start: calc((var(--rd-space-6) - var(--rd-space-4)) / 2);
+      inline-size: var(--rd-space-4);
+      block-size: var(--rd-space-4);
       border-radius: var(--rd-radius-full);
       background: var(--rd-color-border-strong);
       content: '';
@@ -72,19 +71,17 @@
 
     /* 入り切りは位置と色の両方で示す（色だけに頼らない） */
     rd-checkbox:state(switch) input:checked {
-      border-color: var(--rd-color-accent-default);
       background: var(--rd-color-accent-default);
     }
 
     rd-checkbox:state(switch) input:checked::before {
-      inset-inline: auto 0;
+      inset-inline: auto calc((var(--rd-space-6) - var(--rd-space-4)) / 2);
       background: var(--rd-color-text-on-accent);
     }
 
     @media (prefers-reduced-motion: no-preference) {
-      rd-checkbox:state(switch) input::before {
-        transition: inset-inline-start var(--rd-motion-duration-fast)
-          var(--rd-motion-easing-standard);
+      rd-checkbox:state(switch) input {
+        transition: background-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
       }
     }
 

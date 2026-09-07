@@ -27,23 +27,43 @@ bun add @rimltempest/riml-ds-css @rimltempest/riml-ds-tokens
 `layers.css` が入っているので、1 行目の `layers.css` を省いて `index.css` だけにしてもよい
 （トークンより先に読む場合に限る）。
 
-個別に読むなら `layers.css` → `tokens.css` → `reset.css` → `base.css` → `utilities.css` →
-`print.css` → `forced-colors.css` の順。バンドラを持つ利用側はこちらでよい（`index.css` を
+個別に読むなら `layers.css` → `tokens.css` → `reset.css` → `base.css` → `patterns.css` →
+`utilities.css` → `print.css` → `forced-colors.css` の順。バンドラを持つ利用側はこちらでよい（`index.css` を
 結合で作っているのは HTTP リクエスト数のため）。
 
 ## ファイル
 
-| ファイル            | レイヤー       | 中身                                                                              |
-| ------------------- | -------------- | --------------------------------------------------------------------------------- |
-| `layers.css`        | （宣言のみ）   | `@layer rd.reset, rd.tokens, rd.base, rd.components, rd.utilities, rd.overrides;` |
-| `reset.css`         | `rd.reset`     | `box-sizing`、`margin: 0`、メディア要素、フォームの `font: inherit`               |
-| `base.css`          | `rd.base`      | `body`・見出し・行長・リンク・`:focus-visible`・等幅                              |
-| `utilities.css`     | `rd.utilities` | `.rd-visually-hidden`、`.rd-skip-link`、`.rd-stack`、`.rd-cluster`、`[hidden]`    |
-| `print.css`         | `rd.base`      | `@media print`（リンク先の URL、ナビを消す、システム色）                          |
-| `forced-colors.css` | `rd.base`      | `@media (forced-colors: active)`（リンク・フォーカス・ボタンの境界）              |
+| ファイル            | レイヤー        | 中身                                                                              |
+| ------------------- | --------------- | --------------------------------------------------------------------------------- |
+| `layers.css`        | （宣言のみ）    | `@layer rd.reset, rd.tokens, rd.base, rd.components, rd.utilities, rd.overrides;` |
+| `reset.css`         | `rd.reset`      | `box-sizing`、`margin: 0`、メディア要素、フォームの `font: inherit`               |
+| `base.css`          | `rd.base`       | `body`・見出し・行長・`hr`（点線）・リンク・`:focus-visible`・等幅                |
+| `patterns.css`      | `rd.components` | 窓（`.rd-window` / `.rd-window-title` / `.rd-window-body`）                       |
+| `utilities.css`     | `rd.utilities`  | `.rd-visually-hidden`、`.rd-skip-link`、`.rd-stack`、`.rd-cluster`、`[hidden]`    |
+| `print.css`         | `rd.base`       | `@media print`（リンク先の URL、ナビを消す、システム色）                          |
+| `forced-colors.css` | `rd.base`       | `@media (forced-colors: active)`（リンク・フォーカス・ボタンの境界）              |
 
 ダークと高コントラストと密度はここに書かない（トークンが `light-dark()` と
 `prefers-contrast` / `[data-density]` で持つ）。
+
+## 窓（`.rd-window`）
+
+視覚言語「まど」の骨格（[docs/brand.md](../../docs/brand.md) §7.1）。帯・丸 3 つ・硬い影は CSS だけで描く。
+JS が要らないので部品にしない（[ADR-0012](../../docs/adr/0012-progressive-enhancement-tiers.md) §6）。
+
+```html
+<section class="rd-window">
+  <h2 class="rd-window-title"><span>設定</span></h2>
+  <div class="rd-window-body">…</div>
+</section>
+```
+
+帯は**見出し要素そのもの**（文書構造と見た目が一致する）。左端の丸 3 つは `::before` の
+`radial-gradient` なので DOM に無く、読み上げられず、押せない。帯の色は
+`data-tone="accent" | "warning" | "danger"` で変わり、文字色は対応する `on-*` が付く。
+タイトルを 1 行で切りたいときは `<span>` などの要素で包む（素のテキストは匿名グリッド項目になり
+`text-overflow` が効かない）。`forced-colors: active` では帯が `Canvas` / `CanvasText` の
+1px 罫線に置き換わり、丸は消える。
 
 ## ユーティリティ
 

@@ -1,0 +1,100 @@
+@layer rd.components {
+  /* 窓（docs/brand.md §7.1）。JS が要らないので部品にしない（ADR-0012 §6）。
+     <section class="rd-window">
+       <h2 class="rd-window-title">タイトル</h2>
+       <div class="rd-window-body">…</div>
+     </section> */
+  .rd-window {
+    border-radius: var(--rd-radius-lg);
+    background: var(--rd-color-surface-raised);
+    box-shadow: var(--rd-shadow-raised);
+    color: var(--rd-color-text-default);
+  }
+
+  /* 帯 = 見出し要素そのもの。文書構造と見た目が一致する */
+  .rd-window-title {
+    display: grid;
+    grid-template-columns: var(--rd-space-12) 1fr var(--rd-space-12);
+    place-items: center;
+    min-block-size: var(--rd-sizing-target-min);
+    margin: 0;
+    padding-inline: var(--rd-space-3);
+    border-start-start-radius: var(--rd-radius-lg);
+    border-start-end-radius: var(--rd-radius-lg);
+    background: var(--rd-color-chrome-default);
+    color: var(--rd-color-chrome-text);
+    font: var(--rd-type-heading-2);
+  }
+
+  /* 長いタイトルを 1 行で切るには <span> などで包む（素のテキストは匿名グリッド項目になる） */
+  .rd-window-title > * {
+    grid-column: 2;
+    overflow: hidden;
+    max-inline-size: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* 丸 3 つは装飾。DOM に無い・読み上げられない・押せない（brand.md §7.1 / §9） */
+  .rd-window-title::before {
+    grid-column: 1;
+    inline-size: var(--rd-space-12);
+    block-size: var(--rd-space-3);
+    background-image:
+      radial-gradient(
+        circle closest-side at 12.5% 50%,
+        var(--rd-color-brand-signature) 85%,
+        transparent 90%
+      ),
+      radial-gradient(
+        circle closest-side at 50% 50%,
+        var(--rd-color-brand-primary) 85%,
+        transparent 90%
+      ),
+      radial-gradient(
+        circle closest-side at 87.5% 50%,
+        var(--rd-color-border-default) 85%,
+        transparent 90%
+      );
+    content: '';
+  }
+
+  /* 帯の色を変える。文字色は必ず対応する on-* を使う（brand.md §9） */
+  .rd-window-title[data-tone='accent'] {
+    background: var(--rd-color-accent-default);
+    color: var(--rd-color-text-on-accent);
+  }
+
+  .rd-window-title[data-tone='warning'] {
+    background: var(--rd-color-status-warning-default);
+    color: var(--rd-color-text-on-status);
+  }
+
+  .rd-window-title[data-tone='danger'] {
+    background: var(--rd-color-status-danger-default);
+    color: var(--rd-color-text-on-status);
+  }
+
+  .rd-window-body {
+    padding: var(--rd-space-4);
+  }
+
+  /* 強制配色では box-shadow は自動で none になる（CSS Forced Colors）ので消さない */
+  @media (forced-colors: active) {
+    .rd-window {
+      border-width: var(--rd-border-width-default);
+      border-style: solid;
+      border-color: CanvasText;
+    }
+
+    .rd-window-title {
+      border-block-end: var(--rd-border-width-default) solid CanvasText;
+      background: Canvas;
+      color: CanvasText;
+    }
+
+    .rd-window-title::before {
+      display: none;
+    }
+  }
+}

@@ -77,3 +77,17 @@ test('disclosure: JS 無しでも開閉できる（<details> そのもの）', a
   await page.getByText('送料について').click()
   await expect(body).toBeVisible()
 })
+
+test('meter: JS 無しでもネイティブ <meter> が値を表示する', async ({ page }) => {
+  await page.goto('/meter.html')
+  const meter = page.getByRole('meter', { name: 'ディスク使用量' })
+  await expect(meter).toBeVisible()
+  await expect(meter).toHaveAttribute('value', '3.2')
+  // JS が無いので --rd-meter-fill は書かれない。フォールバック（0）で描く
+  await expect(page.locator('rd-meter > meter')).toHaveCSS('border-radius', '9999px')
+})
+
+test('meter: JS 無しでもフォールバック文言が読める', async ({ page }) => {
+  await page.goto('/meter.html')
+  await expect(page.locator('rd-meter > meter')).toContainText('3.2 GB / 10 GB')
+})

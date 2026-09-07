@@ -26,7 +26,8 @@ const SHADOW_OPTIONS = { ...LitElement.shadowRootOptions, delegatesFocus: true, 
  * @slot label - 見出し。省略不可（aria-labelledby で結ばれる）
  * @slot actions - 確定・取消などのボタン
  * @csspart control - 内側の <dialog>
- * @csspart label - 見出しの入れ物
+ * @csspart label - 見出しの入れ物（窓の帯）
+ * @csspart body - 本文とアクションの入れ物
  * @event {CustomEvent<{ reason: 'esc' | 'backdrop' | 'api' }>} rd-dismiss - 閉じたときに発火
  * @state open - 開いている
  * @state malformed - slot="label" の子が無い
@@ -77,8 +78,7 @@ export class RdDialog extends LitElement {
       @close=${this.#onClose}
     >
       <div id="rd-dialog-label" part="label"><slot name="label"></slot></div>
-      <slot></slot>
-      <slot name="actions"></slot>
+      <div part="body"><slot></slot><slot name="actions"></slot></div>
     </dialog>`
   }
 

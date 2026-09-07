@@ -16,6 +16,7 @@
     "./layers.css": "./dist/layers.css",
     "./reset.css": "./dist/reset.css",
     "./base.css": "./dist/base.css",
+    "./patterns.css": "./dist/patterns.css",
     "./utilities.css": "./dist/utilities.css",
     "./print.css": "./dist/print.css",
     "./forced-colors.css": "./dist/forced-colors.css",

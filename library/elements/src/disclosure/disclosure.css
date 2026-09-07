@@ -3,12 +3,13 @@
     display: block;
   }
 
+  /* 線ではなく面で区切る（docs/brand.md §4）。枠は強制配色でだけ戻す */
   rd-disclosure > details {
-    border-width: var(--rd-border-width-default);
+    border-width: 0;
     border-style: solid;
     border-color: var(--rd-color-border-default);
     border-radius: var(--rd-radius-md);
-    background: var(--rd-color-surface-default);
+    background: var(--rd-color-surface-raised);
     color: var(--rd-color-text-default);
   }
 
@@ -21,6 +22,12 @@
     font-weight: var(--rd-font-weight-bold);
     line-height: var(--rd-line-height-body);
     cursor: pointer;
+  }
+
+  @media (hover: hover) {
+    rd-disclosure > details > summary:hover {
+      background: var(--rd-color-surface-hover);
+    }
   }
 
   rd-disclosure > details > summary:focus-visible {
@@ -47,7 +54,14 @@
 
   @media (forced-colors: active) {
     rd-disclosure > details {
+      border-width: var(--rd-border-width-default);
       border-color: CanvasText;
+    }
+
+    @media (hover: hover) {
+      rd-disclosure > details > summary:hover {
+        background: var(--rd-color-surface-hover);
+      }
     }
 
     rd-disclosure > details > summary:focus-visible {

@@ -27,17 +27,18 @@ export const styles: CSSResult = css`
       margin: 0;
       padding-block: var(--rd-space-2);
       padding-inline: var(--rd-space-4);
-      border-width: var(--rd-border-width-default);
+      border-width: 0;
       border-style: solid;
-      border-color: var(--rd-color-border-default);
+      border-color: transparent;
       border-radius: var(--rd-radius-md);
       background: var(--rd-color-surface-raised);
-      box-shadow: var(--rd-shadow-overlay);
+      box-shadow: var(--rd-shadow-raised);
       color: var(--rd-color-text-default);
       font: inherit;
 
-      /* tone は装飾。意味は文言そのものが持つ（色だけで伝えない。accessibility.md 9） */
-      border-inline-start-width: var(--rd-space-1);
+      /* 小さな窓（docs/brand.md §7.7）。tone は左端 0.5rem の帯だけで示し、
+         本文は常にインク on 窓。意味は文言そのものが持つ（accessibility.md 9） */
+      border-inline-start-width: var(--rd-space-2);
       border-inline-start-color: var(--rd-color-status-info-default);
     }
 
@@ -70,15 +71,17 @@ export const styles: CSSResult = css`
       border-width: var(--rd-border-width-default);
       border-style: solid;
       border-color: transparent;
-      border-radius: var(--rd-radius-sm);
+      border-radius: var(--rd-radius-full);
       background: transparent;
       color: var(--rd-color-text-default);
       font: inherit;
       cursor: pointer;
     }
 
-    [part='close']:hover {
-      background: var(--rd-color-surface-sunken);
+    @media (hover: hover) {
+      [part='close']:hover {
+        background: var(--rd-color-surface-hover);
+      }
     }
 
     [part='close']:focus-visible {
@@ -94,6 +97,7 @@ export const styles: CSSResult = css`
 
     @media (forced-colors: active) {
       [part='control'] {
+        border-width: var(--rd-border-width-default);
         border-color: CanvasText;
       }
 

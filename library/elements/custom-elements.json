@@ -431,8 +431,12 @@
               "name": "control"
             },
             {
-              "description": "見出しの入れ物",
+              "description": "見出しの入れ物（窓の帯）",
               "name": "label"
+            },
+            {
+              "description": "本文とアクションの入れ物",
+              "name": "body"
             }
           ],
           "slots": [
@@ -880,6 +884,112 @@
           "declaration": {
             "name": "RdLiveRegion",
             "module": "src/live-region/live-region.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/meter/meter.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-meter",
+          "declaration": {
+            "name": "RdMeter",
+            "module": "/src/meter/meter.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/meter/meter.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "使用量や進捗の割合。ネイティブ `<meter>` / `<progress>` を子として包む（ティア A、ADR-0012）。\nJS が無ければネイティブの見た目のまま値が読める。JS がすることは `value` / `min` / `max` を読んで\n`--rd-meter-fill`（0–1）を書くことだけで、太いピルは CSS がその変数で描く（docs/brand.md §7.5）。",
+          "name": "RdMeter",
+          "cssProperties": [
+            {
+              "description": "塗りの割合（0–1）。部品が書く。読む側は上書きしない",
+              "name": "--rd-meter-fill"
+            },
+            {
+              "description": "塗りの色。既定 var(--rd-color-accent-default)",
+              "name": "--rd-meter-color"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#control",
+              "privacy": "private",
+              "type": {
+                "text": "Element | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#observer",
+              "privacy": "private",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#observe",
+              "privacy": "private",
+              "description": "属性が書き換わったら追随する。`disconnectedCallback` で切る"
+            },
+            {
+              "kind": "field",
+              "name": "#attrs",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#apply",
+              "privacy": "private"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "indeterminate",
+              "description": "<progress> に value が無い（値が決まっていない）"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子（<label for> と <meter> / <progress>）が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "割合の表示。<label for> と <meter> / <progress> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-meter",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdMeter",
+          "declaration": {
+            "name": "RdMeter",
+            "module": "src/meter/meter.element.ts"
           }
         }
       ]

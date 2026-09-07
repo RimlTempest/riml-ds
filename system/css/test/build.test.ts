@@ -8,10 +8,19 @@ import { beforeAll, describe, expect, it } from 'vitest'
 const pkgDir = fileURLToPath(new URL('..', import.meta.url))
 const srcFile = (name: string): string => fileURLToPath(new URL(`../src/${name}`, import.meta.url))
 const distIndex = fileURLToPath(new URL('../dist/index.css', import.meta.url))
+const distFile = (name: string): string =>
+  fileURLToPath(new URL(`../dist/${name}`, import.meta.url))
 const tokensCss = fileURLToPath(new URL('../../tokens/dist/tokens.css', import.meta.url))
 
 const LAYER_ORDER = 'rd.reset, rd.tokens, rd.base, rd.components, rd.utilities, rd.overrides'
-const SOURCES = ['reset.css', 'base.css', 'utilities.css', 'print.css', 'forced-colors.css']
+const SOURCES = [
+  'reset.css',
+  'base.css',
+  'patterns.css',
+  'utilities.css',
+  'print.css',
+  'forced-colors.css',
+]
 const MOTION_PROPS = new Set([
   'transition',
   'transition-property',
@@ -130,5 +139,58 @@ describe('@rimltempest/riml-ds-css の build', () => {
     const props = (hidden?.nodes ?? []).flatMap((node) => (node.type === 'decl' ? [node.prop] : []))
     expect(props).toContain('clip-path')
     expect(props).toContain('position')
+  })
+
+  it('patterns.css の窓は @layer rd.components の中にある（brand.md §7.1）', () => {
+    const root = parse(read(srcFile('patterns.css')))
+    const layers: AtRule[] = []
+    root.walkAtRules('layer', (atRule) => {
+      layers.push(atRule)
+    })
+    expect(layers).toHaveLength(1)
+    expect(layers[0]?.params).toBe('rd.components')
+
+    const selectors: string[] = []
+    layers[0]?.walkRules((rule) => {
+      selectors.push(rule.selector)
+    })
+    expect(selectors.some((selector) => selector.includes('.rd-window-title'))).toBe(true)
+    expect(selectors.some((selector) => selector.includes('.rd-window-body'))).toBe(true)
+    expect(read(distFile('patterns.css'))).toContain('.rd-window')
+  })
+
+  it('帯の丸 3 つは ::before の装飾で、DOM にも読み上げにも出ない（brand.md §7.1）', () => {
+    const root = parse(read(srcFile('patterns.css')))
+    const before: Rule[] = []
+    root.walkRules(/\.rd-window-title::before/, (rule) => {
+      before.push(rule)
+    })
+    expect(before.length).toBeGreaterThanOrEqual(1)
+    const decls = before.flatMap((rule) =>
+      rule.nodes.flatMap((node) => (node.type === 'decl' ? [`${node.prop}:${node.value}`] : [])),
+    )
+    expect(decls.some((decl) => decl.startsWith('content:'))).toBe(true)
+    expect(decls.some((decl) => decl.includes('radial-gradient'))).toBe(true)
+    // 強制配色では丸を消す（brand.md §7.1）
+    expect(decls).toContain('display:none')
+  })
+
+  it('h1 / h2 は display スタックの font-family を参照する（brand.md §6）', () => {
+    const base = read(srcFile('base.css'))
+    expect(base).toMatch(/h1\s*\{[^}]*font-family:\s*var\(--rd-type-heading-1-font-family\)/)
+    expect(base).toMatch(/h2\s*\{[^}]*font-family:\s*var\(--rd-type-heading-2-font-family\)/)
+  })
+
+  it('hr は点線の区切り（brand.md §7.6）', () => {
+    const root = parse(read(srcFile('base.css')))
+    const rules: Rule[] = []
+    root.walkRules(/^hr$/, (rule) => {
+      rules.push(rule)
+    })
+    expect(rules).toHaveLength(1)
+    const decls = (rules[0]?.nodes ?? []).flatMap((node) =>
+      node.type === 'decl' ? [`${node.prop}:${node.value}`] : [],
+    )
+    expect(decls.some((decl) => decl.includes('dotted'))).toBe(true)
   })
 })

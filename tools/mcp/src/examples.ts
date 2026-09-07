@@ -11,6 +11,7 @@ import { markup as buttonMarkup } from '@rimltempest/riml-ds-elements/button/con
 import { markup as dialogMarkup } from '@rimltempest/riml-ds-elements/dialog/contract'
 import { markup as checkboxMarkup } from '@rimltempest/riml-ds-elements/experimental/checkbox/contract'
 import { markup as disclosureMarkup } from '@rimltempest/riml-ds-elements/experimental/disclosure/contract'
+import { markup as meterMarkup } from '@rimltempest/riml-ds-elements/experimental/meter/contract'
 import { markup as selectMarkup } from '@rimltempest/riml-ds-elements/experimental/select/contract'
 import { markup as textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field/contract'
 import type { ElementExampleMap } from './core/elements.js'
@@ -41,6 +42,13 @@ const CHECKBOX = {
   name: 'news',
   defaultValue: 'yes',
 } as const
+const METER = {
+  id: 'disk',
+  label: 'ディスク使用量',
+  value: '3.2',
+  max: '10',
+  text: '3.2 GB / 10 GB',
+} as const
 const DISCLOSURE = {
   label: '送料について',
   children: '<p>5,000 円以上で無料です。</p>',
@@ -59,5 +67,6 @@ export const elementExamples = {
   'rd-select': { html: selectMarkup(SELECT), props: SELECT },
   'rd-checkbox': { html: checkboxMarkup(CHECKBOX), props: CHECKBOX },
   'rd-disclosure': { html: disclosureMarkup(DISCLOSURE), props: DISCLOSURE },
+  'rd-meter': { html: meterMarkup(METER), props: METER },
   'rd-toast': { html: '<rd-toast></rd-toast>', props: TOAST },
 } as const satisfies ElementExampleMap
