@@ -99,6 +99,38 @@ describe('getElement', () => {
     expect(result.value.examples.reactClient).toContain("'use client'")
   })
 
+  it('stable な部品の例は root のサブパスから import する', () => {
+    const result = getElement(manifest, elementExamples, 'rd-button')
+    expect(result.ok).toBe(true)
+    if (!result.ok) {
+      return
+    }
+    const examples = result.value.examples
+    expect(examples.react).toContain(`from '@rimltempest/riml-ds-react'`)
+    expect(examples.reactClient).toContain(`from '@rimltempest/riml-ds-react/client'`)
+    expect(examples.vue).toContain(`from '@rimltempest/riml-ds-vue'`)
+    expect(examples.svelte).toContain(`from '@rimltempest/riml-ds-svelte'`)
+    expect(examples.astro).toContain(`from '@rimltempest/riml-ds-astro/button.astro'`)
+    for (const source of [examples.react, examples.reactClient, examples.vue, examples.svelte]) {
+      expect(source).not.toContain('/experimental')
+    }
+  })
+
+  it('experimental な部品の例は ./experimental サブパスから import する（ADR-0009）', () => {
+    const result = getElement(manifest, elementExamples, 'rd-select')
+    expect(result.ok).toBe(true)
+    if (!result.ok) {
+      return
+    }
+    expect(result.value.status).toBe('experimental')
+    const examples = result.value.examples
+    expect(examples.react).toContain(`from '@rimltempest/riml-ds-react/experimental'`)
+    expect(examples.reactClient).toContain(`from '@rimltempest/riml-ds-react/client/experimental'`)
+    expect(examples.vue).toContain(`from '@rimltempest/riml-ds-vue/experimental'`)
+    expect(examples.svelte).toContain(`from '@rimltempest/riml-ds-svelte/experimental'`)
+    expect(examples.astro).toContain(`from '@rimltempest/riml-ds-astro/experimental/select.astro'`)
+  })
+
   it('知らないタグは unknown-tag で返す', () => {
     expect(getElement(manifest, elementExamples, 'rd-nope')).toEqual({
       ok: false,

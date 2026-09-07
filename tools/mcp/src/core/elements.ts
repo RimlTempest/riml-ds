@@ -123,6 +123,25 @@ const componentName = (tag: string): string =>
 /** `rd-button` → `button`（Astro のファイル名・registry の name） */
 const baseName = (tag: string): string => (tag.startsWith('rd-') ? tag.slice(3) : tag)
 
+/**
+ * `@status experimental` の部品は専用サブパスからしか出ない（ADR-0009）。CEM の `status` は
+ * 外から来る文字列なので、`'experimental'` に一致しなければ stable 扱いにする。
+ * 規則は `tools/cem/src/wrappers/core/common.ts` の `subpathOf` と同じ（依存は作らず写す）。
+ */
+const isExperimental = (status: string): boolean => status === 'experimental'
+
+/** ラッパーパッケージの入口。stable は root、experimental は `/experimental` */
+const wrapperEntry = (framework: string, status: string): string =>
+  `@rimltempest/riml-ds-${framework}${isExperimental(status) ? '/experimental' : ''}`
+
+/** React の `'use client'` 版。stable は `/client`、experimental は `/client/experimental` */
+const reactClientEntry = (status: string): string =>
+  `@rimltempest/riml-ds-react/client${isExperimental(status) ? '/experimental' : ''}`
+
+/** Astro は部品ごとにファイルを配る。`rd-select`（experimental）→ `experimental/select.astro` */
+const astroEntry = (tag: string, status: string): string =>
+  `@rimltempest/riml-ds-astro/${isExperimental(status) ? 'experimental/' : ''}${baseName(tag)}.astro`
+
 /** `rd-press` → `onRdPress` */
 const eventPropName = (eventName: string): string => `on${componentName(eventName)}`
 
@@ -151,10 +170,11 @@ const renderTag = (
 
 const frameworkExamples = (
   tag: string,
-  pe: string,
+  summary: ElementSummary,
   events: readonly ElementMember[],
   example: ElementExample | undefined,
 ): ElementFrameworkExamples => {
+  const { pe, status } = summary
   const component = componentName(tag)
   const props = example?.props ?? {}
   const element = renderTag(component, props, '')
@@ -172,14 +192,14 @@ const frameworkExamples = (
       wrapped === undefined
         ? undefined
         : [
-            `import { ${component} } from '@rimltempest/riml-ds-react'`,
+            `import { ${component} } from '${wrapperEntry('react', status)}'`,
             '',
             '// サーバーコンポーネント（RSC）からそのまま使える。イベントが要るなら client 版へ',
             `export const Example = () => ${wrapped}`,
           ].join('\n'),
     reactClient: [
       "'use client'",
-      `import { ${component} } from '@rimltempest/riml-ds-react/client'`,
+      `import { ${component} } from '${reactClientEntry(status)}'`,
       '',
       `export const Example = () => ${clientElement}`,
     ].join('\n'),
@@ -188,7 +208,7 @@ const frameworkExamples = (
         ? undefined
         : [
             '<script setup lang="ts">',
-            `import { ${component} } from '@rimltempest/riml-ds-vue'`,
+            `import { ${component} } from '${wrapperEntry('vue', status)}'`,
             '</script>',
             '',
             '<template>',
@@ -200,7 +220,7 @@ const frameworkExamples = (
         ? undefined
         : [
             '<script>',
-            `  import { ${component} } from '@rimltempest/riml-ds-svelte'`,
+            `  import { ${component} } from '${wrapperEntry('svelte', status)}'`,
             '</script>',
             '',
             wrapped,
@@ -208,13 +228,9 @@ const frameworkExamples = (
     astro:
       wrapped === undefined
         ? undefined
-        : [
-            '---',
-            `import ${component} from '@rimltempest/riml-ds-astro/${baseName(tag)}.astro'`,
-            '---',
-            '',
-            wrapped,
-          ].join('\n'),
+        : ['---', `import ${component} from '${astroEntry(tag, status)}'`, '---', '', wrapped].join(
+            '\n',
+          ),
   }
 }
 
@@ -243,6 +259,6 @@ export const getElement = (
     cssProperties: membersOf(declared['cssProperties']),
     cssStates: membersOf(declared['cssStates']),
     dependsOn: dependsOnOf(declared['dependsOn']),
-    examples: frameworkExamples(tag, summary.pe, events, examples[tag]),
+    examples: frameworkExamples(tag, summary, events, examples[tag]),
   })
 }
