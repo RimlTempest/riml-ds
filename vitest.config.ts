@@ -3,7 +3,7 @@ import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
 import { playwright } from '@vitest/browser-playwright'
 import { defineConfig } from 'vitest/config'
 
-// docs/testing.md: ルート 1 つで projects を分ける（node / browser / storybook）。
+// docs/testing.md: ルート 1 つで projects を分ける（node / browser / react / storybook）。
 // storybook project の root は `apps/storybook` になるので、パスは絶対で渡す。
 const storybookDir = fileURLToPath(new URL('apps/storybook/.storybook/', import.meta.url))
 export default defineConfig({
@@ -45,6 +45,15 @@ export default defineConfig({
             provider: playwright(),
             instances: [{ browser: 'chromium' }],
           },
+        },
+      },
+      {
+        test: {
+          // React ラッパーは jsdom で回す。Lit の define も jsdom で動く
+          name: 'react',
+          environment: 'jsdom',
+          include: ['library/react/test/**/*.test.tsx'],
+          exclude: ['**/node_modules/**', '**/dist/**'],
         },
       },
       {

@@ -4,6 +4,21 @@
   "modules": [
     {
       "kind": "javascript-module",
+      "path": "src/button/button.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-button",
+          "declaration": {
+            "name": "RdButton",
+            "module": "/src/button/button.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/button/button.element.ts",
       "declarations": [
         {
@@ -144,85 +159,15 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/live-region/live-region.element.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "ページで唯一のライブリージョン。他の部品は `aria-live` を持たず、ここへ `announce()` する（ADR-0008 §6）。\nJS が無いときは何も起きない（害が無い。ティア C、ADR-0012）。",
-          "name": "RdLiveRegion",
-          "cssParts": [
-            {
-              "description": "割り込まない読み上げのノード",
-              "name": "polite"
-            },
-            {
-              "description": "割り込む読み上げのノード。エラーだけに使う",
-              "name": "assertive"
-            }
-          ],
-          "members": [
-            {
-              "kind": "field",
-              "name": "#queue",
-              "privacy": "private",
-              "type": {
-                "text": "AnnouncementQueue"
-              },
-              "default": "emptyQueue"
-            },
-            {
-              "kind": "method",
-              "name": "announce",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "message",
-                  "type": {
-                    "text": "string"
-                  }
-                },
-                {
-                  "name": "options",
-                  "default": "{}",
-                  "type": {
-                    "text": "AnnounceOptions"
-                  }
-                }
-              ],
-              "description": "空（空白だけ）の文言は無視する。`assertive` はエラーだけに使う"
-            }
-          ],
-          "events": [
-            {
-              "name": "rd-announce",
-              "type": {
-                "text": "CustomEvent<{ message: string; politeness: 'polite' | 'assertive' }>"
-              },
-              "description": "読み上げを積んだときに発火"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "summary": "読み上げの集約点。ページに 1 つだけ置く",
-          "status": "stable",
-          "pe": "C",
-          "tagName": "rd-live-region",
-          "customElement": true
-        }
-      ],
+      "path": "src/dialog/dialog.define.ts",
+      "declarations": [],
       "exports": [
         {
-          "kind": "js",
-          "name": "RdLiveRegion",
+          "kind": "custom-element-definition",
+          "name": "rd-dialog",
           "declaration": {
-            "name": "RdLiveRegion",
-            "module": "src/live-region/live-region.element.ts"
+            "name": "RdDialog",
+            "module": "/src/dialog/dialog.element.js"
           }
         }
       ]
@@ -439,6 +384,121 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/live-region/live-region.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-live-region",
+          "declaration": {
+            "name": "RdLiveRegion",
+            "module": "/src/live-region/live-region.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/live-region/live-region.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "ページで唯一のライブリージョン。他の部品は `aria-live` を持たず、ここへ `announce()` する（ADR-0008 §6）。\nJS が無いときは何も起きない（害が無い。ティア C、ADR-0012）。",
+          "name": "RdLiveRegion",
+          "cssParts": [
+            {
+              "description": "割り込まない読み上げのノード",
+              "name": "polite"
+            },
+            {
+              "description": "割り込む読み上げのノード。エラーだけに使う",
+              "name": "assertive"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "#queue",
+              "privacy": "private",
+              "type": {
+                "text": "AnnouncementQueue"
+              },
+              "default": "emptyQueue"
+            },
+            {
+              "kind": "method",
+              "name": "announce",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "message",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "options",
+                  "default": "{}",
+                  "type": {
+                    "text": "AnnounceOptions"
+                  }
+                }
+              ],
+              "description": "空（空白だけ）の文言は無視する。`assertive` はエラーだけに使う"
+            }
+          ],
+          "events": [
+            {
+              "name": "rd-announce",
+              "type": {
+                "text": "CustomEvent<{ message: string; politeness: 'polite' | 'assertive' }>"
+              },
+              "description": "読み上げを積んだときに発火"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "読み上げの集約点。ページに 1 つだけ置く",
+          "status": "stable",
+          "pe": "C",
+          "tagName": "rd-live-region",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdLiveRegion",
+          "declaration": {
+            "name": "RdLiveRegion",
+            "module": "src/live-region/live-region.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/text-field/text-field.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-text-field",
+          "declaration": {
+            "name": "RdTextField",
+            "module": "/src/text-field/text-field.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/text-field/text-field.element.ts",
       "declarations": [
         {
@@ -631,66 +691,6 @@
           "declaration": {
             "name": "RdTextField",
             "module": "src/text-field/text-field.element.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/button/button.define.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "custom-element-definition",
-          "name": "rd-button",
-          "declaration": {
-            "name": "RdButton",
-            "module": "/src/button/button.element.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/live-region/live-region.define.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "custom-element-definition",
-          "name": "rd-live-region",
-          "declaration": {
-            "name": "RdLiveRegion",
-            "module": "/src/live-region/live-region.element.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/text-field/text-field.define.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "custom-element-definition",
-          "name": "rd-text-field",
-          "declaration": {
-            "name": "RdTextField",
-            "module": "/src/text-field/text-field.element.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/dialog/dialog.define.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "custom-element-definition",
-          "name": "rd-dialog",
-          "declaration": {
-            "name": "RdDialog",
-            "module": "/src/dialog/dialog.element.js"
           }
         }
       ]

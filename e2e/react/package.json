@@ -1,0 +1,23 @@
+{
+  "name": "e2e-react",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build && vite build --ssr src/entry-server.tsx --outDir ssr/dist && bun run prerender.ts"
+  },
+  "dependencies": {
+    "@rimltempest/riml-ds-css": "workspace:*",
+    "@rimltempest/riml-ds-elements": "workspace:*",
+    "@rimltempest/riml-ds-react": "workspace:*",
+    "@rimltempest/riml-ds-tokens": "workspace:*",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "@vitejs/plugin-react": "6.1.1",
+    "vite": "8.2.2"
+  }
+}

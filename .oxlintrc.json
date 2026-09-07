@@ -96,6 +96,12 @@
       "rules": { "import/no-default-export": "off" }
     },
     {
+      // フレームワーク別 e2e アプリ（plan 006）。CSS と custom element の `define` は
+      // 副作用 import でしか読めない。
+      "files": ["e2e/**"],
+      "rules": { "import/no-unassigned-import": "off" }
+    },
+    {
       "files": ["scripts/**/*.ts", "tools/*/src/cli.ts"],
       "rules": { "eslint/no-console": "off" }
     }

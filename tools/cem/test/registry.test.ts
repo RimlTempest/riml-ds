@@ -30,6 +30,15 @@ const manifest = (tagName: string, extra: Readonly<Record<string, unknown>>): Pa
   ],
 })
 
+const multiModuleManifest = (tagNames: readonly string[]): Package => ({
+  schemaVersion: '1.0.0',
+  modules: tagNames.map((tagName) => ({
+    kind: 'javascript-module',
+    path: `src/${componentDir(tagName)}/${componentDir(tagName)}.element.js`,
+    declarations: [declaration(tagName, { pe: 'C', status: 'stable', summary: '' })],
+  })),
+})
+
 describe('buildRegistry', () => {
   it('ティア A は index / define / css の 3 ファイルを持つ', () => {
     const registry = buildRegistry(
@@ -62,5 +71,10 @@ describe('buildRegistry', () => {
       'live-region/live-region.define.js',
     ])
     expect(registry[0]?.dependsOn).toEqual(['rd-button'])
+  })
+
+  it('modules の並び順に関わらず name で並ぶ（analyzer の走査順は不定）', () => {
+    const registry = buildRegistry(multiModuleManifest(['rd-zeta', 'rd-alpha', 'rd-mid']))
+    expect(registry.map((entry) => entry.name)).toEqual(['alpha', 'mid', 'zeta'])
   })
 })

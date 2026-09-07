@@ -49,25 +49,31 @@ const filesFor = (name: string, pe: PeTier): readonly string[] => {
   return pe === 'C' ? base : [...base, `${name}/${name}.css`]
 }
 
+const byName = (a: RegistryEntry, b: RegistryEntry): number =>
+  a.name < b.name ? -1 : a.name > b.name ? 1 : 0
+
+/** `manifest.modules` の並び順（analyzer のファイル走査順で不定）に依存しないよう、最後に name で揃える */
 export const buildRegistry = (manifest: Package): Registry =>
-  manifest.modules.flatMap((module) =>
-    (module.declarations ?? []).flatMap((declaration): readonly RegistryEntry[] => {
-      const tag = readString(declaration, 'tagName')
-      const pe = prop(declaration, 'pe')
-      if (prop(declaration, 'customElement') !== true || tag === '' || !isPeTier(pe)) {
-        return []
-      }
-      const name = componentName(tag)
-      return [
-        {
-          name,
-          tag,
-          pe,
-          status: readString(declaration, 'status'),
-          summary: readString(declaration, 'summary'),
-          files: filesFor(name, pe),
-          dependsOn: readStrings(declaration, 'dependsOn'),
-        },
-      ]
-    }),
-  )
+  manifest.modules
+    .flatMap((module) =>
+      (module.declarations ?? []).flatMap((declaration): readonly RegistryEntry[] => {
+        const tag = readString(declaration, 'tagName')
+        const pe = prop(declaration, 'pe')
+        if (prop(declaration, 'customElement') !== true || tag === '' || !isPeTier(pe)) {
+          return []
+        }
+        const name = componentName(tag)
+        return [
+          {
+            name,
+            tag,
+            pe,
+            status: readString(declaration, 'status'),
+            summary: readString(declaration, 'summary'),
+            files: filesFor(name, pe),
+            dependsOn: readStrings(declaration, 'dependsOn'),
+          },
+        ]
+      }),
+    )
+    .toSorted(byName)

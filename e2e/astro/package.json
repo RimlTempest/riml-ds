@@ -1,0 +1,16 @@
+{
+  "name": "e2e-astro",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build"
+  },
+  "dependencies": {
+    "@rimltempest/riml-ds-astro": "workspace:*",
+    "@rimltempest/riml-ds-css": "workspace:*",
+    "@rimltempest/riml-ds-elements": "workspace:*",
+    "@rimltempest/riml-ds-tokens": "workspace:*",
+    "astro": "7.3.1"
+  }
+}
