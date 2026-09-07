@@ -25,13 +25,10 @@
         "oxlint": "1.81.0",
         "oxlint-tsgolint": "7.0.2001",
         "playwright": "1.63.0",
-        "postcss-lit": "1.4.1",
         "publint": "0.3.24",
         "sherif": "1.13.0",
         "size-limit": "13.0.3",
         "stylelint": "17.15.0",
-        "stylelint-config-standard": "40.0.0",
-        "stylelint-declaration-strict-value": "1.12.1",
         "typescript": "7.0.2",
         "vitest": "4.1.11",
       },
@@ -230,6 +227,11 @@
     "tools/lint": {
       "name": "@rimltempest/riml-ds-lint",
       "version": "0.1.0",
+      "dependencies": {
+        "postcss-lit": "1.4.1",
+        "stylelint-config-standard": "40.0.0",
+        "stylelint-declaration-strict-value": "1.12.1",
+      },
       "peerDependencies": {
         "oxlint": ">=1.80",
         "stylelint": ">=17",
