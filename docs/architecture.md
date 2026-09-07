@@ -123,6 +123,10 @@ library/elements/src/<name>/<name>.element.ts   Lit の class（薄い殻。ADR-
 - ESM のみ。バンドルしない・minify しない（Lit の公開ガイド）。`exports` は部品ごと。
 - `sideEffects` は `*/define.js` と `*.css` だけ true。ティア A/B は `<name>/style.css` も配る。
 - `package.json` の `customElements` フィールドが `custom-elements.json` を指す。
+  `library/elements/custom-elements.json` と `tools/cem/registry.json` は **コミットする**
+  （ラッパー生成・MCP・skills の入力を git 上で diff できるようにするため）。
+  `bun run gen` は決定的（モジュール順を安定ソート）で、実行後に `git status` が汚れたら
+  ソースと生成物がずれている印。`library/*/src/generated/` は生成物なのでコミットしない。
 - changesets でバージョンと CHANGELOG。npm は Trusted Publishing（OIDC）で publish し、
   provenance は自動付与（[ADR-0009](adr/0009-publishing-and-versioning.md)）。
 - Storybook の静的出力は GitHub Pages（[ADR-0011](adr/0011-free-tier-operations.md)）。
