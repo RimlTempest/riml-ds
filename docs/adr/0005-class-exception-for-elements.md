@@ -28,6 +28,24 @@ Custom Elements は `HTMLElement` を継承する **class でしか定義でき�
 4. デコレータは **TC39 標準デコレータ（`accessor` 付き）**を使う。TypeScript の
    `experimentalDecorators` は有効にしない。TS 7 で標準デコレータの出力に問題が出た場合は
    `static properties` に落とす（plan 004 の spike で決める。決定はここに追記する）。
+
+   **追記（2026-09-07、plan 004 の spike）：`static properties` に落とした。** `tsc`（TS 7.0.2）は標準デコレータを
+   正しく emit する（`tslib` の `__esDecorate` / `__runInitializers`）が、Vitest browser が使う Vite 8 / rolldown（oxc）は
+   デコレータと `accessor` を変換せずに素通しし、Chromium が `SyntaxError` になる。`rolldown/experimental` の
+   `transform` を各オプションで叩いても変換されなかった。`experimentalDecorators` には逃げていない。
+   書き方は次で固定する（exemplar: `library/elements/src/button/button.element.ts`）：
+
+   ```ts
+   static override properties: PropertyDeclarations = { variant: {}, loading: { type: Boolean, reflect: true } }
+   declare variant: ButtonVariant
+   declare loading: boolean
+   constructor() { super(); this.variant = 'primary'; this.loading = false }
+   ```
+
+   `declare` が要るのは `useDefineForClassFields` がクラスフィールドを `[[Define]]` で定義し、Lit の accessor を
+   上書きしてしまうため。初期値は constructor で代入する。サイズ（lit 込み・brotli）は `static properties` 5.35 kB /
+   標準デコレータ 6.25 kB。`importHelpers: true` + `tslib` は据え置き（helper が出ないので 0 バイト）。
+   rolldown / oxc が標準デコレータを変換できるようになったら、この項を新しい ADR で置き換える。
 5. `*.element.ts` 以外で `class` が必要になったら、まず「関数 + クロージャ」で書けないか、
    次に「標準 API が class を要求しているか」を問う。必要なら **ADR を起こして**パスを足す。
 
