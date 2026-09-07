@@ -39,6 +39,17 @@ describe('vueFiles', () => {
     expect(source).toContain("slots['default']?.()")
   })
 
+  it('experimental の部品は root の index に出ず、./experimental の index に出る', () => {
+    // ADR-0009: プラグインが登録するのは stable だけ。experimental は利用側が個別に登録する
+    const index = find('index.ts')
+    expect(index).not.toContain('RdSelect')
+    expect(index).toContain('export const rdComponents = { RdButton, RdDialog, RdTextField }')
+    const experimental = find('experimental.ts')
+    expect(experimental).toContain("import { RdSelect } from './select.js'")
+    expect(experimental).toContain('export const rdExperimentalComponents = { RdSelect }')
+    expect(experimental).not.toContain('RdButton')
+  })
+
   it('型は GlobalComponents と IntrinsicElementAttributes を広げ、ティア C は部品にならない', () => {
     expect(files.some((file) => file.path === 'live-region.ts')).toBe(false)
     const source = find('elements.ts')

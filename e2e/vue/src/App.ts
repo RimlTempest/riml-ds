@@ -1,4 +1,6 @@
-import { RdButton, RdCheckbox, RdDialog, RdSelect, RdTextField } from '@rimltempest/riml-ds-vue'
+import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-vue'
+// experimental は専用サブパスからしか出ない（ADR-0009）
+import { RdCheckbox, RdSelect } from '@rimltempest/riml-ds-vue/experimental'
 import { defineComponent, h } from 'vue'
 
 /** 4 フレームワークで同じ選択肢を出す */

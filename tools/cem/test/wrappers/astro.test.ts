@@ -44,11 +44,17 @@ const { variant, loading, type, label, class: className } = Astro.props
     expect(source).toContain('value={defaultValue}')
   })
 
+  it('experimental の部品は experimental/ の下に出る', () => {
+    expect(files.some((file) => file.path === 'select.astro')).toBe(false)
+    expect(find('experimental/select.astro')).toContain('<rd-select')
+  })
+
   it('ティア C は .astro を持たない（JS 無しで意味が無い）', () => {
     expect(files.some((file) => file.path === 'live-region.astro')).toBe(false)
     expect(files.map((file) => file.path)).toEqual([
       'button.astro',
       'dialog.astro',
+      'experimental/select.astro',
       'text-field.astro',
     ])
   })

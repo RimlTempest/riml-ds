@@ -1,11 +1,7 @@
 <script>
-  import {
-    RdButton,
-    RdCheckbox,
-    RdDialog,
-    RdSelect,
-    RdTextField,
-  } from '@rimltempest/riml-ds-svelte'
+  import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-svelte'
+  // experimental は専用サブパスからしか出ない（ADR-0009）
+  import { RdCheckbox, RdSelect } from '@rimltempest/riml-ds-svelte/experimental'
 </script>
 
 <main>

@@ -1,4 +1,6 @@
-import { RdButton, RdCheckbox, RdDialog, RdSelect, RdTextField } from '@rimltempest/riml-ds-react'
+import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-react'
+// experimental は専用サブパスからしか出ない（ADR-0009）
+import { RdCheckbox, RdSelect } from '@rimltempest/riml-ds-react/experimental'
 import type { ReactNode } from 'react'
 
 /** 4 フレームワークで同じ選択肢を出す */

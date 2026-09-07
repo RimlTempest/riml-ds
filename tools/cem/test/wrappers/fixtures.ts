@@ -1,4 +1,4 @@
-/** 4 部品の CEM 断片と契約。生成器のテストが共有する（実物の写し） */
+/** 5 部品の CEM 断片と契約。生成器のテストが共有する（実物の写し）。`rd-select` だけ `@status experimental` */
 import type { Package } from 'custom-elements-manifest/schema'
 import type { Contract } from '../../src/wrappers/core/common.js'
 
@@ -72,6 +72,20 @@ export const manifest: Package = {
     },
     {
       kind: 'javascript-module',
+      path: 'src/select/select.element.js',
+      declarations: [
+        declaration('rd-select', {
+          pe: 'A',
+          status: 'experimental',
+          attributes: [
+            { name: 'hint', type: { text: 'string' } },
+            { name: 'error', type: { text: 'string' } },
+          ],
+        }),
+      ],
+    },
+    {
+      kind: 'javascript-module',
       path: 'src/live-region/live-region.element.js',
       declarations: [
         declaration('rd-live-region', {
@@ -121,6 +135,23 @@ export const contracts: Readonly<Record<string, Contract>> = {
             autocomplete: '$autocomplete',
             value: '$defaultValue',
           },
+        },
+      ],
+    },
+  },
+  select: {
+    pe: 'A',
+    roles: { label: ':scope > label', control: ':scope > select' },
+    required: ['label', 'control'],
+    tree: {
+      tag: 'rd-select',
+      attrs: { hint: '$hint', error: '$error', value: '$defaultValue' },
+      children: [
+        { tag: 'label', attrs: { for: '$id' }, children: [{ prop: 'label' }] },
+        {
+          tag: 'select',
+          attrs: { id: '$id', name: '$name', required: '$required' },
+          children: [{ raw: '$children' }],
         },
       ],
     },

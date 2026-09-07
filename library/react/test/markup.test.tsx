@@ -2,6 +2,7 @@ import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
 import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+import * as experimental from '../src/experimental.js'
 import * as index from '../src/index.js'
 import { RdButton, RdTextField } from '../src/index.js'
 import { normalize } from './normalize.js'
@@ -37,13 +38,11 @@ describe('既定 export の部品', () => {
 
   it('ティア C（rd-live-region）は既定 export に無い', () => {
     // JS 無しで意味が無いのでマークアップ部品を生成しない（/client にだけ出る）
-    expect(Object.keys(index)).toEqual([
-      'RdButton',
-      'RdCheckbox',
-      'RdDialog',
-      'RdDisclosure',
-      'RdSelect',
-      'RdTextField',
-    ])
+    expect(Object.keys(index)).toEqual(['RdButton', 'RdDialog', 'RdTextField'])
+  })
+
+  it('experimental の部品は root から出ず、./experimental から出る（ADR-0009）', () => {
+    expect(Object.keys(index)).not.toContain('RdSelect')
+    expect(Object.keys(experimental)).toEqual(['RdCheckbox', 'RdDisclosure', 'RdSelect'])
   })
 })

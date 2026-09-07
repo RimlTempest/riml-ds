@@ -183,7 +183,11 @@ const elementsFile = (specs: readonly WrapperSpec[]): GeneratedFile => {
           `import type { ${spec.namedTypes.join(', ')} } from '@rimltempest/riml-ds-elements/${spec.subpath}'`,
         ],
   )
-  const withMarkup = specs.filter((spec) => spec.contract !== undefined)
+  // GlobalComponents はプラグインが `app.component()` する部品だけ（experimental は登録しない）。
+  // `<rd-*>` を直接書くときの IntrinsicElementAttributes は全部品を持つ（型は害が無い）
+  const registered = specs.filter(
+    (spec) => spec.contract !== undefined && spec.status !== 'experimental',
+  )
   return {
     path: 'elements.ts',
     content: `${[
@@ -192,7 +196,7 @@ const elementsFile = (specs: readonly WrapperSpec[]): GeneratedFile => {
       '',
       `declare module 'vue' {`,
       '  interface GlobalComponents {',
-      ...withMarkup.map(
+      ...registered.map(
         (spec) => `    ${spec.pascal}: typeof import('./${spec.name}.js')['${spec.pascal}']`,
       ),
       '  }',
@@ -213,24 +217,50 @@ const elementsFile = (specs: readonly WrapperSpec[]): GeneratedFile => {
   }
 }
 
+type IndexOptions = {
+  readonly path: string
+  readonly bag: string
+  readonly comment: string
+}
+
+const indexFile = (options: IndexOptions, specs: readonly WrapperSpec[]): GeneratedFile => ({
+  path: options.path,
+  content: `${[
+    HEADER,
+    `import './elements.js'`,
+    ...specs.map((spec) => `import { ${spec.pascal} } from './${spec.name}.js'`),
+    '',
+    ...specs.map((spec) => `export type { ${spec.pascal}Props } from './${spec.name}.js'`),
+    `export { ${specs.map((spec) => spec.pascal).join(', ')} }`,
+    '',
+    options.comment,
+    `export const ${options.bag} = { ${specs.map((spec) => spec.pascal).join(', ')} }`,
+  ].join('\n')}\n`,
+})
+
 export const vueFiles = (specs: readonly WrapperSpec[]): readonly GeneratedFile[] => {
   const withMarkup = specs.filter((spec) => spec.contract !== undefined)
+  const experimental = withMarkup.filter((spec) => spec.status === 'experimental')
+  const stable = withMarkup.filter((spec) => spec.status !== 'experimental')
   return [
     ...withMarkup.map(componentFile),
     elementsFile(specs),
-    {
-      path: 'index.ts',
-      content: `${[
-        HEADER,
-        `import './elements.js'`,
-        ...withMarkup.map((spec) => `import { ${spec.pascal} } from './${spec.name}.js'`),
-        '',
-        ...withMarkup.map((spec) => `export type { ${spec.pascal}Props } from './${spec.name}.js'`),
-        `export { ${withMarkup.map((spec) => spec.pascal).join(', ')} }`,
-        '',
-        '/** プラグインが `app.component()` で登録する全部品 */',
-        `export const rdComponents = { ${withMarkup.map((spec) => spec.pascal).join(', ')} }`,
-      ].join('\n')}\n`,
-    },
+    indexFile(
+      {
+        path: 'index.ts',
+        bag: 'rdComponents',
+        comment: '/** プラグインが `app.component()` で登録する stable な部品 */',
+      },
+      stable,
+    ),
+    indexFile(
+      {
+        path: 'experimental.ts',
+        bag: 'rdExperimentalComponents',
+        comment:
+          '/** semver の対象外（ADR-0009）。プラグインは登録しないので、利用側が `app.component()` する */',
+      },
+      experimental,
+    ),
   ]
 }

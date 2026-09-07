@@ -473,36 +473,55 @@ const jsxFile = (specs: readonly WrapperSpec[]): GeneratedFile => {
   }
 }
 
+/** マークアップ部品の index。`experimental` は `./experimental` からしか出さない（ADR-0009） */
+const indexFile = (path: string, specs: readonly WrapperSpec[]): GeneratedFile => ({
+  path,
+  content: `${[
+    HEADER,
+    `import './jsx.js'`,
+    '',
+    ...specs.flatMap((spec) => [
+      `export { ${spec.pascal} } from './${spec.name}.js'`,
+      `export type { ${spec.pascal}Props } from './${spec.name}.js'`,
+    ]),
+  ].join('\n')}\n`,
+})
+
+/** client 版の index。`client/experimental.ts` は client/ の中なので相対パスが 1 段浅い */
+const clientIndexFile = (path: string, specs: readonly WrapperSpec[]): GeneratedFile => {
+  const dir = path.startsWith('client/') ? '.' : './client'
+  return {
+    path,
+    content: `${[
+      `'use client'`,
+      HEADER,
+      '',
+      ...specs.flatMap((spec) => [
+        `export { ${spec.pascal} } from '${dir}/${spec.name}.js'`,
+        `export type { ${spec.pascal}ClientProps } from '${dir}/${spec.name}.js'`,
+      ]),
+    ].join('\n')}\n`,
+  }
+}
+
 export const reactFiles = (specs: readonly WrapperSpec[]): readonly GeneratedFile[] => {
   const withMarkup = specs.filter((spec) => spec.contract !== undefined)
+  const stable = specs.filter((spec) => spec.status !== 'experimental')
+  const experimental = specs.filter((spec) => spec.status === 'experimental')
   return [
     ...withMarkup.map(markupFile),
     { path: 'client/internal.ts', content: INTERNAL },
     ...specs.map(clientFile),
     jsxFile(specs),
-    {
-      path: 'index.ts',
-      content: `${[
-        HEADER,
-        `import './jsx.js'`,
-        '',
-        ...withMarkup.flatMap((spec) => [
-          `export { ${spec.pascal} } from './${spec.name}.js'`,
-          `export type { ${spec.pascal}Props } from './${spec.name}.js'`,
-        ]),
-      ].join('\n')}\n`,
-    },
-    {
-      path: 'client.ts',
-      content: `${[
-        `'use client'`,
-        HEADER,
-        '',
-        ...specs.flatMap((spec) => [
-          `export { ${spec.pascal} } from './client/${spec.name}.js'`,
-          `export type { ${spec.pascal}ClientProps } from './client/${spec.name}.js'`,
-        ]),
-      ].join('\n')}\n`,
-    },
+    indexFile(
+      'index.ts',
+      stable.filter((spec) => spec.contract !== undefined),
+    ),
+    indexFile(
+      'experimental.ts',
+      experimental.filter((spec) => spec.contract !== undefined),
+    ),
+    clientIndexFile('client.ts', stable),
+    clientIndexFile('client/experimental.ts', experimental),
   ]
 }

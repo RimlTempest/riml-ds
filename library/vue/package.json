@@ -14,6 +14,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./experimental": {
+      "types": "./dist/generated/experimental.d.ts",
+      "default": "./dist/generated/experimental.js"
+    },
     "./types": {
       "types": "./dist/generated/elements.d.ts",
       "default": "./dist/generated/elements.js"

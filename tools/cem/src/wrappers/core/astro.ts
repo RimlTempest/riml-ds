@@ -33,7 +33,8 @@ const componentFile = (spec: WrapperSpec): GeneratedFile => {
   ]
   const names = [...visible.map((markupProp) => markupProp.name), 'class: className']
   return {
-    path: `${spec.name}.astro`,
+    // ADR-0009: experimental は `@rimltempest/riml-ds-astro/experimental/<name>.astro` から配る
+    path: `${spec.status === 'experimental' ? 'experimental/' : ''}${spec.name}.astro`,
     content: `${[
       '---',
       HEADER,
