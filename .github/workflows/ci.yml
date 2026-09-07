@@ -294,6 +294,9 @@ jobs:
       - uses: jdx/mise-action@v3
         with: { cache: true }
       - run: bun install --frozen-lockfile
+      # mcp のテストは system/tokens/dist と library/elements/dist（contract サブパス）を読む。
+      # build は gen も含むので、続く `bun run gen` + `git diff --exit-code` は鮮度の検査として残す
+      - run: bun run build
       # 生成物（custom-elements.json / registry.json）が最新か（docs/agent-integration.md §CI）
       - run: bun run gen
       - run: git diff --exit-code
