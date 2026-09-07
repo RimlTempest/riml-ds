@@ -4,7 +4,7 @@
 （executor は会話の文脈を持たない前提）。テンプレートは qrcc の
 `.claude/skills/improve/references/plan-template.md`。
 
-**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
+**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
 `system/guidelines/**`, `.claude/skills/riml-ds-*`）が仕様の正で、計画はそれを手順に落としたもの。
 矛盾を見つけたら計画側を直すのではなく STOP して advisor に返す。
 
@@ -33,6 +33,9 @@
 - 009 は 005 と 006 の後（wave 2 の 4 部品。以降は 009a, 009b … と足す）
 - 011 は 009 と 010 の後（009 が生んだラッパー生成器の欠陥の追随。experimental を `./experimental` に隔離）
 
+- 014 → 015 → 016 は直列（ブランドの色 → 部品の形 → ショーケース）。014 のあと qrcc2 側の取り込み（`file:` tarball → npm）は
+  npm 初回 publish（ユーザー作業）を待つ
+
 レーンとの対応は `docs/parallel-lanes.md` / `scripts/lanes.tsv`。
 
 ## 状態
@@ -52,6 +55,9 @@
 | 011 | [ラッパー生成器の追随（experimental 分離・select v-model・契約サブパス）](011-wrappers-experimental-and-contract-subpath.md) | P2 | M | 009, 010 | DONE（マージ `#plan-011`。`WrapperSpec` に `status`/`subpath`、experimental は react `./experimental` + `./client/experimental`・vue `./experimental`（`rdExperimentalComponents`、プラグインと `GlobalComponents` は stable のみ）・svelte `./experimental`・astro `./experimental/<name>.astro`。Vue `onInput` が select/textarea でも emit。elements に `./<name>/contract`（6 部品）、mcp は contract から例を作り `lit` 非依存（`LitElement` 0 件、bundle 44 kB）、experimental の例は `./experimental` から import。テスト 474→486、e2e 21→22。逸脱: Vue e2e は `vue.spec.ts` に置いた、`bun.lock` は変更不要（frozen で no changes）。follow-up: `LitElement` 0 件を release-check に入れるか） |
 | 012 | [小さな追随（mcp の lit 混入ゲート・underline-offset トークン・印刷の改ページ）](012-small-follow-ups.md) | P3 | S | 011 | DONE |
 | 013 | [テーマ × スキームの解決と themes/qrcc に qrcc の実色を入れる](013-theme-scheme-and-qrcc-palette.md) | P1 | M | 012 | DONE |
+| 014 | [既定ブランドを riml の色にし「まど」の形・影・文字をトークンへ](014-riml-brand-tokens.md) | P1 | M | 013 | TODO |
+| 015 | [「まど」を部品に当てる（.rd-window・ピルのボタン・rd-meter）](015-mado-components.md) | P1 | L | 014 | TODO |
+| 016 | [Storybook のブランド切替と Foundations Brand / Mado](016-brand-showcase.md) | P2 | S | 015 | TODO |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
