@@ -1,0 +1,20 @@
+@layer rd.base {
+  /* 強制配色ではシステム色で描き直す（ADR-0004 §9）。
+     img { forced-color-adjust: none } は写真以外に副作用があるので書かない */
+  @media (forced-colors: active) {
+    a {
+      color: LinkText;
+    }
+
+    :focus-visible {
+      outline-color: Highlight;
+    }
+
+    button,
+    [role='button'] {
+      border-width: var(--rd-border-width-default);
+      border-style: solid;
+      border-color: ButtonText;
+    }
+  }
+}

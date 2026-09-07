@@ -1,0 +1,19 @@
+@layer rd.base {
+  @media print {
+    /* リンク先が紙に残らないので URL を書き出す（system/guidelines/motion-and-responsive.md §印刷） */
+    a[href^='http']::after {
+      content: ' (' attr(href) ')';
+    }
+
+    nav,
+    [data-rd-print='hide'] {
+      display: none;
+    }
+
+    /* 紙はシステム色。背景色を刷らない */
+    body {
+      background: Canvas;
+      color: CanvasText;
+    }
+  }
+}
