@@ -72,6 +72,11 @@ describe('トークンの不変条件', () => {
     expect(others.every((size) => size >= 1)).toBe(true)
   })
 
+  it('surface.hover と status.danger.hover がある（qrcc / noter 移行の前提）', () => {
+    expect(byId.has('color.surface.hover')).toBe(true)
+    expect(byId.has('color.status.danger.hover')).toBe(true)
+  })
+
   it('dist/tokens.json のトークン数は src の葉の数と一致する（取りこぼしが無い）', () => {
     const declared = SRC_FILES.flatMap((file) =>
       flatten(JSON.parse(readSrc(file))).map((leaf) => leaf.id),

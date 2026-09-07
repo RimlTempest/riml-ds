@@ -10,6 +10,9 @@
       },
       "sunken": {
         "$value": "{color.palette.neutral.900}"
+      },
+      "hover": {
+        "$value": "{color.palette.neutral.800}"
       }
     },
     "overlay": {
@@ -63,6 +66,9 @@
       "danger": {
         "default": {
           "$value": "{color.palette.danger.400}"
+        },
+        "hover": {
+          "$value": "{color.palette.danger.300}"
         },
         "text": {
           "$value": "{color.palette.danger.400}"

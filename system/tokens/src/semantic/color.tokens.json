@@ -13,6 +13,10 @@
       "sunken": {
         "$value": "{color.palette.neutral.200}",
         "$description": "窪んだ面（入力欄の背景・コード領域）の背景"
+      },
+      "hover": {
+        "$value": "{color.palette.neutral.200}",
+        "$description": "ポインタを載せた行やカードの背景。sunken と同じ素材だが役割が違う"
       }
     },
     "overlay": {
@@ -60,6 +64,7 @@
           "riml-ds": {
             "contrastAgainst": [
               "color.status.danger.default",
+              "color.status.danger.hover",
               "color.status.warning.default",
               "color.status.success.default",
               "color.status.info.default"
@@ -126,6 +131,10 @@
         "default": {
           "$value": "{color.palette.danger.600}",
           "$description": "危険を表す面の色"
+        },
+        "hover": {
+          "$value": "{color.palette.danger.700}",
+          "$description": "破壊的操作のボタンの hover / pressed の面"
         },
         "text": {
           "$value": "{color.palette.danger.600}",
