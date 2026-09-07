@@ -11,7 +11,9 @@
   "type": "module",
   "sideEffects": [
     "./dist/**/*.define.js",
-    "./dist/**/*.css"
+    "./dist/**/*.css",
+    "./src/**/*.define.ts",
+    "./src/**/*.css"
   ],
   "exports": {
     "./button": {
