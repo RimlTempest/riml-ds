@@ -49,6 +49,21 @@ import '@rimltempest/riml-ds-elements/dialog/define'
 - `id` を渡さなければ `name` を使う。同名フィールドが 2 つ以上あるページでは `id` を明示する。
 - 非文字列のプロパティは `.prop` 修飾子（`:items.prop="list"`）。
 
+## `/experimental` — `@status experimental` の部品
+
+プラグイン（`rdDesignSystem`）が `app.component()` するのは stable な部品だけ。
+`rd-select` / `rd-checkbox` / `rd-disclosure` は `@rimltempest/riml-ds-vue/experimental` の
+`rdExperimentalComponents` を利用側が明示的に登録する（semver の対象外。ADR-0009）。
+
+```ts
+import { rdExperimentalComponents } from '@rimltempest/riml-ds-vue/experimental'
+for (const [name, component] of Object.entries(rdExperimentalComponents))
+  app.component(name, component)
+```
+
+`GlobalComponents` の型も登録される部品だけ。`<rd-*>` を直接書くための `IntrinsicElementAttributes` は全部品を持つ。
+`v-model` は `<input>` / `<select>` / `<textarea>` を包む部品で効く。
+
 ## 型
 
 `@rimltempest/riml-ds-vue` を import すると `GlobalComponents`（`<RdButton>` の補完）と

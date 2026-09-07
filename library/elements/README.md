@@ -34,6 +34,19 @@ riml-ds の Web Components（Lit 3）。部品の実装はここだけに書く�
 | `rd-disclosure` | A      | 子の `<details>` / `<summary>` を包む        | `open`, `rd-toggle`, `:state(open)`                          |
 | `rd-toast`      | C      | 一時的な通知。読み上げは `rd-live-region` へ | `show({ message, tone, duration })`, `close()`, `rd-dismiss` |
 
+### `./<name>/contract` — マークアップ契約だけ
+
+`markup()` と契約（必要な子・既定の木）だけを出すサブパス。Lit の class を読まないので **`lit` を
+引き込まない**。SSR・ドキュメント・コード生成（`@rimltempest/riml-ds-mcp` が使う）向け。
+
+```ts
+import { markup } from '@rimltempest/riml-ds-elements/button/contract'
+import { markup as selectMarkup } from '@rimltempest/riml-ds-elements/experimental/select/contract'
+```
+
+ティア A/B の 6 部品（button / text-field / dialog / select / checkbox / disclosure）にある。
+ティア C（live-region / toast）は契約を持たないので無い。
+
 ## 使い方
 
 ```html

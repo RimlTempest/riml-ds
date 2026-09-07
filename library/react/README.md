@@ -60,6 +60,18 @@ const [email, setEmail] = useState('')
 - `ref` はホスト要素（`<rd-text-field>`）。ティア A はネイティブ要素が子なので
   `ref.current.querySelector('input')` が届く。
 
+## `/experimental` — `@status experimental` の部品
+
+`rd-select` / `rd-checkbox` / `rd-disclosure` は root からは出ない（semver の対象外。ADR-0009）。
+
+| 入口                                             | 中身                                      |
+| ------------------------------------------------ | ----------------------------------------- |
+| `@rimltempest/riml-ds-react/experimental`        | RSC 向け（`'use client'` 無し）           |
+| `@rimltempest/riml-ds-react/client/experimental` | `'use client'` 付き。イベント・controlled |
+
+stable に上がった部品は root に移り、`/experimental` のパスは 1 メジャー残る。
+`<rd-*>` を直接書くための `@rimltempest/riml-ds-react/jsx` の型は全部品を持つ。
+
 ## `<rd-*>` を JSX に直接書く
 
 部品（`RdButton` など）を使うだけなら要らない。生の要素を書くときだけ:

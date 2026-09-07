@@ -51,6 +51,17 @@ import RdTextField from '@rimltempest/riml-ds-astro/text-field.astro'
 - `<slot>` が使える。`RdButton` は子を渡せば `label` の代わりになる。
 - `id` を渡さなければ `name` を使う。同名フィールドが 2 つ以上あるページでは `id` を明示する。
 
+### `@status experimental` の部品
+
+`rd-select` / `rd-checkbox` / `rd-disclosure` は `@rimltempest/riml-ds-astro/experimental/<name>.astro` から
+（semver の対象外。ADR-0009）。stable に上がると `./<name>.astro` に移る。
+
+```astro
+---
+import RdSelect from '@rimltempest/riml-ds-astro/experimental/select.astro'
+---
+```
+
 ## 保守
 
 部品を足す = `contract.ts` を書く。`bun run gen` で `.astro` が増える。

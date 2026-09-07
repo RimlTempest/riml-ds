@@ -36,6 +36,7 @@ bunx @rimltempest/riml-ds-mcp design-md --out DESIGN.md      # テーマ無し
 
 - `tokens.json` … `@rimltempest/riml-ds-tokens` から読む
 - `custom-elements.json` … `@rimltempest/riml-ds-elements` から読む
+- 使用例のマークアップ … `@rimltempest/riml-ds-elements/<name>/contract` から生成してバンドルに取り込む（`lit` は実行時依存に無い）
 - `system/guidelines/*.md` と `DESIGN.md` … このパッケージの `dist/data/` に同梱
 
 **実行時にネットワークへ出ない。** 同梱データは publish 時点のスナップショットなので、

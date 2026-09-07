@@ -38,6 +38,11 @@ import '@rimltempest/riml-ds-elements/dialog/define'
 <rd-button onrd-press={save}><button type="button">保存</button></rd-button>
 ```
 
+## `/experimental` — `@status experimental` の部品
+
+`rd-select` / `rd-checkbox` / `rd-disclosure` の `.svelte` は `@rimltempest/riml-ds-svelte/experimental` から
+（semver の対象外。ADR-0009）。`svelteHTML` の型は全部品を持つ。
+
 ## 型を入れる
 
 `svelteHTML.IntrinsicElements` の拡張はグローバル宣言なので、アプリの `tsconfig.json`（または
