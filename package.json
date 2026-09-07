@@ -16,7 +16,7 @@
     "typecheck": "tsc --build",
     "build": "bun run --filter './system/*' build",
     "design-md": "bun run --filter @rimltempest/riml-ds-design-md generate",
-    "gen": "bun run --filter @rimltempest/riml-ds-elements gen && bun run tools/cem/src/registry.ts",
+    "gen": "bun run --filter @rimltempest/riml-ds-elements gen && bun run tools/cem/src/registry.ts && bunx oxfmt tools/cem/registry.json",
     "lint:tokens": "bun run --filter @rimltempest/riml-ds-tokens check",
     "lint": "oxlint --type-aware --ignore-pattern 'tools/lint/test/fixtures/**'",
     "lint:fix": "oxlint --type-aware --fix --ignore-pattern 'tools/lint/test/fixtures/**'",

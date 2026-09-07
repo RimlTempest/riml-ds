@@ -15,3 +15,19 @@ export const syncStates = (internals: ElementInternals, next: ReadonlySet<string
     internals.states.add(state)
   }
 }
+
+/** `value` が `undefined` なら属性を消し、そうでなければその値にする */
+export const syncAttribute = (
+  element: Element | undefined,
+  name: string,
+  value: string | undefined,
+): void => {
+  if (element === undefined) {
+    return
+  }
+  if (value === undefined) {
+    element.removeAttribute(name)
+  } else {
+    element.setAttribute(name, value)
+  }
+}

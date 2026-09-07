@@ -21,6 +21,8 @@ export default defineConfig({
         },
       },
       {
+        // 依存の事前バンドルが実行中に走るとテストが再読み込みされるので、先に固定する
+        optimizeDeps: { include: ['lit', '@guidepup/virtual-screen-reader'] },
         test: {
           name: 'browser',
           include: ['library/elements/src/**/*.test.ts', 'library/elements/test/**/*.test.ts'],

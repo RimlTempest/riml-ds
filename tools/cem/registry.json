@@ -1,0 +1,11 @@
+[
+  {
+    "name": "button",
+    "tag": "rd-button",
+    "pe": "A",
+    "status": "stable",
+    "summary": "操作の起点。primary は画面に 1 つ",
+    "files": ["button/index.js", "button/button.define.js", "button/button.css"],
+    "dependsOn": []
+  }
+]

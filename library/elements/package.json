@@ -14,6 +14,15 @@
     "./dist/**/*.css"
   ],
   "exports": {
+    "./button": {
+      "types": "./dist/button/index.d.ts",
+      "default": "./dist/button/index.js"
+    },
+    "./button/define": {
+      "types": "./dist/button/button.define.d.ts",
+      "default": "./dist/button/button.define.js"
+    },
+    "./button/style.css": "./dist/button/button.css",
     "./styles.css": "./dist/styles.css",
     "./custom-elements.json": "./custom-elements.json",
     "./package.json": "./package.json"

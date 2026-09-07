@@ -20,3 +20,10 @@ riml-ds の Web Components（Lit 3）。部品の実装はここだけに書く�
   bundle 後は同値だった。`importHelpers: true` は据え置き（今は helper が 1 つも出ないので 0 バイト）。
 - light DOM 描画（`createRenderRoot() { return this }`）は**既存の子を消さない**。`render()` が返す強化ノードは
   子の**末尾**に足される（spike で `<rd-probe><span>keep</span></rd-probe>` → `span`, `p` の順を確認）。
+
+## `disabled` の運用
+
+- 部品は `disabled` 属性を**持たない**。押せなくするならネイティブの `<button disabled>` を子に書く。
+- ただし ADR-0008 は「フォーカスを消さない」を求める。押せないことを伝えつつフォーカスを残すなら、
+  利用側が子に `aria-disabled="true"` を書き、`click` を無視する（部品は関与しない）。
+- 「処理中で押せない」は `disabled` ではなく `rd-button` の `loading`。押下は無視され `aria-busy` が付く。
