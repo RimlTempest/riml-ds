@@ -20,5 +20,14 @@
       "text-field/text-field.css"
     ],
     "dependsOn": []
+  },
+  {
+    "name": "dialog",
+    "tag": "rd-dialog",
+    "pe": "B",
+    "status": "stable",
+    "summary": "モーダル。見出しは slot=\"label\" に必ず置く",
+    "files": ["dialog/index.js", "dialog/dialog.define.js", "dialog/dialog.css"],
+    "dependsOn": []
   }
 ]

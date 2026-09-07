@@ -32,6 +32,15 @@
       "default": "./dist/text-field/text-field.define.js"
     },
     "./text-field/style.css": "./dist/text-field/text-field.css",
+    "./dialog": {
+      "types": "./dist/dialog/index.d.ts",
+      "default": "./dist/dialog/index.js"
+    },
+    "./dialog/define": {
+      "types": "./dist/dialog/dialog.define.d.ts",
+      "default": "./dist/dialog/dialog.define.js"
+    },
+    "./dialog/style.css": "./dist/dialog/dialog.css",
     "./styles.css": "./dist/styles.css",
     "./custom-elements.json": "./custom-elements.json",
     "./package.json": "./package.json"

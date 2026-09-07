@@ -1,0 +1,23 @@
+@layer rd.components {
+  /* 定義前（JS が無い / 遅い）の見え方だけ。内容は inline のセクションとして読める（ADR-0012 ティア B） */
+  rd-dialog:not(:defined) {
+    display: block;
+    padding: var(--rd-space-4);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-radius: var(--rd-radius-lg);
+    background: var(--rd-color-surface-raised);
+    color: var(--rd-color-text-default);
+  }
+
+  rd-dialog:not(:defined) > [slot='label'] {
+    margin-block: 0 var(--rd-space-4);
+    font: var(--rd-type-heading-2);
+  }
+
+  rd-dialog:not(:defined) > [slot='actions'] {
+    display: block;
+    margin-block-start: var(--rd-space-4);
+  }
+}

@@ -13,6 +13,12 @@ export type MarkupNode =
   | { readonly text: string }
   /** props[prop] をテキストとして差し込む */
   | { readonly prop: string }
+  /**
+   * **エスケープせずに**差し込む生 HTML。`'$name'` なら props[name] を生のまま入れる。
+   * ティア B の `children`（利用側が組み立てた信頼済みの HTML 断片）専用。
+   * 利用者入力をここに通さないこと（XSS になる）。テキストは `{ text }` / `{ prop }` を使う。
+   */
+  | { readonly raw: string }
 
 export type MarkupTree = MarkupNode
 
@@ -78,6 +84,11 @@ export const renderMarkup = (tree: MarkupTree, props: MarkupProps): string => {
   }
   if ('prop' in tree) {
     return renderText(props[tree.prop])
+  }
+  if ('raw' in tree) {
+    const value = resolve(tree.raw, props)
+    // エスケープしない。信頼済みの HTML 断片だけを渡す契約（型の JSDoc を参照）
+    return typeof value === 'string' ? value : ''
   }
   const open = `<${tree.tag}${renderAttrs(tree.attrs, tree.slot, props)}>`
   if (VOID_TAGS.has(tree.tag)) {

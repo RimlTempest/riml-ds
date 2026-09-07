@@ -148,7 +148,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "1 行テキスト入力。子の `<label for>` と `<input>` / `<textarea>` を包む（ティア A、ADR-0012）。\n送信・検証・ラベル関連付けはブラウザが素で行う。JS が無いときはネイティブの吹き出しが出る（退行しない）。",
+          "description": "1 行テキスト入力。子の `<label for>` と `<input>` / `<textarea>` を包む（ティア A、ADR-0012）。\n送信・検証・ラベル付けはブラウザが素で行い、JS が無ければネイティブの吹き出しが出る（退行しない）。",
           "name": "RdTextField",
           "cssProperties": [
             {
@@ -342,6 +342,216 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/dialog/dialog.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "モーダルダイアログ。ネイティブ `<dialog>` を枠にし、内容はすべて slot（ティア B、ADR-0012）。\nJS が無いときは `:not(:defined)` の CSS が受け、内容が inline のセクションとして読める。",
+          "name": "RdDialog",
+          "cssParts": [
+            {
+              "description": "内側の <dialog>",
+              "name": "control"
+            },
+            {
+              "description": "見出しの入れ物",
+              "name": "label"
+            }
+          ],
+          "slots": [
+            {
+              "description": "本文",
+              "name": ""
+            },
+            {
+              "description": "見出し。省略不可（aria-labelledby で結ばれる）",
+              "name": "label"
+            },
+            {
+              "description": "確定・取消などのボタン",
+              "name": "actions"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true, serializable: true, }"
+            },
+            {
+              "kind": "field",
+              "name": "open",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "open",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "dismissible",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true",
+              "attribute": "dismissible",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#opener",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLElement | null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "#reason",
+              "privacy": "private",
+              "type": {
+                "text": "DismissReason"
+              },
+              "default": "'api'"
+            },
+            {
+              "kind": "method",
+              "name": "show",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "description": "開く。閉じたときにフォーカスを戻す先として、いま focus のある要素を覚える"
+            },
+            {
+              "kind": "method",
+              "name": "close",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "reason",
+                  "default": "'api'",
+                  "type": {
+                    "text": "DismissReason"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "#dialog",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#applyOpen",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#onCancel",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#onClick",
+              "privacy": "private",
+              "description": "`<dialog>` 自身が click の対象なら背面（backdrop）を押している"
+            },
+            {
+              "kind": "field",
+              "name": "#onClose",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ reason: 'esc' | 'backdrop' | 'api' }>"
+              },
+              "description": "閉じたときに発火",
+              "name": "rd-dismiss"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "open"
+            },
+            {
+              "name": "dismissible",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true",
+              "fieldName": "dismissible"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "open",
+              "description": "開いている"
+            },
+            {
+              "name": "malformed",
+              "description": "slot=\"label\" の子が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "モーダル。見出しは slot=\"label\" に必ず置く",
+          "status": "stable",
+          "pe": "B",
+          "tagName": "rd-dialog",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdDialog",
+          "declaration": {
+            "name": "RdDialog",
+            "module": "src/dialog/dialog.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/button/button.define.ts",
       "declarations": [],
       "exports": [
@@ -351,6 +561,21 @@
           "declaration": {
             "name": "RdButton",
             "module": "/src/button/button.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/dialog/dialog.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-dialog",
+          "declaration": {
+            "name": "RdDialog",
+            "module": "/src/dialog/dialog.element.js"
           }
         }
       ]

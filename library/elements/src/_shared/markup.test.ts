@@ -40,6 +40,14 @@ describe('renderMarkup', () => {
     ).toBe('<rd-button><button>&lt;b&gt;保存&lt;/b&gt;</button></rd-button>')
   })
 
+  it('{ raw } はエスケープせずそのまま差し込む（$prop も可）', () => {
+    expect(
+      renderMarkup({ tag: 'div', children: [{ raw: '$children' }] }, { children: '<p>本文</p>' }),
+    ).toBe('<div><p>本文</p></div>')
+    expect(renderMarkup({ tag: 'div', children: [{ raw: '<hr>' }] }, {})).toBe('<div><hr></div>')
+    expect(renderMarkup({ tag: 'div', children: [{ raw: '$children' }] }, {})).toBe('<div></div>')
+  })
+
   it('slot は slot 属性として出す', () => {
     expect(renderMarkup({ tag: 'h2', slot: 'label', children: [{ text: '削除の確認' }] }, {})).toBe(
       '<h2 slot="label">削除の確認</h2>',

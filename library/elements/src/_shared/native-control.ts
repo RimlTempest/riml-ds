@@ -44,3 +44,7 @@ export const readAttrs = (
   names: readonly string[],
 ): Readonly<Record<string, string | undefined>> =>
   Object.fromEntries(names.map((name) => [name, element?.getAttribute(name) ?? undefined]))
+
+/** `focus()` を持つ要素にだけ絞る（`document.activeElement` は `Element | null`） */
+export const asFocusable = (node: Node | null): HTMLElement | null =>
+  node instanceof HTMLElement ? node : null
