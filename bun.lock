@@ -19,6 +19,16 @@
         "vitest": "4.1.11",
       },
     },
+    "system/css": {
+      "name": "@rimltempest/riml-ds-css",
+      "version": "0.0.0",
+      "devDependencies": {
+        "postcss": "8.5.28",
+      },
+      "peerDependencies": {
+        "@rimltempest/riml-ds-tokens": "workspace:*",
+      },
+    },
     "system/tokens": {
       "name": "@rimltempest/riml-ds-tokens",
       "version": "0.0.0",
@@ -197,6 +207,8 @@
     "@oxlint/binding-win32-ia32-msvc": ["@oxlint/binding-win32-ia32-msvc@1.81.0", "", { "os": "win32", "cpu": "ia32" }, "sha512-ksqPP5jbFXcYreEQ7zdJh06rJQBymCTyGRCdaXjfcf2aG4f8KxUWY5wcgYHmaTK+FJ4bPG5sUAdOX+6trnH1JA=="],
 
     "@oxlint/binding-win32-x64-msvc": ["@oxlint/binding-win32-x64-msvc@1.81.0", "", { "os": "win32", "cpu": "x64" }, "sha512-IZuUCwGw9emG5JtCp+fYGB+Z4OWEoeEcM8R5BA1pYw63/ieYFVdcU2ylxTpHbVHSenZnsYE+ZZ20uHAJszQ4cA=="],
+
+    "@rimltempest/riml-ds-css": ["@rimltempest/riml-ds-css@workspace:system/css"],
 
     "@rimltempest/riml-ds-design-md": ["@rimltempest/riml-ds-design-md@workspace:tools/design-md"],
 

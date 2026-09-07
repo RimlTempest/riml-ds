@@ -1,0 +1,69 @@
+@layer rd.base {
+  /* color-scheme はここに書かない（tokens.css が :root に置く。二重定義しない） */
+  body {
+    min-block-size: 100dvh;
+    background: var(--rd-color-surface-default);
+    color: var(--rd-color-text-default);
+    font-family: var(--rd-type-body-font-family);
+    font-size: var(--rd-type-body-font-size);
+    line-height: var(--rd-type-body-line-height);
+  }
+
+  h1 {
+    font-size: var(--rd-type-heading-1-font-size);
+    font-weight: var(--rd-type-heading-1-font-weight);
+    line-height: var(--rd-type-heading-1-line-height);
+  }
+
+  h2 {
+    font-size: var(--rd-type-heading-2-font-size);
+    font-weight: var(--rd-type-heading-2-font-weight);
+    line-height: var(--rd-type-heading-2-line-height);
+  }
+
+  /* h3 以降は本文サイズの太字（見出しの階層は文書構造で表す） */
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: var(--rd-type-body-font-size);
+    font-weight: var(--rd-font-weight-bold);
+    line-height: var(--rd-type-body-line-height);
+  }
+
+  /* 行長 80ch（WCAG 1.4.8、system/guidelines/accessibility.md） */
+  p,
+  li {
+    max-inline-size: var(--rd-sizing-measure-max);
+  }
+
+  a {
+    color: var(--rd-color-accent-text);
+    text-decoration: underline;
+  }
+
+  /* フォーカスリング 3px / offset 2px / 背景に 3:1（WCAG 2.4.13） */
+  :focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: var(--rd-type-mono-font-family);
+    font-size: var(--rd-type-mono-font-size);
+  }
+
+  /* モーションは opt-in（WCAG 2.3.3、ADR-0004 §8） */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}

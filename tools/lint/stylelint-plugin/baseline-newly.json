@@ -1,0 +1,23 @@
+{
+  "$comment": "出典 docs/baseline.md の Newly 行。四半期ごとに見直し、Newly → Widely に上がったら docs/baseline.md と同時にここからも消す（riml-ds-architecture skill の Baseline review）。Wait / バッジ無しの機能は「使わない」ので載せない。",
+  "properties": [
+    "field-sizing",
+    "text-box-trim",
+    "text-box-edge",
+    "anchor-name",
+    "position-anchor",
+    "position-area",
+    "position-try",
+    "position-try-fallbacks",
+    "position-try-order",
+    "position-visibility"
+  ],
+  "declarations": [
+    { "property": "text-wrap", "value": "balance" },
+    { "property": "text-wrap", "value": "pretty" },
+    { "property": "scrollbar-gutter", "value": "stable" },
+    { "property": "content-visibility", "value": "auto" },
+    { "property": "transition-behavior", "value": "allow-discrete" }
+  ],
+  "selectors": [":state("]
+}

@@ -1,0 +1,51 @@
+@layer rd.utilities {
+  /* 目には見えないが読み上げには残す。clip は非推奨なので clip-path。
+     0.0625rem は 1px 相当（stylelint の unit-disallowed-list が px を罫線系にしか許さない） */
+  .rd-visually-hidden:not(:focus, :active) {
+    position: absolute;
+    overflow: hidden;
+    inline-size: 0.0625rem;
+    block-size: 0.0625rem;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* スキップリンクは部品にしない（ADR-0012 §6）。JS 無しで動くのは <a href="#main"> そのものだから。
+     利用側は <a class="rd-skip-link" href="#main">本文へ</a> を <body> 直下に置く */
+  .rd-skip-link {
+    position: absolute;
+    z-index: var(--rd-layer-toast);
+    inset-block-start: var(--rd-space-2);
+    inset-inline-start: var(--rd-space-2);
+    padding: var(--rd-space-2) var(--rd-space-3);
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-surface-default);
+    color: var(--rd-color-text-default);
+  }
+
+  /* フォーカスされるまでは隠す（.rd-visually-hidden と同じ 5 宣言） */
+  .rd-skip-link:not(:focus, :focus-within) {
+    position: absolute;
+    overflow: hidden;
+    inline-size: 0.0625rem;
+    block-size: 0.0625rem;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .rd-stack > * + * {
+    margin-block-start: var(--rd-space-4);
+  }
+
+  .rd-cluster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rd-space-2);
+  }
+
+  /* [hidden] は強制指定（important）を使わず、レイヤー順で勝たせる。
+     hidden="until-found" は検索で開くので display: none にしない */
+  [hidden]:not([hidden='until-found']) {
+    display: none;
+  }
+}
