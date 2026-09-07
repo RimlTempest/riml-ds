@@ -27,10 +27,18 @@ describe('vueFiles', () => {
     const source = find('text-field.ts')
     expect(source).toContain('readonly modelValue?: string')
     expect(source).toContain(`emits: ['update:modelValue']`)
-    expect(source).toContain(`emit('update:modelValue', event.target.value)`)
+    expect(source).toContain(`emit('update:modelValue', target.value)`)
     expect(source).toContain('value: props.modelValue ?? props.defaultValue')
     // <label for> と <input id> は id が無ければ name を使う
     expect(source).toContain('const controlId = props.id ?? props.name')
+  })
+
+  it('<select> / <textarea> でも v-model が効く（HTMLInputElement だけを見ない）', () => {
+    const source = find('select.ts')
+    expect(source).toContain('HTMLInputElement')
+    expect(source).toContain('HTMLSelectElement')
+    expect(source).toContain('HTMLTextAreaElement')
+    expect(source).toContain(`emit('update:modelValue', target.value)`)
   })
 
   it('ティア B の raw は既定 slot になる', () => {

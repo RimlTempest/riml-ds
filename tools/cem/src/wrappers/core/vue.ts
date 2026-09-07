@@ -132,8 +132,14 @@ const componentFile = (spec: WrapperSpec): GeneratedFile => {
     ? [
         `  (props: ${spec.pascal}Props${param}) => {`,
         '    const onInput = (event: Event): void => {',
-        `      if (event.target instanceof HTMLInputElement) {`,
-        `        emit('update:modelValue', event.target.value)`,
+        '      const target = event.target',
+        // 共通の親（HTMLElement）には `value` が無いので、操作要素を 1 つずつ絞る
+        '      if (',
+        '        target instanceof HTMLInputElement',
+        '        || target instanceof HTMLSelectElement',
+        '        || target instanceof HTMLTextAreaElement',
+        '      ) {',
+        `        emit('update:modelValue', target.value)`,
         '      }',
         '    }',
         '    return () => {',
