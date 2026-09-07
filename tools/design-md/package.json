@@ -1,0 +1,15 @@
+{
+  "name": "@rimltempest/riml-ds-design-md",
+  "version": "0.0.0",
+  "private": true,
+  "description": "system/tokens/dist/tokens.json から DESIGN.md のフロントマターを生成する",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "generate": "bun run src/cli.ts",
+    "test": "vitest run --project node --dir tools/design-md"
+  },
+  "devDependencies": {
+    "yaml": "2.9.0"
+  }
+}

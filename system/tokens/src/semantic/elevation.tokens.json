@@ -1,0 +1,57 @@
+{
+  "shadow": {
+    "$type": "shadow",
+    "raised": {
+      "$value": {
+        "color": {
+          "colorSpace": "oklch",
+          "components": [0.16, 0.01, 200],
+          "alpha": 0.12
+        },
+        "offsetX": {
+          "value": 0,
+          "unit": "rem"
+        },
+        "offsetY": {
+          "value": 0.125,
+          "unit": "rem"
+        },
+        "blur": {
+          "value": 0.5,
+          "unit": "rem"
+        },
+        "spread": {
+          "value": 0,
+          "unit": "rem"
+        }
+      },
+      "$description": "浮いた面（カード・ドロップダウン）の影"
+    },
+    "overlay": {
+      "$value": {
+        "color": {
+          "colorSpace": "oklch",
+          "components": [0.16, 0.01, 200],
+          "alpha": 0.24
+        },
+        "offsetX": {
+          "value": 0,
+          "unit": "rem"
+        },
+        "offsetY": {
+          "value": 0.5,
+          "unit": "rem"
+        },
+        "blur": {
+          "value": 1.5,
+          "unit": "rem"
+        },
+        "spread": {
+          "value": 0,
+          "unit": "rem"
+        }
+      },
+      "$description": "覆いの上に出る面（モーダル）の影"
+    }
+  }
+}

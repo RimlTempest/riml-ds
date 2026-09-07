@@ -1,0 +1,42 @@
+{
+  "name": "@rimltempest/riml-ds-tokens",
+  "version": "0.0.0",
+  "description": "riml-ds のデザイントークン（DTCG 2025.10）。tokens.css / tokens.js / tokens.json",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/tokens.d.ts",
+      "default": "./dist/tokens.js"
+    },
+    "./tokens.css": "./dist/tokens.css",
+    "./themes/*.css": "./dist/themes/*.css",
+    "./tokens.json": "./dist/tokens.json",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "check": "terrazzo check",
+    "build": "terrazzo build && bun run scripts/postbuild.ts",
+    "test": "vitest run --project node --dir system/tokens"
+  },
+  "devDependencies": {
+    "@terrazzo/cli": "2.7.1",
+    "@terrazzo/parser": "2.7.1",
+    "@terrazzo/plugin-css": "2.7.1",
+    "@terrazzo/plugin-js": "2.7.1",
+    "@types/culori": "4.0.1",
+    "culori": "4.0.2"
+  }
+}

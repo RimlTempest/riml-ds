@@ -1,0 +1,90 @@
+{
+  "dimension": {
+    "$type": "dimension",
+    "1": {
+      "$value": {
+        "value": 0.25,
+        "unit": "rem"
+      },
+      "$description": "最小の間隔（4px）。アイコンと文字の隙間"
+    },
+    "2": {
+      "$value": {
+        "value": 0.5,
+        "unit": "rem"
+      },
+      "$description": "小さい間隔（8px）。密な行間・部品内の余白"
+    },
+    "3": {
+      "$value": {
+        "value": 0.75,
+        "unit": "rem"
+      },
+      "$description": "やや小さい間隔（12px）。入力欄の内側余白"
+    },
+    "4": {
+      "$value": {
+        "value": 1.0,
+        "unit": "rem"
+      },
+      "$description": "標準の間隔（16px）。部品どうしの既定の隙間"
+    },
+    "6": {
+      "$value": {
+        "value": 1.5,
+        "unit": "rem"
+      },
+      "$description": "大きい間隔（24px）。段落と見出しの間"
+    },
+    "8": {
+      "$value": {
+        "value": 2.0,
+        "unit": "rem"
+      },
+      "$description": "節の間隔（32px）。セクション内の区切り"
+    },
+    "12": {
+      "$value": {
+        "value": 3.0,
+        "unit": "rem"
+      },
+      "$description": "節どうしの間隔（48px）"
+    },
+    "16": {
+      "$value": {
+        "value": 4.0,
+        "unit": "rem"
+      },
+      "$description": "ページ単位の間隔（64px）。最大の余白"
+    }
+  },
+  "border": {
+    "$type": "dimension",
+    "width": {
+      "default": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$description": "既定の罫線の太さ。面と面の境界に使う"
+      }
+    }
+  },
+  "sizing": {
+    "$type": "dimension",
+    "target-min": {
+      "$value": {
+        "value": 2.75,
+        "unit": "rem"
+      },
+      "$description": "対話部品の最小の当たり判定（44px、WCAG 2.5.5）。密度を下げても縮めない"
+    },
+    "measure-max": {
+      "$value": {
+        "value": 80,
+        "unit": "ch"
+      },
+      "$description": "本文の最大行長（80 文字、WCAG 1.4.8）"
+    }
+  }
+}

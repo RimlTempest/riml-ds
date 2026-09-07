@@ -1,0 +1,119 @@
+{
+  "name": "riml-ds",
+  "version": "2025.10",
+  "description": "riml-ds のトークン解決順。base → semantic → theme → scheme → contrast → density",
+  "sets": {
+    "base": {
+      "sources": [
+        {
+          "$ref": "./base/color.tokens.json"
+        },
+        {
+          "$ref": "./base/dimension.tokens.json"
+        },
+        {
+          "$ref": "./base/typography.tokens.json"
+        },
+        {
+          "$ref": "./base/motion.tokens.json"
+        },
+        {
+          "$ref": "./base/layer.tokens.json"
+        }
+      ]
+    },
+    "semantic": {
+      "sources": [
+        {
+          "$ref": "./semantic/color.tokens.json"
+        },
+        {
+          "$ref": "./semantic/space.tokens.json"
+        },
+        {
+          "$ref": "./semantic/typography.tokens.json"
+        },
+        {
+          "$ref": "./semantic/shape.tokens.json"
+        },
+        {
+          "$ref": "./semantic/focus.tokens.json"
+        },
+        {
+          "$ref": "./semantic/elevation.tokens.json"
+        }
+      ]
+    }
+  },
+  "modifiers": {
+    "scheme": {
+      "contexts": {
+        "light": [],
+        "dark": [
+          {
+            "$ref": "./modes/dark.tokens.json"
+          }
+        ]
+      },
+      "default": "light"
+    },
+    "contrast": {
+      "contexts": {
+        "normal": [],
+        "more": [
+          {
+            "$ref": "./modes/high-contrast.tokens.json"
+          }
+        ]
+      },
+      "default": "normal"
+    },
+    "density": {
+      "contexts": {
+        "default": [],
+        "compact": [
+          {
+            "$ref": "./modes/compact.tokens.json"
+          }
+        ]
+      },
+      "default": "default"
+    },
+    "theme": {
+      "contexts": {
+        "riml-ds": [],
+        "qrcc": [
+          {
+            "$ref": "./themes/qrcc/color.tokens.json"
+          }
+        ],
+        "noter": [
+          {
+            "$ref": "./themes/noter/color.tokens.json"
+          }
+        ]
+      },
+      "default": "riml-ds"
+    }
+  },
+  "resolutionOrder": [
+    {
+      "$ref": "#/sets/base"
+    },
+    {
+      "$ref": "#/sets/semantic"
+    },
+    {
+      "$ref": "#/modifiers/theme"
+    },
+    {
+      "$ref": "#/modifiers/scheme"
+    },
+    {
+      "$ref": "#/modifiers/contrast"
+    },
+    {
+      "$ref": "#/modifiers/density"
+    }
+  ]
+}

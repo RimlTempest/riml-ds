@@ -1,47 +1,48 @@
 ---
-version: 1.0
-name: riml-ds
-description: >-
-  riml-ds の見た目の正。フロントマターは system/tokens から生成される（plan 002 以降）。
-  本文は手書きで、system/guidelines/ の要約。矛盾したら guidelines が正。
+version: "1.0"
+name: "riml-ds"
+description: "riml-ds の見た目の正。フロントマターは system/tokens から生成される（plan 002 以降）。本文は手書きで、system/guidelines/ の要約。矛盾したら guidelines が正。"
 colors:
-  # 値は oklch。生成時に hex フォールバックを併記する。ここに書いた値は plan 002 の
-  # terrazzo check（AAA 7:1）を通った時点で確定し、以後は生成物になる。
+  accent-300: "oklch(0.86 0.08 175)"
+  accent-400: "oklch(0.78 0.11 175)"
+  accent-600: "oklch(0.42 0.09 175)"
+  accent-700: "oklch(0.36 0.08 175)"
+  danger-400: "oklch(0.78 0.17 25)"
+  danger-600: "oklch(0.44 0.17 25)"
+  info-400: "oklch(0.78 0.13 240)"
+  info-600: "oklch(0.44 0.13 240)"
   neutral-0: "oklch(0.99 0.005 200)"
   neutral-100: "oklch(0.96 0.008 200)"
-  neutral-200: "oklch(0.90 0.012 200)"
-  neutral-300: "oklch(0.80 0.015 200)"
+  neutral-200: "oklch(0.9 0.012 200)"
+  neutral-300: "oklch(0.8 0.015 200)"
   neutral-500: "oklch(0.55 0.02 200)"
   neutral-600: "oklch(0.44 0.02 200)"
   neutral-800: "oklch(0.25 0.02 200)"
   neutral-900: "oklch(0.16 0.01 200)"
-  accent-400: "oklch(0.78 0.11 175)"
-  accent-600: "oklch(0.42 0.09 175)"
-  accent-700: "oklch(0.36 0.08 175)"
-  danger-600: "oklch(0.44 0.17 25)"
-  warning-600: "oklch(0.44 0.10 75)"
+  success-400: "oklch(0.78 0.11 150)"
   success-600: "oklch(0.44 0.11 150)"
-  info-600: "oklch(0.44 0.13 240)"
+  warning-400: "oklch(0.78 0.1 75)"
+  warning-600: "oklch(0.44 0.1 75)"
   surface: "{colors.neutral-0}"
   surface-raised: "{colors.neutral-100}"
   text: "{colors.neutral-800}"
   text-muted: "{colors.neutral-600}"
-  border: "{colors.neutral-300}"
+  border: "{colors.neutral-500}"
   focus: "{colors.accent-600}"
 typography:
   body:
     fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Hiragino Sans', 'Noto Sans JP', sans-serif"
-    fontSize: "clamp(1rem, 0.96rem + 0.2vw, 1.125rem)"
+    fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.6
   heading-1:
     fontFamily: "{typography.body.fontFamily}"
-    fontSize: "clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem)"
+    fontSize: "1.75rem"
     fontWeight: 700
     lineHeight: 1.2
   heading-2:
     fontFamily: "{typography.body.fontFamily}"
-    fontSize: "clamp(1.375rem, 1.2rem + 0.9vw, 1.875rem)"
+    fontSize: "1.375rem"
     fontWeight: 700
     lineHeight: 1.25
   small:
@@ -55,14 +56,14 @@ typography:
     fontWeight: 400
     lineHeight: 1.5
 spacing:
-  1: "0.25rem"
-  2: "0.5rem"
-  3: "0.75rem"
-  4: "1rem"
-  6: "1.5rem"
-  8: "2rem"
-  12: "3rem"
-  16: "4rem"
+  "1": "0.25rem"
+  "2": "0.5rem"
+  "3": "0.75rem"
+  "4": "1rem"
+  "6": "1.5rem"
+  "8": "2rem"
+  "12": "3rem"
+  "16": "4rem"
 rounded:
   sm: "0.25rem"
   md: "0.5rem"

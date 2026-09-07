@@ -1,0 +1,16 @@
+{
+  "color": {
+    "$type": "color",
+    "accent": {
+      "default": {
+        "$value": "{color.palette.accent.600}"
+      },
+      "hover": {
+        "$value": "{color.palette.accent.700}"
+      },
+      "text": {
+        "$value": "{color.palette.accent.600}"
+      }
+    }
+  }
+}

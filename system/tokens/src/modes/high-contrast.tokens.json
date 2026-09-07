@@ -1,0 +1,20 @@
+{
+  "color": {
+    "$type": "color",
+    "text": {
+      "muted": {
+        "$value": "{color.text.default}"
+      }
+    },
+    "border": {
+      "default": {
+        "$value": "{color.border.strong}"
+      }
+    },
+    "accent": {
+      "text": {
+        "$value": "{color.accent.hover}"
+      }
+    }
+  }
+}
