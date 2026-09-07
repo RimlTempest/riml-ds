@@ -49,3 +49,9 @@ bun run --filter @rimltempest/riml-ds-mcp build   # dist/cli.js（shebang 付き
 bun run test -- --project node tools/mcp
 bunx @modelcontextprotocol/inspector node tools/mcp/dist/cli.js
 ```
+
+## `stylelint-config-standard` / `stylelint-declaration-strict-value` を直接の依存に持つ理由
+
+stylelint は共有設定の `extends` / `plugins` の文字列を、設定ファイルの場所ではなく**呼び出し側**を
+起点に解決することがある。`knip.json` の `tools/mcp` で `ignoreDependencies` にしているのはこのため
+（コードからは名前で参照されないので knip には未使用に見える）。
