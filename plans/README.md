@@ -38,7 +38,7 @@
 
 | #   | 計画                                                                          | 優先 | 規模 | 依存     | 状態 |
 | --- | ----------------------------------------------------------------------------- | ---- | ---- | -------- | ---- |
-| 001 | [足場・ツールチェーン・lint プラグイン](001-scaffold-and-toolchain.md)         | P1   | L    | —        | TODO |
+| 001 | [足場・ツールチェーン・lint プラグイン](001-scaffold-and-toolchain.md)         | P1   | L    | —        | DONE（`a11cb7e`。テスト 25 件、workspaces `e2e*`、fixture は `--ignore-pattern`） |
 | 002 | [トークン（DTCG + Terrazzo + AAA lint + DESIGN.md 生成）](002-tokens.md)      | P1   | L    | 001      | TODO |
 | 003 | [基盤 CSS（@rimltempest/riml-ds-css）と stylelint](003-foundation-css.md) | P1 | M | 002 | TODO（`7bf04e8` で改訂） |
 | 004 | [Lit 部品の土台と最初の 4 部品（A/A/B/C）](004-elements-infra-and-first-five.md) | P0 | L | 003 | TODO（`7bf04e8` で改訂） |
