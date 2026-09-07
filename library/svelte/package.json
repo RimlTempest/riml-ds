@@ -1,0 +1,34 @@
+{
+  "name": "@rimltempest/riml-ds-svelte",
+  "version": "0.0.0",
+  "description": "riml-ds の Svelte 5 部品と svelteHTML 型。CEM とマークアップ契約から生成する",
+  "license": "MIT",
+  "files": [
+    "src/generated",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "svelte": "./src/generated/index.js",
+  "exports": {
+    ".": {
+      "types": "./src/generated/elements.d.ts",
+      "svelte": "./src/generated/index.js",
+      "default": "./src/generated/index.js"
+    },
+    "./types": "./src/generated/elements.d.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "devDependencies": {
+    "@rimltempest/riml-ds-elements": "workspace:*",
+    "svelte": "5.57.0"
+  },
+  "peerDependencies": {
+    "@rimltempest/riml-ds-elements": "workspace:*",
+    "svelte": "^5.0.0"
+  }
+}
