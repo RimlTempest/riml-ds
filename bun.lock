@@ -247,7 +247,6 @@
         "@rimltempest/riml-ds-lint": "workspace:*",
         "@rimltempest/riml-ds-tokens": "workspace:*",
         "colorjs.io": "0.7.1",
-        "postcss-lit": "1.4.1",
         "stylelint": "17.15.0",
         "stylelint-config-standard": "40.0.0",
         "stylelint-declaration-strict-value": "1.12.1",
