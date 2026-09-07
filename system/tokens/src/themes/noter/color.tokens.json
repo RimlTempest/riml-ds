@@ -1,15 +1,14 @@
 {
   "color": {
-    "$type": "color",
-    "accent": {
-      "default": {
-        "$value": "{color.palette.accent.600}"
-      },
-      "hover": {
-        "$value": "{color.palette.accent.700}"
-      },
-      "text": {
-        "$value": "{color.palette.accent.600}"
+    "palette": {
+      "$type": "color",
+      "accent": {
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.42, 0.09, 175]
+          }
+        }
       }
     }
   }
