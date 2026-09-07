@@ -323,3 +323,38 @@ export const toWrapperSpecs = (
       }),
     )
     .toSorted((left, right) => (left.name < right.name ? -1 : left.name > right.name ? 1 : 0))
+
+/** 型を TypeScript のソースにする */
+export const typeText = (type: AttrType): string => {
+  if (typeof type === 'string') {
+    return type
+  }
+  return 'union' in type ? type.union.map((value) => `'${value}'`).join(' | ') : type.named
+}
+
+/**
+ * 契約の木で `controlTag` の直下にある `{ prop }` の名前。
+ * 各フレームワークではそこが children / slot になる（`<RdButton>保存</RdButton>`）。
+ */
+export const childrenTextOf = (spec: WrapperSpec): string | undefined => {
+  const visit = (node: MarkupNode): string | undefined => {
+    if (!('tag' in node)) {
+      return undefined
+    }
+    if (node.tag === spec.controlTag) {
+      const text = (node.children ?? []).find((child) => 'prop' in child)
+      return text !== undefined && 'prop' in text ? text.prop : undefined
+    }
+    for (const child of node.children ?? []) {
+      const found = visit(child)
+      if (found !== undefined) {
+        return found
+      }
+    }
+    return undefined
+  }
+  return spec.contract === undefined ? undefined : visit(spec.contract.tree)
+}
+
+/** `$id` は未指定なら `$name` を使う。生成器が共通で参照する名前 */
+export const CONTROL_ID = 'controlId'

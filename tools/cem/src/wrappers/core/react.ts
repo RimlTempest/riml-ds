@@ -9,7 +9,8 @@
  *   Lit を React パッケージに引き込まずに済む（サイズ予算）。オブジェクト/配列のプロパティを渡す
  *   部品が出たらそこだけ `createComponent` を足す（ADR-0002 / ADR-0012 §5）。
  */
-import type { AttrType, MarkupNode, MarkupProp, WrapperSpec } from './common.js'
+import type { MarkupNode, MarkupProp, WrapperSpec } from './common.js'
+import { childrenTextOf, typeText } from './common.js'
 
 export type GeneratedFile = { readonly path: string; readonly content: string }
 
@@ -60,13 +61,6 @@ const DOM_TYPE: Readonly<Record<string, string>> = {
 }
 
 const isCustomTag = (tag: string): boolean => tag.includes('-')
-
-const typeText = (type: AttrType): string => {
-  if (typeof type === 'string') {
-    return type
-  }
-  return 'union' in type ? type.union.map((value) => `'${value}'`).join(' | ') : type.named
-}
 
 /** React の綴りに直す。`value` はフォーム部品では uncontrolled の `defaultValue` に写す */
 const reactAttrName = (tag: string, attr: string): string => {
@@ -175,27 +169,6 @@ const renderNode = (context: Context, node: MarkupNode, depth: number, root: boo
     ...children.map((child) => renderNode(context, child, depth + 1, false)),
     `${pad}</${node.tag}>`,
   ].join('\n')
-}
-
-/** 契約の木で `controlTag` の直下にある `{ prop }`。React ではそこが children になる */
-const childrenTextOf = (spec: WrapperSpec): string | undefined => {
-  const visit = (node: MarkupNode): string | undefined => {
-    if (!('tag' in node)) {
-      return undefined
-    }
-    if (node.tag === spec.controlTag) {
-      const text = (node.children ?? []).find((child) => 'prop' in child)
-      return text !== undefined && 'prop' in text ? text.prop : undefined
-    }
-    for (const child of node.children ?? []) {
-      const found = visit(child)
-      if (found !== undefined) {
-        return found
-      }
-    }
-    return undefined
-  }
-  return spec.contract === undefined ? undefined : visit(spec.contract.tree)
 }
 
 const controlHandlers = (spec: WrapperSpec): readonly string[] =>
