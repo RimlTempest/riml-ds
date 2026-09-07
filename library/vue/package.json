@@ -1,0 +1,38 @@
+{
+  "name": "@rimltempest/riml-ds-vue",
+  "version": "0.0.0",
+  "description": "riml-ds の Vue 3.5 ラッパーとプラグイン。CEM とマークアップ契約から生成する",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/generated/elements.d.ts",
+      "default": "./dist/generated/elements.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "devDependencies": {
+    "@rimltempest/riml-ds-elements": "workspace:*",
+    "vue": "3.5.42"
+  },
+  "peerDependencies": {
+    "@rimltempest/riml-ds-elements": "workspace:*",
+    "vue": "^3.5.0"
+  }
+}
