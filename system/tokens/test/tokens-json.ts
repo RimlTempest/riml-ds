@@ -9,7 +9,17 @@ export type Leaf = {
   readonly riml: Record<string, unknown>
 }
 
-export const MODES = ['light', 'dark', 'more', 'more-dark', 'compact'] as const
+export const MODES = [
+  'light',
+  'dark',
+  'more',
+  'more-dark',
+  'compact',
+  'theme-qrcc',
+  'theme-qrcc-dark',
+  'theme-noter',
+  'theme-noter-dark',
+] as const
 export type Mode = (typeof MODES)[number]
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
