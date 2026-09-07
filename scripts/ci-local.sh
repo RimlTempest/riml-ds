@@ -11,6 +11,11 @@
 # markuplint / a11y-vrt-pe / frameworks）に対応する。
 # Docker イメージは `e2e/Dockerfile`（Playwright と同じタグ + 日本語フォント + bun）。
 # CI の `container:` は素の Playwright イメージにその 2 つを apt で足したもので、中身は同じ。
+#
+# **ジョブごとのビルド不足はここでは再現できない。** このスクリプトは 1 つの作業木／
+# 1 つのコンテナで `bun run build` を一度だけ回してから全ゲートを続けるが、CI は
+# ジョブごとに新しい checkout から始まる。どのジョブに `bun run build` が要るかは
+# ci.yml のステップが唯一の正。
 set -euo pipefail
 
 cd "$(dirname "$0")/.."

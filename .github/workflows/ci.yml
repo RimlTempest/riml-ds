@@ -118,6 +118,8 @@ jobs:
       - uses: jdx/mise-action@v3
         with: { cache: true }
       - run: bun install --frozen-lockfile
+      # tsc --build は library/*/src/generated と各 dist の型を読む。生成物はコミットしないので先に作る
+      - run: bun run build
       - run: bun run typecheck
 
   test-node:
@@ -131,6 +133,8 @@ jobs:
       - uses: jdx/mise-action@v3
         with: { cache: true }
       - run: bun install --frozen-lockfile
+      # node/react project は system/tokens/dist・library/elements/dist・library/react/src/generated を読む
+      - run: bun run build
       # node は環境 node、react は jsdom。どちらもブラウザを要らない
       - run: bun run test -- --project node --project react
 
@@ -153,6 +157,9 @@ jobs:
           rm -rf /var/lib/apt/lists/*
       - uses: jdx/mise-action@v3
         with: { cache: true }
+      # コンテナ内では checkout 先の所有者が実行ユーザーと違い、prepare（lefthook install）の
+      # git rev-parse が "dubious ownership" で落ちる。作業ディレクトリだけ信頼する
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - run: bun install --frozen-lockfile
       # browser project は library/elements/dist を読む
       - run: bun run build
@@ -184,6 +191,9 @@ jobs:
           rm -rf /var/lib/apt/lists/*
       - uses: jdx/mise-action@v3
         with: { cache: true }
+      # コンテナ内では checkout 先の所有者が実行ユーザーと違い、prepare（lefthook install）の
+      # git rev-parse が "dubious ownership" で落ちる。作業ディレクトリだけ信頼する
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - run: bun install --frozen-lockfile
       - run: bun run build
       # `render` は中で storybook:build を呼ぶ（二重にビルドしない）。
@@ -209,6 +219,9 @@ jobs:
           rm -rf /var/lib/apt/lists/*
       - uses: jdx/mise-action@v3
         with: { cache: true }
+      # コンテナ内では checkout 先の所有者が実行ユーザーと違い、prepare（lefthook install）の
+      # git rev-parse が "dubious ownership" で落ちる。作業ディレクトリだけ信頼する
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - run: bun install --frozen-lockfile
       - run: bun run build
       - run: bun run storybook:build
@@ -241,6 +254,9 @@ jobs:
           rm -rf /var/lib/apt/lists/*
       - uses: jdx/mise-action@v3
         with: { cache: true }
+      # コンテナ内では checkout 先の所有者が実行ユーザーと違い、prepare（lefthook install）の
+      # git rev-parse が "dubious ownership" で落ちる。作業ディレクトリだけ信頼する
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - run: bun install --frozen-lockfile
       - run: bun run build
       - run: bun run e2e:frameworks
