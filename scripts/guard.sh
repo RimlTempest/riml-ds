@@ -185,6 +185,67 @@ if [ -n "$scan_pkg_dirs" ]; then
   done
 fi
 
+# 14 と 15 は「main からの差分」を見る。base が引けないとき（git の外、浅い clone）は黙って飛ばす。
+changed_files=""
+if git rev-parse --git-dir >/dev/null 2>&1; then
+  base_ref="origin/main"
+  if ! git rev-parse --verify --quiet "$base_ref" >/dev/null; then
+    base_ref="main"
+  fi
+  if git rev-parse --verify --quiet "$base_ref" >/dev/null; then
+    changed_files=$(git diff --name-only "$base_ref...HEAD" 2>/dev/null || true)
+  fi
+fi
+
+# 14. 変更ファイルがレーンの所有範囲内か（docs/parallel-lanes.md。scripts/lanes.tsv が正）。
+#     PR では GITHUB_HEAD_REF、手元ではカレントブランチ名を見る。
+#     レーン名に一致する行が無ければ検査しない（main、dependabot/* など）。
+if [ -n "$changed_files" ] && [ -f scripts/lanes.tsv ]; then
+  lane="${GITHUB_HEAD_REF:-}"
+  if [ -z "$lane" ]; then
+    lane=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+  fi
+  owned=""
+  if [ -n "$lane" ]; then
+    owned=$(awk -F'\t' -v lane="$lane" '$1 == lane { print $3; exit }' scripts/lanes.tsv)
+  fi
+  if [ -n "$owned" ]; then
+    while IFS= read -r file; do
+      [ -n "$file" ] || continue
+      # どのレーンも触ってよい共有ファイル（追記のみ）
+      case "$file" in
+        plans/README.md | .changeset/* | scripts/lanes.tsv) continue ;;
+      esac
+      allowed=0
+      saved_ifs="$IFS"
+      IFS=','
+      for owned_path in $owned; do
+        case "$file" in "$owned_path"*) allowed=1 ;; esac
+      done
+      IFS="$saved_ifs"
+      if [ "$allowed" = 0 ]; then
+        report "$file" "owned by another lane, not $lane (scripts/lanes.tsv)"
+      fi
+    done <<CHANGED
+$changed_files
+CHANGED
+  fi
+fi
+
+# 15. *.element.ts / *.contract.ts を変えたら CEM と registry.json も同じ PR で更新する
+#     （ADR-0002「CEM が API の正」。生成は bun run gen）
+if [ -n "$changed_files" ] \
+  && printf '%s\n' "$changed_files" | grep -qE '^library/elements/src/.*\.(element|contract)\.ts$'; then
+  if ! printf '%s\n' "$changed_files" | grep -qx 'library/elements/custom-elements.json'; then
+    report "library/elements/custom-elements.json" \
+      "*.element.ts / *.contract.ts changed without regenerating the manifest (bun run gen)"
+  fi
+  if ! printf '%s\n' "$changed_files" | grep -qx 'tools/cem/registry.json'; then
+    report "tools/cem/registry.json" \
+      "*.element.ts / *.contract.ts changed without regenerating the registry (bun run gen)"
+  fi
+fi
+
 # plan 002 以降が足す検査の予約席:
 # - system/tokens/dist/tokens.css が生値を含まない（plan 002）
 #   （「公開パッケージの exports に dist 以外が現れない」は入れない：svelte / astro は
