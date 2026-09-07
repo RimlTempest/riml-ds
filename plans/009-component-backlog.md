@@ -83,12 +83,14 @@ plan 004 / 005 / 006 と同じ。加えて：
 - `library/elements/src/experimental/<name>/index.ts`（re-export）+ `package.json` の `exports`（`./experimental/*` を**列挙**。ワイルドカード禁止）
 - `library/elements/scripts/scaffold.ts`（雛形生成。skill のファイル構成をそのまま出す）+ root `package.json` の `scaffold:element`
 - `e2e/pe/build-pages.ts` の一覧（ティア A/B の新部品を追加。plan 005 Maintenance の通り。`registry.json` の `pe` から自動列挙に置き換えてよい）
-- `.changeset/*.md`（minor ×1：「experimental に 4 部品追加」）
+- `.changeset/*.md`（minor ×1：「experimental に 4 部品追加」、minor ×1：「rd-dialog: dismissible → persistent、rd-live-region: serializable」）
+- Step 0 のため：`library/elements/src/{dialog,live-region}/**`、`library/elements/README.md`、`e2e/frameworks/**`、`e2e/{react,vue,svelte,astro}/**`（`dismissible` の置換のみ）、
+  `library/elements/custom-elements.json`、`tools/cem/registry.json`、`e2e/__screenshots__/**`（dialog Persistent の画像のみ）
 - `plans/README.md`（自分の行だけ）
 
 **Out of scope**:
 
-- 既存 4 部品の API 変更（`_shared/field.ts` の括り出しは**内部**のみ。CEM の diff がゼロであること）
+- 既存 4 部品の API 変更（Step 0 の 2 点を除く。`_shared/field.ts` の括り出しは**内部**のみで、Step 0 以降 CEM の diff がゼロであること）
 - `system/**`（トークン不足は STOP）、`tools/cem/src/**`（生成器が新部品で失敗したら STOP）、`docs/**`、`.claude/skills/**`
 - バックログ #5〜#12 の実装
 
@@ -100,14 +102,33 @@ plan 004 / 005 / 006 と同じ。加えて：
 
 ## Steps
 
+### Step 0: plan 004 / 005 / 006 からの追補（既存 4 部品の小さな修正。**先にやる**）
+
+いずれも実装で見つかった欠陥。まだ npm に公開していないので API を直してよい（0.x、ADR-0009）。
+
+- **`rd-live-region` に `serializable: true`**：`shadowRootOptions` を `{ ...LitElement.shadowRootOptions, serializable: true }` にする
+  （`RdDialog` と同じ）。無いと `getHTML({ serializableShadowRoots: true })` に shadow 内容が出ず、Storybook の描画後 HTML（markuplint）に
+  live region が現れない。`live-region.test.ts` に「`el.getHTML({ serializableShadowRoots: true })` が `part="polite"` を含む」を 1 件追加（red → green）。
+- **`rd-dialog` の `dismissible`（既定 true）を `persistent`（既定 false）に反転**：boolean 属性は「無い = false」しか HTML で表せず、
+  `markup({ dismissible: false })` が属性を省くだけで既定 true のまま立ち上がる欠陥。`dialog.contract.ts` / `dialog.logic.ts`（`decideClose({ persistent, reason })`）/
+  `dialog.element.ts`（`@state persistent` は付けない。`:state(open)` のみのまま）/ `dialog.css` / `dialog.stories.ts`（`Persistent` story を属性で書く）/
+  `dialog.test.ts` / `library/elements/README.md` を更新。`bun run gen` で CEM とラッパー（`library/*/src/generated`）が追随し、
+  `e2e/frameworks/*.spec.ts` と `e2e/<fw>/**` に `dismissible` が残っていれば `persistent` に置換（`grep -rn dismissible library e2e apps` が 0 件）。
+  `skills/riml-ds/SKILL.md` §3 の `dismissible={undefined}` の例は**レビュアーが直す**（skills は out of scope）。
+- **text-field の現状**：`text-field.logic.ts` は `computeView` / `usesJapaneseCopy` / `computeMessage` 系を持ち、テストは node 17 + browser 13 = **30 件**
+  （plan 本文の「23 件」は改訂前の数）。Step 1 の `_shared/field.ts` はこれらを移す。
+
+**Verify**: `bun run test` → live-region +1、dialog は件数同じで全 pass。`bun run gen && git status --porcelain` が空（生成物をコミットした後）。
+`bun run e2e:frameworks` 17 件 pass、`bun run pe` pass、`bun run vrt`（Docker）で差分が出るのは dialog の `Persistent` story だけ → その画像だけ `bun run vrt:update` で更新。
+
 ### Step 1: 雛形生成器と `_shared/field.ts`
 
 `library/elements/scripts/scaffold.ts`：`--pe A|B|C` に応じて skill §1.1 のファイル構成を空の TDD 雛形で出す（`it.todo` 入りのテスト、
 `@pe` / `@status experimental` / `@summary TODO` 入りの element、契約の骨）。生成後に `bun run check` が通ること（`it.todo` は許容）。
-`_shared/field.ts`：`text-field.logic.ts` の `computeMessage` / `computeStates` / `computeDescribedBy` を移し、text-field は re-export。**text-field の 23 件が
+`_shared/field.ts`：`text-field.logic.ts` の `computeMessage` / `computeStates` / `computeDescribedBy` を移し、text-field は re-export。**text-field の 30 件が
 変更無しで通る**（テストを触らない）。
 
-**Verify**: `bun run scaffold:element probe --pe A && bun run check` exit 0 → 生成物を削除。`bun run test` → text-field 23 件 pass、`bun run gen && git diff --exit-code library/elements/custom-elements.json`
+**Verify**: `bun run scaffold:element probe --pe A && bun run check` exit 0 → 生成物を削除。`bun run test` → text-field 30 件 pass、`bun run gen && git diff --exit-code library/elements/custom-elements.json`
 
 ### Step 2: `rd-select`（A）
 

@@ -25,7 +25,9 @@ Vitest は**ルートの `vitest.config.ts` 1 つ**で `projects` を分ける�
   `fixture()` ヘルパは `library/elements/test/fixture.ts` に 1 つ。
 - テストは日本語の `it('ラベルが無いと :state(unlabeled) になる')`。
 - Storybook の interaction test は `play` 関数。`userEvent` でキーボード操作を書く。
-- VRT は story の `parameters.vrt: false` で除外できるが、除外には理由コメント必須。
+- VRT は story のタグ `no-vrt` で除外できる（`parameters` は `index.json` に載らないためタグで判定する）。除外には理由コメント必須。
+- JS 無し検証（`e2e/pe`）は 2 project：`pe`（`javaScriptEnabled: false`。送信・開閉の操作）と `pe-axe`（JS 有効で axe AAA。axe はページに
+  JS を注入するので JS 無しでは動かない。pe ページには `<script>` が 1 つも無いことを生成器が保証するので DOM は同一）。
 
 ## CI 時間の予算
 
