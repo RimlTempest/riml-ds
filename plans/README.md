@@ -57,7 +57,7 @@
 | 013 | [テーマ × スキームの解決と themes/qrcc に qrcc の実色を入れる](013-theme-scheme-and-qrcc-palette.md) | P1 | M | 012 | DONE |
 | 014 | [既定ブランドを riml の色にし「まど」の形・影・文字をトークンへ](014-riml-brand-tokens.md) | P1 | M | 013 | DONE（`0c941c3`。palette 26 段（+neutral.700 / accent.500 / signature.400・500）、`brand.*` / `chrome.*` / `font.family.display`、radius 8/12/16、硬い影。contrastAgainst 15、葉 104、テスト 568 → 594、8 モード AAA を L 調整なしで通過。noter は旧既定 26 段。VRT 319/321 更新） |
 | 015 | [「まど」を部品に当てる（.rd-window・ピルのボタン・rd-meter）](015-mado-components.md) | P1 | L | 014 | DONE（`9d2e26a`: patterns.css の `.rd-window`、tier A ピル化、dialog/toast 窓化、`rd-meter` 実験、VRT 359 枚撮り直し） |
-| 016 | [Storybook のブランド切替と Foundations Brand / Mado](016-brand-showcase.md) | P2 | S | 015 | TODO |
+| 016 | [Storybook のブランド切替と Foundations Brand / Mado](016-brand-showcase.md) | P2 | S | 015 | DONE |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
@@ -153,3 +153,20 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
   (c) toast の影が `shadow.raised`、`docs/brand.md` §5 の表は `overlay` → brand.md 側を「小さな窓は raised」に直す;
   (d) `e2e/frameworks` に meter が無い（4 アプリへの手組み込みが要る）
 - `Result` 型が `meter.logic.ts` にローカル定義。2 つ目の要素が必要になったら `_shared/result.ts` に出す
+
+### 016 の実行メモ（2026-09-08）
+
+- マージ `6e97ae9`。Storybook ツールバーに `theme`（riml / qrcc / noter）が付き、`<style id="rd-theme">` で `themes/*.css` を差し込む
+  （`apps/storybook/.storybook/modes.ts`）。Foundations に Brand（5 story）/ Mado（6 story）。VRT は 359 → 403 枚
+- VRT の閾値は `threshold: 0.05, maxDiffPixelRatio: 0.001`。R チャンネル delta 40 の改変を旧設定は見逃し新設定は落とすことを実測で確認。既存 359 枚は撮り直し無し
+- **レーン外の修正を 1 つ入れた**（`3be706f`、guard が期待どおり警告）: noter テーマの `neutral.600` を L 0.44 → 0.38。
+  ライトの `text.muted` が窓の本体（`surface.raised`、6.87:1）と入力欄（`surface.sunken`、5.73:1）で AAA を割っていたため。
+  あわせて `semantic/color.tokens.json` の `text.default` / `text.muted` の `contrastAgainst` を 3 面（default / raised / sunken）に広げた
+- **検査の穴（未解決）**: `bun run lint:tokens`（terrazzo check）は**テーマ（qrcc / noter）の値を見ていない**。noter を 0.44 に戻しても緑だった。
+  テーマごとに解決した値で `contrastAgainst` を検査する仕組みが要る（tokens レーン、次の小 plan）。`docs/brand.md` §3 の検査表にも `muted / raised` を足す
+- `apps/storybook/.storybook/modes.test.ts` はルートの `vitest.config.ts` に載っておらず、CI でも走らない（`apps/storybook` の `test:unit` だけ）。
+  `vitest.config.ts` の node project に `apps/**/*.test.ts` を足すのが恒久対応（`chore/scaffold` レーン）
+- ブランドの色見本は空 `<span aria-hidden>` だと markuplint `no-empty-palpable-content` に落ちるので `::before` + `style="--rd-sb-swatch: …"`
+- 気づき: ダークでは `shadow.raised` / `shadow.overlay` がほぼ見えない（影色がインクの alpha）。トークン側の設計判断が要る
+- 気づき（ユーザー指摘 2026-09-08）: **タイトル帯の 3 つの丸は装飾ではなくボタン**（閉じる / 最大化 / 最小化）。`patterns.css` の `::before` と
+  brand.md §7 の記述は誤り。plan 017 系で作り直す
