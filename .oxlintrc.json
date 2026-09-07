@@ -66,6 +66,19 @@
       }
     },
     {
+      // lint 設定のテスト用 fixture。意図的に規約を破っているので既定の実行では
+      // --ignore-pattern で外し（package.json / lefthook.yml）、テストだけが
+      // 明示的に検査する。上の test 緩和を実ソースと同じ厳しさに戻す。
+      "files": ["tools/lint/test/fixtures/**/*.ts"],
+      "rules": { "import/no-default-export": "error" }
+    },
+    {
+      // fixture は本物のドメイン層の配置を写している。overrides の files が
+      // 効いていることを確かめるため、同じルールをここでも有効にする。
+      "files": ["tools/lint/test/fixtures/library/elements/src/**/*.logic.ts"],
+      "rules": { "riml-ds/no-throw-in-domain": "error" }
+    },
+    {
       // CSF3 の story、設定ファイル、Storybook 設定、oxlint プラグインは default export が規約
       "files": [
         "**/*.stories.ts",
