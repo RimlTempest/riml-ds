@@ -245,7 +245,6 @@
       },
       "dependencies": {
         "@modelcontextprotocol/sdk": "1.30.0",
-        "@rimltempest/riml-ds-elements": "workspace:*",
         "@rimltempest/riml-ds-lint": "workspace:*",
         "@rimltempest/riml-ds-tokens": "workspace:*",
         "colorjs.io": "0.7.1",
@@ -258,6 +257,7 @@
       "devDependencies": {
         "@google/design.md": "0.4.0",
         "@rimltempest/riml-ds-design-md": "workspace:*",
+        "@rimltempest/riml-ds-elements": "workspace:*",
         "tsdown": "0.23.0",
       },
     },
