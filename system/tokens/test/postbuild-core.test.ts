@@ -148,6 +148,43 @@ describe('splitThemes', () => {
     }
     expect(result.value[0]?.css).toContain('移行時にここへブランド差分が入る')
   })
+
+  it('テーマのライト差分とダーク差分を light-dark() に畳む', () => {
+    // FULL: light は --rd-a: 1rem / --rd-b: red、dark は --rd-b: blue、
+    // theme qrcc(light) は --rd-b: green。
+    const css = `${FULL}
+/* rd:theme qrcc dark */
+:root {
+  --rd-a: 1rem;
+  --rd-b: green;
+}
+`
+    const result = splitThemes(css)
+    expect(result.ok).toBe(true)
+    if (!result.ok) {
+      return
+    }
+    // --rd-a: テーマはライト・ダークとも基準と同じ → 出ない
+    expect(result.value[0]?.css).not.toContain('--rd-a')
+    // --rd-b: ライト green / ダーク green（基準は red / blue）→ 同じ値なので畳まない
+    expect(result.value[0]?.css).toContain('--rd-b: green;')
+  })
+
+  it('ライトとダークで違う値はテーマ CSS でも light-dark() になる', () => {
+    const css = `${FULL}
+/* rd:theme qrcc dark */
+:root {
+  --rd-a: 1rem;
+  --rd-b: lime;
+}
+`
+    const result = splitThemes(css)
+    expect(result.ok).toBe(true)
+    if (!result.ok) {
+      return
+    }
+    expect(result.value[0]?.css).toContain('--rd-b: light-dark(green, lime);')
+  })
 })
 
 describe('contrastPairs', () => {
