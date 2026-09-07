@@ -143,7 +143,7 @@ fi
 
 # 11. VRT のベースラインは Docker の中でだけ撮る（OS 名が付いた画像はホストで撮ったもの）
 if git rev-parse --git-dir >/dev/null 2>&1; then
-  host_shots=$(git ls-files 'e2e/vrt/__screenshots__/**' 2>/dev/null | grep -E -- '-(darwin|win32)' || true)
+  host_shots=$({ git ls-files 'e2e/**/__screenshots__/**' 2>/dev/null || true; } | grep -E -- '-(darwin|win32)' || true)
   for file in $host_shots; do
     report "$file" "screenshots must be taken inside Docker (bun run vrt:update); host-taken images are not committable"
   done

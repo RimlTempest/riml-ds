@@ -76,6 +76,7 @@ parameters: {
 
 ## VRT（スクリーンショット）
 
+ベースラインは `e2e/__screenshots__/<project>/<story-id>.png`（ADR-0007 決定 4、docs/testing.md）。
 **更新は Docker の中でだけ**行う（ADR-0007 §影響）。macOS で撮った画像はフォントと
 サブピクセル描画が違うのでコミットしない。ホストから `playwright test --update-snapshots` を
 直接叩ける npm script は用意していない。

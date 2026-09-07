@@ -23,4 +23,6 @@ exec docker run --rm \
   -v riml-ds-e2e-markuplint-node-modules:/work/tools/markuplint/node_modules \
   -v riml-ds-e2e-bun-cache:/root/.bun/install/cache \
   -w /work "$IMAGE" \
-  bash -c 'bun install --frozen-lockfile && bunx playwright test -c e2e/playwright.config.ts "$@"' -- "$@"
+  bash -c 'bun install --frozen-lockfile --ignore-scripts \
+    && bun run gen:argtypes \
+    && bunx playwright test -c e2e/playwright.config.ts "$@"' -- "$@"
