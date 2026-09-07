@@ -51,7 +51,7 @@
 | 010 | [CI・Pages・Dependabot・不変条件ガード・public 化](010-devops-ci-and-guard.md) | P1 | M | 001（Pages は 008） | DONE（マージ `#plan-010`。`ci.yml` 11 ジョブ（ブラウザ系は Playwright イメージの `container:` + `fonts-noto-cjk`、`playwright install` 0 件）、`pages.yml`（`deploy-pages@v4`、`pages/` 8.2 MiB、Storybook は相対パスなので `base` 変更不要）、guard 14（レーン所有権）/ 15（CEM 鮮度）+ テスト 4、`ci:local` 4m04s exit 0、Dependabot は初回実行で `bun` が lockfileVersion 2 非対応と判明し `github-actions` のみに縮小。初回 push の CI は typecheck/test-node の build 不足とコンテナ内 `lefthook install` の dubious ownership で失敗 → hotfix（typecheck / test-node / agent-surface に `bun run build`、コンテナ 4 ジョブに `safe.directory`）→ `workflow_dispatch` で **11 ジョブ全部緑**を確認。markuplint の `input[type=checkbox][role=switch]` に `aria-checked` を求めるのは偽陽性（HTML-AAM）なので `.markuplintrc.json` の nodeRule で外した。**Step 5（public 化・Pages 有効化）はユーザー作業、未実施**。残リスク: `mise-action` が Playwright コンテナ内で動くかは実 CI で確認） |
 | 011 | [ラッパー生成器の追随（experimental 分離・select v-model・契約サブパス）](011-wrappers-experimental-and-contract-subpath.md) | P2 | M | 009, 010 | DONE（マージ `#plan-011`。`WrapperSpec` に `status`/`subpath`、experimental は react `./experimental` + `./client/experimental`・vue `./experimental`（`rdExperimentalComponents`、プラグインと `GlobalComponents` は stable のみ）・svelte `./experimental`・astro `./experimental/<name>.astro`。Vue `onInput` が select/textarea でも emit。elements に `./<name>/contract`（6 部品）、mcp は contract から例を作り `lit` 非依存（`LitElement` 0 件、bundle 44 kB）、experimental の例は `./experimental` から import。テスト 474→486、e2e 21→22。逸脱: Vue e2e は `vue.spec.ts` に置いた、`bun.lock` は変更不要（frozen で no changes）。follow-up: `LitElement` 0 件を release-check に入れるか） |
 | 012 | [小さな追随（mcp の lit 混入ゲート・underline-offset トークン・印刷の改ページ）](012-small-follow-ups.md) | P3 | S | 011 | DONE |
-| 013 | [テーマ × スキームの解決と themes/qrcc に qrcc の実色を入れる](013-theme-scheme-and-qrcc-palette.md) | P1 | M | 012 | TODO |
+| 013 | [テーマ × スキームの解決と themes/qrcc に qrcc の実色を入れる](013-theme-scheme-and-qrcc-palette.md) | P1 | M | 012 | DONE |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
@@ -108,3 +108,15 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - `tools/mcp/test/core/tokens.test.ts` がトークンの葉の数（90 → 91）を固定している。**トークンを増減する plan はこのファイルを
   レーンに入れる**（013 に反映）
 - VRT 321 枚、差分ゼロ。テスト 486 → 490
+
+### 013 の実行メモ（2026-09-07）
+
+- `themes/<brand>.css` は light / dark の 2 permutation を畳んだ `light-dark()`。テーマのダーク区画が無い
+  場合はダークの情報が無いので捏造しない（`d = l`、旧挙動）。実出力では常に両区画が出る
+- Terrazzo は oklch を sRGB にガマットマップして出力する。src `[0.44, 0.16, 255]` は dist で
+  `oklch(44.29% 0.1571 257)` になる。ビルド出力の値を期待するテストは dist の値で書く
+- `tools/design-md/test/frontmatter.test.ts` は「qrcc テーマは既定と同値のプレースホルダ」を前提にしていた。
+  テーマの実色を入れる plan はこのファイルもレーンに含める（013 は途中で広げた）
+- `tokens.json` の各トークンは `modes` を持つようになったので、テストの検体は文字列注入ではなく実在する
+  `"theme-<brand>":{…}` の値を置換して作る
+- 全体テスト 490 → 568（tokens 89 → 167）。VRT 321 差分ゼロ
