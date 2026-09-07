@@ -144,6 +144,204 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/text-field/text-field.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "1 行テキスト入力。子の `<label for>` と `<input>` / `<textarea>` を包む（ティア A、ADR-0012）。\n送信・検証・ラベル関連付けはブラウザが素で行う。JS が無いときはネイティブの吹き出しが出る（退行しない）。",
+          "name": "RdTextField",
+          "cssProperties": [
+            {
+              "description": "ラベル・入力欄・文言の間隔。既定 var(--rd-space-1)",
+              "name": "--rd-text-field-gap"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "hint",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "hint"
+            },
+            {
+              "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "error"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#control",
+              "privacy": "private",
+              "type": {
+                "text": "NativeControl | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#touched",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#bindings",
+              "privacy": "private",
+              "type": {
+                "text": "readonly Binding[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "description": "値はネイティブ要素が持つ。部品は委譲するだけ"
+            },
+            {
+              "kind": "method",
+              "name": "checkValidity",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "reportValidity",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#listeners",
+              "privacy": "private",
+              "type": {
+                "text": "Listeners"
+              },
+              "default": "{ input: () => this.requestUpdate(), blur: () => this.#setTouched(true), invalid: (event) => { event.preventDefault() this.#setTouched(true) }, }"
+            },
+            {
+              "kind": "field",
+              "name": "#formListeners",
+              "privacy": "private",
+              "type": {
+                "text": "Listeners"
+              },
+              "default": "{ reset: () => this.#setTouched(false) }"
+            },
+            {
+              "kind": "field",
+              "name": "#bind",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#setTouched",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#view",
+              "privacy": "private"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "hint",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "hint"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "error"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "invalid",
+              "description": "検証に通っていない（blur 後、または error 属性がある）"
+            },
+            {
+              "name": "errored",
+              "description": "error 属性で文言を強制表示している"
+            },
+            {
+              "name": "hinted",
+              "description": "hint がある"
+            },
+            {
+              "name": "filled",
+              "description": "値が入っている"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子（<label for> と <input>）が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "1 行テキスト入力。ラベルと入力欄は利用側が書く",
+          "status": "stable",
+          "pe": "A",
+          "tagName": "rd-text-field",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdTextField",
+          "declaration": {
+            "name": "RdTextField",
+            "module": "src/text-field/text-field.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/button/button.define.ts",
       "declarations": [],
       "exports": [
@@ -153,6 +351,21 @@
           "declaration": {
             "name": "RdButton",
             "module": "/src/button/button.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/text-field/text-field.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-text-field",
+          "declaration": {
+            "name": "RdTextField",
+            "module": "/src/text-field/text-field.element.js"
           }
         }
       ]

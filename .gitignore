@@ -12,6 +12,7 @@ tools/markuplint/node_modules/
 !.env.example
 storybook-static/
 test-results/
+.vitest-attachments/
 playwright-report/
 .claude/worktrees/
 LANE.md

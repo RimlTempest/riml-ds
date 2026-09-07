@@ -1,0 +1,93 @@
+@layer rd.components {
+  rd-text-field {
+    display: block;
+  }
+
+  rd-text-field > label {
+    display: block;
+    margin-block-end: var(--rd-text-field-gap, var(--rd-space-1));
+    color: var(--rd-color-text-default);
+  }
+
+  rd-text-field > input,
+  rd-text-field > textarea {
+    display: block;
+    inline-size: 100%;
+    min-block-size: var(--rd-sizing-target-min);
+    padding-block: var(--rd-space-2);
+    padding-inline: var(--rd-space-3);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-strong);
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-surface-default);
+    color: var(--rd-color-text-default);
+    font: inherit;
+    line-height: var(--rd-line-height-body);
+  }
+
+  rd-text-field > input:focus-visible,
+  rd-text-field > textarea:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* JS が無くても検証表示が出る。入力中には怒らない（:user-invalid） */
+  rd-text-field > input:user-invalid,
+  rd-text-field > textarea:user-invalid {
+    border-color: var(--rd-color-status-danger-default);
+  }
+
+  @supports selector(:state(invalid)) {
+    rd-text-field:state(invalid) > input,
+    rd-text-field:state(invalid) > textarea {
+      border-color: var(--rd-color-status-danger-default);
+    }
+  }
+
+  rd-text-field > [part='hint'] {
+    margin-block: var(--rd-text-field-gap, var(--rd-space-1)) 0;
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+  }
+
+  /* 色だけに頼らない：太字と縦罫で「エラー」を形でも示す（accessibility.md 9） */
+  rd-text-field > [part='error'] {
+    margin-block: var(--rd-text-field-gap, var(--rd-space-1)) 0;
+    padding-inline-start: var(--rd-space-2);
+    border-inline-start: var(--rd-focus-ring-width) solid var(--rd-color-status-danger-default);
+    color: var(--rd-color-status-danger-text);
+    font: var(--rd-type-small);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  @supports (field-sizing: content) {
+    rd-text-field > textarea {
+      field-sizing: content;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    rd-text-field > input,
+    rd-text-field > textarea {
+      transition: border-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+    }
+  }
+
+  @media (forced-colors: active) {
+    rd-text-field > input,
+    rd-text-field > textarea {
+      border-color: FieldText;
+    }
+
+    rd-text-field > input:focus-visible,
+    rd-text-field > textarea:focus-visible {
+      outline-color: Highlight;
+    }
+
+    rd-text-field > [part='error'] {
+      border-inline-start-color: MarkText;
+      color: MarkText;
+    }
+  }
+}

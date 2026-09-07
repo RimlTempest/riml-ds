@@ -36,6 +36,8 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
+            // 失敗時のスクリーンショットを src に書き出さない（生成物をコミットしない）
+            screenshotFailures: false,
             provider: playwright(),
             instances: [{ browser: 'chromium' }],
           },

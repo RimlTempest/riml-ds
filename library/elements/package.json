@@ -23,6 +23,15 @@
       "default": "./dist/button/button.define.js"
     },
     "./button/style.css": "./dist/button/button.css",
+    "./text-field": {
+      "types": "./dist/text-field/index.d.ts",
+      "default": "./dist/text-field/index.js"
+    },
+    "./text-field/define": {
+      "types": "./dist/text-field/text-field.define.d.ts",
+      "default": "./dist/text-field/text-field.define.js"
+    },
+    "./text-field/style.css": "./dist/text-field/text-field.css",
     "./styles.css": "./dist/styles.css",
     "./custom-elements.json": "./custom-elements.json",
     "./package.json": "./package.json"
