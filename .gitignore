@@ -14,6 +14,7 @@ storybook-static/
 test-results/
 playwright-report/
 .claude/worktrees/
+LANE.md
 # 生成物（ソースは system/tokens/src と library/elements/src）
 system/tokens/dist/
 library/elements/custom-elements.json
