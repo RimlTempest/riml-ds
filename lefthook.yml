@@ -16,7 +16,7 @@ pre-commit:
       run: bunx oxlint --type-aware --deny-warnings --ignore-pattern 'tools/lint/test/fixtures/**' {staged_files}
 
     - name: stylelint
-      glob: '{system/css/**/*.css,library/elements/**/*.styles.ts,apps/storybook/**/*.css}'
+      glob: '{system/css/**/*.css,library/elements/**/*.css,library/elements/**/*.styles.ts,apps/storybook/**/*.css}'
       run: bunx stylelint --config tools/lint/stylelint.config.js {staged_files}
 
     - name: secrets

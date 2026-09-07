@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "src/button/button.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "操作の起点となるボタン。ネイティブの `<button>` / `<a href>` を子として包む（ティア A、ADR-0012）。\nJS が無くても押せる・送信できる。部品が足すのは `:state()` と `aria-busy` だけ。",
+          "name": "RdButton",
+          "cssProperties": [
+            {
+              "description": "横パディング。既定 var(--rd-space-4)",
+              "name": "--rd-button-padding-inline"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "variant",
+              "privacy": "public",
+              "type": {
+                "text": "ButtonVariant"
+              },
+              "default": "'primary'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "loading",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "loading",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#control",
+              "privacy": "private",
+              "type": {
+                "text": "Element | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#onClick",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<Record<string, never>>"
+              },
+              "description": "子の click で発火（loading 中は発火しない）",
+              "name": "rd-press"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "variant",
+              "type": {
+                "text": "ButtonVariant"
+              },
+              "default": "'primary'",
+              "fieldName": "variant"
+            },
+            {
+              "name": "loading",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "loading"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "primary",
+              "description": "variant=primary"
+            },
+            {
+              "name": "secondary",
+              "description": "variant=secondary"
+            },
+            {
+              "name": "ghost",
+              "description": "variant=ghost"
+            },
+            {
+              "name": "danger",
+              "description": "variant=danger"
+            },
+            {
+              "name": "loading",
+              "description": "読み込み中。押下を無視し aria-busy を付ける"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子（<button> か <a href>）が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "操作の起点。primary は画面に 1 つ",
+          "status": "stable",
+          "pe": "A",
+          "tagName": "rd-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdButton",
+          "declaration": {
+            "name": "RdButton",
+            "module": "src/button/button.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/button/button.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-button",
+          "declaration": {
+            "name": "RdButton",
+            "module": "/src/button/button.element.js"
+          }
+        }
+      ]
+    }
+  ]
+}

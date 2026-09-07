@@ -17,7 +17,6 @@ playwright-report/
 LANE.md
 # 生成物（ソースは system/tokens/src と library/elements/src）
 system/tokens/dist/
-library/elements/custom-elements.json
 library/react/src/generated/
 library/vue/src/generated/
 library/svelte/src/generated/
