@@ -15,12 +15,12 @@ export { default } from '@rimltempest/riml-ds-lint/stylelint'
 
 ## oxlint プラグイン `riml-ds/*`
 
-| ルール                     | 何を落とすか                                             | 根拠                                       |
-| -------------------------- | -------------------------------------------------------- | ------------------------------------------ |
-| `riml-ds/no-class`         | `class`。ただし `*.element.ts` は免除                    | ADR-0005（Custom Elements は class 必須）  |
-| `riml-ds/no-type-assertion`| `as`（`as const` は許可）、`<T>x`、`!`                    | ADR-0006 / `riml-ds-typescript`            |
-| `riml-ds/no-enum`          | `enum`。`as const` オブジェクト + 値のユニオンを使う     | ADR-0006 / `riml-ds-typescript`            |
-| `riml-ds/no-throw-in-domain` | ドメイン層の `throw`。失敗は `Result<T, E>` で返す     | `riml-ds-typescript` §3                    |
+| ルール                       | 何を落とすか                                         | 根拠                                      |
+| ---------------------------- | ---------------------------------------------------- | ----------------------------------------- |
+| `riml-ds/no-class`           | `class`。ただし `*.element.ts` は免除                | ADR-0005（Custom Elements は class 必須） |
+| `riml-ds/no-type-assertion`  | `as`（`as const` は許可）、`<T>x`、`!`               | ADR-0006 / `riml-ds-typescript`           |
+| `riml-ds/no-enum`            | `enum`。`as const` オブジェクト + 値のユニオンを使う | ADR-0006 / `riml-ds-typescript`           |
+| `riml-ds/no-throw-in-domain` | ドメイン層の `throw`。失敗は `Result<T, E>` で返す   | `riml-ds-typescript` §3                   |
 
 `no-throw-in-domain` はルート `.oxlintrc.json` の `overrides` が指すパス
 （`library/elements/src/**/*.logic.ts`、`system/tokens/src/**/*.ts`、`tools/*/src/core/**/*.ts`）
@@ -60,3 +60,10 @@ ADR を起こし、この README とテストを同時に直す。
 
 `tools/lint/test/` は oxlint / stylelint を**設定込みで実際に走らせて**出力を検査する
 （ルール実装の単体テストより、設定の壊れに気づける）。`bun run test` で回る。
+
+`test/fixtures/**` は意図的に規約を破る検体なので、既定の実行からは外している
+（`package.json` の `lint` / `lint:fix` と `lefthook.yml` の oxlint ジョブに
+`--ignore-pattern 'tools/lint/test/fixtures/**'`、`tools/lint/tsconfig.json` の `exclude`）。
+テストだけが `.oxlintrc.json` を渡して明示的に検査する。fixture は
+`.oxlintrc.json` の `overrides` で「test の緩和」を打ち消してあるので、
+実ソースと同じ厳しさで判定される。
