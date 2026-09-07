@@ -41,6 +41,15 @@ const dialogIn = (canvasElement: HTMLElement): RdDialog | undefined => {
   return element instanceof RdDialog ? element : undefined
 }
 
+/**
+ * 開いた状態で描く story は、`@starting-style` の opacity 遷移が終わるまで待つ。
+ * 遷移の途中を axe が掴むと、半透明の枠が背面（backdrop）と混ざってコントラスト違反に見える。
+ * 待つのは `document.getAnimations()`（shadow 内の遷移も含まれる）。
+ */
+const settled = async (): Promise<void> => {
+  await Promise.all(document.getAnimations().map((animation) => animation.finished))
+}
+
 const meta: Meta<Args> = {
   title: 'Components/Dialog',
   component: 'rd-dialog',
@@ -96,7 +105,7 @@ export const Variants: Story = {
   },
 }
 
-export const Open: Story = { args: { open: true } }
+export const Open: Story = { args: { open: true }, play: settled }
 
 /**
  * `persistent` は Esc も背面クリックも受けない。`Disabled` に相当する状態。
@@ -107,20 +116,26 @@ export const Open: Story = { args: { open: true } }
 export const Persistent: Story = {
   args: { open: true, persistent: true },
   play: async ({ canvasElement }) => {
+    await settled()
     const dialog = dialogIn(canvasElement)
     await expect(dialog?.open).toBe(true)
     await expect(dialog?.persistent).toBe(true)
   },
 }
 
-export const Dark: Story = { args: { open: true }, globals: { scheme: 'dark' } }
+export const Dark: Story = { args: { open: true }, globals: { scheme: 'dark' }, play: settled }
 
-export const Dense: Story = { args: { open: true }, globals: { density: 'compact' } }
+export const Dense: Story = {
+  args: { open: true },
+  globals: { density: 'compact' },
+  play: settled,
+}
 
-export const RTL: Story = { args: { open: true }, globals: { dir: 'rtl' } }
+export const RTL: Story = { args: { open: true }, globals: { dir: 'rtl' }, play: settled }
 
 export const ForcedColors: Story = {
   args: { open: true },
+  play: settled,
   parameters: {
     docs: {
       description: {
@@ -134,6 +149,7 @@ export const ForcedColors: Story = {
 
 export const ReducedMotion: Story = {
   args: { open: true },
+  play: settled,
   parameters: {
     docs: {
       description: {
