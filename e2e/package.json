@@ -1,0 +1,12 @@
+{
+  "name": "@rimltempest/riml-ds-e2e",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Playwright の VRT・a11y・JS 無し（PE）検証。VRT は Docker の中でだけ撮る（ADR-0007）",
+  "type": "module",
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
+    "http-server": "14.1.1"
+  }
+}

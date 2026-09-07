@@ -23,3 +23,6 @@ library/react/src/generated/
 library/vue/src/generated/
 library/svelte/src/generated/
 library/astro/src/generated/
+apps/storybook/rendered/
+apps/storybook/.storybook/generated/
+e2e/pe/pages/

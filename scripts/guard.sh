@@ -125,6 +125,36 @@ for contract_file in library/elements/src/*/*.contract.ts; do
   fi
 done
 
+# 10. story の a11y 除外は理由付きで、合計が部品数を超えない（ADR-0007 §影響）
+story_files=$(find library/elements/src apps/storybook/stories -name '*.stories.ts' 2>/dev/null || true)
+if [ -n "$story_files" ] && [ -f tools/cem/registry.json ]; then
+  # shellcheck disable=SC2086
+  exclusions=$({ grep -hE '^[[:space:]]*rules:' $story_files 2>/dev/null || true; } | wc -l | tr -d ' ')
+  # shellcheck disable=SC2086
+  reasons=$({ grep -hE '^[[:space:]]*reason:' $story_files 2>/dev/null || true; } | wc -l | tr -d ' ')
+  components=$(node -e 'const r=require("./tools/cem/registry.json");console.log(Array.isArray(r)?r.length:0)')
+  if [ "$exclusions" -gt "$reasons" ]; then
+    report "library/elements/src" "every parameters.a11y exclusion needs a reason (ADR-0007): $exclusions rules but $reasons reasons"
+  fi
+  if [ "$exclusions" -gt "$components" ]; then
+    report "library/elements/src" "too many a11y exclusions: $exclusions > $components components (ADR-0007)"
+  fi
+fi
+
+# 11. VRT のベースラインは Docker の中でだけ撮る（OS 名が付いた画像はホストで撮ったもの）
+if git rev-parse --git-dir >/dev/null 2>&1; then
+  host_shots=$({ git ls-files 'e2e/**/__screenshots__/**' 2>/dev/null || true; } | grep -E -- '-(darwin|win32)' || true)
+  for file in $host_shots; do
+    report "$file" "screenshots must be taken inside Docker (bun run vrt:update); host-taken images are not committable"
+  done
+
+  # 12. JS 無し検証のページは生成物（e2e/pe/build-pages.ts が毎回作る）
+  pe_pages=$(git ls-files 'e2e/pe/pages/**' 2>/dev/null || true)
+  for file in $pe_pages; do
+    report "$file" "generated output must not be committed (e2e/pe/build-pages.ts rebuilds it)"
+  done
+fi
+
 # plan 002 以降が足す検査の予約席:
 # - system/tokens/dist/tokens.css が生値を含まない（plan 002）
 # - 公開パッケージの exports に dist 以外が現れない（plan 007）

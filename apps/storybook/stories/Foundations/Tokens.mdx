@@ -1,0 +1,16 @@
+import { Markdown, Meta } from '@storybook/addon-docs/blocks'
+import tokens from '../../../../system/tokens/dist/tokens.md?raw'
+
+{/* 正は system/tokens/src。ここは生成物 tokens.md をそのまま見せるだけ（二重管理しない） */}
+
+<Meta title="Foundations/Tokens" />
+
+# トークン
+
+`@rimltempest/riml-ds-tokens` が配る CSS 変数の一覧。値は `system/tokens/src` の DTCG
+ファイルが正で、この表は `bun run build` の生成物（`tokens.md`）をそのまま読んでいる。
+
+利用側は `@rimltempest/riml-ds-tokens/tokens.css` を読み込み、`--rd-*` だけを使う。
+生の色・生の px を書かない（stylelint が落とす）。
+
+<Markdown>{tokens}</Markdown>

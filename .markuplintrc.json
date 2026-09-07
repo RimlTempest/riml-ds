@@ -37,12 +37,26 @@
             "value": {
               "enum": ["-1", "0"]
             }
+          },
+          {
+            "name": "part",
+            "value": "Any"
+          },
+          {
+            "name": "exportparts",
+            "value": "Any"
           }
         ]
       }
     }
   },
   "nodeRules": [
+    {
+      "selector": "template[shadowrootmode] *",
+      "rules": {
+        "id-duplication": false
+      }
+    },
     {
       "selector": "img",
       "rules": {

@@ -1,0 +1,38 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Foundations/Layers" />
+
+# レイヤー
+
+`@rimltempest/riml-ds-css` は `@layer` の順序を 1 か所で決める（ADR-0004）。
+
+```css
+@layer rd.reset, rd.tokens, rd.base, rd.components, rd.utilities, rd.overrides;
+```
+
+| レイヤー        | 中身                                                               |
+| --------------- | ------------------------------------------------------------------ |
+| `rd.reset`      | ブラウザ差だけを潰す。見た目（色・余白・字）は決めない             |
+| `rd.tokens`     | `--rd-*`（`@rimltempest/riml-ds-tokens/tokens.css`）               |
+| `rd.base`       | 素の要素の既定（本文の字・行間・リンク）                           |
+| `rd.components` | 部品。ティア A/B の `<name>.css` はここに入る（ADR-0012）          |
+| `rd.utilities`  | `.rd-skip-link` / `.rd-visually-hidden` / `.rd-stack` などの小道具 |
+| `rd.overrides`  | 利用側の逃げ道。riml-ds はここに何も書かない                       |
+
+## 読み込む順
+
+```js
+import '@rimltempest/riml-ds-css/layers.css' // 順序の宣言だけ。必ず最初
+import '@rimltempest/riml-ds-tokens/tokens.css'
+import '@rimltempest/riml-ds-css'
+import '@rimltempest/riml-ds-elements/button/style.css' // 部品ごと、または styles.css で一括
+```
+
+`layers.css` を最初に読むのは、`@layer` の順序が「最初に現れた宣言」で決まるため。
+部品の CSS を先に読むと順序が入れ替わり、`rd.utilities` が `rd.components` に負ける。
+
+## ティア A の CSS
+
+ティア A の部品は light DOM に描くので、スタイルは `static styles` ではなく
+`<name>.css` に置く（ADR-0012 §2）。セレクタは `rd-<name> > <native>` の形にし、
+`::slotted()` の制限を避ける。
