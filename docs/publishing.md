@@ -10,8 +10,7 @@ npm login                                     # ブラウザで認証
 cd system/tokens && npm publish --access public
 cd ../css && npm publish --access public
 cd ../../library/elements && npm publish --access public
-# 依存の向きに沿って react / vue / svelte / astro → tools/lint も同様
-# （tools/mcp は plan 008 でパッケージができてから同じ手順で足す）
+# 依存の向きに沿って react / vue / svelte / astro → tools/lint → tools/mcp も同様（公開 9 パッケージ）
 ```
 
 `npm publish` はローカルの provenance を付けない（`publishConfig.provenance: true` は
