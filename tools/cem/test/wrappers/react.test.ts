@@ -73,6 +73,7 @@ export const RdButton = ({
     expect(markupFiles.map((file) => file.path)).toEqual([
       'button.tsx',
       'dialog.tsx',
+      'select.tsx',
       'text-field.tsx',
     ])
     for (const file of markupFiles) {
@@ -107,6 +108,17 @@ export const RdButton = ({
     expect(textField).not.toContain('...rest,')
   })
 
+  it('experimental の部品は root の index に出ず、./experimental の index に出る', () => {
+    // ADR-0009: experimental は専用サブパスからしか出さない
+    expect(find('index.ts')).not.toContain('RdSelect')
+    expect(find('index.ts')).toContain("export { RdButton } from './button.js'")
+    expect(find('experimental.ts')).toContain("export { RdSelect } from './select.js'")
+    expect(find('experimental.ts')).toContain("export type { RdSelectProps } from './select.js'")
+    expect(find('experimental.ts')).not.toContain('RdButton')
+    expect(find('client.ts')).not.toContain('RdSelect')
+    expect(find('client/experimental.ts')).toContain("export { RdSelect } from './select.js'")
+  })
+
   it('jsx の型は rd-* を IntrinsicElements に足す', () => {
     const source = find('jsx.ts')
     expect(source).toContain("declare module 'react'")
@@ -118,15 +130,19 @@ export const RdButton = ({
     expect(files.map((file) => file.path)).toEqual([
       'button.tsx',
       'dialog.tsx',
+      'select.tsx',
       'text-field.tsx',
       'client/internal.ts',
       'client/button.tsx',
       'client/dialog.tsx',
       'client/live-region.tsx',
+      'client/select.tsx',
       'client/text-field.tsx',
       'jsx.ts',
       'index.ts',
+      'experimental.ts',
       'client.ts',
+      'client/experimental.ts',
     ])
   })
 })

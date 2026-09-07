@@ -59,7 +59,7 @@ const componentFile = (spec: WrapperSpec): GeneratedFile => {
 /** グローバルな `.d.ts` にするため、名前つきの型は `import('...')` で参照する */
 const inlineType = (spec: WrapperSpec, text: string): string =>
   spec.namedTypes.includes(text)
-    ? `import('@rimltempest/riml-ds-elements/${spec.name}').${text}`
+    ? `import('@rimltempest/riml-ds-elements/${spec.subpath}').${text}`
     : text
 
 const elementsFile = (specs: readonly WrapperSpec[]): GeneratedFile => {
@@ -87,19 +87,27 @@ const elementsFile = (specs: readonly WrapperSpec[]): GeneratedFile => {
   }
 }
 
+const indexFile = (path: string, specs: readonly WrapperSpec[]): GeneratedFile => ({
+  path,
+  content: `${[
+    TS_HEADER,
+    ...specs.map((spec) => `export { default as ${spec.pascal} } from './${spec.name}.svelte'`),
+  ].join('\n')}\n`,
+})
+
 export const svelteFiles = (specs: readonly WrapperSpec[]): readonly GeneratedFile[] => {
   const withMarkup = specs.filter((spec) => spec.contract !== undefined)
   return [
     ...withMarkup.map(componentFile),
     elementsFile(specs),
-    {
-      path: 'index.js',
-      content: `${[
-        TS_HEADER,
-        ...withMarkup.map(
-          (spec) => `export { default as ${spec.pascal} } from './${spec.name}.svelte'`,
-        ),
-      ].join('\n')}\n`,
-    },
+    // ADR-0009: experimental は `@rimltempest/riml-ds-svelte/experimental` からしか出さない
+    indexFile(
+      'index.js',
+      withMarkup.filter((spec) => spec.status !== 'experimental'),
+    ),
+    indexFile(
+      'experimental.js',
+      withMarkup.filter((spec) => spec.status === 'experimental'),
+    ),
   ]
 }

@@ -21,6 +21,10 @@
       "types": "./dist/button/index.d.ts",
       "default": "./dist/button/index.js"
     },
+    "./button/contract": {
+      "types": "./dist/button/button.contract.d.ts",
+      "default": "./dist/button/button.contract.js"
+    },
     "./button/define": {
       "types": "./dist/button/button.define.d.ts",
       "default": "./dist/button/button.define.js"
@@ -30,6 +34,10 @@
       "types": "./dist/text-field/index.d.ts",
       "default": "./dist/text-field/index.js"
     },
+    "./text-field/contract": {
+      "types": "./dist/text-field/text-field.contract.d.ts",
+      "default": "./dist/text-field/text-field.contract.js"
+    },
     "./text-field/define": {
       "types": "./dist/text-field/text-field.define.d.ts",
       "default": "./dist/text-field/text-field.define.js"
@@ -38,6 +46,10 @@
     "./dialog": {
       "types": "./dist/dialog/index.d.ts",
       "default": "./dist/dialog/index.js"
+    },
+    "./dialog/contract": {
+      "types": "./dist/dialog/dialog.contract.d.ts",
+      "default": "./dist/dialog/dialog.contract.js"
     },
     "./dialog/define": {
       "types": "./dist/dialog/dialog.define.d.ts",
@@ -56,6 +68,10 @@
       "types": "./dist/experimental/select/index.d.ts",
       "default": "./dist/experimental/select/index.js"
     },
+    "./experimental/select/contract": {
+      "types": "./dist/select/select.contract.d.ts",
+      "default": "./dist/select/select.contract.js"
+    },
     "./experimental/select/define": {
       "types": "./dist/select/select.define.d.ts",
       "default": "./dist/select/select.define.js"
@@ -65,6 +81,10 @@
       "types": "./dist/experimental/checkbox/index.d.ts",
       "default": "./dist/experimental/checkbox/index.js"
     },
+    "./experimental/checkbox/contract": {
+      "types": "./dist/checkbox/checkbox.contract.d.ts",
+      "default": "./dist/checkbox/checkbox.contract.js"
+    },
     "./experimental/checkbox/define": {
       "types": "./dist/checkbox/checkbox.define.d.ts",
       "default": "./dist/checkbox/checkbox.define.js"
@@ -73,6 +93,10 @@
     "./experimental/disclosure": {
       "types": "./dist/experimental/disclosure/index.d.ts",
       "default": "./dist/experimental/disclosure/index.js"
+    },
+    "./experimental/disclosure/contract": {
+      "types": "./dist/disclosure/disclosure.contract.d.ts",
+      "default": "./dist/disclosure/disclosure.contract.js"
     },
     "./experimental/disclosure/define": {
       "types": "./dist/disclosure/disclosure.define.d.ts",

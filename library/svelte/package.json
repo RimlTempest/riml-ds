@@ -16,6 +16,11 @@
       "svelte": "./src/generated/index.js",
       "default": "./src/generated/index.js"
     },
+    "./experimental": {
+      "types": "./src/generated/elements.d.ts",
+      "svelte": "./src/generated/experimental.js",
+      "default": "./src/generated/experimental.js"
+    },
     "./types": "./src/generated/elements.d.ts",
     "./package.json": "./package.json"
   },

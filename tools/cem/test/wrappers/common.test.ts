@@ -108,6 +108,33 @@ const dialogCem: Readonly<Record<string, unknown>> = {
 
 const liveRegionCem: Readonly<Record<string, unknown>> = { pe: 'C' }
 
+const selectContract: Contract = {
+  pe: 'A',
+  roles: { label: ':scope > label', control: ':scope > select' },
+  required: ['label', 'control'],
+  tree: {
+    tag: 'rd-select',
+    attrs: { hint: '$hint', error: '$error', value: '$defaultValue' },
+    children: [
+      { tag: 'label', attrs: { for: '$id' }, children: [{ prop: 'label' }] },
+      {
+        tag: 'select',
+        attrs: { id: '$id', name: '$name', required: '$required' },
+        children: [{ raw: '$children' }],
+      },
+    ],
+  },
+}
+
+const selectCem: Readonly<Record<string, unknown>> = {
+  pe: 'A',
+  status: 'experimental',
+  attributes: [
+    { name: 'hint', type: { text: 'string' }, default: "''" },
+    { name: 'error', type: { text: 'string' }, default: "''" },
+  ],
+}
+
 describe('toPascal', () => {
   it('タグ名を PascalCase の部品名にする', () => {
     expect(toPascal('rd-text-field')).toBe('RdTextField')
@@ -195,6 +222,26 @@ describe('toWrapperSpecs', () => {
     expect(spec?.contract).toBeUndefined()
     expect(spec?.markupProps).toEqual([])
     expect(spec?.controlTag).toBeUndefined()
+  })
+
+  it('@status experimental は experimental/<name> のサブパスを持つ', () => {
+    const [spec] = toWrapperSpecs(manifest([['rd-select', selectCem]]), { select: selectContract })
+    expect(spec?.status).toBe('experimental')
+    expect(spec?.subpath).toBe('experimental/select')
+  })
+
+  it('@status が無い・知らない文字列なら stable 扱いで <name> をサブパスにする', () => {
+    const [stable] = toWrapperSpecs(manifest([['rd-button', buttonCem]]), {
+      button: buttonContract,
+    })
+    expect(stable?.status).toBe('stable')
+    expect(stable?.subpath).toBe('button')
+    const [unknown] = toWrapperSpecs(
+      manifest([['rd-button', { ...buttonCem, status: 'まだ決めていない' }]]),
+      { button: buttonContract },
+    )
+    expect(unknown?.status).toBe('stable')
+    expect(unknown?.subpath).toBe('button')
   })
 
   it('部品名の昇順で返す（生成が冪等になる）', () => {

@@ -33,13 +33,14 @@ const componentFile = (spec: WrapperSpec): GeneratedFile => {
   ]
   const names = [...visible.map((markupProp) => markupProp.name), 'class: className']
   return {
-    path: `${spec.name}.astro`,
+    // ADR-0009: experimental は `@rimltempest/riml-ds-astro/experimental/<name>.astro` から配る
+    path: `${spec.status === 'experimental' ? 'experimental/' : ''}${spec.name}.astro`,
     content: `${[
       '---',
       HEADER,
       ...(spec.namedTypes.length > 0
         ? [
-            `import type { ${spec.namedTypes.join(', ')} } from '@rimltempest/riml-ds-elements/${spec.name}'`,
+            `import type { ${spec.namedTypes.join(', ')} } from '@rimltempest/riml-ds-elements/${spec.subpath}'`,
           ]
         : []),
       '',

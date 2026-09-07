@@ -27,16 +27,35 @@ describe('vueFiles', () => {
     const source = find('text-field.ts')
     expect(source).toContain('readonly modelValue?: string')
     expect(source).toContain(`emits: ['update:modelValue']`)
-    expect(source).toContain(`emit('update:modelValue', event.target.value)`)
+    expect(source).toContain(`emit('update:modelValue', target.value)`)
     expect(source).toContain('value: props.modelValue ?? props.defaultValue')
     // <label for> と <input id> は id が無ければ name を使う
     expect(source).toContain('const controlId = props.id ?? props.name')
+  })
+
+  it('<select> / <textarea> でも v-model が効く（HTMLInputElement だけを見ない）', () => {
+    const source = find('select.ts')
+    expect(source).toContain('HTMLInputElement')
+    expect(source).toContain('HTMLSelectElement')
+    expect(source).toContain('HTMLTextAreaElement')
+    expect(source).toContain(`emit('update:modelValue', target.value)`)
   })
 
   it('ティア B の raw は既定 slot になる', () => {
     const source = find('dialog.ts')
     expect(source).toContain(`h('h2', { slot: 'label' }, props.label)`)
     expect(source).toContain("slots['default']?.()")
+  })
+
+  it('experimental の部品は root の index に出ず、./experimental の index に出る', () => {
+    // ADR-0009: プラグインが登録するのは stable だけ。experimental は利用側が個別に登録する
+    const index = find('index.ts')
+    expect(index).not.toContain('RdSelect')
+    expect(index).toContain('export const rdComponents = { RdButton, RdDialog, RdTextField }')
+    const experimental = find('experimental.ts')
+    expect(experimental).toContain("import { RdSelect } from './select.js'")
+    expect(experimental).toContain('export const rdExperimentalComponents = { RdSelect }')
+    expect(experimental).not.toContain('RdButton')
   })
 
   it('型は GlobalComponents と IntrinsicElementAttributes を広げ、ティア C は部品にならない', () => {

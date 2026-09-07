@@ -15,9 +15,17 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./experimental": {
+      "types": "./dist/experimental.d.ts",
+      "default": "./dist/experimental.js"
+    },
     "./client": {
       "types": "./dist/client.d.ts",
       "default": "./dist/client.js"
+    },
+    "./client/experimental": {
+      "types": "./dist/client-experimental.d.ts",
+      "default": "./dist/client-experimental.js"
     },
     "./jsx": {
       "types": "./dist/generated/jsx.d.ts",
