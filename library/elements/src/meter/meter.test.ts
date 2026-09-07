@@ -66,4 +66,13 @@ it('JS が無くても読める形のまま、太いピルとして描かれる'
   // --rd-radius-full: 9999px、--rd-space-4: 1rem
   expect(style?.borderRadius).toBe('9999px')
   expect(style?.height).toBe('16px')
+  // ネイティブの内側（緑・黄・赤の棒）を消していることは VRT が見る
+  //（getComputedStyle は UA shadow の擬似要素に作者スタイルを返さない）
+})
+
+it('ラベルは太字のインク（brand.md §7.3）', async () => {
+  const el = await fixtureOf(RdMeter, METER)
+  const label = el.querySelector('label')
+  const style = label === null ? undefined : getComputedStyle(label)
+  expect(style?.fontWeight).toBe('700')
 })

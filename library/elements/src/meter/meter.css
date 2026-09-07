@@ -51,6 +51,18 @@
     );
   }
 
+  /* Blink / WebKit は `appearance: none` でもネイティブの内側（緑・黄・赤の棒）を別に描くので消す。
+     ここだけベンダ接頭辞を使う（他のエンジンでは何も起きない。docs/baseline.md の例外） */
+  rd-meter > meter::-webkit-meter-inner-element,
+  rd-meter > progress::-webkit-progress-bar {
+    display: none;
+  }
+
+  /* Gecko の <progress> は ::-moz-progress-bar が値の棒。背景で描くので透かす */
+  rd-meter > progress::-moz-progress-bar {
+    background: transparent;
+  }
+
   rd-meter > meter:focus-visible,
   rd-meter > progress:focus-visible {
     outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
@@ -63,7 +75,15 @@
     rd-meter > meter,
     rd-meter > progress {
       appearance: auto;
+      border-width: var(--rd-border-width-default);
+      border-style: solid;
+      border-color: CanvasText;
       background-image: none;
+    }
+
+    rd-meter > meter::-webkit-meter-inner-element,
+    rd-meter > progress::-webkit-progress-bar {
+      display: revert;
     }
   }
 }

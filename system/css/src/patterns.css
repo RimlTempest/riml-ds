@@ -41,9 +41,21 @@
     inline-size: var(--rd-space-12);
     block-size: var(--rd-space-3);
     background-image:
-      radial-gradient(circle at 12.5% 50%, var(--rd-color-brand-signature) 45%, transparent 50%),
-      radial-gradient(circle at 50% 50%, var(--rd-color-brand-primary) 45%, transparent 50%),
-      radial-gradient(circle at 87.5% 50%, var(--rd-color-border-default) 45%, transparent 50%);
+      radial-gradient(
+        circle closest-side at 12.5% 50%,
+        var(--rd-color-brand-signature) 85%,
+        transparent 90%
+      ),
+      radial-gradient(
+        circle closest-side at 50% 50%,
+        var(--rd-color-brand-primary) 85%,
+        transparent 90%
+      ),
+      radial-gradient(
+        circle closest-side at 87.5% 50%,
+        var(--rd-color-border-default) 85%,
+        transparent 90%
+      );
     content: '';
   }
 
