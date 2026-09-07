@@ -6,5 +6,7 @@
     "rootDir": ".",
     "types": ["bun"]
   },
+  // fixture は意図的に規約を破る検体。型検査の対象にしない
+  "exclude": ["test/fixtures/**"],
   "include": ["test/**/*.ts"]
 }
