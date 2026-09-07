@@ -123,7 +123,7 @@
     },
     "library/astro": {
       "name": "@rimltempest/riml-ds-astro",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "devDependencies": {
         "astro": "7.3.1",
       },
@@ -136,7 +136,7 @@
     },
     "library/elements": {
       "name": "@rimltempest/riml-ds-elements",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "dependencies": {
         "lit": "3.3.3",
         "tslib": "2.8.1",
@@ -150,7 +150,7 @@
     },
     "library/react": {
       "name": "@rimltempest/riml-ds-react",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "devDependencies": {
         "@rimltempest/riml-ds-elements": "workspace:*",
         "@types/react": "19.2.18",
@@ -166,7 +166,7 @@
     },
     "library/svelte": {
       "name": "@rimltempest/riml-ds-svelte",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "devDependencies": {
         "@rimltempest/riml-ds-elements": "workspace:*",
         "svelte": "5.57.0",
@@ -178,7 +178,7 @@
     },
     "library/vue": {
       "name": "@rimltempest/riml-ds-vue",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "devDependencies": {
         "@rimltempest/riml-ds-elements": "workspace:*",
         "vue": "3.5.42",
@@ -190,7 +190,7 @@
     },
     "system/css": {
       "name": "@rimltempest/riml-ds-css",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "devDependencies": {
         "postcss": "8.5.28",
       },
@@ -200,7 +200,7 @@
     },
     "system/tokens": {
       "name": "@rimltempest/riml-ds-tokens",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "devDependencies": {
         "@terrazzo/cli": "2.7.1",
         "@terrazzo/parser": "2.7.1",
@@ -226,7 +226,7 @@
     },
     "tools/lint": {
       "name": "@rimltempest/riml-ds-lint",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "dependencies": {
         "postcss-lit": "1.4.1",
         "stylelint-config-standard": "40.0.0",
@@ -239,7 +239,7 @@
     },
     "tools/mcp": {
       "name": "@rimltempest/riml-ds-mcp",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "bin": {
         "riml-ds-mcp": "./dist/cli.js",
       },
