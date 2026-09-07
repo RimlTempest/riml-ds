@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist/types",
+    "emitDeclarationOnly": true,
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "types": ["bun"],
+    "importHelpers": true
+  },
+  "include": ["src", "test", "scripts"]
+}

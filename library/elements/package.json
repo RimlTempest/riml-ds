@@ -1,0 +1,41 @@
+{
+  "name": "@rimltempest/riml-ds-elements",
+  "version": "0.0.0",
+  "description": "riml-ds の Web Components（Lit）。唯一のソース",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "custom-elements.json",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "./dist/**/*.define.js",
+    "./dist/**/*.css"
+  ],
+  "exports": {
+    "./styles.css": "./dist/styles.css",
+    "./custom-elements.json": "./custom-elements.json",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && bun run scripts/copy-css.ts",
+    "gen": "cem analyze --config custom-elements.config.js",
+    "test": "vitest run --root ../.. --project node --project browser library/elements"
+  },
+  "dependencies": {
+    "lit": "3.3.3",
+    "tslib": "2.8.1"
+  },
+  "devDependencies": {
+    "@custom-elements-manifest/analyzer": "0.11.0"
+  },
+  "peerDependencies": {
+    "@rimltempest/riml-ds-tokens": "workspace:*"
+  },
+  "customElements": "custom-elements.json"
+}
