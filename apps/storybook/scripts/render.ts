@@ -1,7 +1,7 @@
 /**
  * 描画後の DOM を HTML に落とし、markuplint に食わせる（ADR-0006）。
  * shadow root は `getHTML({ serializableShadowRoots: true })` で `<template shadowrootmode>` として出る。
- * **shadow を `serializable: true` で attach していない部品は中身が出ない**（今は rd-live-region が該当）。
+ * **shadow を `serializable: true` で attach していない部品は中身が出ない**（ティア B/C の部品は全部 `serializable: true` で attach する。plan 009 Step 0 で rd-live-region も揃えた）。
  *
  * 生成物は `apps/storybook/rendered/`（gitignore）。`bun run render` から呼ぶ。
  */

@@ -135,7 +135,7 @@ const [email, setEmail] = useState('')
 - **`define` はハイドレーションの後に読む**（`useEffect` か動的 `import()`）。先に読むとティア A が light DOM に
   足す強化ノード（hint / error）でハイドレーションが食い違い、React が DOM を作り直す。
 - `id` を省くと `name` が `id` になる（RSC で `useId` を呼べないため）。同じ `name` が 1 ページに 2 つ以上あるなら `id` を明示する。
-- 未指定の props は属性ごと出ない。`dismissible={undefined}` のように `undefined` を渡しても要素の既定値を潰さない。
+- 未指定の props は属性ごと出ない。`persistent={undefined}` のように `undefined` を渡しても要素の既定値を潰さない。
 
 ### Vue 3.5
 

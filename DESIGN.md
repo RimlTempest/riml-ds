@@ -185,9 +185,20 @@ JS が無くても内容が読める。ティア C（live-region など）は無
 | ----------------- | ----------------------------------------------- | ----------------------------------------------- |
 | `rd-button`（A）      | 操作の起点。子のネイティブ `<button>` を包む。`variant`: primary / secondary / ghost / danger | `variant`, `loading`, `rd-press` |
 | `rd-text-field`（A）  | 1 行テキスト入力。子の `<label for>` + `<input>` を包む。インラインのエラー文言と `:state(invalid)` を足す | `hint`, `error`, `:state(invalid)` |
-| `rd-dialog`（B）      | モーダル。ネイティブ `<dialog>` を枠にし内容は slot | `open`, `dismissible`, `show()`, `close()`, `:state(open)` |
+| `rd-dialog`（B）      | モーダル。ネイティブ `<dialog>` を枠にし内容は slot | `open`, `persistent`, `show()`, `close()`, `:state(open)` |
 | `rd-live-region`（C） | 読み上げの集約点。ページに 1 つ                 | `announce(text, { politeness })`                |
 | `.rd-skip-link`（CSS）| 本文へのスキップ。部品ではなく `@rimltempest/riml-ds-css` のクラス | `<a class="rd-skip-link" href="#main">` |
+
+第 2 波（plan 009、`@status experimental`。import は `@rimltempest/riml-ds-elements/experimental/<name>`）：
+
+| 部品              | 役割                                            | 主要な API                                      |
+| ----------------- | ----------------------------------------------- | ----------------------------------------------- |
+| `rd-select`（A）      | 1 つ選ぶ。子の `<label for>` + `<select>` を包む。見た目はネイティブのまま | `hint`, `error`, `value`（初期選択）, `:state(invalid)` |
+| `rd-checkbox`（A）    | 真偽。`<label>` が `<input type="checkbox">` を包む。`switch` で `role="switch"` | `switch`, `indeterminate`, `hint`, `error` |
+| `rd-disclosure`（A）  | 開閉。子の `<details>` / `<summary>` を包む。`group` で排他アコーディオン | `group`（`<details name>`）, `rd-toggle` |
+| `rd-toast`（C）       | 一時通知の表示。読み上げは `rd-live-region` に委譲する | `show({ message, tone, duration })`, `close()`, `rd-dismiss`, `:state(success)` など |
+
+`rd-toast` の `tone`（info / success / warning / danger）は装飾で、意味は文言に持たせる。色だけで意味を伝えない。
 
 部品の共通ルール：
 
