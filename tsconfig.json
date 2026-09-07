@@ -1,4 +1,8 @@
 {
   "files": [],
-  "references": [{ "path": "./tools/lint" }]
+  "references": [
+    { "path": "./tools/lint" },
+    { "path": "./system/tokens" },
+    { "path": "./tools/design-md" }
+  ]
 }

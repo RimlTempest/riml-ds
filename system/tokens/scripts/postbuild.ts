@@ -56,6 +56,8 @@ const main = async (): Promise<void> => {
     ['more', setFor({ contrast: 'more' })],
     ['more-dark', setFor({ scheme: 'dark', contrast: 'more' })],
     ['compact', setFor({ density: 'compact' })],
+    ['theme-qrcc', setFor({ theme: 'qrcc' })],
+    ['theme-noter', setFor({ theme: 'noter' })],
   ])
 
   const semanticTypography: unknown = JSON.parse(

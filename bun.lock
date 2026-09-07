@@ -31,6 +31,13 @@
         "culori": "4.0.2",
       },
     },
+    "tools/design-md": {
+      "name": "@rimltempest/riml-ds-design-md",
+      "version": "0.0.0",
+      "devDependencies": {
+        "yaml": "2.9.0",
+      },
+    },
     "tools/lint": {
       "name": "@rimltempest/riml-ds-lint",
       "version": "0.0.0",
@@ -190,6 +197,8 @@
     "@oxlint/binding-win32-ia32-msvc": ["@oxlint/binding-win32-ia32-msvc@1.81.0", "", { "os": "win32", "cpu": "ia32" }, "sha512-ksqPP5jbFXcYreEQ7zdJh06rJQBymCTyGRCdaXjfcf2aG4f8KxUWY5wcgYHmaTK+FJ4bPG5sUAdOX+6trnH1JA=="],
 
     "@oxlint/binding-win32-x64-msvc": ["@oxlint/binding-win32-x64-msvc@1.81.0", "", { "os": "win32", "cpu": "x64" }, "sha512-IZuUCwGw9emG5JtCp+fYGB+Z4OWEoeEcM8R5BA1pYw63/ieYFVdcU2ylxTpHbVHSenZnsYE+ZZ20uHAJszQ4cA=="],
+
+    "@rimltempest/riml-ds-design-md": ["@rimltempest/riml-ds-design-md@workspace:tools/design-md"],
 
     "@rimltempest/riml-ds-lint": ["@rimltempest/riml-ds-lint@workspace:tools/lint"],
 
