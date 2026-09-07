@@ -83,7 +83,7 @@ main マージで Storybook・`registry.json`・`DESIGN.md` を GitHub Pages に
 
 ## Git workflow
 
-- Branch: `chore/devops`（`bun run wt add chore/devops`）
+- Branch: `chore/devops`（`bun run wt new chore/devops`）
 - 例：`ci: add ci workflow with affected-based jobs`、`ci(pages): publish storybook registry and design.md`、`chore(guard): check lane ownership`、`chore: add dependabot and pr template`
 - push しない
 
