@@ -101,26 +101,34 @@ describe('buildFrontmatter', () => {
     if (!themed.ok || !result.ok) {
       return
     }
-    // 現在の qrcc は riml-ds と同値のプレースホルダなので差は出ない
-    expect(themed.value.colors).toEqual(result.value.colors)
+    // qrcc の accent は青（hue 255）。既定の teal（hue 175）から差し替わる
+    expect(themed.value.colors['accent-600']).toBe('oklch(0.44 0.16 255)')
+    expect(result.value.colors['accent-600']).toBe('oklch(0.42 0.09 175)')
+    // qrcc が触らない色（info / warning）は既定のまま
+    expect(themed.value.colors['info-600']).toBe(result.value.colors['info-600'])
+    expect(themed.value.colors['warning-600']).toBe(result.value.colors['warning-600'])
   })
 
   it('theme のモード差分があればそれを使う', () => {
-    // palette だけにテーマ差分を入れた検体。semantic は差分を持たないので実値のまま残る
-    // （テーマは解決済みのトークンごとに記録されるため）。
-    const withTheme: unknown = JSON.parse(
-      JSON.stringify(tokens).replace(
-        '"--rd-color-palette-accent-600"',
-        '"--rd-color-palette-accent-600","modes":{"theme-qrcc":{"colorSpace":"oklch","components":[0.5,0.2,300],"alpha":1}}',
-      ),
+    // accent-600 には実物の theme-qrcc がある。"modes" を前に差し込んでも JSON の
+    // パースで後ろの実物が勝つので、その theme-qrcc の値だけを差し替えた検体を作る。
+    const source = JSON.stringify(tokens)
+    const patched = source.replace(
+      /("cssVar":"--rd-color-palette-accent-600","modes":\{)"theme-qrcc":\{[^}]*\}/,
+      '$1"theme-qrcc":{"colorSpace":"oklch","components":[0.5,0.2,300],"alpha":1}',
     )
+    expect(patched).not.toBe(source)
+    const withTheme: unknown = JSON.parse(patched)
     const themed = buildFrontmatter(withTheme, { ...OPTIONS, theme: 'qrcc' })
     expect(themed.ok).toBe(true)
     if (!themed.ok) {
       return
     }
     expect(themed.value.colors['accent-600']).toBe('oklch(0.5 0.2 300)')
-    expect(themed.value.colors['focus']).toBe('oklch(0.42 0.09 175)')
+    // theme-qrcc のモードを持たないトークンは既定のまま
+    expect(themed.value.colors['info-600']).toBe('oklch(0.44 0.13 240)')
+    // semantic は palette と値が一致しなくなれば参照ではなく実値で残る
+    expect(themed.value.colors['focus']).toBe('oklch(0.44 0.16 255)')
   })
 
   it('トークンが足りなければ err（missing-token）', () => {
