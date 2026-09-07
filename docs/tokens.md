@@ -107,7 +107,25 @@ system/tokens/
 | `a11y/min-contrast`       | `level: "AAA"`、対は `contrastAgainst` から生成         |
 | `a11y/min-font-size`      | `16px`（`type.small` を除外、14px 最小）                |
 
-ダーク・高コントラストも同じ lint を通す（モードごとに解決して検査）。
+`a11y/min-contrast` は Terrazzo の実装上 **既定（light）の解決結果でしか走らない**。ダーク・高コントラスト・
+ダーク×高コントラストの 4 モードは `system/tokens/test/contrast.test.ts` が `dist/tokens.json` を読んで
+7:1（テキスト）/ 3:1（`nonText: true`）で固定する。lint とテストの両方が通って初めて「AAA」と言える。
+
+## 実装で確定した判断（plan 002、2026-09-07）
+
+- **`color.border.default` は `neutral.500`**（light 4.68:1 / dark 4.03:1）。`neutral.300` は surface に対して
+  1.81:1 で WCAG 1.4.11 の非テキスト 3:1 を満たさない。装飾用の薄い区切り線が要るなら
+  `color.border.subtle`（3:1 を要求しない、`nonText` なし）を **別名で足す**。default を薄くしない
+- **ダークの `color.surface.sunken` は `neutral.900`（= `surface.default`）**。palette に 900 より暗い段が無い。
+  段を足すのは DESIGN.md の palette 追加＝デザイン判断
+- **DESIGN.md の `typography.*.fontSize` は clamp の最小値**（`1rem` など）。`@google/design.md` 0.4.0 が
+  `clamp()` を dimension と認めないため。流体の 3 値は `tokens.css` と `tokens.json`
+  （`$extensions["riml-ds"].fluid`）にある
+- `light-dark()` の畳み込みは `{light, dark} × {contrast: no-preference, more} × 色域` の permutation を
+  対で畳み、基準との差分だけを `@media (prefers-contrast: more)` / `(color-gamut: …)` に出す。
+  high-contrast モードは生値ではなく alias で書く（dark でも意味が壊れない）
+- `core/duplicate-values` の `ignore` は semantic 側を列挙する（Terrazzo は複合型の alias を
+  重複扱いするため、`color.palette.**` を ignore すると semantic の別名が全部落ちる）
 
 ## 変更手順
 
