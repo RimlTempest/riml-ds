@@ -364,3 +364,18 @@ bun run build && bun run design-md && bun run gen && git status --short
   （`text.muted → text.default` など）なので palette 差し替えで自動的に追随するが、機械検査はしていない
 - qrcc の `--qrcc-border`（light 0.72）は 3:1 を割っていた。riml-ds に寄せると境界線が濃くなる。qrcc の VRT/目視で
   「濁った」と感じたら、0.6 と 0.72 の間で 3:1 を保つ値を探す（0.66 で約 3.2:1）
+
+## 追記（2026-09-07、実行中の STOP への回答）
+
+`tools/design-md/test/frontmatter.test.ts` の 2 件はこの plan の想定内の追随漏れ。レーンを
+`tools/design-md/test` まで広げた（`scripts/lanes.tsv` 更新済み）。直し方:
+
+1. `--theme を渡すと … を優先する`: 「差が出ない」前提を捨てる。`themed.value.colors['accent-600']` が
+   `'oklch(0.44 0.16 255)'` で、`result.value.colors['accent-600']`（既定 = teal）とは異なること、
+   かつテーマが触らない色（例: `info` 系）は既定と同じことを確認する形にする。
+2. `theme のモード差分があればそれを使う`: 文字列注入で `"modes"` を **前置**するとパース時に実物に上書きされる。
+   検体は `tokens.json` の `--rd-color-palette-accent-600` に実在する `"theme-qrcc":{…}` の値を置換する
+   （正規表現で `"theme-qrcc":\{[^}]*\}` の最初の 1 件を `[0.5,0.2,300]` の値に置き換える）か、
+   テーマ差分を持たないトークンを検体にして「差分が無ければ既定のまま」も併せて固定する。
+   `any` / `as` / `!` は使わない。
+3. 直したら `bun run test` 全 green を再確認して報告。
