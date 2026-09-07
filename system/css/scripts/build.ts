@@ -11,6 +11,7 @@ const ORDER = [
   'layers',
   'reset',
   'base',
+  'typography',
   'patterns',
   'utilities',
   'print',

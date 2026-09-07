@@ -1,0 +1,202 @@
+@layer rd.components {
+  /* 文字の見た目のクラス（docs/brand.md §6、system/guidelines/typography.md）。
+     **見出しレベルとは独立**: 構造は要素（h1..h6）が、大きさはクラスが決める。
+     素の h1..h6 はここでは触らない（base.css の責務）。
+     <h2 class="rd-heading-3">小節</h2> のように、要素とクラスを別々に選ぶ。 */
+  .rd-display {
+    margin: 0;
+    font: var(--rd-type-display);
+    letter-spacing: -0.01em;
+  }
+
+  .rd-heading-1 {
+    margin: 0;
+    font: var(--rd-type-heading-1);
+  }
+
+  .rd-heading-2 {
+    margin: 0;
+    font: var(--rd-type-heading-2);
+  }
+
+  .rd-heading-3 {
+    margin: 0;
+    font: var(--rd-type-heading-3);
+  }
+
+  .rd-heading-4 {
+    margin: 0;
+    font: var(--rd-type-heading-4);
+  }
+
+  .rd-body {
+    font: var(--rd-type-body);
+  }
+
+  .rd-small {
+    font: var(--rd-type-small);
+  }
+
+  /* 補助文。字間を広げるのは短い語（ラベル・単位・日付）だけ。
+     大文字化（text-transform）は付けない — 日本語に効かず、利用側の選択だから */
+  .rd-caption {
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+    letter-spacing: var(--rd-letter-spacing-wide);
+  }
+
+  .rd-label {
+    font: var(--rd-type-small);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  .rd-mono {
+    font: var(--rd-type-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 桁を揃えるだけ。字面は変えない（font-feature-settings は書かない） */
+  .rd-numeric {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 1 行で切る。切れた文字は読み上げには残る（title 属性は付けない — 利用側が決める） */
+  .rd-truncate {
+    overflow: hidden;
+    max-inline-size: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* 行数で切る。行数は --rd-clamp-lines（既定 3）。
+     `line-clamp` の無接頭辞版はまだ Baseline に無いので、-webkit- 版だけを書く。
+     stylelint の *-no-vendor-prefix は「無接頭辞版がある」前提のルールなので、
+     この 3 宣言に限って無効化する（docs/baseline.md）。 */
+  .rd-clamp {
+    /* stylelint-disable value-no-vendor-prefix, property-no-vendor-prefix -- line-clamp は -webkit- 版しか無い */
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--rd-clamp-lines, 3);
+    /* stylelint-enable value-no-vendor-prefix, property-no-vendor-prefix */
+  }
+
+  /* 流し込み本文の入れ物。CMS・Markdown の出力をそのまま包む。
+     <article class="rd-prose">…</article>
+     中の要素セレクタは :where() で詳細度 0 にしてあるので、利用側のクラスが必ず勝つ。 */
+  .rd-prose {
+    max-inline-size: var(--rd-sizing-measure-max);
+  }
+
+  .rd-prose > * + * {
+    margin-block-start: var(--rd-space-4);
+  }
+
+  /* 見出しの直後は詰める（見出しと本文は 1 かたまり） */
+  .rd-prose > :where(h1, h2, h3, h4, h5, h6) + * {
+    margin-block-start: var(--rd-space-2);
+  }
+
+  .rd-prose :where(h1) {
+    font: var(--rd-type-heading-1);
+  }
+
+  .rd-prose :where(h2) {
+    font: var(--rd-type-heading-2);
+  }
+
+  .rd-prose :where(h3) {
+    font: var(--rd-type-heading-3);
+  }
+
+  .rd-prose :where(h4, h5, h6) {
+    font: var(--rd-type-heading-4);
+  }
+
+  .rd-prose :where(a) {
+    text-underline-offset: var(--rd-type-link-underline-offset);
+  }
+
+  .rd-prose :where(hr) {
+    border-width: 0;
+    border-block-start: 0.125rem dotted var(--rd-color-border-default);
+  }
+
+  .rd-prose :where(blockquote) {
+    padding-inline-start: var(--rd-space-4);
+    border-inline-start: 0.125rem dotted var(--rd-color-border-default);
+    color: var(--rd-color-text-muted);
+  }
+
+  .rd-prose :where(code) {
+    padding-inline: var(--rd-space-1);
+    border-radius: var(--rd-radius-sm);
+    background: var(--rd-color-surface-sunken);
+    font: var(--rd-type-mono);
+  }
+
+  .rd-prose :where(pre) {
+    overflow-x: auto;
+    padding: var(--rd-space-4);
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-surface-sunken);
+  }
+
+  /* 打ち消しは longhand で書く（`background: none` は生値。reset.css と同じ流儀） */
+  .rd-prose :where(pre code) {
+    padding: 0;
+    border-radius: 0;
+    background-color: transparent;
+    background-image: none;
+  }
+
+  .rd-prose :where(ul, ol) {
+    padding-inline-start: var(--rd-space-6);
+  }
+
+  .rd-prose :where(li + li) {
+    margin-block-start: var(--rd-space-1);
+  }
+
+  .rd-prose :where(img, video) {
+    max-inline-size: 100%;
+    border-radius: var(--rd-radius-md);
+  }
+
+  /* text-wrap: balance / pretty は Baseline Newly。効かない環境でも読めるので、
+     @supports の中だけに置いて素の折り返しに落とす（ADR-0004 §3） */
+  @supports (text-wrap: balance) {
+    .rd-display,
+    .rd-heading-1,
+    .rd-heading-2,
+    .rd-heading-3,
+    .rd-heading-4,
+    .rd-prose :where(h1, h2, h3, h4, h5, h6) {
+      text-wrap: balance;
+    }
+  }
+
+  @supports (text-wrap: pretty) {
+    .rd-body,
+    .rd-prose :where(p, li) {
+      text-wrap: pretty;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .rd-prose :where(code, pre) {
+      border-width: var(--rd-border-width-default);
+      border-style: solid;
+      border-color: CanvasText;
+    }
+
+    .rd-prose :where(hr) {
+      border-block-start-color: CanvasText;
+    }
+
+    .rd-prose :where(blockquote) {
+      border-inline-start-color: CanvasText;
+      color: CanvasText;
+    }
+  }
+}

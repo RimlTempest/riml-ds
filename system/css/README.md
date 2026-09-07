@@ -27,9 +27,13 @@ bun add @rimltempest/riml-ds-css @rimltempest/riml-ds-tokens
 `layers.css` が入っているので、1 行目の `layers.css` を省いて `index.css` だけにしてもよい
 （トークンより先に読む場合に限る）。
 
-個別に読むなら `layers.css` → `tokens.css` → `reset.css` → `base.css` → `patterns.css` →
-`utilities.css` → `print.css` → `forced-colors.css` の順。バンドラを持つ利用側はこちらでよい（`index.css` を
+個別に読むなら `layers.css` → `tokens.css` → `reset.css` → `base.css` → `typography.css` →
+`atoms.css` → `patterns.css` → `print.css` → `forced-colors.css` の順。バンドラを持つ利用側はこちらでよい（`index.css` を
 結合で作っているのは HTTP リクエスト数のため）。
+
+`@rimltempest/riml-ds-tokens` は `peerDependenciesMeta` で optional にしてある。npm に出ていない
+tokens を `file:` / `workspace:` で取り込む利用側が 404 で止まらないようにするためで、
+**変数の供給が要らなくなるわけではない**（読み込まないと色も寸法も出ない）。
 
 ## ファイル
 
@@ -38,6 +42,7 @@ bun add @rimltempest/riml-ds-css @rimltempest/riml-ds-tokens
 | `layers.css`        | （宣言のみ）    | `@layer rd.reset, rd.tokens, rd.base, rd.components, rd.utilities, rd.overrides;` |
 | `reset.css`         | `rd.reset`      | `box-sizing`、`margin: 0`、メディア要素、フォームの `font: inherit`               |
 | `base.css`          | `rd.base`       | `body`・見出し・行長・`hr`（点線）・リンク・`:focus-visible`・等幅                |
+| `typography.css`    | `rd.components` | 文字のクラス（`.rd-display` … `.rd-prose`）                                       |
 | `patterns.css`      | `rd.components` | 窓（`.rd-window` / `.rd-window-title` / `.rd-window-body`）                       |
 | `utilities.css`     | `rd.utilities`  | `.rd-visually-hidden`、`.rd-skip-link`、`.rd-stack`、`.rd-cluster`、`[hidden]`    |
 | `print.css`         | `rd.base`       | `@media print`（リンク先の URL、ナビを消す、システム色）                          |
@@ -45,6 +50,31 @@ bun add @rimltempest/riml-ds-css @rimltempest/riml-ds-tokens
 
 ダークと高コントラストと密度はここに書かない（トークンが `light-dark()` と
 `prefers-contrast` / `[data-density]` で持つ）。
+
+## 文字（`typography.css`）
+
+見た目のクラスで、**見出しレベルとは独立**。構造は要素（`h1`..`h6`）が、大きさはクラスが決める。
+素の `h1`..`h6` は `base.css` が持ち、ここでは触らない。判断は
+[`system/guidelines/typography.md`](../guidelines/typography.md)。
+
+| クラス                            | 使うところ                                                             |
+| --------------------------------- | ---------------------------------------------------------------------- |
+| `.rd-display`                     | ヒーローと数字 1 つの窓。1 画面に 1 つ                                 |
+| `.rd-heading-1` … `.rd-heading-4` | 見出しの大きさ（`<h2 class="rd-heading-3">` のように選ぶ）             |
+| `.rd-body` / `.rd-small`          | 本文と補助テキスト                                                     |
+| `.rd-caption`                     | 補助文。`letter.spacing.wide` の広い字間と `text.muted`                |
+| `.rd-label`                       | 太字の小さいラベル                                                     |
+| `.rd-mono` / `.rd-numeric`        | 等幅・桁揃え（`tabular-nums`）                                         |
+| `.rd-truncate` / `.rd-clamp`      | 1 行省略・行数省略（行数は `--rd-clamp-lines`、既定 3）                |
+| `.rd-prose`                       | 流し込み本文の入れ物。中の要素は `:where()` なので利用側のクラスが勝つ |
+
+```html
+<article class="rd-prose">
+  <h1 class="rd-display">まど</h1>
+  <p class="rd-caption">2026-09-08</p>
+  <p>本文。<code>--rd-*</code> だけで組んである。</p>
+</article>
+```
 
 ## 窓（`.rd-window`）
 
