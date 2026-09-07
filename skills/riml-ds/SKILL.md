@@ -33,7 +33,7 @@ bun add @rimltempest/riml-ds-tokens @rimltempest/riml-ds-css @rimltempest/riml-d
 ```css
 @import "@rimltempest/riml-ds-css/layers.css";      /* @layer の順序宣言 */
 @import "@rimltempest/riml-ds-tokens/tokens.css";   /* --rd-*（light-dark 込み） */
-@import "@rimltempest/riml-ds-css/base.css";        /* reset + base */
+@import "@rimltempest/riml-ds-css";                 /* reset + base + utilities + print + forced-colors */
 /* ブランドテーマがあれば */
 @import "@rimltempest/riml-ds-tokens/themes/qrcc.css";
 
