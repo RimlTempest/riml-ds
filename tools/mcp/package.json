@@ -1,6 +1,6 @@
 {
   "name": "@rimltempest/riml-ds-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "riml-ds の MCP サーバ（stdio）と design-md CLI。トークン・部品・ガイドラインを同梱データから配る",
   "license": "MIT",
   "bin": {

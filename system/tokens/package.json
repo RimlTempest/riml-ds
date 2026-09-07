@@ -1,6 +1,6 @@
 {
   "name": "@rimltempest/riml-ds-tokens",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "riml-ds のデザイントークン（DTCG 2025.10）。tokens.css / tokens.js / tokens.json",
   "license": "MIT",
   "files": [
