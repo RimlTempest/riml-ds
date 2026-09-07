@@ -103,6 +103,20 @@ bun run lint:html   # tools/markuplint（描画後 DOM を検査）
 部品は中身が出ない**ので、新しいティア C 部品には
 `static shadowRootOptions = { ...LitElement.shadowRootOptions, serializable: true }` を付ける。
 
+### `.markuplintrc.json` の例外 2 つ（shadow DOM を平坦化したため）
+
+描画後 HTML は、本来スコープが分かれている shadow root を **1 つの文書に平坦化**したもの。
+markuplint はその境界を知らないので、平坦化そのものが原因の偽陽性が 2 種類出る。
+どちらも実 DOM では起きない。**部品の側を直して消せる違反ではない**ので、設定で外している。
+
+| 例外                                                            | なぜ要るか                                                                                                                                                                       |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `invalid-attr.allowAttrs` に `part` / `exportparts`             | どちらも CSS Shadow Parts が定める**グローバル属性**だが、markuplint の HTML spec がまだ持っていない。ティア A の強化ノード（`<p part="error">`）と `rd-dialog` の shadow に出る |
+| `nodeRules: template[shadowrootmode] * → id-duplication: false` | shadow root の中の `id` は shadow ごとにスコープされる。`rd-dialog` を 2 つ置いた story では `id="rd-dialog-label"` が 2 回出るが、実 DOM では重複していない                     |
+
+`id-duplication` は `<template shadowrootmode>` の**中だけ**外している。light DOM の
+`id` 重複（`<label for>` が壊れる本物のバグ）は今までどおり落ちる。
+
 ## MCP（開発時）
 
 `bun run storybook` を起こすと `http://localhost:6006/mcp` が生える（`@storybook/addon-mcp`）。
