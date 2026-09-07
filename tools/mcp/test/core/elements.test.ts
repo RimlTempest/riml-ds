@@ -33,6 +33,30 @@ describe('listElements', () => {
     expect(result.value[0]?.summary).not.toBe('')
   })
 
+  it('契約を持つ部品すべてに使用例がある（ティア C の rd-toast も空タグで載せる）', () => {
+    // rd-live-region だけは core が空タグに落とす（skills 側の説明が別にある）
+    expect(Object.keys(elementExamples).toSorted()).toEqual([
+      'rd-button',
+      'rd-checkbox',
+      'rd-dialog',
+      'rd-disclosure',
+      'rd-select',
+      'rd-text-field',
+      'rd-toast',
+    ])
+  })
+
+  it('experimental の使用例も契約から描く（select は <option> 込み）', () => {
+    const result = getElement(manifest, elementExamples, 'rd-select')
+    expect(result.ok).toBe(true)
+    if (!result.ok) {
+      return
+    }
+    expect(result.value.status).toBe('experimental')
+    expect(result.value.examples.html).toContain('<option value="jp">')
+    expect(result.value.examples.html).toContain('<label for="country">')
+  })
+
   it('CEM でないものは not-a-manifest で返す（throw しない）', () => {
     expect(listElements(42)).toEqual({
       ok: false,
