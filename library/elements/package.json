@@ -52,6 +52,41 @@
       "types": "./dist/live-region/live-region.define.d.ts",
       "default": "./dist/live-region/live-region.define.js"
     },
+    "./experimental/select": {
+      "types": "./dist/experimental/select/index.d.ts",
+      "default": "./dist/experimental/select/index.js"
+    },
+    "./experimental/select/define": {
+      "types": "./dist/select/select.define.d.ts",
+      "default": "./dist/select/select.define.js"
+    },
+    "./experimental/select/style.css": "./dist/select/select.css",
+    "./experimental/checkbox": {
+      "types": "./dist/experimental/checkbox/index.d.ts",
+      "default": "./dist/experimental/checkbox/index.js"
+    },
+    "./experimental/checkbox/define": {
+      "types": "./dist/checkbox/checkbox.define.d.ts",
+      "default": "./dist/checkbox/checkbox.define.js"
+    },
+    "./experimental/checkbox/style.css": "./dist/checkbox/checkbox.css",
+    "./experimental/disclosure": {
+      "types": "./dist/experimental/disclosure/index.d.ts",
+      "default": "./dist/experimental/disclosure/index.js"
+    },
+    "./experimental/disclosure/define": {
+      "types": "./dist/disclosure/disclosure.define.d.ts",
+      "default": "./dist/disclosure/disclosure.define.js"
+    },
+    "./experimental/disclosure/style.css": "./dist/disclosure/disclosure.css",
+    "./experimental/toast": {
+      "types": "./dist/experimental/toast/index.d.ts",
+      "default": "./dist/experimental/toast/index.js"
+    },
+    "./experimental/toast/define": {
+      "types": "./dist/toast/toast.define.d.ts",
+      "default": "./dist/toast/toast.define.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./custom-elements.json": "./custom-elements.json",
     "./package.json": "./package.json"

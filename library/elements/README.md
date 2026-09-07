@@ -23,6 +23,17 @@ riml-ds の Web Components（Lit 3）。部品の実装はここだけに書く�
 | `rd-live-region` | C      | 読み上げの集約点。ページに 1 つ                   | `announce(text, { politeness })`, `rd-announce`                |
 | `.rd-skip-link`  | —      | 本文へのスキップ。**部品ではない**（ADR-0012 §6） | `@rimltempest/riml-ds-css` のクラス                            |
 
+### `@status experimental`（`experimental/<name>` からのみ export。ADR-0009）
+
+名前も API も変わり得る。stable に上がると `./<name>` に移り、`experimental/` のパスは 1 メジャー残る。
+
+| 部品            | ティア | 概要                                         | 主な API                                                     |
+| --------------- | ------ | -------------------------------------------- | ------------------------------------------------------------ |
+| `rd-select`     | A      | 子の `<label for>` + `<select>` を包む       | `hint`, `error`, `value`（初期選択）, `:state(invalid)`      |
+| `rd-checkbox`   | A      | `<label>` が `<input type=checkbox>` を包む  | `switch`, `indeterminate`, `checked`, `:state(checked)`      |
+| `rd-disclosure` | A      | 子の `<details>` / `<summary>` を包む        | `open`, `rd-toggle`, `:state(open)`                          |
+| `rd-toast`      | C      | 一時的な通知。読み上げは `rd-live-region` へ | `show({ message, tone, duration })`, `close()`, `rd-dismiss` |
+
 ## 使い方
 
 ```html
@@ -51,6 +62,8 @@ riml-ds の Web Components（Lit 3）。部品の実装はここだけに書く�
 // 登録（副作用 import）。部品ごとに読み込む。`.` エントリは無い（ADR-0002）
 import '@rimltempest/riml-ds-elements/button/define'
 import '@rimltempest/riml-ds-elements/text-field/define'
+// experimental の部品は `experimental/<name>` から（ADR-0009）
+import '@rimltempest/riml-ds-elements/experimental/select/define'
 ```
 
 ```css

@@ -10,7 +10,10 @@ import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buttonMarkup } from '../../library/elements/src/button/index.js'
+import { checkboxMarkup } from '../../library/elements/src/checkbox/index.js'
 import { dialogMarkup } from '../../library/elements/src/dialog/index.js'
+import { disclosureMarkup } from '../../library/elements/src/disclosure/index.js'
+import { selectMarkup } from '../../library/elements/src/select/index.js'
 import { textFieldMarkup } from '../../library/elements/src/text-field/index.js'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
@@ -25,6 +28,9 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/button/button.css', 'button.css'],
   ['library/elements/src/text-field/text-field.css', 'text-field.css'],
   ['library/elements/src/dialog/dialog.css', 'dialog.css'],
+  ['library/elements/src/select/select.css', 'select.css'],
+  ['library/elements/src/checkbox/checkbox.css', 'checkbox.css'],
+  ['library/elements/src/disclosure/disclosure.css', 'disclosure.css'],
 ]
 
 const STYLESHEETS = CSS_SOURCES.map(
@@ -52,6 +58,10 @@ ${body}
 
 const submit = buttonMarkup({ label: '送信', type: 'submit' })
 
+const OPTIONS =
+  '<option value="">選択してください</option>'
+  + '<option value="jp">日本</option><option value="us">アメリカ</option>'
+
 const PAGES: Readonly<Record<string, string>> = {
   'button.html': page(
     'ボタン',
@@ -71,6 +81,39 @@ const PAGES: Readonly<Record<string, string>> = {
         })}
         ${submit}
       </form>`,
+  ),
+  'select.html': page(
+    '選択',
+    `      <form method="get" action="/echo.html">
+        ${selectMarkup({
+          id: 'country',
+          label: '国',
+          name: 'country',
+          required: true,
+          children: OPTIONS,
+        })}
+        ${submit}
+      </form>`,
+  ),
+  'checkbox.html': page(
+    'チェックボックス',
+    `      <form method="get" action="/echo.html">
+        ${checkboxMarkup({
+          id: 'terms',
+          label: '規約に同意する',
+          name: 'terms',
+          defaultValue: 'yes',
+          required: true,
+        })}
+        ${submit}
+      </form>`,
+  ),
+  'disclosure.html': page(
+    '折りたたみ',
+    `      ${disclosureMarkup({
+      label: '送料について',
+      children: '<p>全国一律 500 円です。</p>',
+    })}`,
   ),
   'dialog.html': page(
     'ダイアログ',
