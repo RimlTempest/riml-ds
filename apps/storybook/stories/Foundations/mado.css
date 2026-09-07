@@ -1,0 +1,24 @@
+@layer rd.components {
+  /* Foundations/Mado の見本だけに使う組み版（`sb-` = storybook。部品ではない） */
+
+  /* 硬い影は右下に落ちるので、切れないよう外側に余白を取る */
+  .sb-mado {
+    max-inline-size: var(--rd-sizing-measure-max);
+    padding-block-end: var(--rd-space-4);
+    padding-inline-end: var(--rd-space-4);
+  }
+
+  /* 窓を少しずらして重ねる。同じグリッドセルに置き、2 枚目だけ寄せる */
+  .sb-stacked {
+    display: grid;
+  }
+
+  .sb-stacked > * {
+    grid-area: 1 / 1;
+  }
+
+  .sb-stacked > :nth-child(2) {
+    margin-block-start: var(--rd-space-8);
+    margin-inline-start: var(--rd-space-8);
+  }
+}

@@ -1,0 +1,110 @@
+@layer rd.components {
+  /* Foundations/Brand の見本だけに使う組み版。部品ではないので `rd-` は名乗らない（`sb-` = storybook） */
+  .sb-swatches {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--rd-space-2) var(--rd-space-6);
+    margin: 0;
+  }
+
+  @media (width >= 40rem) {
+    .sb-swatches {
+      grid-template-columns: max-content 1fr;
+      align-items: center;
+    }
+  }
+
+  .sb-swatch-name {
+    display: flex;
+    align-items: center;
+    gap: var(--rd-space-3);
+    font: var(--rd-type-mono);
+  }
+
+  /* 色そのものを見せる四角。読み上げには要らない（名前が隣にある） */
+  .sb-swatch {
+    flex: none;
+    inline-size: var(--rd-sizing-target-min);
+    block-size: var(--rd-sizing-target-min);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-radius: var(--rd-radius-md);
+  }
+
+  .sb-swatch-use {
+    margin: 0;
+    padding-block-end: var(--rd-space-2);
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+  }
+
+  @media (width >= 40rem) {
+    .sb-swatch-use {
+      padding-block-end: 0;
+    }
+  }
+
+  /* 形と影の見本。箱の中身は空なので aria-hidden、名前は隣の <code> が持つ */
+  .sb-shapes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rd-space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sb-shapes > li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rd-space-2);
+    align-items: center;
+    font: var(--rd-type-mono);
+  }
+
+  .sb-shape {
+    inline-size: var(--rd-space-16);
+    block-size: var(--rd-space-16);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    background: var(--rd-color-surface-raised);
+  }
+
+  .sb-shape-sm {
+    border-radius: var(--rd-radius-sm);
+  }
+
+  .sb-shape-md {
+    border-radius: var(--rd-radius-md);
+  }
+
+  .sb-shape-lg {
+    border-radius: var(--rd-radius-lg);
+  }
+
+  .sb-shape-full {
+    border-radius: var(--rd-radius-full);
+  }
+
+  .sb-shape-raised {
+    border-radius: var(--rd-radius-lg);
+    box-shadow: var(--rd-shadow-raised);
+  }
+
+  .sb-shape-overlay {
+    border-radius: var(--rd-radius-lg);
+    box-shadow: var(--rd-shadow-overlay);
+  }
+
+  /* 影は右下に落ちるので、切れないよう外側に余白を取る */
+  .sb-shadows {
+    padding-block-end: var(--rd-space-8);
+    padding-inline-end: var(--rd-space-8);
+  }
+
+  .sb-type > * {
+    margin-block: 0 var(--rd-space-4);
+  }
+}
