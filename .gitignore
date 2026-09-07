@@ -21,3 +21,4 @@ system/tokens/dist/
 library/react/src/generated/
 library/vue/src/generated/
 library/svelte/src/generated/
+library/astro/src/generated/

@@ -16,7 +16,9 @@ describe('vueFiles', () => {
     expect(source).toContain(
       `h('rd-button', { variant: props.variant, loading: props.loading || undefined }`,
     )
-    expect(source).toContain(`h('button', { type: props.type }, slots.default?.() ?? props.label)`)
+    expect(source).toContain(
+      `h('button', { type: props.type }, slots['default']?.() ?? props.label)`,
+    )
     expect(source).not.toContain(' as ')
   })
 
@@ -33,7 +35,7 @@ describe('vueFiles', () => {
   it('ティア B の raw は既定 slot になる', () => {
     const source = find('dialog.ts')
     expect(source).toContain(`h('h2', { slot: 'label' }, props.label)`)
-    expect(source).toContain('slots.default?.()')
+    expect(source).toContain("slots['default']?.()")
   })
 
   it('型は GlobalComponents と IntrinsicElementAttributes を広げ、ティア C は部品にならない', () => {

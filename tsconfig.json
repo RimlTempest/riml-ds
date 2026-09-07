@@ -18,6 +18,15 @@
     },
     {
       "path": "./library/elements/tsconfig.test.json"
+    },
+    {
+      "path": "./library/react/tsconfig.test.json"
+    },
+    {
+      "path": "./library/vue"
+    },
+    {
+      "path": "./library/astro"
     }
   ]
 }

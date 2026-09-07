@@ -14,13 +14,13 @@ import type { ReactNode, Ref } from 'react'
 import type { ButtonVariant } from '@rimltempest/riml-ds-elements/button'
 
 export type RdButtonProps = {
-  readonly variant?: ButtonVariant
-  readonly loading?: boolean
-  readonly type?: 'button' | 'submit' | 'reset'
-  readonly label?: ReactNode
+  readonly variant?: ButtonVariant | undefined
+  readonly loading?: boolean | undefined
+  readonly type?: 'button' | 'submit' | 'reset' | undefined
+  readonly label?: ReactNode | undefined
   readonly children?: ReactNode
-  readonly className?: string
-  readonly ref?: Ref<HTMLElement>
+  readonly className?: string | undefined
+  readonly ref?: Ref<HTMLElement> | undefined
 }
 
 export const RdButton = ({
@@ -87,12 +87,15 @@ export const RdButton = ({
   it('client ラッパーは rd-* を addEventListener で受け、controlled を再同期する', () => {
     expect(find('client/button.tsx')).toContain("useRdEvent(host, 'rd-press', onRdPress)")
     expect(find('client/button.tsx')).toContain(
-      'readonly onRdPress?: (event: CustomEvent<Record<string, never>>) => void',
+      'readonly onRdPress?: ((event: CustomEvent<Record<string, never>>) => void) | undefined',
     )
     const textField = find('client/text-field.tsx')
     expect(textField).toContain('useLayoutEffect')
     expect(textField).toContain("host.current?.querySelector('input')")
     expect(textField).toContain('defaultValue={value ?? defaultValue}')
+    // 親が値を拒否したときも効果が走るよう入力のたびに描き直す
+    expect(textField).toContain('const [, bump] = useReducer((count: number) => count + 1, 0)')
+    expect(textField).toContain('onInput?.(event)')
     // rest 要素の後ろにカンマを置くと構文エラーになる
     expect(textField).not.toContain('...rest,')
   })
@@ -100,8 +103,8 @@ export const RdButton = ({
   it('jsx の型は rd-* を IntrinsicElements に足す', () => {
     const source = find('jsx.ts')
     expect(source).toContain("declare module 'react'")
-    expect(source).toContain("'rd-button': RdElementAttrs<{ variant?: ButtonVariant")
-    expect(source).toContain("'rd-live-region': RdElementAttrs<Record<string, never>>")
+    expect(source).toContain("'rd-button': RdElementAttrs<{ variant?: ButtonVariant | undefined")
+    expect(source).toContain("'rd-live-region': RdElementAttrs<unknown>")
   })
 
   it('生成物の一覧が決まっている（冪等の前提）', () => {

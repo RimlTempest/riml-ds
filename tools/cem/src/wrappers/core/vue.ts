@@ -62,10 +62,10 @@ const nodeSource = (
     return `${pad}'${node.text}'`
   }
   if ('prop' in node) {
-    return `${pad}${node.prop === childrenText ? `slots.default?.() ?? props.${node.prop}` : `props.${node.prop}`}`
+    return `${pad}${node.prop === childrenText ? `slots['default']?.() ?? props.${node.prop}` : `props.${node.prop}`}`
   }
   if ('raw' in node) {
-    return `${pad}slots.default?.()`
+    return `${pad}slots['default']?.()`
   }
   const entries = Object.entries(node.attrs ?? {}).map(
     ([attr, value]) => `${attr}: ${attrValue(spec, value, modelled)}`,

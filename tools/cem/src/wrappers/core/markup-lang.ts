@@ -56,7 +56,6 @@ const attrSource = (
 }
 
 const inlineOf = (
-  spec: WrapperSpec,
   dialect: Dialect,
   node: MarkupNode,
   childrenText: string | undefined,
@@ -82,7 +81,7 @@ export const renderTree = (
   root: boolean,
 ): string => {
   const pad = '  '.repeat(depth)
-  const inline = inlineOf(spec, dialect, node, childrenText)
+  const inline = inlineOf(dialect, node, childrenText)
   if (inline !== undefined) {
     return `${pad}${inline}`
   }
@@ -97,7 +96,7 @@ export const renderTree = (
   const children = node.children ?? []
   const selfClosing = VOID_TAGS.has(node.tag) || children.length === 0
   const open = `<${node.tag}${pairs.map((pair) => ` ${pair}`).join('')}`
-  const inlineChildren = children.map((child) => inlineOf(spec, dialect, child, childrenText))
+  const inlineChildren = children.map((child) => inlineOf(dialect, child, childrenText))
   const allInline = inlineChildren.every((child) => child !== undefined)
   const oneLine = selfClosing
     ? `${pad}${open} />`

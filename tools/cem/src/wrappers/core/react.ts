@@ -81,6 +81,9 @@ type Context = {
   readonly childrenText: string | undefined
 }
 
+/** `exactOptionalPropertyTypes` の下では省略可能 prop に `| undefined` が要る */
+const optional = (text: string): string => `${text} | undefined`
+
 const propType = (markupProp: MarkupProp): string =>
   markupProp.kind === 'attr' ? typeText(markupProp.type) : 'ReactNode'
 
@@ -213,14 +216,15 @@ const markupFile = (spec: WrapperSpec): GeneratedFile => {
       : []),
   ]
   const typeLines = [
-    ...spec.markupProps.map(
-      (markupProp) =>
-        `  readonly ${markupProp.name}${markupProp.optional ? '?' : ''}: ${propType(markupProp)}`,
+    ...spec.markupProps.map((markupProp) =>
+      markupProp.optional
+        ? `  readonly ${markupProp.name}?: ${optional(propType(markupProp))}`
+        : `  readonly ${markupProp.name}: ${propType(markupProp)}`,
     ),
     ...(extraChildren ? ['  readonly children?: ReactNode'] : []),
-    '  readonly className?: string',
-    '  readonly ref?: Ref<HTMLElement>',
-    ...handlers.map((handler) => `  readonly ${handler}?: ${handlerType(spec, handler)}`),
+    '  readonly className?: string | undefined',
+    '  readonly ref?: Ref<HTMLElement> | undefined',
+    ...handlers.map((handler) => `  readonly ${handler}?: ${optional(handlerType(spec, handler))}`),
   ]
   const names = [
     ...spec.markupProps.map((markupProp) => markupProp.name),
@@ -321,11 +325,12 @@ export const useHostRef = (
 const clientFile = (spec: WrapperSpec): GeneratedFile => {
   const controlled = spec.pe === 'A' && FORM_CONTROLS.has(spec.controlTag ?? '')
   const helpers = [...(spec.events.length > 0 ? ['useRdEvent'] : []), 'useHostRef'].toSorted()
-  const hooks = ['useRef', ...(controlled ? ['useLayoutEffect'] : [])].toSorted()
+  const hooks = ['useRef', ...(controlled ? ['useLayoutEffect', 'useReducer'] : [])].toSorted()
+  const controlDom = DOM_TYPE[spec.controlTag ?? ''] ?? 'HTMLElement'
   const markup = spec.contract !== undefined
   const imports = [
     `import { ${hooks.join(', ')} } from 'react'`,
-    `import type { ReactNode, Ref } from 'react'`,
+    `import type { ${controlled ? 'FormEvent, ' : ''}ReactNode, Ref } from 'react'`,
     ...(markup
       ? [
           `import { ${spec.pascal} as ${spec.pascal}Markup } from '../${spec.name}.js'`,
@@ -336,20 +341,24 @@ const clientFile = (spec: WrapperSpec): GeneratedFile => {
   ]
   const typeLines = [
     `export type ${spec.pascal}ClientProps = ${markup ? `Omit<${spec.pascal}Props, 'ref'> & {` : '{'}`,
-    ...(controlled ? ['  readonly value?: string'] : []),
-    ...(markup ? [] : ['  readonly className?: string']),
-    ...spec.events.map((event) => `  readonly ${event.prop}?: (event: ${event.detail}) => void`),
-    '  readonly ref?: Ref<HTMLElement>',
+    ...(controlled ? ['  readonly value?: string | undefined'] : []),
+    ...(markup ? [] : ['  readonly className?: string | undefined']),
+    ...spec.events.map(
+      (event) => `  readonly ${event.prop}?: ((event: ${event.detail}) => void) | undefined`,
+    ),
+    '  readonly ref?: Ref<HTMLElement> | undefined',
     '}',
   ]
   const names = [
-    ...(controlled ? ['value', 'defaultValue'] : []),
+    ...(controlled ? ['value', 'defaultValue', 'onInput'] : []),
     ...spec.events.map((event) => event.prop),
     'ref',
     ...(markup ? ['...rest'] : ['className']),
   ]
   const resync = controlled
     ? [
+        '  // 親が値を拒否しても効果が走るよう、入力のたびに描き直す（React の controlled と同じ）',
+        '  const [, bump] = useReducer((count: number) => count + 1, 0)',
         '  // controlled: 親が値を更新しなければ描画直後に書き戻す（ADR-0012 §5。<input> と同じ意味論）',
         '  useLayoutEffect(() => {',
         `    const control = host.current?.querySelector('${spec.controlTag}') ?? null`,
@@ -357,10 +366,25 @@ const clientFile = (spec: WrapperSpec): GeneratedFile => {
         '      control.value = value',
         '    }',
         '  })',
+        `  const handleInput = (event: FormEvent<${controlDom}>): void => {`,
+        '    onInput?.(event)',
+        '    bump()',
+        '  }',
       ]
     : []
   const element = markup
-    ? `  return <${spec.pascal}Markup ref={host}${controlled ? ' defaultValue={value ?? defaultValue}' : ''} {...rest} />`
+    ? controlled
+      ? [
+          `  return (`,
+          `    <${spec.pascal}Markup`,
+          '      ref={host}',
+          '      defaultValue={value ?? defaultValue}',
+          '      onInput={handleInput}',
+          '      {...rest}',
+          '    />',
+          '  )',
+        ].join('\n')
+      : `  return <${spec.pascal}Markup ref={host} {...rest} />`
     : `  return <${spec.tag} ref={host} className={className} />`
   return {
     path: `client/${spec.name}.tsx`,
@@ -397,8 +421,8 @@ const jsxFile = (specs: readonly WrapperSpec[]): GeneratedFile => {
   const rows = specs.map((spec) => {
     const own =
       spec.attrs.length === 0
-        ? 'Record<string, never>'
-        : `{ ${spec.attrs.map((attr) => `${attr.name}?: ${typeText(attr.type)}`).join('; ')} }`
+        ? 'unknown'
+        : `{ ${spec.attrs.map((attr) => `${attr.name}?: ${optional(typeText(attr.type))}`).join('; ')} }`
     return `      '${spec.tag}': RdElementAttrs<${own}>`
   })
   return {

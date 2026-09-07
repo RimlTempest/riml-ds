@@ -43,6 +43,15 @@ export default defineConfig({
           },
         },
       },
+      {
+        test: {
+          // React ラッパーは jsdom で回す。Lit の define も jsdom で動く
+          name: 'react',
+          environment: 'jsdom',
+          include: ['library/react/test/**/*.test.tsx'],
+          exclude: ['**/node_modules/**', '**/dist/**'],
+        },
+      },
     ],
     passWithNoTests: false,
   },
