@@ -4,9 +4,10 @@
  * 同梱データは publish 時点のスナップショットで、実行時にネットワークへは出ない（ADR-0010）。
  */
 import { existsSync } from 'node:fs'
-import { readdir, readFile } from 'node:fs/promises'
+import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
+import { buildDesignMd } from './core/design-md.js'
 import { makeLintCss } from './core/lint.js'
 import { elementExamples } from './examples.js'
 import type { ServerDeps } from './server.js'
@@ -29,9 +30,7 @@ const bundledData = new URL('./data/', import.meta.url)
 const repoRoot = new URL('../../../', import.meta.url)
 const isBundled = existsSync(fileURLToPath(new URL('DESIGN.md', bundledData)))
 
-export const designMdUrl = isBundled
-  ? new URL('DESIGN.md', bundledData)
-  : new URL('DESIGN.md', repoRoot)
+const designMdUrl = isBundled ? new URL('DESIGN.md', bundledData) : new URL('DESIGN.md', repoRoot)
 const guidelinesUrl = isBundled
   ? new URL('guidelines/', bundledData)
   : new URL('system/guidelines/', repoRoot)
@@ -61,11 +60,35 @@ const loadDeps = async (): Promise<ServerDeps> => ({
   lintCss: makeLintCss(loadStylelintConfig()),
 })
 
+/** `design-md [--theme <brand>] [--out <file>]`。tokens.json + テーマ差分から DESIGN.md を作る */
+const runDesignMd = async (args: readonly string[]): Promise<number> => {
+  const themeIndex = args.indexOf('--theme')
+  const theme = themeIndex === -1 ? undefined : args[themeIndex + 1]
+  const outIndex = args.indexOf('--out')
+  const out = outIndex === -1 ? undefined : args[outIndex + 1]
+
+  const tokens = await readJson(packageFile('@rimltempest/riml-ds-tokens/tokens.json'))
+  const template = await readFile(designMdUrl, 'utf8')
+  const built = buildDesignMd(tokens, template, { theme })
+  if (!built.ok) {
+    console.error('design-md: DESIGN.md を作れない', JSON.stringify(built.error))
+    return 1
+  }
+  if (out === undefined) {
+    process.stdout.write(built.value)
+  } else {
+    await writeFile(out, built.value, 'utf8')
+  }
+  return 0
+}
+
 const command = process.argv[2]
 
 if (command === '--help' || command === '-h' || command === 'help') {
   console.log(USAGE)
   process.exit(0)
+} else if (command === 'design-md') {
+  process.exit(await runDesignMd(process.argv.slice(3)))
 } else if (command !== undefined && !command.startsWith('-')) {
   console.error(`riml-ds-mcp: 知らないサブコマンド: ${command}\n`)
   console.error(USAGE)

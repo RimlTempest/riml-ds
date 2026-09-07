@@ -15,7 +15,7 @@ export default defineConfig({
   banner: { js: '#!/usr/bin/env node' },
   deps: {
     neverBundle: true,
-    alwaysBundle: ['@rimltempest/riml-ds-design-md'],
+    alwaysBundle: [/^@rimltempest\/riml-ds-design-md\//],
   },
   copy: [
     { from: '../../system/guidelines/*.md', to: 'dist/data/guidelines' },
