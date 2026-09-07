@@ -1,0 +1,415 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "riml-ds の構成",
+    "output": "riml-ds-architecture.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/RimlTempest/riml-ds",
+      "revision": "b501378b64f92dc0eb751c87502777a7a19c21c0"
+    },
+    "views": [
+      {
+        "id": "pipeline",
+        "label": "トークンから部品まで",
+        "focus": [
+          "tokens",
+          "css",
+          "elements",
+          "cem",
+          "wrappers"
+        ],
+        "note": "DTCG トークン → 基礎 CSS → Lit 要素 → custom-elements.json → 各フレームワーク向けラッパー。生成物が正で、ラッパーはソースを読まない。"
+      },
+      {
+        "id": "agents",
+        "label": "エージェント向けの面",
+        "focus": [
+          "tokens",
+          "cem",
+          "agent",
+          "aiclients"
+        ],
+        "note": "tokens.json と registry.json から DESIGN.md・MCP・skills を作る。人が読む文書と機械が読む契約を同じ入力から出す。"
+      },
+      {
+        "id": "ship",
+        "label": "配布と検証",
+        "focus": [
+          "elements",
+          "storybook",
+          "wrappers",
+          "consumers"
+        ],
+        "note": "Storybook（GitHub Pages）で見て、Playwright（axe AAA・VRT）で守り、changesets で npm へ出す。"
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "tokens",
+      "type": "database",
+      "label": "DTCG トークン",
+      "sublabel": "system/tokens（terrazzo）",
+      "tag": "唯一の判断の置き場",
+      "pos": [
+        40,
+        100
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "system/tokens/terrazzo.config.ts",
+          "label": "terrazzo"
+        },
+        {
+          "path": "system/tokens/src/base/color.tokens.json",
+          "label": "base tokens"
+        }
+      ]
+    },
+    {
+      "id": "css",
+      "type": "frontend",
+      "label": "riml-ds-css",
+      "sublabel": "@layer rd.*・reset・patterns",
+      "pos": [
+        330,
+        100
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "system/css/scripts/build.ts",
+          "label": "レイヤーの結合順"
+        },
+        {
+          "path": "system/css/src/layers.css",
+          "label": "@layer"
+        }
+      ]
+    },
+    {
+      "id": "elements",
+      "type": "frontend",
+      "label": "riml-ds-elements",
+      "sublabel": "Lit Web Components",
+      "tag": "PE A / B / C",
+      "pos": [
+        620,
+        100
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "library/elements/src/button/button.element.ts",
+          "label": "rd-button"
+        },
+        {
+          "path": "library/elements/custom-elements.json",
+          "label": "CEM"
+        }
+      ]
+    },
+    {
+      "id": "wrappers",
+      "type": "frontend",
+      "label": "ラッパー",
+      "sublabel": "React / Vue / Svelte / Astro",
+      "pos": [
+        910,
+        100
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "library/react/src/index.ts",
+          "label": "react"
+        },
+        {
+          "path": "library/vue/package.json",
+          "label": "vue"
+        },
+        {
+          "path": "library/astro/package.json",
+          "label": "astro"
+        }
+      ],
+      "tag": "CEM から生成"
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "DESIGN.md・MCP・skills",
+      "sublabel": "design-md・mcp・skills/",
+      "pos": [
+        40,
+        284
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "tools/design-md/src/cli.ts",
+          "label": "DESIGN.md 生成"
+        },
+        {
+          "path": "tools/mcp/src/server.ts",
+          "label": "MCP（stdio）"
+        },
+        {
+          "path": "skills/riml-ds/SKILL.md",
+          "label": "利用側 skill"
+        }
+      ]
+    },
+    {
+      "id": "cem",
+      "type": "backend",
+      "label": "CEM + registry.json",
+      "sublabel": "tools/cem（生成器）",
+      "pos": [
+        620,
+        284
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "tools/cem/src/registry.ts",
+          "label": "registry"
+        },
+        {
+          "path": "tools/cem/src/wrappers/index.ts",
+          "label": "ラッパー生成"
+        }
+      ]
+    },
+    {
+      "id": "storybook",
+      "type": "cloud",
+      "label": "Storybook",
+      "sublabel": "GitHub Pages・a11y・VRT",
+      "pos": [
+        620,
+        468
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "apps/storybook/.storybook/main.ts",
+          "label": "storybook"
+        },
+        {
+          "path": "e2e/playwright.config.ts",
+          "label": "axe AAA / VRT"
+        },
+        {
+          "path": ".github/workflows/pages.yml",
+          "label": "Pages"
+        }
+      ]
+    },
+    {
+      "id": "aiclients",
+      "type": "external",
+      "label": "AI エージェント",
+      "sublabel": "Claude Code・MCP クライアント",
+      "pos": [
+        40,
+        468
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "docs/agent-integration.md",
+          "label": "つなぎ方"
+        }
+      ]
+    },
+    {
+      "id": "consumers",
+      "type": "external",
+      "label": "qrcc2 / noter",
+      "sublabel": "npm @rimltempest/riml-ds-*",
+      "tag": "changesets",
+      "pos": [
+        910,
+        468
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": ".changeset/config.json",
+          "label": "fixed 版"
+        },
+        {
+          "path": ".github/workflows/release.yml",
+          "label": "publish"
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "system（判断）",
+      "wraps": [
+        "tokens",
+        "css"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "library（実装）",
+      "wraps": [
+        "elements",
+        "wrappers"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "tools（生成・連携）",
+      "wraps": [
+        "agent",
+        "cem"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "tokens-css",
+      "from": "tokens",
+      "to": "css",
+      "label": "tokens.css / tokens.ts",
+      "variant": "emphasis",
+      "labelDy": 56
+    },
+    {
+      "id": "css-elements",
+      "from": "css",
+      "to": "elements",
+      "label": "CSS 変数と @layer を前提に",
+      "variant": "emphasis",
+      "labelDy": 56
+    },
+    {
+      "id": "elements-cem",
+      "from": "elements",
+      "to": "cem",
+      "label": "custom-elements.json",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "cem-wrappers",
+      "from": "cem",
+      "to": "wrappers",
+      "label": "ラッパーと型を生成",
+      "variant": "emphasis",
+      "labelDy": 56
+    },
+    {
+      "id": "cem-storybook",
+      "from": "cem",
+      "to": "storybook",
+      "label": "argTypes・docs",
+      "variant": "dashed",
+      "labelDy": 24,
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "tokens-agent",
+      "from": "tokens",
+      "to": "agent",
+      "label": "tokens.json",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "cem-agent",
+      "from": "cem",
+      "to": "agent",
+      "label": "registry.json（PE 等級・状態）",
+      "fromSide": "left",
+      "toSide": "right",
+      "labelDy": 56
+    },
+    {
+      "id": "agent-aiclients",
+      "from": "agent",
+      "to": "aiclients",
+      "label": "MCP（stdio）・skills",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "wrappers-consumers",
+      "from": "wrappers",
+      "to": "consumers",
+      "label": "npm publish",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "システムとライブラリを分ける",
+      "items": [
+        "system/* は library/* を知らない（依存は一方向）",
+        "判断はトークンと DESIGN.md に、実装は elements に"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "生成物が正",
+      "items": [
+        "ラッパーは custom-elements.json だけを入力にする",
+        "DESIGN.md・MCP・registry.json は同じ入力から作る"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "品質ゲート",
+      "items": [
+        "axe（WCAG AAA タグ）・VRT・forced-colors・reduced-motion を Playwright で",
+        "PE 等級（A/B/C）ごとに JS 無しの見え方を検証（ADR-0012）"
+      ]
+    }
+  ]
+}

@@ -63,7 +63,7 @@
       "ignoreDependencies": ["@rimltempest/riml-ds-elements", "http-server"]
     },
     "e2e": {
-      "entry": ["*.config.ts", "stories.ts", "axe-tags.ts"],
+      "entry": ["*.config.ts", "stories.ts", "axe-tags.ts", "archify-png.ts"],
       "ignoreDependencies": ["@axe-core/playwright", "http-server"]
     },
     "e2e/react": {

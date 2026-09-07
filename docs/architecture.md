@@ -7,6 +7,11 @@ riml-ds は「デザインシステム」と「コンポーネントライブラ
 
 ## 1. 全体像
 
+構成図は [archify](https://github.com/tt-a1i/archify) で
+[`architecture/riml-ds.architecture.json`](architecture/riml-ds.architecture.json) から生成し、README に表示している
+（対話版は [`architecture/riml-ds-architecture.html`](architecture/riml-ds-architecture.html)）。
+構成を変えたら仕様 JSON を直して `bun run archify` で作り直す。以下は同じ内容のテキスト版。
+
 ```
 system/                      デザインシステム（判断）
   tokens/     @rimltempest/riml-ds-tokens   DTCG 2025.10 JSON → tokens.css / tokens.ts / tokens.json / tokens.md

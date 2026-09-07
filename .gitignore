@@ -29,3 +29,6 @@ e2e/pe/pages/
 # GitHub Pages に出すもの（scripts/pages-build.sh が毎回作り直す）
 pages/
 *.local
+
+# archify visual-check の副産物
+docs/architecture/*.visual-check.*
