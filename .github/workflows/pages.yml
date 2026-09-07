@@ -1,0 +1,52 @@
+# Storybook / registry.json / DESIGN.md を GitHub Pages に出す（ADR-0011 決定 2）。
+# 公開先は https://rimltempest.github.io/riml-ds/。
+#
+# **main へのマージ時だけ**デプロイする（ADR-0011 決定 7）。PR のプレビューは作らない
+# （環境が 1 つしかない）。PR では ci.yml の artifact（VRT の差分画像・Playwright レポート）で見る。
+#
+# 公開リポジトリでないと Pages は無料で使えない。有効化（Settings → Pages → Source: GitHub Actions）は
+# ユーザーが 1 度だけ行う（plan 010 Step 5）。
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# デプロイは詰まっても取り消さない（途中で止めると公開中のサイトが壊れる）
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: pages/ を作る
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: jdx/mise-action@v3
+        with: { cache: true }
+      - run: bun install --frozen-lockfile
+      - run: bun run pages:build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages
+
+  deploy:
+    name: デプロイ
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write # Pages にデプロイする
+      id-token: write # deploy-pages の OIDC
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
