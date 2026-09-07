@@ -3,11 +3,8 @@
 import '@rimltempest/riml-ds-css/layers.css'
 import '@rimltempest/riml-ds-tokens/tokens.css'
 import '@rimltempest/riml-ds-css'
-// 部品の登録。ティア A/B の `<name>.css` は preview では読まず、各 story が自分で import する
-import '@rimltempest/riml-ds-elements/button/define'
-import '@rimltempest/riml-ds-elements/text-field/define'
-import '@rimltempest/riml-ds-elements/dialog/define'
-import '@rimltempest/riml-ds-elements/live-region/define'
+// 部品の `define` と `<name>.css` は各 story が src から import する（preview では読まない）。
+// dist と src の両方を読むと customElements.define が二重になって落ちるため、登録は 1 か所に絞る。
 import type { Preview } from '@storybook/web-components-vite'
 import { initialModeGlobals, modeGlobalTypes, withModes } from './modes.js'
 

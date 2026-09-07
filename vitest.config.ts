@@ -1,7 +1,11 @@
+import { fileURLToPath } from 'node:url'
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
 import { playwright } from '@vitest/browser-playwright'
 import { defineConfig } from 'vitest/config'
 
-// docs/testing.md: ルート 1 つで projects を分ける。storybook は plan 005 が足す。
+// docs/testing.md: ルート 1 つで projects を分ける（node / browser / storybook）。
+// storybook project の root は `apps/storybook` になるので、パスは絶対で渡す。
+const storybookDir = fileURLToPath(new URL('apps/storybook/.storybook/', import.meta.url))
 export default defineConfig({
   test: {
     projects: [
@@ -37,6 +41,22 @@ export default defineConfig({
             enabled: true,
             headless: true,
             // 失敗時のスクリーンショットを src に書き出さない（生成物をコミットしない）
+            screenshotFailures: false,
+            provider: playwright(),
+            instances: [{ browser: 'chromium' }],
+          },
+        },
+      },
+      {
+        // story = テストケース（ADR-0007 決定 3）。addon-a11y の `test: 'error'` が
+        // axe（AAA タグ込み）の違反をそのまま失敗にする。
+        extends: true,
+        plugins: [storybookTest({ configDir: storybookDir })],
+        test: {
+          name: 'storybook',
+          browser: {
+            enabled: true,
+            headless: true,
             screenshotFailures: false,
             provider: playwright(),
             instances: [{ browser: 'chromium' }],

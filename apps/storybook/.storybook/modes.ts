@@ -1,3 +1,4 @@
+import { html } from 'lit'
 import type { Decorator } from '@storybook/web-components-vite'
 
 /**
@@ -25,12 +26,25 @@ const applyDir = (root: HTMLElement, dir: unknown): void => {
   root.setAttribute('dir', dir === 'rtl' ? 'rtl' : 'ltr')
 }
 
+/** riml-ds の既定 UI 言語。`rd-text-field` の検証文言（日本語の表）もこれで決まる */
+const applyLang = (root: HTMLElement): void => {
+  root.lang = 'ja'
+}
+
+/**
+ * story は必ずランドマークの中に描く。axe の `region`（best-practice）と markuplint の
+ * `landmark-roles` は「ページの内容はランドマークに入っている」ことを要求するので、
+ * 部品ごとに `<main>` を書かせるのではなく decorator が 1 つだけ与える。
+ * 自分でランドマークを持つ story は `parameters.landmark: false` で外す。
+ */
 export const withModes: Decorator = (story, context) => {
   const root = context.canvasElement.ownerDocument.documentElement
   applyScheme(root, context.globals['scheme'])
   applyDensity(root, context.globals['density'])
   applyDir(root, context.globals['dir'])
-  return story()
+  applyLang(root)
+  const inner = story()
+  return context.parameters['landmark'] === false ? inner : html`<main>${inner}</main>`
 }
 
 /** ツールバーに出すモード。`initialGlobals` と対で使う */
