@@ -21,9 +21,13 @@ describe('listElements', () => {
     }
     expect(result.value.map((element) => element.tag)).toEqual([
       'rd-button',
+      'rd-checkbox',
       'rd-dialog',
+      'rd-disclosure',
       'rd-live-region',
+      'rd-select',
       'rd-text-field',
+      'rd-toast',
     ])
     expect(result.value[0]).toMatchObject({ pe: 'A', status: 'stable' })
     expect(result.value[0]?.summary).not.toBe('')

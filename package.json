@@ -36,6 +36,7 @@
     "storybook": "bun run --filter @rimltempest/riml-ds-storybook dev",
     "storybook:build": "bun run --filter @rimltempest/riml-ds-storybook build",
     "render": "bun run storybook:build && bun run --filter @rimltempest/riml-ds-storybook render",
+    "scaffold:element": "bun run library/elements/scripts/scaffold.ts",
     "lint:html": "bun run --cwd tools/markuplint lint",
     "vrt": "bash scripts/vrt.sh --project vrt-light-360 --project vrt-light-1024 --project vrt-dark-360 --project vrt-dark-1024 --project forced-colors --project reduced-motion",
     "vrt:update": "bash scripts/vrt.sh --update-snapshots --project vrt-light-360 --project vrt-light-1024 --project vrt-dark-360 --project vrt-dark-1024 --project forced-colors --project reduced-motion",

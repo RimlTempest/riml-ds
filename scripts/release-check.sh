@@ -15,8 +15,6 @@
 #     workspaces で除外されているので knip の解析対象に入らない
 #   - e2e/* の @rimltempest/riml-ds-css: src/styles.css の @import から使う（CSS は解析されない）
 #   - library/svelte の svelte: 生成物の *.svelte から使う
-#   - ignoreIssues の tools/cem/src/wrappers/core/common.ts: CONTROL_ID が未使用。
-#     feat/frameworks レーンの所有ファイルなのでこのレーンでは消せない（報告済み）
 set -euo pipefail
 
 cd "$(dirname "$0")/.."

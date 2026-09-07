@@ -18,6 +18,9 @@
     "./button.astro": "./src/generated/button.astro",
     "./dialog.astro": "./src/generated/dialog.astro",
     "./text-field.astro": "./src/generated/text-field.astro",
+    "./checkbox.astro": "./src/generated/checkbox.astro",
+    "./disclosure.astro": "./src/generated/disclosure.astro",
+    "./select.astro": "./src/generated/select.astro",
     "./package.json": "./package.json"
   },
   "publishConfig": {

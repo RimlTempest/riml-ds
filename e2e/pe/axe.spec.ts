@@ -8,7 +8,15 @@ import { AXE_TAGS } from '../axe-tags.js'
  * **ページには `<script>` が 1 つも無い**（`build-pages.ts` が保証）ので、JS の有無で DOM は変わらない
  * ＝ ここで見ているのは「JS 無しのときの DOM」そのもの。
  */
-const PAGES = ['/button.html', '/text-field.html', '/dialog.html', '/live-region.html'] as const
+const PAGES = [
+  '/button.html',
+  '/text-field.html',
+  '/select.html',
+  '/checkbox.html',
+  '/disclosure.html',
+  '/dialog.html',
+  '/live-region.html',
+] as const
 
 for (const path of PAGES) {
   test(`axe (AAA): ${path}`, async ({ page }) => {

@@ -38,11 +38,11 @@ export class RdDialog extends LitElement {
 
   static override properties: PropertyDeclarations = {
     open: { type: Boolean, reflect: true },
-    dismissible: { type: Boolean, reflect: true },
+    persistent: { type: Boolean, reflect: true },
   }
 
   declare open: boolean
-  declare dismissible: boolean
+  declare persistent: boolean
 
   #internals = this.attachInternals()
   #contractOk = false
@@ -52,7 +52,7 @@ export class RdDialog extends LitElement {
   constructor() {
     super()
     this.open = false
-    this.dismissible = true
+    this.persistent = false
   }
 
   override firstUpdated(): void {
@@ -112,7 +112,7 @@ export class RdDialog extends LitElement {
   }
 
   #onCancel = (event: Event): void => {
-    const decision = decideClose({ dismissible: this.dismissible, reason: 'esc' })
+    const decision = decideClose({ persistent: this.persistent, reason: 'esc' })
     switch (decision.kind) {
       case 'blocked':
         event.preventDefault()
@@ -125,7 +125,7 @@ export class RdDialog extends LitElement {
 
   /** `<dialog>` 自身が click の対象なら背面（backdrop）を押している */
   #onClick = (event: Event): void => {
-    const decision = decideClose({ dismissible: this.dismissible, reason: 'backdrop' })
+    const decision = decideClose({ persistent: this.persistent, reason: 'backdrop' })
     const dialog = this.#dialog()
     if (decision.kind === 'close' && event.target === dialog) {
       this.#reason = decision.reason

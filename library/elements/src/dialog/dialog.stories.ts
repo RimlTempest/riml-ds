@@ -50,7 +50,6 @@ const meta: Meta<Args> = {
     label: '確認',
     children:
       '<p>保存しますか？</p><rd-button slot="actions"><button type="button">保存</button></rd-button>',
-    dismissible: true,
   },
   render: (args) => example(args, '確認を開く'),
 }
@@ -85,12 +84,12 @@ export const Default: Story = {
   },
 }
 
-/** variant は `dismissible` の 2 通り。閉じた状態を並べて見せる */
+/** variant は `persistent` の 2 通り。閉じた状態を並べて見せる */
 export const Variants: Story = {
   render: (args) =>
     html`<div class="rd-stack">
-      ${example({ ...args, label: '確認' }, '閉じられる（dismissible）')}
-      ${example({ ...args, label: '確定', dismissible: false }, '閉じられない（persistent）')}
+      ${example({ ...args, label: '確認' }, '閉じられる（既定）')}
+      ${example({ ...args, label: '確定', persistent: true }, '閉じられない（persistent）')}
     </div>`,
   play: async ({ canvasElement }) => {
     await expect(canvasElement.querySelectorAll('rd-dialog')).toHaveLength(2)
@@ -100,24 +99,17 @@ export const Variants: Story = {
 export const Open: Story = { args: { open: true } }
 
 /**
- * `dismissible: false` は Esc も背面クリックも受けない。`Disabled` に相当する状態。
- *
- * **既定が true の boolean 属性は HTML で「false」を書けない**（属性が在れば true）。
- * `markup({ dismissible: false })` は属性を省くだけなので、部品は既定の true のまま立ち上がる。
- * story はプロパティで倒して見せる。契約の欠陥として plan 004 に差し戻す（`persistent` のような
- * 既定 false の名前に反転するのが正しい）。
+ * `persistent` は Esc も背面クリックも受けない。`Disabled` に相当する状態。
+ * 既定 false の boolean 属性なので、`markup({ persistent: true })` が属性をそのまま出せる
+ * （既定 true の名前では属性で false を表せなかった。plan 009 Step 0 で反転した）。
  * Esc を実際に押して閉じないことは `e2e/a11y/keyboard.spec.ts` が見る（合成イベントでは再現できない）。
  */
 export const Persistent: Story = {
-  args: { open: true, dismissible: false },
+  args: { open: true, persistent: true },
   play: async ({ canvasElement }) => {
     const dialog = dialogIn(canvasElement)
     await expect(dialog?.open).toBe(true)
-    if (dialog !== undefined) {
-      dialog.dismissible = false
-    }
-    await dialog?.updateComplete
-    await expect(dialog?.dismissible).toBe(false)
+    await expect(dialog?.persistent).toBe(true)
   },
 }
 

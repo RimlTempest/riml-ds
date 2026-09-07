@@ -355,6 +355,3 @@ export const childrenTextOf = (spec: WrapperSpec): string | undefined => {
   }
   return spec.contract === undefined ? undefined : visit(spec.contract.tree)
 }
-
-/** `$id` は未指定なら `$name` を使う。生成器が共通で参照する名前 */
-export const CONTROL_ID = 'controlId'

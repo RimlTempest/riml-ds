@@ -8,9 +8,15 @@ describe('markup', () => {
     )
   })
 
-  it('open / dismissible は指定したときだけ属性に出る。label はエスケープする', () => {
-    expect(markup({ label: '<b>x</b>', children: '', open: true, dismissible: false })).toBe(
+  it('open / persistent は指定したときだけ属性に出る。label はエスケープする', () => {
+    expect(markup({ label: '<b>x</b>', children: '', open: true, persistent: false })).toBe(
       '<rd-dialog open><h2 slot="label">&lt;b&gt;x&lt;/b&gt;</h2></rd-dialog>',
+    )
+  })
+
+  it('persistent は属性として書ける（既定 false なので存在で true）', () => {
+    expect(markup({ label: '確定', children: '', persistent: true })).toBe(
+      '<rd-dialog persistent><h2 slot="label">確定</h2></rd-dialog>',
     )
   })
 })

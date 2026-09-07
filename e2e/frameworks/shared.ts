@@ -7,6 +7,8 @@ import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
 import { dialogMarkup } from '@rimltempest/riml-ds-elements/dialog'
+import { checkboxMarkup } from '@rimltempest/riml-ds-elements/experimental/checkbox'
+import { selectMarkup } from '@rimltempest/riml-ds-elements/experimental/select'
 import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 
 const AAA_TAGS = ['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag22aa'] as const
@@ -66,6 +68,28 @@ export const frameworkSuite = (framework: string): void => {
           hint: '確認メールを送ります',
         }),
       )
+      await compareMarkup(
+        page,
+        'rd-select',
+        selectMarkup({
+          id: 'country',
+          label: '国',
+          name: 'country',
+          children:
+            '<option value="">選択してください</option>'
+            + '<option value="jp">日本</option><option value="us">アメリカ</option>',
+        }),
+      )
+      await compareMarkup(
+        page,
+        'rd-checkbox',
+        checkboxMarkup({
+          id: 'news',
+          label: 'お知らせを受け取る',
+          name: 'news',
+          defaultValue: 'yes',
+        }),
+      )
       await compareMarkup(page, 'rd-button', buttonMarkup({ label: '送信', type: 'submit' }))
       await compareMarkup(
         page,
@@ -79,6 +103,16 @@ export const frameworkSuite = (framework: string): void => {
       await page.getByLabel('メール').fill('a@example.com')
       await page.getByRole('button', { name: '送信' }).click()
       await expect(page).toHaveURL(/thanks\.html\?email=a%40example\.com/)
+    })
+
+    test('選択とチェックも送信のクエリに載る', async ({ page }) => {
+      await page.goto('/')
+      await page.getByLabel('メール').fill('a@example.com')
+      await page.getByLabel('国').selectOption('jp')
+      await page.getByLabel('お知らせを受け取る').check()
+      await page.getByRole('button', { name: '送信' }).click()
+      await expect(page).toHaveURL(/country=jp/)
+      await expect(page).toHaveURL(/news=yes/)
     })
   })
 

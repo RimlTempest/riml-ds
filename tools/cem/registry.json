@@ -9,6 +9,15 @@
     "dependsOn": []
   },
   {
+    "name": "checkbox",
+    "tag": "rd-checkbox",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "真偽を 1 つ。ラベルと <input type=checkbox> は利用側が書く",
+    "files": ["checkbox/index.js", "checkbox/checkbox.define.js", "checkbox/checkbox.css"],
+    "dependsOn": []
+  },
+  {
     "name": "dialog",
     "tag": "rd-dialog",
     "pe": "B",
@@ -18,12 +27,34 @@
     "dependsOn": []
   },
   {
+    "name": "disclosure",
+    "tag": "rd-disclosure",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "折りたたみ。<details> と <summary> は利用側が書く",
+    "files": [
+      "disclosure/index.js",
+      "disclosure/disclosure.define.js",
+      "disclosure/disclosure.css"
+    ],
+    "dependsOn": []
+  },
+  {
     "name": "live-region",
     "tag": "rd-live-region",
     "pe": "C",
     "status": "stable",
     "summary": "読み上げの集約点。ページに 1 つだけ置く",
     "files": ["live-region/index.js", "live-region/live-region.define.js"],
+    "dependsOn": []
+  },
+  {
+    "name": "select",
+    "tag": "rd-select",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "1 つ選ぶ。ラベルと <select> は利用側が書く",
+    "files": ["select/index.js", "select/select.define.js", "select/select.css"],
     "dependsOn": []
   },
   {
@@ -38,5 +69,14 @@
       "text-field/text-field.css"
     ],
     "dependsOn": []
+  },
+  {
+    "name": "toast",
+    "tag": "rd-toast",
+    "pe": "C",
+    "status": "experimental",
+    "summary": "一時的な通知。読み上げは rd-live-region に委譲する",
+    "files": ["toast/index.js", "toast/toast.define.js"],
+    "dependsOn": ["rd-live-region"]
   }
 ]

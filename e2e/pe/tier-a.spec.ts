@@ -43,3 +43,37 @@ test('skip link: JS 無しでも Tab で現れ、Enter で本文へ飛ぶ', asyn
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL(/#main$/u)
 })
+
+test('select: JS 無しでも選んで送信できる', async ({ page }) => {
+  await page.goto('/select.html')
+  await page.getByLabel('国').selectOption('jp')
+  await page.getByRole('button', { name: '送信' }).click()
+  await expect(page).toHaveURL(/country=jp/u)
+})
+
+test('select: required が未選択なら遷移しない（ネイティブ検証）', async ({ page }) => {
+  await page.goto('/select.html')
+  await page.getByRole('button', { name: '送信' }).click()
+  await expect(page).toHaveURL(/\/select\.html$/u)
+  await expect(page.getByLabel('国')).toBeFocused()
+})
+
+test('checkbox: JS 無しでもチェックが送信される', async ({ page }) => {
+  await page.goto('/checkbox.html')
+  await page.getByLabel('規約に同意する').check()
+  await page.getByRole('button', { name: '送信' }).click()
+  await expect(page).toHaveURL(/terms=yes/u)
+})
+
+test('checkbox: JS 無しでも文言までがタップ標的になる（44px）', async ({ page }) => {
+  await page.goto('/checkbox.html')
+  await expect(page.locator('rd-checkbox > label')).toHaveCSS('min-block-size', '44px')
+})
+
+test('disclosure: JS 無しでも開閉できる（<details> そのもの）', async ({ page }) => {
+  await page.goto('/disclosure.html')
+  const body = page.getByText('全国一律 500 円です。')
+  await expect(body).toBeHidden()
+  await page.getByText('送料について').click()
+  await expect(body).toBeVisible()
+})
