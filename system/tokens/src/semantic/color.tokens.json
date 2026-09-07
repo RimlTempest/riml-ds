@@ -15,6 +15,16 @@
         "$description": "窪んだ面（入力欄の背景・コード領域）の背景"
       }
     },
+    "overlay": {
+      "default": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.16, 0.01, 200],
+          "alpha": 0.4
+        },
+        "$description": "モーダルの背面を覆う色（::backdrop）。半透明"
+      }
+    },
     "text": {
       "default": {
         "$value": "{color.palette.neutral.800}",
