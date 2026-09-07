@@ -137,6 +137,22 @@ const [email, setEmail] = useState('')
 - `id` を省くと `name` が `id` になる（RSC で `useId` を呼べないため）。同じ `name` が 1 ページに 2 つ以上あるなら `id` を明示する。
 - 未指定の props は属性ごと出ない。`persistent={undefined}` のように `undefined` を渡しても要素の既定値を潰さない。
 
+### experimental な部品の import 先（全フレームワーク共通）
+
+`@status experimental` の部品（`rd-select` / `rd-checkbox` / `rd-disclosure` / `rd-toast`）は
+**root からは出ない**。semver の対象外なので、専用サブパスから import して依存を明示する（ADR-0009）。
+
+| fw     | stable                         | experimental                                           |
+| ------ | ------------------------------ | ------------------------------------------------------ |
+| react  | `@rimltempest/riml-ds-react` / `…/client` | `@rimltempest/riml-ds-react/experimental` / `…/client/experimental` |
+| vue    | `@rimltempest/riml-ds-vue`（`rdComponents`） | `@rimltempest/riml-ds-vue/experimental`（`rdExperimentalComponents` を自分で `app.component()`） |
+| svelte | `@rimltempest/riml-ds-svelte`  | `@rimltempest/riml-ds-svelte/experimental`             |
+| astro  | `@rimltempest/riml-ds-astro/<name>.astro` | `@rimltempest/riml-ds-astro/experimental/<name>.astro` |
+| elements | `@rimltempest/riml-ds-elements/<name>{,/define,/style.css,/contract}` | `@rimltempest/riml-ds-elements/experimental/<name>{,/define,/style.css,/contract}` |
+
+`…/contract` は `markup()` だけを出すサブパス（`lit` を引き込まない）。SSR や自前のコード生成で HTML だけ欲しいときに使う。
+MCP の `get_element` が返す例はこの表どおりの import 先になっている。
+
 ### Vue 3.5
 
 ```ts
@@ -148,7 +164,7 @@ vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.startsWith('r
 <rd-text-field :label="t('email')" v-model="email" required />
 ```
 
-`@rimltempest/riml-ds-vue` はプラグイン（型 + `v-model` の `value` / `input` 対応）。
+`@rimltempest/riml-ds-vue` はプラグイン（型 + `v-model` の `value` / `input` 対応。`<input>` / `<select>` / `<textarea>` を包む部品で効く）。
 非文字列のプロパティは `.prop`（`:items.prop="list"`）。
 
 ### Svelte 5
