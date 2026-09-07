@@ -112,3 +112,36 @@ it('slot のラベルが aria-labelledby で <dialog> に結ばれる', async ()
   expect(label?.querySelector('slot')?.getAttribute('name')).toBe('label')
   expect(el.querySelector('[slot=label]')?.textContent).toBe('削除の確認')
 })
+
+/** `var(--rd-color-*)` の解決値を rgb 文字列で得る（実測と同じ土俵で比べるため） */
+const resolvedColor = (token: string): string => {
+  const probe = document.createElement('span')
+  probe.style.backgroundColor = `var(${token})`
+  document.body.append(probe)
+  const value = getComputedStyle(probe).backgroundColor
+  probe.remove()
+  return value
+}
+
+it('見出しが窓の帯になり、本文は body part に入る（brand.md §7.1 / §7.7）', async () => {
+  const el = await fixtureOf(RdDialog, DIALOG)
+  el.show()
+  await el.updateComplete
+  const label = el.shadowRoot?.querySelector('[part=label]')
+  const body = el.shadowRoot?.querySelector('[part=body]')
+  expect(label).not.toBeNull()
+  expect(body).not.toBeNull()
+  // 本文と actions はどちらも body に入る（帯と本体を分ける）
+  expect(body?.querySelectorAll('slot')).toHaveLength(2)
+
+  const bar = label === null || label === undefined ? undefined : getComputedStyle(label)
+  expect(bar?.backgroundColor).toBe(resolvedColor('--rd-color-chrome-default'))
+  expect(bar?.display).toBe('grid')
+
+  // 枠は <dialog> ではなく帯と本体が持つ。パディングは body 側
+  const control = nativeDialog(el)
+  const frame = control === null ? undefined : getComputedStyle(control)
+  expect(frame?.paddingTop).toBe('0px')
+  expect(frame?.borderTopWidth).toBe('0px')
+  expect(frame?.borderTopLeftRadius).toBe('16px')
+})

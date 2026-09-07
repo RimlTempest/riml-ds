@@ -431,8 +431,12 @@
               "name": "control"
             },
             {
-              "description": "見出しの入れ物",
+              "description": "見出しの入れ物（窓の帯）",
               "name": "label"
+            },
+            {
+              "description": "本文とアクションの入れ物",
+              "name": "body"
             }
           ],
           "slots": [
