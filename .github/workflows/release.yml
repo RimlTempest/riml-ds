@@ -40,13 +40,13 @@ jobs:
       pull-requests: write # Version PR の作成・更新
       id-token: write # npm Trusted Publishing（OIDC）。npm のトークンは Secrets に置かない
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           # version は GitHub API 経由で push するので、git の資格情報は残さない
           persist-credentials: false
 
-      - uses: jdx/mise-action@v3
+      - uses: jdx/mise-action@v4
         with:
           cache: true
 
