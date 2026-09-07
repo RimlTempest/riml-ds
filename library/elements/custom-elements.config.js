@@ -1,4 +1,5 @@
 import { jsdocTags } from '../../tools/cem/src/plugins/jsdoc-tags.js'
+import { sortModules } from '../../tools/cem/src/plugins/sort-modules.js'
 
 export default {
   globs: ['src/**/*.element.ts', 'src/**/*.define.ts'],
@@ -6,5 +7,5 @@ export default {
   outdir: '.',
   litelement: true,
   packagejson: true,
-  plugins: [jsdocTags()],
+  plugins: [jsdocTags(), sortModules()],
 }
