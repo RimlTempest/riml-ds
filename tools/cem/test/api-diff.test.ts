@@ -6,10 +6,9 @@ import { diffManifests, missingChangeset } from '../src/core/api-diff.js'
  * `CustomElementDeclaration`（schema v1.0.0）は `customElement` / `tagName` / riml-ds 独自の
  * `pe` / `status` を持たないので、registry.test.ts と同じくレコードとして組み立てる。
  */
-const declaration = (
-  tagName: string,
-  extra: Readonly<Record<string, unknown>>,
-): Readonly<Record<string, unknown>> & { readonly kind: 'class'; readonly name: string } => ({
+type Decl = Readonly<Record<string, unknown>> & { readonly kind: 'class'; readonly name: string }
+
+const declaration = (tagName: string, extra: Readonly<Record<string, unknown>>): Decl => ({
   kind: 'class',
   name: 'Rd',
   customElement: true,
@@ -19,7 +18,7 @@ const declaration = (
   ...extra,
 })
 
-const manifest = (declarations: readonly Readonly<Record<string, unknown>>[]): Package => ({
+const manifest = (declarations: readonly Decl[]): Package => ({
   schemaVersion: '1.0.0',
   modules: declarations.map((declared) => ({
     kind: 'javascript-module',
