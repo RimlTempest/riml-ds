@@ -1,4 +1,6 @@
 import { html } from 'lit'
+import noterCss from '@rimltempest/riml-ds-tokens/themes/noter.css?raw'
+import qrccCss from '@rimltempest/riml-ds-tokens/themes/qrcc.css?raw'
 import type { Decorator } from '@storybook/web-components-vite'
 
 /**
@@ -12,6 +14,40 @@ import type { Decorator } from '@storybook/web-components-vite'
  */
 const applyScheme = (root: HTMLElement, scheme: unknown): void => {
   root.style.colorScheme = scheme === 'dark' ? 'dark' : 'light'
+}
+
+/**
+ * ブランド（テーマ）の CSS。riml は既定なので表に持たない（`tokens.css` がそのまま riml）。
+ * テーマは `color.palette.*` だけを上書きする（docs/brand.md §10）。
+ * テーマを足したらここと `modeGlobalTypes.theme.toolbar.items` に 1 行ずつ足す。
+ */
+const THEME_CSS: Readonly<Record<string, string>> = { qrcc: qrccCss, noter: noterCss }
+
+/** テーマ CSS の文字列。riml（既定）と未知の値は空文字 */
+export const themeStyle = (
+  theme: unknown,
+  table: Readonly<Record<string, string>> = THEME_CSS,
+): string => (typeof theme === 'string' ? (table[theme] ?? '') : '')
+
+/**
+ * テーマ CSS を `<style id="rd-theme">` として `<head>` の末尾に置く。
+ * テーマも `tokens.css` も同じ `@layer rd.tokens` の `:root` なので、後に読んだ方が勝つ
+ * （preview.ts の import 順は layers → tokens → css。テーマはその後）。
+ */
+const applyTheme = (root: HTMLElement, theme: unknown): void => {
+  const doc = root.ownerDocument
+  const existing = doc.getElementById('rd-theme')
+  const css = themeStyle(theme)
+  if (css === '') {
+    existing?.remove()
+    return
+  }
+  const style = existing ?? doc.createElement('style')
+  style.id = 'rd-theme'
+  style.textContent = css
+  if (existing === null) {
+    doc.head.append(style)
+  }
 }
 
 const applyDensity = (root: HTMLElement, density: unknown): void => {
@@ -40,6 +76,7 @@ const applyLang = (root: HTMLElement): void => {
 export const withModes: Decorator = (story, context) => {
   const root = context.canvasElement.ownerDocument.documentElement
   applyScheme(root, context.globals['scheme'])
+  applyTheme(root, context.globals['theme'])
   applyDensity(root, context.globals['density'])
   applyDir(root, context.globals['dir'])
   applyLang(root)
@@ -49,6 +86,15 @@ export const withModes: Decorator = (story, context) => {
 
 /** ツールバーに出すモード。`initialGlobals` と対で使う */
 export const modeGlobalTypes = {
+  theme: {
+    description: 'ブランド（テーマ）。riml が既定、qrcc / noter は palette だけ差し替える',
+    toolbar: {
+      title: 'ブランド',
+      icon: 'paintbrush',
+      items: ['riml', 'qrcc', 'noter'],
+      dynamicTitle: true,
+    },
+  },
   scheme: {
     description: '配色（color-scheme）',
     toolbar: { title: '配色', icon: 'mirror', items: ['light', 'dark'], dynamicTitle: true },
@@ -88,6 +134,7 @@ export const modeGlobalTypes = {
 } as const
 
 export const initialModeGlobals = {
+  theme: 'riml',
   scheme: 'light',
   density: 'default',
   dir: 'ltr',
