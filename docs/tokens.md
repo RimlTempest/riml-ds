@@ -90,7 +90,7 @@ system/tokens/
 ### ライト/ダーク
 
 ```css
---rd-color-surface-default: light-dark(oklch(0.99 0.005 200), oklch(0.16 0.01 200));
+--rd-color-surface-default: light-dark(var(--rd-color-palette-neutral-0), var(--rd-color-palette-neutral-900));
 ```
 
 切替は `color-scheme`。強制する場合は `<html style="color-scheme: dark">` か

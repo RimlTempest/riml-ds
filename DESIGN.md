@@ -91,9 +91,13 @@ motion:
 ## Overview
 
 riml-ds は RimlTempest のプロダクト（qrcc、noter、以降のもの）で共有する見た目の基準。
-**「静かで、読みやすく、触りやすい」**。装飾より情報、演出より応答速度、独自性より一貫性を
+**「静かで、読みやすく、触りやすい」**に、riml の人格（`docs/brand.md`）——**紙にインクで書いた、
+小さな窓が積み重なる画面**——を重ねたもの。装飾より情報、演出より応答速度、独自性より一貫性を
 優先する。既定で AAA（WCAG 2.2）を満たし、ダーク・高コントラスト・強制配色・低モーション・
 高密度のすべてのモードで同じ意味を保つ。
+
+既定のブランドは **riml**（`RimlTempest/blogs` の 7 色由来）。qrcc / noter は `themes/<brand>.css` で
+`color.palette.*` だけを差し替える。**形・影・文字（視覚言語「まど」）は全ブランド共通**（ADR-0013）。
 
 - 誰のためか：文書を書く人、コードを扱う人、印刷物を作る人。長時間見る画面。
 - どこで使うか：ブラウザ（モバイル 360px 〜 デスクトップ）、印刷、埋め込み（ドキュメント内）。
@@ -105,18 +109,21 @@ riml-ds は RimlTempest のプロダクト（qrcc、noter、以降のもの）�
 
 ## Colors
 
-**中立色は青みの灰（色相 200）**。純粋な灰は画面上で汚れて見え、暖色の灰は文書の白と
-喧嘩する。**アクセントは深い青緑（色相 175、明度 0.42）**。青（qrcc / noter の 255）でも
-緑でもない位置を取り、リンクの青と区別できる。
+**紙とインク**。面は cream（`neutral-0`、色相 78）と一段明るい窓（`neutral-100`）、窪みと hover は
+peach（`neutral-200`）。文字は navy のインク（`neutral-700`、色相 270、明度 0.38）。
+**アクセントは髪の青**（色相 260.53）で、塗りとリンクは明度 0.42（`accent-600`）、鮮やかな
+`accent-500`（= `brand.primary`）と赤目の `signature-500`（= `brand.signature`）は**装飾専用**
+——窓の丸・区切り・メーターの区分に使い、**文字を載せない・文字色にしない**（非文字 3:1 だけを保証）。
+タイトルバーの帯は `chrome`（ライトはインク、ダークは `neutral-600`）に `chrome-text`（cream）。
 
 - テキストと背景の対は **7:1 以上**（AAA）。`text-muted` でも 7:1 を満たす明度に置く。
   補助テキストは「薄く」ではなく「小さく・細く」で階層を作る。
 - 非テキストの境界（入力欄の枠、アイコン）は **3:1 以上**。
 - **色だけで状態を伝えない。** 危険は色 + アイコン + 文言、成功は色 + チェック + 文言。
-- 意味色は 4 つだけ：danger（25）、warning（75）、success（150）、info（240）。
-  すべて明度 0.42–0.44 に置き、白地でテキストとして 7:1 を満たす。
-- ダークモードは **同じ色相・反転した明度**。アクセントは 0.78 に持ち上げ、
-  ダーク背景（0.16）に対して 7:1 を保つ。彩度は少し落とす（暗い背景では彩度が強く見える）。
+- 意味色は 4 つだけ：danger（25.84、赤目と同じ色相）、warning（75）、success（150）、info（200。
+  主役の青と混ざらない位置）。すべて明度 0.42–0.43 に置き、紙の上でテキストとして 7:1 を満たす。
+- ダークモードは **同じ色相・反転した明度**。面は navy（`neutral-900`、明度 0.22）、文字は cream。
+  アクセントは 0.80 に持ち上げ 7:1 を保つ。彩度は少し落とす（暗い背景では彩度が強く見える）。
 - 高コントラスト（`prefers-contrast: more`）では `text-muted` を `text` に寄せ、境界を
   `text` の色にする。強制配色（`forced-colors: active`）ではシステム色（`CanvasText`、
   `Highlight`、`ButtonText`）だけを使い、独自の色を一切出さない。
@@ -127,7 +134,9 @@ riml-ds は RimlTempest のプロダクト（qrcc、noter、以降のもの）�
 
 **システムフォント**。自前で配信しない（性能・無料枠・日本語フォントの容量）。
 本文は `system-ui` を先頭に、日本語は `Hiragino Sans` / `Noto Sans JP` に落ちる。
-等幅は `ui-monospace` 系。
+等幅は `ui-monospace` 系。**見出しとタイトルバーは丸ゴシック系のスタック**（`font.family.display`:
+Zen Maru Gothic → M PLUS Rounded 1c → Hiragino Maru Gothic ProN → … → `system-ui`）。
+入っていれば丸くなり、無ければ本文と同じ書体に落ちる。フォントファイルは 0 バイト。
 
 - 本文は **流体サイズ**（`clamp()`）で 16px → 18px。見出しも同じ比率で伸びる。
   最小 16px を下回らない（iOS のフォーカス時ズームを避ける）。
@@ -156,21 +165,28 @@ riml-ds は RimlTempest のプロダクト（qrcc、noter、以降のもの）�
 
 ## Elevation & Depth
 
-**影は 2 段だけ**。`raised`（カード、ポップオーバー）と `overlay`（ダイアログ、メニュー）。
-影の色は `neutral-900` を `color-mix()` で 12% / 24% に薄めたもの。ダークでは影が見えないため
-**1px の境界線 + 表面の明度差**で層を表す。
+**影は 2 段だけ、どちらも硬い**（ぼかし 0、右下に落ちる。積み重なった窓の見え方）。
+`raised`（窓、カード）は 0.25rem、`overlay`（ダイアログ、トースト）は 0.5rem。色は navy のインク
+（`[0.22, 0.03, 270.31]`）を 16% / 24% にしたもの。ダークでは影が見えないため
+**表面の明度差（`surface` → `raised`）**で層を表す。グラデーション・ぼかし・フィルタは使わない。
 
 - 層の順序は `z-index` トークン（`layer.base` 0 / `layer.raised` 10 / `layer.overlay` 100 /
-  `layer.toast` 200）のみ。生の数値は書かない。
+  `layer.toast` 1000）のみ。生の数値は書かない。
 - ダイアログとポップオーバーは **ネイティブ**（`<dialog>`、`popover` 属性）で最上位レイヤーに
   乗せる。`z-index` で殴らない。
 - 半透明の背景ぼかし（`backdrop-filter`）は使わない（性能・低コントラスト）。
 
 ## Shapes
 
-角丸は **4 / 8 / 12px** と `full`。小さい部品（チップ、入力欄）が 4、ボタンとカードが 8、
-ダイアログが 12。入れ子のときは内側を 1 段小さくする。
+角丸は **8 / 12 / 16px** と `full`。チェックボックスの箱・タグが 8（`sm`）、入力欄・リスト行・
+アイコン地が 12（`md`）、窓・カード・ダイアログ・トーストが 16（`lg`）。**ボタン・スイッチ・
+メーターはピル**（`full`）。入れ子のときは内側を 1 段小さくする。
 
+- **窓（`.rd-window`）**が基本の器：タイトルバーの帯（`chrome`、高さ ≥ 2.75rem、見出し中央、
+  左に装飾の丸 3 つ = `signature` / `brand.primary` / `border`）+ 本体（`surface-raised`）+ `raised` の影。
+  ダイアログは窓 + `overlay` の影、トーストは小さな窓 + 左端 0.5rem の意味色の帯。
+- 塗りは平坦で枠を持たない（ボタン・帯）。境界線を持つのは入力欄（1px `border`）と `hr`（**2px 点線**）だけ。
+  強制配色では帯と塗りに 1px `CanvasText` の境界線を戻す。
 - 境界線は **1px**。太さで階層を作らず、色（`border` → `text-muted` → `text`）で作る。
 - アイコンは 20px（本文）/ 24px（ボタン）。線幅 1.5–2px。`currentColor` で塗る。
 - フォーカスリングは **外側 3px、オフセット 2px、`focus` 色**。部品の形（角丸）に沿わせる。
@@ -194,6 +210,7 @@ JS が無くても内容が読める。ティア C（live-region など）は無
 | `rd-dialog`（B）      | モーダル。ネイティブ `<dialog>` を枠にし内容は slot | `open`, `persistent`, `show()`, `close()`, `:state(open)` |
 | `rd-live-region`（C） | 読み上げの集約点。ページに 1 つ                 | `announce(text, { politeness })`                |
 | `.rd-skip-link`（CSS）| 本文へのスキップ。部品ではなく `@rimltempest/riml-ds-css` のクラス | `<a class="rd-skip-link" href="#main">` |
+| `.rd-window`（CSS）   | 窓。JS が要らないので部品にしない（ADR-0012 §6）。`patterns.css`（plan 015） | `<section class="rd-window"><h2 class="rd-window-title">`、`data-tone` |
 
 第 2 波（plan 009、`@status experimental`。import は `@rimltempest/riml-ds-elements/experimental/<name>`）：
 
@@ -203,6 +220,7 @@ JS が無くても内容が読める。ティア C（live-region など）は無
 | `rd-checkbox`（A）    | 真偽。`<label>` が `<input type="checkbox">` を包む。`switch` で `role="switch"` | `switch`, `indeterminate`, `hint`, `error` |
 | `rd-disclosure`（A）  | 開閉。子の `<details>` / `<summary>` を包む。`group` で排他アコーディオン | `group`（`<details name>`）, `rd-toggle` |
 | `rd-toast`（C）       | 一時通知の表示。読み上げは `rd-live-region` に委譲する | `show({ message, tone, duration })`, `close()`, `rd-dismiss`, `:state(success)` など |
+| `rd-meter`（A）       | 値の表示。子の `<label for>` + `<meter>` / `<progress>` を包み、太いピルで描く（plan 015） | `--rd-meter-fill`, `data-tone`, `:state(indeterminate)` |
 
 `rd-toast` の `tone`（info / success / warning / danger）は装飾で、意味は文言に持たせる。色だけで意味を伝えない。
 
