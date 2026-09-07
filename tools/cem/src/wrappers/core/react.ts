@@ -236,7 +236,7 @@ const markupFile = (spec: WrapperSpec): GeneratedFile => {
     `import type { ${reactTypes.toSorted().join(', ')} } from 'react'`,
     ...(spec.namedTypes.length > 0
       ? [
-          `import type { ${spec.namedTypes.join(', ')} } from '@rimltempest/riml-ds-elements/${spec.name}'`,
+          `import type { ${spec.namedTypes.join(', ')} } from '@rimltempest/riml-ds-elements/${spec.subpath}'`,
         ]
       : []),
   ]
@@ -440,7 +440,7 @@ const jsxFile = (specs: readonly WrapperSpec[]): GeneratedFile => {
     spec.namedTypes.length === 0
       ? []
       : [
-          `import type { ${spec.namedTypes.join(', ')} } from '@rimltempest/riml-ds-elements/${spec.name}'`,
+          `import type { ${spec.namedTypes.join(', ')} } from '@rimltempest/riml-ds-elements/${spec.subpath}'`,
         ],
   )
   const rows = specs.map((spec) => {

@@ -59,7 +59,7 @@ const componentFile = (spec: WrapperSpec): GeneratedFile => {
 /** グローバルな `.d.ts` にするため、名前つきの型は `import('...')` で参照する */
 const inlineType = (spec: WrapperSpec, text: string): string =>
   spec.namedTypes.includes(text)
-    ? `import('@rimltempest/riml-ds-elements/${spec.name}').${text}`
+    ? `import('@rimltempest/riml-ds-elements/${spec.subpath}').${text}`
     : text
 
 const elementsFile = (specs: readonly WrapperSpec[]): GeneratedFile => {

@@ -161,7 +161,7 @@ const componentFile = (spec: WrapperSpec): GeneratedFile => {
       `import { defineComponent, h } from 'vue'`,
       ...(spec.namedTypes.length > 0
         ? [
-            `import type { ${spec.namedTypes.join(', ')} } from '@rimltempest/riml-ds-elements/${spec.name}'`,
+            `import type { ${spec.namedTypes.join(', ')} } from '@rimltempest/riml-ds-elements/${spec.subpath}'`,
           ]
         : []),
       '',
@@ -180,7 +180,7 @@ const elementsFile = (specs: readonly WrapperSpec[]): GeneratedFile => {
     spec.namedTypes.length === 0
       ? []
       : [
-          `import type { ${spec.namedTypes.join(', ')} } from '@rimltempest/riml-ds-elements/${spec.name}'`,
+          `import type { ${spec.namedTypes.join(', ')} } from '@rimltempest/riml-ds-elements/${spec.subpath}'`,
         ],
   )
   const withMarkup = specs.filter((spec) => spec.contract !== undefined)

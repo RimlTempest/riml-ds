@@ -10,6 +10,9 @@ import type { Package } from 'custom-elements-manifest/schema'
 
 export type PeTier = 'A' | 'B' | 'C'
 
+/** CEM の独自フィールド `status`（ADR-0009 のライフサイクル）。知らない値は `'stable'` に倒す */
+export type WrapperStatus = 'stable' | 'experimental' | 'deprecated'
+
 /** `library/elements/src/_shared/markup.ts` の `MarkupNode` を構造的に写したもの */
 export type MarkupNode =
   | {
@@ -31,7 +34,7 @@ export type Contract = {
 }
 
 /**
- * prop の型。`named` は `@rimltempest/riml-ds-elements/<name>` から `import type` する名前
+ * prop の型。`named` は `@rimltempest/riml-ds-elements/<subpath>` から `import type` する名前
  * （`ButtonVariant` など。CEM は union の中身を持たないので名前で参照する）。
  */
 export type AttrType =
@@ -76,6 +79,13 @@ export type WrapperSpec = {
   readonly name: string
   readonly pascal: string
   readonly pe: PeTier
+  /** ADR-0009 のライフサイクル。`experimental` は別サブパスから出す */
+  readonly status: WrapperStatus
+  /**
+   * `@rimltempest/riml-ds-elements` の公開サブパス（`button` / `experimental/select`）。
+   * import 先を組み立てるときは `name` ではなく必ずこちらを使う
+   */
+  readonly subpath: string
   readonly attrs: readonly WrapperAttr[]
   readonly events: readonly WrapperEvent[]
   readonly slots: readonly WrapperSlot[]
@@ -86,7 +96,7 @@ export type WrapperSpec = {
   readonly controlTag: string | undefined
   /** `$id` が未指定のときに代わりに使う prop（`$name` があれば `'name'`） */
   readonly idFallback: string | undefined
-  /** `@rimltempest/riml-ds-elements/<name>` から import type する名前 */
+  /** `@rimltempest/riml-ds-elements/<subpath>` から import type する名前 */
   readonly namedTypes: readonly string[]
 }
 
@@ -131,6 +141,19 @@ const readArray = (source: unknown, key: string): readonly unknown[] => {
 
 const isPeTier = (value: unknown): value is PeTier =>
   value === 'A' || value === 'B' || value === 'C'
+
+const isStatus = (value: unknown): value is WrapperStatus =>
+  value === 'stable' || value === 'experimental' || value === 'deprecated'
+
+/** CEM は外から来るデータ。`status` が無い・知らない文字列なら `'stable'` 扱い（registry.ts と同じ寛容さ） */
+const readStatus = (declaration: unknown): WrapperStatus => {
+  const value = prop(declaration, 'status')
+  return isStatus(value) ? value : 'stable'
+}
+
+/** `experimental` は `@rimltempest/riml-ds-elements/experimental/<name>` からしか出ない（ADR-0009） */
+const subpathOf = (name: string, status: WrapperStatus): string =>
+  status === 'experimental' ? `experimental/${name}` : name
 
 /** `rd-text-field` → `RdTextField` */
 export const toPascal = (tag: string): string =>
@@ -299,6 +322,7 @@ export const toWrapperSpecs = (
           return []
         }
         const name = componentName(tag)
+        const status = readStatus(declaration)
         const attrs = readAttrs(declaration)
         const contract = contracts[name]
         const markupProps = contract === undefined ? [] : dedupe(collectProps(contract.tree, attrs))
@@ -310,6 +334,8 @@ export const toWrapperSpecs = (
             name,
             pascal: toPascal(tag),
             pe,
+            status,
+            subpath: subpathOf(name, status),
             attrs,
             events: readEvents(declaration),
             slots: readSlots(declaration),
