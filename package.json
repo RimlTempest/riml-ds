@@ -40,6 +40,7 @@
     "vrt:update": "bash scripts/vrt.sh --update-snapshots --project vrt-light-360 --project vrt-light-1024 --project vrt-dark-360 --project vrt-dark-1024 --project forced-colors --project reduced-motion",
     "a11y": "bash scripts/vrt.sh --project a11y",
     "pe": "bash scripts/vrt.sh --project pe --project pe-axe",
+    "changeset": "changeset",
     "guard": "./scripts/guard.sh",
     "wt": "./scripts/wt.sh",
     "prepare": "lefthook install",
@@ -49,6 +50,8 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
+    "@changesets/changelog-github": "1.0.1",
+    "@changesets/cli": "3.0.2",
     "@guidepup/virtual-screen-reader": "0.32.1",
     "@playwright/test": "1.63.0",
     "@size-limit/esbuild": "13.0.3",

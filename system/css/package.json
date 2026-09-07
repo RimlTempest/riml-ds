@@ -1,6 +1,6 @@
 {
   "name": "@rimltempest/riml-ds-css",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "riml-ds の基盤 CSS。@layer の順序、リセット、ベース、ユーティリティ、印刷、強制配色",
   "license": "MIT",
   "files": [

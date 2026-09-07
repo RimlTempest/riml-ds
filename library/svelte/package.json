@@ -1,6 +1,6 @@
 {
   "name": "@rimltempest/riml-ds-svelte",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "riml-ds の Svelte 5 部品と svelteHTML 型。CEM とマークアップ契約から生成する",
   "license": "MIT",
   "files": [
