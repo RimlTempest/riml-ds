@@ -123,6 +123,10 @@ const [email, setEmail] = useState('')
   `:state()` とインライン文言が有効になる。それまでの見た目は `style.css` が受ける。
 - `ref` はホスト要素。ティア A はネイティブ要素が子なので `ref.current.querySelector('input')` が届く。
   ティア B/C は `delegatesFocus` で `ref.current.focus()` が内部に届く。
+- **`define` はハイドレーションの後に読む**（`useEffect` か動的 `import()`）。先に読むとティア A が light DOM に
+  足す強化ノード（hint / error）でハイドレーションが食い違い、React が DOM を作り直す。
+- `id` を省くと `name` が `id` になる（RSC で `useId` を呼べないため）。同じ `name` が 1 ページに 2 つ以上あるなら `id` を明示する。
+- 未指定の props は属性ごと出ない。`dismissible={undefined}` のように `undefined` を渡しても要素の既定値を潰さない。
 
 ### Vue 3.5
 
@@ -143,7 +147,7 @@ vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.startsWith('r
 摩擦なし。`import '@rimltempest/riml-ds-elements/button/define'` して `<rd-button>` を書く。
 型は `@rimltempest/riml-ds-svelte` の `svelteHTML` 拡張。イベントは `onrd-press={…}`。
 
-### Astro 5
+### Astro 7
 
 `client:*` 不要。`@rimltempest/riml-ds-astro` の integration が `tokens.css` と `layers.css` を注入する。
 インタラクションが要るページで define を `<script>` から import。
