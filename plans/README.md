@@ -31,6 +31,7 @@
 - 005 と 006 は 004 の後に並行できる（`e2e/pe` は 005、`e2e/<fw>` は 006）
 - 007 は 005 と 006 の両方をマージしてから。008 は 007 の後
 - 009 は 005 と 006 の後（wave 2 の 4 部品。以降は 009a, 009b … と足す）
+- 011 は 009 と 010 の後（009 が生んだラッパー生成器の欠陥の追随。experimental を `./experimental` に隔離）
 
 レーンとの対応は `docs/parallel-lanes.md` / `scripts/lanes.tsv`。
 
@@ -48,6 +49,7 @@
 | 008 | [AI ネイティブ層（@rimltempest/riml-ds-mcp・design-md）](008-agent-native-layer.md) | P1 | M | 007 | DONE（マージ `#plan-008`。`tools/mcp`: resource 6 / tool 5（`docs/agent-integration.md` と一致をテストで固定）、`design-md --theme`、tsdown 単一ファイル 36.6 kB + 同梱 guidelines/DESIGN.md、テスト +34（377）。`check_contrast` は `colorjs.io` の `contrastWCAG21`（Terrazzo lint と同じ）。副産物: `@rimltempest/riml-ds-lint` の publish 形の欠陥（`stylelint-plugin/` 未同梱・依存未宣言）を修正。申し送り: mcp は elements 経由で lit を実行時依存に持つ → elements に契約専用サブパス（`./<name>/contract`）を足せば外せる（009 以降）） |
 | 009 | [部品バックログ wave 2（select/checkbox/disclosure/toast）](009-component-backlog.md) | P2 | L | 005, 006 | DONE（マージ `#plan-009`。CEM 4 → 8（既存 4 の差分は Step 0 の 2 点だけ）、テスト 377 → 471、story +37、e2e:frameworks 17 → 21、pe 20 / vrt 321 / a11y 12（Docker）。`dismissible` → `persistent` 反転、live-region `serializable`、`_shared/field.ts`、`scaffold:element`（10/11/9 ファイル）、`CONTROL_ID` 削除。契約側の回避: `{ raw: 'children' }` に統一（Svelte 生成器は raw 名を見ない）、checkbox の prop は `asSwitch`（`switch` は予約語）、select / checkbox は `defaultValue`（React 生成器の分割代入に合わせた）。申し送り: Vue 生成器の `v-model` が `<select>` で発火しない（`HTMLInputElement` しか見ない）、ラッパーは experimental を区別しない、`lint:html` 未実行、`::details-content` / `position-area` は Baseline 表に無いので未使用） |
 | 010 | [CI・Pages・Dependabot・不変条件ガード・public 化](010-devops-ci-and-guard.md) | P1 | M | 001（Pages は 008） | TODO |
+| 011 | [ラッパー生成器の追随（experimental 分離・select v-model・契約サブパス）](011-wrappers-experimental-and-contract-subpath.md) | P2 | M | 009, 010 | TODO |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
