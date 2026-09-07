@@ -63,6 +63,10 @@ type Story = StoryObj<Args>
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const opener = within(canvasElement).getByRole('button', { name: '確認を開く' })
+    // `show()` は「いま focus のある要素」を戻り先として覚える。並列実行でウィンドウが
+    // 非アクティブだと click だけでは activeElement が body のままになることがあるので、
+    // 戻り先を先に確定させる。
+    opener.focus()
     await userEvent.click(opener)
     const dialog = dialogIn(canvasElement)
     await expect(dialog?.open).toBe(true)
