@@ -15,9 +15,9 @@ const loaded = loadTokens(document)
 const index: TokenIndex = loaded.ok ? loaded.value : { leaves: [], byPath: new Map() }
 
 describe('loadTokens', () => {
-  it('DTCG の入れ子から葉だけを平らにし、生成物の 95 トークンを全部拾う', () => {
+  it('DTCG の入れ子から葉だけを平らにし、生成物の 104 トークンを全部拾う', () => {
     expect(loaded.ok).toBe(true)
-    expect(index.leaves).toHaveLength(95)
+    expect(index.leaves).toHaveLength(104)
   })
 
   it('ドキュメントでないものは not-a-document で返す（throw しない）', () => {

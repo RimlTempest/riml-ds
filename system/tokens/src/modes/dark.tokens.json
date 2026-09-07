@@ -57,9 +57,25 @@
         "$value": "{color.palette.accent.400}"
       }
     },
+    "brand": {
+      "primary": {
+        "$value": "{color.palette.accent.400}"
+      },
+      "signature": {
+        "$value": "{color.palette.signature.400}"
+      }
+    },
     "focus": {
       "ring": {
         "$value": "{color.palette.accent.400}"
+      }
+    },
+    "chrome": {
+      "default": {
+        "$value": "{color.palette.neutral.600}"
+      },
+      "text": {
+        "$value": "{color.palette.neutral.0}"
       }
     },
     "status": {

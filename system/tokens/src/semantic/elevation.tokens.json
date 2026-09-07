@@ -5,19 +5,19 @@
       "$value": {
         "color": {
           "colorSpace": "oklch",
-          "components": [0.16, 0.01, 200],
-          "alpha": 0.12
+          "components": [0.22, 0.03, 270.31],
+          "alpha": 0.16
         },
         "offsetX": {
-          "value": 0,
+          "value": 0.25,
           "unit": "rem"
         },
         "offsetY": {
-          "value": 0.125,
+          "value": 0.25,
           "unit": "rem"
         },
         "blur": {
-          "value": 0.5,
+          "value": 0,
           "unit": "rem"
         },
         "spread": {
@@ -25,17 +25,17 @@
           "unit": "rem"
         }
       },
-      "$description": "浮いた面（カード・ドロップダウン）の影"
+      "$description": "浮いた面（窓・カード）の硬い影。ぼかさず右下に落とす"
     },
     "overlay": {
       "$value": {
         "color": {
           "colorSpace": "oklch",
-          "components": [0.16, 0.01, 200],
+          "components": [0.22, 0.03, 270.31],
           "alpha": 0.24
         },
         "offsetX": {
-          "value": 0,
+          "value": 0.5,
           "unit": "rem"
         },
         "offsetY": {
@@ -43,7 +43,7 @@
           "unit": "rem"
         },
         "blur": {
-          "value": 1.5,
+          "value": 0,
           "unit": "rem"
         },
         "spread": {
@@ -51,7 +51,7 @@
           "unit": "rem"
         }
       },
-      "$description": "覆いの上に出る面（モーダル）の影"
+      "$description": "覆いの上に出る面（ダイアログ・トースト）の硬い影。ぼかさず右下に落とす"
     }
   }
 }

@@ -71,6 +71,8 @@ export default defineConfig({
             'color.text.*',
             'color.border.*',
             'color.accent.*',
+            'color.brand.*',
+            'color.chrome.*',
             'color.focus.*',
             'color.status.**',
             'space.*',

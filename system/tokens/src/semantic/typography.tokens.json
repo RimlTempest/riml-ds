@@ -25,7 +25,7 @@
     "heading": {
       "1": {
         "$value": {
-          "fontFamily": "{font.family.sans}",
+          "fontFamily": "{font.family.display}",
           "fontSize": {
             "value": 1.75,
             "unit": "rem"
@@ -46,7 +46,7 @@
       },
       "2": {
         "$value": {
-          "fontFamily": "{font.family.sans}",
+          "fontFamily": "{font.family.display}",
           "fontSize": {
             "value": 1.375,
             "unit": "rem"

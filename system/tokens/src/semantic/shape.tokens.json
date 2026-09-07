@@ -3,31 +3,31 @@
     "$type": "dimension",
     "sm": {
       "$value": {
-        "value": 0.25,
-        "unit": "rem"
-      },
-      "$description": "小さい部品（チップ・バッジ）の角丸"
-    },
-    "md": {
-      "$value": {
         "value": 0.5,
         "unit": "rem"
       },
-      "$description": "既定の角丸（ボタン・入力欄）"
+      "$description": "小さい部品（チェックボックスの箱・タグ・メーターの区分）の角丸"
     },
-    "lg": {
+    "md": {
       "$value": {
         "value": 0.75,
         "unit": "rem"
       },
-      "$description": "大きい面（カード・ダイアログ）の角丸"
+      "$description": "既定の角丸（入力欄・セレクト・リスト行・アイコン地）"
+    },
+    "lg": {
+      "$value": {
+        "value": 1,
+        "unit": "rem"
+      },
+      "$description": "大きい面（窓・カード・ダイアログ・トースト）の角丸"
     },
     "full": {
       "$value": {
         "value": 9999,
         "unit": "px"
       },
-      "$description": "完全な丸（アバター・ピル）"
+      "$description": "完全な丸（ボタン・スイッチ・スライダーのつまみ）"
     }
   }
 }

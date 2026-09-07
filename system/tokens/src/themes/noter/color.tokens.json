@@ -2,11 +2,173 @@
   "color": {
     "palette": {
       "$type": "color",
+      "neutral": {
+        "0": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.99, 0.005, 200]
+          }
+        },
+        "100": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.96, 0.008, 200]
+          }
+        },
+        "200": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.9, 0.012, 200]
+          }
+        },
+        "300": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.8, 0.015, 200]
+          }
+        },
+        "500": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.55, 0.02, 200]
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.44, 0.02, 200]
+          }
+        },
+        "700": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.25, 0.02, 200]
+          }
+        },
+        "800": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.27, 0.02, 200]
+          }
+        },
+        "900": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.16, 0.01, 200]
+          }
+        }
+      },
       "accent": {
+        "300": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.86, 0.08, 175]
+          }
+        },
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.78, 0.11, 175]
+          }
+        },
+        "500": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.55, 0.1, 175]
+          }
+        },
         "600": {
           "$value": {
             "colorSpace": "oklch",
             "components": [0.42, 0.09, 175]
+          }
+        },
+        "700": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.36, 0.08, 175]
+          }
+        }
+      },
+      "signature": {
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.72, 0.15, 25]
+          }
+        },
+        "500": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.62, 0.16, 25]
+          }
+        }
+      },
+      "danger": {
+        "300": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.86, 0.1, 25]
+          }
+        },
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.78, 0.17, 25]
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.44, 0.17, 25]
+          }
+        },
+        "700": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.36, 0.17, 25]
+          }
+        }
+      },
+      "warning": {
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.78, 0.1, 75]
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.44, 0.1, 75]
+          }
+        }
+      },
+      "success": {
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.78, 0.11, 150]
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.44, 0.11, 150]
+          }
+        }
+      },
+      "info": {
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.78, 0.13, 240]
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.44, 0.13, 240]
           }
         }
       }

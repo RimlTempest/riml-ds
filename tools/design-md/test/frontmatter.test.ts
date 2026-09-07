@@ -68,8 +68,8 @@ describe('buildFrontmatter', () => {
       return
     }
     expect(result.value.colors['surface']).toBe('{colors.neutral-0}')
-    expect(result.value.colors['text']).toBe('{colors.neutral-800}')
-    expect(result.value.colors['neutral-0']).toBe('oklch(0.99 0.005 200)')
+    expect(result.value.colors['text']).toBe('{colors.neutral-700}')
+    expect(result.value.colors['neutral-0']).toBe('oklch(0.9701 0.0181 78.24)')
   })
 
   it('typography は @google/design.md が読める dimension を出す（clamp() ではない）', () => {
@@ -78,8 +78,9 @@ describe('buildFrontmatter', () => {
       return
     }
     expect(result.value.typography['body']?.['fontSize']).toBe('1rem')
-    expect(result.value.typography['heading-1']?.['fontFamily']).toBe(
-      '{typography.body.fontFamily}',
+    // 見出しは丸ゴシック系の display スタック。本文と別 family なので実値が出る
+    expect(String(result.value.typography['heading-1']?.['fontFamily'])).toContain(
+      "'Zen Maru Gothic'",
     )
     expect(String(result.value.typography['body']?.['fontFamily'])).toContain("'Segoe UI'")
   })
@@ -101,11 +102,13 @@ describe('buildFrontmatter', () => {
     if (!themed.ok || !result.ok) {
       return
     }
-    // qrcc の accent は青（hue 255）。既定の teal（hue 175）から差し替わる
+    // qrcc の accent は青（hue 255）。既定の riml の青（hue 260.53）から差し替わる
     expect(themed.value.colors['accent-600']).toBe('oklch(0.44 0.16 255)')
-    expect(result.value.colors['accent-600']).toBe('oklch(0.42 0.09 175)')
-    // qrcc が触らない色（info / warning）は既定のまま
-    expect(themed.value.colors['info-600']).toBe(result.value.colors['info-600'])
+    expect(result.value.colors['accent-600']).toBe('oklch(0.42 0.0911 260.53)')
+    // qrcc の info は青系（hue 240）。既定の青緑（hue 200）から差し替わる
+    expect(themed.value.colors['info-600']).toBe('oklch(0.42 0.1 240)')
+    expect(result.value.colors['info-600']).toBe('oklch(0.42 0.07 200)')
+    // qrcc が既定と同じ値を持つ色（warning）は既定のまま
     expect(themed.value.colors['warning-600']).toBe(result.value.colors['warning-600'])
   })
 
@@ -125,8 +128,8 @@ describe('buildFrontmatter', () => {
       return
     }
     expect(themed.value.colors['accent-600']).toBe('oklch(0.5 0.2 300)')
-    // theme-qrcc のモードを持たないトークンは既定のまま
-    expect(themed.value.colors['info-600']).toBe('oklch(0.44 0.13 240)')
+    // theme-qrcc のモードを持たないトークン（qrcc の warning は既定と同値）は既定のまま
+    expect(themed.value.colors['warning-600']).toBe('oklch(0.42 0.09 75)')
     // semantic は palette と値が一致しなくなれば参照ではなく実値で残る
     expect(themed.value.colors['focus']).toBe('oklch(0.44 0.16 255)')
   })

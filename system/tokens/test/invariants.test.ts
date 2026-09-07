@@ -93,6 +93,19 @@ describe('トークンの不変条件', () => {
     expect(themes).toEqual(BRANDS.map((brand) => ({ brand, empty: false, outside: [] })))
   })
 
+  it('既定が持つ color.palette.* の段を、テーマ（qrcc / noter）も全部持つ（riml の色が混ざらない）', () => {
+    const defaults = flatten(JSON.parse(readSrc('base/color.tokens.json')))
+      .map((leaf) => leaf.id)
+      .toSorted()
+    const themes = BRANDS.map((brand) => ({
+      brand,
+      ids: flatten(JSON.parse(readSrc(`themes/${brand}/color.tokens.json`)))
+        .map((leaf) => leaf.id)
+        .toSorted(),
+    }))
+    expect(themes).toEqual(BRANDS.map((brand) => ({ brand, ids: defaults })))
+  })
+
   it('dist/tokens.json のトークン数は src の葉の数と一致する（取りこぼしが無い）', () => {
     const declared = SRC_FILES.flatMap((file) =>
       flatten(JSON.parse(readSrc(file))).map((leaf) => leaf.id),
