@@ -71,6 +71,8 @@ guidelines）をネットワーク無しで引けるようにする（ADR-0010�
 - `skills/riml-ds/SKILL.md`（対応バージョン・MCP tool 名・`design-md` の使い方の**仕上げのみ**。構成や方針は変えない）
 - `AGENTS.md`（MCP の起動コマンドと `design-md` の 1 行が実装と一致するかの確認・修正のみ）
 - root `package.json`（`tools/mcp` を `build` の filter に含める、devDeps）、`tsconfig.json`（reference）、`.size-limit.json`（**足さない**。CLI はサイズ予算外）
+- `knip.json`（`tools/mcp` の workspace エントリを足すだけ。plan 007 で入った既存エントリは変えない）
+- `.oxlintrc.json` は変更不要：`no-throw-in-domain` の対象 glob `tools/*/src/core/**/*.ts` が `tools/mcp/src/core` を既に含む
 - `plans/README.md`（自分の行だけ）
 
 **Out of scope**:
@@ -111,7 +113,12 @@ plan 001 のレーン → **足せないので、`core/` は `throw` を書か�
 - `elements.ts`：`listElements(manifest) → { tag, name, status, pe, summary }[]`、`getElement(manifest, contracts, tag) → ElementDoc | undefined`
   （属性・イベント・slot・parts・CSS 変数・`cssStates`・**使用例**：ティア A/B は `contract.markup(既定 props)` の HTML、ティア C は `<rd-x></rd-x>`；
   フレームワーク別の例は `docs/agent-integration.md` の `get_element` 行の通り 4 つ（React は既定 / `client` の両方））
-- `contrast.ts`：`checkContrast(index, fg, bg) → { ratio, aaa: boolean, aa: boolean, resolved: { fg, bg } }`（トークン名か生の色。計算は `@rimltempest/riml-ds-tokens` の関数を呼ぶ）
+- `contrast.ts`：`checkContrast(index, fg, bg) → { ratio, aaa: boolean, aa: boolean, resolved: { fg, bg } }`（トークン名か生の色）。
+  **計算は `colorjs.io/fn` の `contrastWCAG21`**（`tools/mcp` の dependency に `colorjs.io` 0.7.x を足す）。これは `terrazzo check` の
+  `a11y/min-contrast` が内部で使っているのと同じ関数（`node_modules/@terrazzo/parser/dist/lint/plugin-core/rules/a11y-min-contrast.js`）なので、
+  トークンのゲートと MCP の答えがずれない。`@rimltempest/riml-ds-tokens` に実行時の関数は無い（改訂 2026-09-07：STOP 条件から外す）。
+  トークンの色は `tokens.json` の `$value.hex`（light）と `$extensions["riml-ds"].modes.dark` を使い、`mode` 引数（`'light' | 'dark'`、既定 light）で選ぶ。
+  テストの 1 件は「`color.text.default` × `color.surface.default` が AAA（7:1 以上）」で、tokens 側のゲートと一致することを固定する
 - `suggest.ts`：`suggestComponent(manifest, guidelines, intent) → { tag, reason }[]`（CEM の `@summary` と `system/guidelines/*.md` の見出し語との
   単純一致スコア。**LLM を使わない**。候補 0 なら「アプリ内に作る」（skill §5）を返す）
 - `lint.ts`：`lintCss(source) → Promise<{ warnings: { rule, text, line }[] }>`（`stylelint.lint({ code, config: <@rimltempest/riml-ds-lint の設定> })`。I/O なのでここだけ非純）
@@ -140,7 +147,10 @@ tsdown が**バンドルに取り込む**ので配布物には含まれる。`ex
 `--theme qrcc` は `tokens.json` の `themes.qrcc` 差分（plan 002 の出力形）を当ててから生成。出力は stdout（`--out` でファイル）。
 生成結果は `bunx @google/design.md lint -` を通す（テストで `design.md lint` を実行。devDep）。
 
-`test/design-md.test.ts`（3 件：theme なし＝リポジトリの `DESIGN.md` と一致、`--theme qrcc` でフロントマターの色が差し替わる、lint が通る）。
+`test/design-md.test.ts`（3 件：theme なし＝リポジトリの `DESIGN.md` と一致、`--theme qrcc` でフロントマターの `name` が `riml-ds/qrcc` になる、lint が通る）。
+**改訂 2026-09-07**：現時点の `themes/qrcc` は既定値と同一（差分ゼロ）なので `tokens.json` に `theme-qrcc` のモード値は出ていない。
+「色が差し替わる」ことは、`$extensions["riml-ds"].modes["theme-qrcc"]` を 1 トークンだけ持たせた**合成フィクスチャ**を `buildFrontmatter` に渡す
+4 件目のテストで固定する（実データでは差が無いことも同じテストで確認してよい）。
 
 **Verify**: `bun tools/mcp/dist/cli.js design-md | bunx @google/design.md lint -` exit 0（stdin 非対応なら一時ファイル）
 
@@ -174,7 +184,7 @@ tsdown が**バンドルに取り込む**ので配布物には含まれる。`ex
 ## STOP conditions
 
 - `@modelcontextprotocol/sdk` の API（`registerResource` / `ResourceTemplate` / `InMemoryTransport`）が Context7 の記述と違い、resource の一覧が返せない → 報告
-- `@rimltempest/riml-ds-tokens` に `contrastRatio` 相当が無い → MCP 側に実装せず報告
+- （削除 2026-09-07：`contrastRatio` は `colorjs.io/fn` の `contrastWCAG21` を使う。上記 Step 2）
 - `tools/design-md/src/core` の関数がテーマ差分を受け取れない → 報告（他レーン）
 - tsdown が `workspace:*` の private 依存を取り込めない → 代替（`tools/design-md` を公開パッケージ化）を提案して STOP
 - `stylelint.lint` が `@rimltempest/riml-ds-lint` の設定（`postcss-lit` など）を CLI 実行環境で解決できない → `lint_css` を外さず報告
