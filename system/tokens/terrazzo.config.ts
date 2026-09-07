@@ -44,7 +44,15 @@ export default defineConfig({
         },
         { input: { density: 'compact' }, prepare: (c) => block('[data-density="compact"]', c) },
         { input: { theme: 'qrcc' }, prepare: (c) => block('/* rd:theme qrcc */\n:root', c) },
+        {
+          input: { theme: 'qrcc', scheme: 'dark' },
+          prepare: (c) => block('/* rd:theme qrcc dark */\n:root', c),
+        },
         { input: { theme: 'noter' }, prepare: (c) => block('/* rd:theme noter */\n:root', c) },
+        {
+          input: { theme: 'noter', scheme: 'dark' },
+          prepare: (c) => block('/* rd:theme noter dark */\n:root', c),
+        },
       ],
     }),
     js({ filename: 'tokens.raw.js' }),

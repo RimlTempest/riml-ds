@@ -15,12 +15,13 @@ export const Scope = {
   moreDark: 'more-dark',
   compact: 'compact',
   theme: 'theme',
+  themeDark: 'theme-dark',
 } as const
 export type Scope = (typeof Scope)[keyof typeof Scope]
 
 export type Section = {
   readonly scope: Scope
-  /** `scope` が `theme` のときだけブランド名が入る。 */
+  /** `scope` が `theme` / `theme-dark` のときだけブランド名が入る。 */
   readonly theme: string | undefined
   readonly gamut: Gamut
   readonly declarations: ReadonlyMap<string, string>
@@ -31,7 +32,7 @@ export type SectionsError =
   | { readonly kind: 'unknown-prelude'; readonly prelude: string }
   | { readonly kind: 'gamut-before-scope'; readonly prelude: string }
 
-const THEME_RE = /rd:theme\s+([a-z0-9-]+)/
+const THEME_RE = /rd:theme\s+([a-z0-9-]+)(\s+dark)?/
 
 const scopeOf = (prelude: string): Scope | undefined => {
   if (prelude === ':root') {
@@ -91,7 +92,8 @@ export const parseSections = (css: string): Result<readonly Section[], SectionsE
     }
     const themeMatch = THEME_RE.exec(block.prelude)
     const theme = themeMatch?.[1]
-    const scope = theme === undefined ? scopeOf(prelude) : Scope.theme
+    const themeScope = themeMatch?.[2] === undefined ? Scope.theme : Scope.themeDark
+    const scope = theme === undefined ? scopeOf(prelude) : themeScope
     if (scope === undefined) {
       return err({ kind: 'unknown-prelude', prelude })
     }

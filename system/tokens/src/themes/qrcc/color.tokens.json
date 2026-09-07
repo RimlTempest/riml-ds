@@ -1,15 +1,122 @@
 {
   "color": {
-    "$type": "color",
-    "accent": {
-      "default": {
-        "$value": "{color.palette.accent.600}"
+    "palette": {
+      "$type": "color",
+      "neutral": {
+        "0": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [1, 0, 0]
+          }
+        },
+        "100": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.975, 0.002, 265]
+          }
+        },
+        "200": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.945, 0.004, 265]
+          }
+        },
+        "300": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.79, 0.012, 265]
+          }
+        },
+        "500": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.6, 0.012, 265]
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.415, 0.012, 265]
+          }
+        },
+        "800": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.24, 0.013, 265]
+          }
+        },
+        "900": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.18, 0.012, 265]
+          }
+        }
       },
-      "hover": {
-        "$value": "{color.palette.accent.700}"
+      "accent": {
+        "300": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.89, 0.11, 250]
+          }
+        },
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.83, 0.13, 250]
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.44, 0.16, 255]
+          }
+        },
+        "700": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.36, 0.16, 255]
+          }
+        }
       },
-      "text": {
-        "$value": "{color.palette.accent.600}"
+      "danger": {
+        "300": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.89, 0.12, 25]
+          }
+        },
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.83, 0.14, 25]
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.44, 0.19, 25]
+          }
+        },
+        "700": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.36, 0.19, 25]
+          }
+        }
+      },
+      "success": {
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.83, 0.13, 150]
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.42, 0.13, 150]
+          }
+        }
       }
     }
   }

@@ -151,6 +151,18 @@
         }
       },
       "danger": {
+        "300": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.86, 0.1, 25]
+          },
+          "$description": "最も明るい危険色。ダークの hover に使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
         "400": {
           "$value": {
             "colorSpace": "oklch",
@@ -169,6 +181,18 @@
             "components": [0.44, 0.17, 25]
           },
           "$description": "危険・破壊的操作を表す既定の色。ライトで使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "700": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.36, 0.17, 25]
+          },
+          "$description": "最も暗い危険色。ライトの hover に使う素材",
           "$extensions": {
             "riml-ds": {
               "status": "internal"

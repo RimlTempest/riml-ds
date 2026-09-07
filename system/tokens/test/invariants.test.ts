@@ -17,6 +17,8 @@ const SRC_FILES = [
 
 const CSS_VAR = /^--rd-[a-z0-9-]+$/
 
+const BRANDS = ['qrcc', 'noter'] as const
+
 const fontSizeRem = (id: string): number | undefined => {
   const value = byId.get(id)?.$value['fontSize']
   if (typeof value !== 'object' || value === null || Array.isArray(value)) {
@@ -70,6 +72,25 @@ describe('トークンの不変条件', () => {
       .map((leaf) => fontSizeRem(leaf.id) ?? 0)
     expect(others.length).toBeGreaterThan(0)
     expect(others.every((size) => size >= 1)).toBe(true)
+  })
+
+  it('surface.hover と status.danger.hover がある（qrcc / noter 移行の前提）', () => {
+    expect(byId.has('color.surface.hover')).toBe(true)
+    expect(byId.has('color.status.danger.hover')).toBe(true)
+  })
+
+  it('テーマ（themes/*/color.tokens.json）は color.palette.* だけを上書きする', () => {
+    const themes = BRANDS.map((brand) => {
+      const document: unknown = JSON.parse(readSrc(`themes/${brand}/color.tokens.json`))
+      const ids = flatten(document).map((leaf) => leaf.id)
+      return {
+        brand,
+        empty: ids.length === 0,
+        outside: ids.filter((id) => !id.startsWith('color.palette.')),
+      }
+    })
+    // semantic を直接上書きするテーマはモードの組み合わせごとに値を持つことになり保守できない。
+    expect(themes).toEqual(BRANDS.map((brand) => ({ brand, empty: false, outside: [] })))
   })
 
   it('dist/tokens.json のトークン数は src の葉の数と一致する（取りこぼしが無い）', () => {

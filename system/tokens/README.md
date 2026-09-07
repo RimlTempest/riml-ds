@@ -53,9 +53,20 @@ import '@rimltempest/riml-ds-tokens/tokens.css'
 import '@rimltempest/riml-ds-tokens/themes/qrcc.css'
 ```
 
-`themes/*.css` は semantic の差分だけを持つ。移行のためだけに存在する
-（[docs/migration.md](../../docs/migration.md)）。現時点の qrcc / noter は riml-ds と同値の
-プレースホルダ。
+`themes/*.css` は既定値との差分だけを持つ。移行のためだけに存在する
+（[docs/migration.md](../../docs/migration.md)）。qrcc は実色が入っている。noter は
+まだ riml-ds と同値のプレースホルダ。
+
+**テーマが上書きできるのは `color.palette.*` だけ。** semantic と `modes/*` は palette を
+参照しているので、palette を差し替えればライト・ダーク・高コントラストが一緒に追随する。
+semantic を直接上書きするテーマはモードの組み合わせごとに値を持つことになり保守できない
+（`test/invariants.test.ts` が固定している）。
+
+テーマはライトとダークの両方で解決され、両者が違えば `themes/*.css` の 1 変数が
+`light-dark()` に畳まれる。新しいブランドを足すときは 5 か所を 1 PR で:
+`src/themes/<brand>/color.tokens.json`・`src/riml-ds.resolver.json` の `theme.contexts`・
+`terrazzo.config.ts` の permutation 2 件（light / dark）・`scripts/postbuild.ts` の `modes` 2 件・
+`test/tokens-json.ts` の `MODES`。
 
 ## 生成物
 
