@@ -155,28 +155,51 @@ info は主役の青と混ざらないよう色相 200（青緑）に置く。
 
 ## 7. 「まど」の部品規約
 
-### 7.1 窓（`.rd-window`、ダイアログ・トーストも同じ骨格）
+### 7.1 窓（`.rd-window` / `rd-window`。ダイアログも同じ骨格）
 
 ```
 ┌──────────────────────────────┐  帯: chrome.default、文字 chrome.text、高さ ≥ 2.75rem
-│ ● ● ●        タイトル          │  ● = 装飾の丸 3 つ（signature / brand.primary / neutral.500）
+│ ⊗ ▢ ⊖        タイトル          │  左端の丸 3 つ = 本物のボタン（閉じる / 広げる / たたむ）
 ├──────────────────────────────┤  角: radius.lg（帯は上 2 角、本体は下 2 角）
 │  本体: surface.raised          │  影: shadow.raised
 │  文字: text.default            │
 └──────────────────────────────┘
 ```
 
-- 窓は **JS が要らないので部品（Lit）にしない**（ADR-0012 §6、スキップリンクと同じ扱い）。
-  `@rimltempest/riml-ds-css` の `patterns.css`（`@layer rd.components`）が `.rd-window` / `.rd-window-title` /
-  `.rd-window-body` のクラスを出す。`<section class="rd-window"><h2 class="rd-window-title">…</h2><div class="rd-window-body">…</div></section>`
-  のように、見出し要素をそのまま帯にする（帯 = 見出し。文書構造と見た目が一致する）。
-- 丸 3 つは **CSS だけ**で描く（帯の `::before` に `radial-gradient` を 3 つ重ねる）。DOM に要素を置かず、
-  スクリーンリーダーには存在しない。押せない（押せる見た目にしない）。
-- タイトルは帯の中央、`type.heading.2`、1 行で切る（`text-overflow: ellipsis`）。
+- **左端の丸は装飾ではなく操作**（2026-09-08 のオーナー判断、ADR-0014）。丸 = `chrome.text` の塗り（クリーム）、
+  中の記号 = `chrome.default`（インク）。記号は幾何（× / □ / −）で、絵やロゴを持ち込まない。並びは左から
+  **閉じる（×）・広げる（□）・たたむ（−）**。使わない操作の丸は**描かない**（押せない丸を置かない）。
+  1 つも使わないなら帯の左は空欄で、タイトルは帯の中央のまま。
+- 丸の見た目は 1.25rem、当たり判定は `sizing.target-min`（2.75rem）四方。hover / focus-visible は丸の外側に
+  `chrome.text` の 2px リング（塗りは変えない — `brand.primary` の上に記号を置かない §9）。
+- 骨格は 2 つの出口を持つ:
+  - **CSS だけ**（JS 不要な窓）: `@rimltempest/riml-ds-css` の `patterns.css` が `.rd-window` / `.rd-window-bar` /
+    `.rd-window-controls` / `.rd-window-control[data-action]` / `.rd-window-title` / `.rd-window-body` を出す。
+    ボタンの動作（閉じる・たたむ）は利用側が書く。
+    ```html
+    <section class="rd-window" aria-labelledby="w1">
+      <header class="rd-window-bar">
+        <div class="rd-window-controls">
+          <button type="button" class="rd-window-control" data-action="close" aria-label="閉じる"></button>
+        </div>
+        <h2 class="rd-window-title" id="w1">タイトル</h2>
+      </header>
+      <div class="rd-window-body">…</div>
+    </section>
+    ```
+  - **部品**（`rd-window`、ティア B、experimental）: 帯とボタンとその動作（`closable` / `collapsible` / `expandable`、
+    `rd-dismiss` / `rd-toggle` / `rd-expand`）を持つ。見出しは `slot="title"` に**利用側が h 要素を置く**
+    （文書構造は利用側のもの）。JS 無しでは `:not(:defined)` の CSS が帯だけを描き、ボタンは出ない。
+- 帯 = 見出しではなく **帯 ⊃ 見出し**（ボタンが見出しの名前に混ざらないように、見出しは帯の中の別要素）。
+  `aria-labelledby` は見出しに結ぶ。
+- タイトルは帯の中央、`type.heading.2`、1 行で切る（`text-overflow: ellipsis`）。左のボタンが場所を取るときは
+  中央からずれてよいが、ボタンを削ってはいけない。
 - 帯の色は変えられる: `data-tone="accent"`（`accent.default` + `text.on-accent`）、`data-tone="warning"` / `"danger"`
-  （`status.*.default` + `text.on-status`）。文字色は必ず対応する `on-*`。
+  （`status.*.default` + `text.on-status`）。文字色は必ず対応する `on-*`。丸は tone でも `chrome.text` のまま
+  （`on-*` と同系のクリーム）。
 - 40rem 未満では窓は全幅・角丸は上下ともそのまま。帯の高さは縮めない（44px のタップ目標）。
-- `forced-colors: active` では帯を `Canvas`/`CanvasText` と 1px `CanvasText` の境界線に置き換え、丸は消す。
+- `forced-colors: active` では帯を `Canvas`/`CanvasText` と 1px `CanvasText` の境界線に置き換え、丸は
+  `ButtonFace` + 1px `ButtonText` の縁 + `ButtonText` の記号になる（消さない — 操作だから）。
 
 ### 7.2 ボタン（`rd-button`）
 
@@ -209,7 +232,9 @@ info は主役の青と混ざらないよう色相 200（青緑）に置く。
 
 ### 7.7 トースト・ダイアログ
 
-- ダイアログ = 窓 + `shadow.overlay`。見出しが帯。閉じるボタンは帯の右端のピル（丸 3 つとは別物）。
+- ダイアログ = 窓 + `shadow.overlay`。帯の左端の **×（閉じる）が閉じるボタン**（§7.1 と同じ丸）。`persistent` のときは
+  × を出さない（Esc・背面クリックと同じく閉じられない状態を見た目でも示す）。□ / − はダイアログには無い。
+  帯の右端にピルは置かない。
 - トーストは小さな窓。意味色は**左端の 0.5rem の帯**で示し、本文は常にインク on 窓。
 
 ## 8. 動き・応答・性能

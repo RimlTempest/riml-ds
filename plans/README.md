@@ -4,7 +4,7 @@
 （executor は会話の文脈を持たない前提）。テンプレートは qrcc の
 `.claude/skills/improve/references/plan-template.md`。
 
-**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
+**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）、017〜018 は `b501378`（2026-09-08。窓の丸はボタン = ADR-0014）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
 `system/guidelines/**`, `.claude/skills/riml-ds-*`）が仕様の正で、計画はそれを手順に落としたもの。
 矛盾を見つけたら計画側を直すのではなく STOP して advisor に返す。
 
@@ -35,6 +35,8 @@
 
 - 014 → 015 → 016 は直列（ブランドの色 → 部品の形 → ショーケース）。014 のあと qrcc2 側の取り込み（`file:` tarball → npm）は
   npm 初回 publish（ユーザー作業）を待つ
+- 017 と 018 は 016 の後に**並行**できる（017 = `patterns.css` + `library/elements`、018 = `typography.css` / `atoms.css` + 文字トークン。
+  `e2e/__screenshots__` は別ファイル）。qrcc2 への適用（qrcc2 plan 013）は両方のマージ後
 
 レーンとの対応は `docs/parallel-lanes.md` / `scripts/lanes.tsv`。
 
@@ -58,6 +60,8 @@
 | 014 | [既定ブランドを riml の色にし「まど」の形・影・文字をトークンへ](014-riml-brand-tokens.md) | P1 | M | 013 | DONE（`0c941c3`。palette 26 段（+neutral.700 / accent.500 / signature.400・500）、`brand.*` / `chrome.*` / `font.family.display`、radius 8/12/16、硬い影。contrastAgainst 15、葉 104、テスト 568 → 594、8 モード AAA を L 調整なしで通過。noter は旧既定 26 段。VRT 319/321 更新） |
 | 015 | [「まど」を部品に当てる（.rd-window・ピルのボタン・rd-meter）](015-mado-components.md) | P1 | L | 014 | DONE（`9d2e26a`: patterns.css の `.rd-window`、tier A ピル化、dialog/toast 窓化、`rd-meter` 実験、VRT 359 枚撮り直し） |
 | 016 | [Storybook のブランド切替と Foundations Brand / Mado](016-brand-showcase.md) | P2 | S | 015 | DONE |
+| 017 | [窓の左端の丸を本物のボタンにする（rd-window・.rd-window-bar・dialog の ×）](017-window-controls.md) | P1 | L | 016 | TODO |
+| 018 | [Typography（typography.css）と静的パターン集 atoms.css](018-typography-and-atoms.md) | P1 | M | 016 | TODO |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
