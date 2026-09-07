@@ -1,6 +1,27 @@
 {
   "type": {
     "$type": "typography",
+    "display": {
+      "$value": {
+        "fontFamily": "{font.family.display}",
+        "fontSize": {
+          "value": 2.5,
+          "unit": "rem"
+        },
+        "fontWeight": "{font.weight.bold}",
+        "lineHeight": "{line.height.display}"
+      },
+      "$description": "ヒーローと数字 1 つの窓の特大見出し。1 画面に 1 つだけ置く",
+      "$extensions": {
+        "riml-ds": {
+          "fluid": {
+            "min": "2.5rem",
+            "preferred": "1.6rem + 3vw",
+            "max": "4rem"
+          }
+        }
+      }
+    },
     "body": {
       "$value": {
         "fontFamily": "{font.family.sans}",
@@ -64,6 +85,39 @@
             }
           }
         }
+      },
+      "3": {
+        "$value": {
+          "fontFamily": "{font.family.display}",
+          "fontSize": {
+            "value": 1.125,
+            "unit": "rem"
+          },
+          "fontWeight": "{font.weight.bold}",
+          "lineHeight": "{line.height.heading-2}"
+        },
+        "$description": "小節の見出し",
+        "$extensions": {
+          "riml-ds": {
+            "fluid": {
+              "min": "1.125rem",
+              "preferred": "1.05rem + 0.35vw",
+              "max": "1.375rem"
+            }
+          }
+        }
+      },
+      "4": {
+        "$value": {
+          "fontFamily": "{font.family.display}",
+          "fontSize": {
+            "value": 1,
+            "unit": "rem"
+          },
+          "fontWeight": "{font.weight.bold}",
+          "lineHeight": "{line.height.heading-2}"
+        },
+        "$description": "窓・カードの中の見出し。幅で大きさを変えない"
       }
     },
     "small": {
