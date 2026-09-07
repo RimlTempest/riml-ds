@@ -15,6 +15,16 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
+/** `var(--rd-color-*)` の解決値を rgb 文字列で得る（実測と同じ土俵で比べるため） */
+const resolvedColor = (token: string): string => {
+  const probe = document.createElement('span')
+  probe.style.backgroundColor = `var(${token})`
+  document.body.append(probe)
+  const value = getComputedStyle(probe).backgroundColor
+  probe.remove()
+  return value
+}
+
 it('契約どおりの子があれば malformed にならない', async () => {
   const el = await fixtureOf(RdButton, '<rd-button><button type="button">保存</button></rd-button>')
   expect(el.matches(':state(malformed)')).toBe(false)
@@ -85,4 +95,28 @@ it('style.css が当たり、タッチターゲットが 44px 以上になる', 
   const box = control?.getBoundingClientRect()
   expect(box?.height).toBeGreaterThanOrEqual(44)
   expect(box?.width).toBeGreaterThanOrEqual(44)
+})
+
+it('ピルの形と太字が当たる（brand.md §7.2）', async () => {
+  const el = await fixtureOf(RdButton, '<rd-button><button type="button">保存</button></rd-button>')
+  const control = el.querySelector('button')
+  expect(control).not.toBeNull()
+  const style = control === null ? undefined : getComputedStyle(control)
+  // --rd-radius-full: 9999px（tokens.css）。ピルであることを解決値で固定する
+  expect(style?.borderRadius).toBe('9999px')
+  // --rd-font-weight-bold: 700
+  expect(style?.fontWeight).toBe('700')
+  // 枠は持たない（面の切り替えで区切る。brand.md §4）
+  expect(style?.borderTopWidth).toBe('0px')
+})
+
+it('secondary は肌色の面で、枠を持たない（brand.md §7.2）', async () => {
+  const el = await fixtureOf(
+    RdButton,
+    '<rd-button variant="secondary"><button type="button">戻る</button></rd-button>',
+  )
+  const control = el.querySelector('button')
+  const style = control === null ? undefined : getComputedStyle(control)
+  expect(style?.borderTopWidth).toBe('0px')
+  expect(style?.backgroundColor).toBe(resolvedColor('--rd-color-surface-sunken'))
 })

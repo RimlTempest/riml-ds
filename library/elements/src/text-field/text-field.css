@@ -3,10 +3,12 @@
     display: block;
   }
 
+  /* ラベルは太字のインク（docs/brand.md §7.3） */
   rd-text-field > label {
     display: block;
     margin-block-end: var(--rd-text-field-gap, var(--rd-space-1));
     color: var(--rd-color-text-default);
+    font-weight: var(--rd-font-weight-bold);
   }
 
   rd-text-field > input,
@@ -18,9 +20,9 @@
     padding-inline: var(--rd-space-3);
     border-width: var(--rd-border-width-default);
     border-style: solid;
-    border-color: var(--rd-color-border-strong);
+    border-color: var(--rd-color-border-default);
     border-radius: var(--rd-radius-md);
-    background: var(--rd-color-surface-default);
+    background: var(--rd-color-surface-raised);
     color: var(--rd-color-text-default);
     font: inherit;
     line-height: var(--rd-line-height-body);

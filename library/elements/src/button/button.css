@@ -1,8 +1,34 @@
 @layer rd.components {
+  /* ピルの面（docs/brand.md §7.2）。variant はカスタムプロパティで面と文字を切り替える。
+     hover を variant ごとのルールにすると詳細度が上限（0,3,0）を超えるため、
+     ホストに変数を置き、`:hover:enabled` の 1 ルールだけが面を動かす */
   rd-button {
     display: inline-block;
+
+    --rd-button-background: var(--rd-color-accent-default);
+    --rd-button-background-hover: var(--rd-color-accent-hover);
+    --rd-button-color: var(--rd-color-text-on-accent);
   }
 
+  rd-button[variant='secondary'] {
+    --rd-button-background: var(--rd-color-surface-sunken);
+    --rd-button-background-hover: var(--rd-color-surface-hover);
+    --rd-button-color: var(--rd-color-text-default);
+  }
+
+  rd-button[variant='ghost'] {
+    --rd-button-background: transparent;
+    --rd-button-background-hover: var(--rd-color-surface-hover);
+    --rd-button-color: var(--rd-color-accent-text);
+  }
+
+  rd-button[variant='danger'] {
+    --rd-button-background: var(--rd-color-status-danger-default);
+    --rd-button-background-hover: var(--rd-color-status-danger-hover);
+    --rd-button-color: var(--rd-color-text-on-status);
+  }
+
+  /* 枠は持たない。面の切り替えで区切る（brand.md §4）。強制配色でだけ枠を戻す */
   rd-button > button,
   rd-button > a {
     display: inline-flex;
@@ -12,56 +38,37 @@
     min-block-size: var(--rd-sizing-target-min);
     min-inline-size: var(--rd-sizing-target-min);
     padding-inline: var(--rd-button-padding-inline, var(--rd-space-4));
-    border-width: var(--rd-border-width-default);
+    border-width: 0;
     border-style: solid;
     border-color: transparent;
-    border-radius: var(--rd-radius-md);
-    background: var(--rd-color-accent-default);
-    color: var(--rd-color-text-on-accent);
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-button-background);
+    color: var(--rd-button-color);
     font: inherit;
+    font-weight: var(--rd-font-weight-bold);
     line-height: var(--rd-line-height-body);
     text-decoration: none;
     cursor: pointer;
   }
 
-  rd-button[variant='secondary'] > button,
-  rd-button[variant='secondary'] > a {
-    border-color: var(--rd-color-border-strong);
-    background: var(--rd-color-surface-raised);
-    color: var(--rd-color-text-default);
-  }
-
-  rd-button[variant='ghost'] > button,
-  rd-button[variant='ghost'] > a {
-    background: transparent;
-    color: var(--rd-color-accent-text);
-  }
-
-  rd-button[variant='danger'] > button,
-  rd-button[variant='danger'] > a {
-    background: var(--rd-color-status-danger-default);
-    color: var(--rd-color-text-on-status);
-  }
-
   /* :state() が使えるブラウザでは属性ではなく状態を主にする（riml-ds-css §0） */
   @supports selector(:state(secondary)) {
-    rd-button:state(secondary) > button,
-    rd-button:state(secondary) > a {
-      border-color: var(--rd-color-border-strong);
-      background: var(--rd-color-surface-raised);
-      color: var(--rd-color-text-default);
+    rd-button:state(secondary) {
+      --rd-button-background: var(--rd-color-surface-sunken);
+      --rd-button-background-hover: var(--rd-color-surface-hover);
+      --rd-button-color: var(--rd-color-text-default);
     }
 
-    rd-button:state(ghost) > button,
-    rd-button:state(ghost) > a {
-      background: transparent;
-      color: var(--rd-color-accent-text);
+    rd-button:state(ghost) {
+      --rd-button-background: transparent;
+      --rd-button-background-hover: var(--rd-color-surface-hover);
+      --rd-button-color: var(--rd-color-accent-text);
     }
 
-    rd-button:state(danger) > button,
-    rd-button:state(danger) > a {
-      background: var(--rd-color-status-danger-default);
-      color: var(--rd-color-text-on-status);
+    rd-button:state(danger) {
+      --rd-button-background: var(--rd-color-status-danger-default);
+      --rd-button-background-hover: var(--rd-color-status-danger-hover);
+      --rd-button-color: var(--rd-color-text-on-status);
     }
 
     rd-button:state(loading) > button,
@@ -72,6 +79,14 @@
 
   rd-button > [aria-busy='true'] {
     cursor: progress;
+  }
+
+  /* 触れる入力のときだけ面を 1 段動かす。無効な <button> は :enabled で外れる */
+  @media (hover: hover) {
+    rd-button > button:hover:enabled,
+    rd-button > a:hover {
+      background: var(--rd-button-background-hover);
+    }
   }
 
   rd-button > button:focus-visible,
@@ -95,11 +110,18 @@
         background-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard),
         color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
     }
+
+    /* 押し込みは 1px 下げるだけ（brand.md §7.2）。動きはこれだけ */
+    rd-button > button:active:enabled,
+    rd-button > a:active {
+      translate: 0 0.0625rem;
+    }
   }
 
   @media (forced-colors: active) {
     rd-button > button,
     rd-button > a {
+      border-width: var(--rd-border-width-default);
       border-color: ButtonText;
       color: ButtonText;
     }
