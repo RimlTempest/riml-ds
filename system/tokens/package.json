@@ -29,7 +29,7 @@
   "scripts": {
     "check": "terrazzo check",
     "build": "terrazzo build && bun run scripts/postbuild.ts",
-    "test": "vitest run --project node --dir system/tokens"
+    "test": "vitest run --root ../.. --project node system/tokens"
   },
   "devDependencies": {
     "@terrazzo/cli": "2.7.1",

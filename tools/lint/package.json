@@ -20,7 +20,7 @@
     "provenance": true
   },
   "scripts": {
-    "test": "vitest run --project node --dir tools/lint"
+    "test": "vitest run --root ../.. --project node tools/lint"
   },
   "peerDependencies": {
     "oxlint": ">=1.80",
