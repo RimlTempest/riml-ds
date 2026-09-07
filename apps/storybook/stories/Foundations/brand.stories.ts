@@ -48,18 +48,13 @@ const SWATCHES: readonly Swatch[] = [
   { token: '--rd-color-focus-ring', use: 'フォーカスリング（3px / 2px オフセット）' },
 ]
 
-/** 意味色の一覧。色見本は装飾で、名前は隣の `<code>` が読み上げる */
+/** 意味色の一覧。色見本は `::before` の装飾（DOM に置かない）で、名前は `<code>` が読み上げる */
 const palette = (): TemplateResult =>
   html`<h1 class="rd-visually-hidden">意味色の見本</h1>
     <dl class="sb-swatches">
       ${SWATCHES.map(
         (row) =>
-          html`<dt class="sb-swatch-name">
-              <span
-                class="sb-swatch"
-                style="background: var(${row.token})"
-                aria-hidden="true"
-              ></span>
+          html`<dt class="sb-swatch-name" style="--rd-sb-swatch: var(${row.token})">
               <code>${row.token}</code>
             </dt>
             <dd class="sb-swatch-use">${row.use}</dd>`,
@@ -95,22 +90,14 @@ export const ShapeAndShadow: Story = {
   render: () =>
     html`<h1 class="rd-visually-hidden">形と影の見本</h1>
       <ul class="sb-shapes">
-        <li><span class="sb-shape sb-shape-sm" aria-hidden="true"></span><code>radius.sm</code></li>
-        <li><span class="sb-shape sb-shape-md" aria-hidden="true"></span><code>radius.md</code></li>
-        <li><span class="sb-shape sb-shape-lg" aria-hidden="true"></span><code>radius.lg</code></li>
-        <li>
-          <span class="sb-shape sb-shape-full" aria-hidden="true"></span><code>radius.full</code>
-        </li>
+        <li class="sb-shape-sm"><code>radius.sm</code></li>
+        <li class="sb-shape-md"><code>radius.md</code></li>
+        <li class="sb-shape-lg"><code>radius.lg</code></li>
+        <li class="sb-shape-full"><code>radius.full</code></li>
       </ul>
       <ul class="sb-shapes sb-shadows">
-        <li>
-          <span class="sb-shape sb-shape-raised" aria-hidden="true"></span
-          ><code>shadow.raised</code>
-        </li>
-        <li>
-          <span class="sb-shape sb-shape-overlay" aria-hidden="true"></span
-          ><code>shadow.overlay</code>
-        </li>
+        <li class="sb-shape-raised"><code>shadow.raised</code></li>
+        <li class="sb-shape-overlay"><code>shadow.overlay</code></li>
       </ul>`,
 }
 
