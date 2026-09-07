@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "generate": "bun run src/cli.ts",
-    "test": "vitest run --project node --dir tools/design-md"
+    "test": "vitest run --root ../.. --project node tools/design-md"
   },
   "devDependencies": {
     "yaml": "2.9.0"
