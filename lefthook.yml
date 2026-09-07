@@ -5,7 +5,8 @@ pre-commit:
   jobs:
     - name: oxfmt
       glob: '*.{js,jsx,ts,tsx,mjs,cjs,json,jsonc,css,md,yaml,yml}'
-      run: bunx oxfmt {staged_files}
+      # ignorePatterns で全部除外された場合に「対象なし」で落ちないようにする
+      run: bunx oxfmt --no-error-on-unmatched-pattern {staged_files}
       stage_fixed: true
 
     - name: oxlint
