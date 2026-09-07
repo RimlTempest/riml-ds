@@ -8,5 +8,12 @@
     "name": "@rimltempest/riml-ds-elements/dialog/define (lit 込み)",
     "path": "library/elements/dist/dialog/dialog.define.js",
     "limit": "14 KB"
+  },
+  {
+    "name": "@rimltempest/riml-ds-react (button のみ import)",
+    "path": "library/react/dist/generated/button.js",
+    "import": "{ RdButton }",
+    "limit": "13 KB",
+    "brotli": true
   }
 ]

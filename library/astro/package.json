@@ -1,0 +1,39 @@
+{
+  "name": "@rimltempest/riml-ds-astro",
+  "version": "0.0.0",
+  "description": "riml-ds の Astro integration と .astro 部品。CEM とマークアップ契約から生成する",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "src/generated",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./button.astro": "./src/generated/button.astro",
+    "./dialog.astro": "./src/generated/dialog.astro",
+    "./text-field.astro": "./src/generated/text-field.astro",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "devDependencies": {
+    "astro": "7.3.1"
+  },
+  "peerDependencies": {
+    "@rimltempest/riml-ds-css": "workspace:*",
+    "@rimltempest/riml-ds-elements": "workspace:*",
+    "@rimltempest/riml-ds-tokens": "workspace:*",
+    "astro": "^7.0.0"
+  }
+}
