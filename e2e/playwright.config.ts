@@ -15,7 +15,12 @@ export default defineConfig({
   forbidOnly: process.env['CI'] === 'true',
   reporter: [['list']],
   snapshotPathTemplate: '{testDir}/__screenshots__/{projectName}/{arg}{ext}',
-  expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.001, animations: 'disabled' } },
+  // Playwright 既定の `threshold: 0.2` は YIQ の色差で、テーマを丸ごと差し替えても（plan 014 の
+  // cream ↔ 白・navy ↔ 黒）旧ベースラインが通ってしまう。色の回帰を掴むために 0.05 まで絞る。
+  // フォントのアンチエイリアス差で偽陽性が出たら `maxDiffPixelRatio` だけを緩める（`threshold` は上げない）。
+  expect: {
+    toHaveScreenshot: { threshold: 0.05, maxDiffPixelRatio: 0.001, animations: 'disabled' },
+  },
   use: { baseURL: `http://localhost:${STORYBOOK_PORT}` },
   projects: [
     {
