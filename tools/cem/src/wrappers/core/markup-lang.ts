@@ -7,6 +7,11 @@ import type { MarkupNode, WrapperSpec } from './common.js'
 export type Dialect = {
   /** 属性 1 つ。`name` は HTML の綴り、`expression` は既に言語の式になっている */
   readonly attr: (name: string, expression: string, shorthand: boolean) => string
+  /**
+   * custom element の属性。**キーがあるだけでプロパティが書かれる**言語（Svelte / Vue / React）は、
+   * 未指定なら属性ごと落とさないと要素の既定値を潰す。実装しなければ `attr` と同じ扱い。
+   */
+  readonly customAttr?: (name: string, prop: string, isBoolean: boolean) => string
   /** `{ prop }`。`children` に置き換わる位置かどうかを受ける */
   readonly text: (prop: string, isChildren: boolean) => string
   /** `{ raw }` */
@@ -42,6 +47,7 @@ export const expressionFor = (spec: WrapperSpec, value: string): string => {
 const attrSource = (
   spec: WrapperSpec,
   dialect: Dialect,
+  tag: string,
   name: string,
   value: string | boolean,
 ): string => {
@@ -50,6 +56,12 @@ const attrSource = (
   }
   if (!value.startsWith('$')) {
     return `${name}="${value}"`
+  }
+  const prop = value.slice(1)
+  const reference = prop === 'id' && spec.idFallback !== undefined ? 'controlId' : prop
+  const isBoolean = spec.markupProps.find((item) => item.name === prop)?.type === 'boolean'
+  if (tag.includes('-') && dialect.customAttr !== undefined) {
+    return dialect.customAttr(name, reference, isBoolean)
   }
   const expression = expressionFor(spec, value)
   return dialect.attr(name, expression, expression === name)
@@ -90,9 +102,13 @@ export const renderTree = (
   }
   const slot = node.slot === undefined ? [] : [`slot="${node.slot}"`]
   const own = Object.entries(node.attrs ?? {})
-    .map(([name, value]) => attrSource(spec, dialect, name, value))
+    .map(([name, value]) => attrSource(spec, dialect, node.tag, name, value))
     .filter((pair) => pair !== '')
-  const pairs = [...slot, ...own, ...(root ? [dialect.attr('class', 'className', false)] : [])]
+  const classAttr =
+    node.tag.includes('-') && dialect.customAttr !== undefined
+      ? dialect.customAttr('class', 'className', false)
+      : dialect.attr('class', 'className', false)
+  const pairs = [...slot, ...own, ...(root ? [classAttr] : [])]
   const children = node.children ?? []
   const selfClosing = VOID_TAGS.has(node.tag) || children.length === 0
   const open = `<${node.tag}${pairs.map((pair) => ` ${pair}`).join('')}`

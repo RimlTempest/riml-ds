@@ -14,7 +14,11 @@ describe('svelteFiles', () => {
   let { variant, loading, type, label, children, class: className } = $props()
 </script>
 
-<rd-button {variant} loading={loading || undefined} class={className}>
+<rd-button
+  {...(variant === undefined ? {} : { variant })}
+  {...(loading === true ? { loading } : {})}
+  {...(className === undefined ? {} : { class: className })}
+>
   <button {type}>{#if children}{@render children()}{:else}{label}{/if}</button>
 </rd-button>
 `,
@@ -23,7 +27,7 @@ describe('svelteFiles', () => {
 
   it('text-field は id が無ければ name を使い、value を defaultValue から出す', () => {
     const source = find('text-field.svelte')
-    expect(source).toContain('const controlId = id ?? name')
+    expect(source).toContain('const controlId = $derived(id ?? name)')
     expect(source).toContain('<label for={controlId}>{label}</label>')
     expect(source).toContain('value={defaultValue}')
     expect(source).toContain('required={required || undefined}')

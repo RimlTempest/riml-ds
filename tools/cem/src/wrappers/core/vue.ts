@@ -50,6 +50,26 @@ const attrValue = (spec: WrapperSpec, value: string | boolean, modelled: boolean
   return declared?.type === 'boolean' ? `props.${name} || undefined` : `props.${name}`
 }
 
+/**
+ * custom element では**キーがある**だけで Vue がプロパティを書く（`patchDOMProp`）。
+ * `dismissible: undefined` は要素の既定値（`true`）を潰すので、未指定ならキーごと落とす。
+ */
+const customSpread = (
+  spec: WrapperSpec,
+  attr: string,
+  value: string | boolean,
+  modelled: boolean,
+): readonly string[] => {
+  if (typeof value === 'boolean' || !value.startsWith('$')) {
+    return [`${attr}: ${attrValue(spec, value, modelled)}`]
+  }
+  const name = value.slice(1)
+  const declared = spec.markupProps.find((item) => item.name === name)
+  return declared?.type === 'boolean'
+    ? [`...(props.${name} === true ? { ${attr}: true } : {})`]
+    : [`...(props.${name} === undefined ? {} : { ${attr}: props.${name} })`]
+}
+
 const nodeSource = (
   spec: WrapperSpec,
   node: MarkupNode,
@@ -67,8 +87,11 @@ const nodeSource = (
   if ('raw' in node) {
     return `${pad}slots['default']?.()`
   }
-  const entries = Object.entries(node.attrs ?? {}).map(
-    ([attr, value]) => `${attr}: ${attrValue(spec, value, modelled)}`,
+  const custom = node.tag.includes('-')
+  const entries = Object.entries(node.attrs ?? {}).flatMap(([attr, value]) =>
+    custom
+      ? customSpread(spec, attr, value, modelled)
+      : [`${attr}: ${attrValue(spec, value, modelled)}`],
   )
   const slot = node.slot === undefined ? [] : [`slot: '${node.slot}'`]
   const handler =

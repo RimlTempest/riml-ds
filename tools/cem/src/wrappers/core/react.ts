@@ -104,21 +104,46 @@ const attrExpression = (context: Context, value: string | boolean): string => {
   return declared?.type === 'boolean' ? `={${reference} || undefined}` : `={${reference}}`
 }
 
+/**
+ * custom element では**キーがある**だけでプロパティが書かれる（React は `key in node` を見る）。
+ * `variant={undefined}` は要素の既定値（`'primary'` や `dismissible: true`）を潰すので、
+ * 未指定のときはキーごと落とす。ネイティブ要素は React が属性を省くのでそのままでよい。
+ */
+const customAttrSpread = (context: Context, attr: string, value: string | boolean): string => {
+  if (typeof value === 'boolean') {
+    return value ? attr : ''
+  }
+  if (!value.startsWith('$')) {
+    return `${attr}="${value}"`
+  }
+  const name = value.slice(1)
+  const reference = propRef(context.spec, name)
+  const declared = context.spec.markupProps.find((item) => item.name === name)
+  const entry = attr === reference ? `{ ${attr} }` : `{ ${attr}: ${reference} }`
+  return declared?.type === 'boolean'
+    ? `{...(${reference} === true ? ${entry} : {})}`
+    : `{...(${reference} === undefined ? {} : ${entry})}`
+}
+
 const attrPairs = (
   context: Context,
   node: Extract<MarkupNode, { tag: string }>,
   root: boolean,
 ): readonly string[] => {
-  const own = Object.entries(node.attrs ?? {}).map(
-    ([attr, value]) => `${reactAttrName(node.tag, attr)}${attrExpression(context, value)}`,
-  )
+  const own = Object.entries(node.attrs ?? {})
+    .map(([attr, value]) =>
+      isCustomTag(node.tag)
+        ? customAttrSpread(context, attr, value)
+        : `${reactAttrName(node.tag, attr)}${attrExpression(context, value)}`,
+    )
+    .filter((pair) => pair !== '')
   const slot = node.slot === undefined ? [] : [`slot="${node.slot}"`]
   const handlers =
     !root && context.spec.controlTag === node.tag && FORM_CONTROLS.has(node.tag)
       ? ['onInput={onInput}', 'onChange={onChange}', 'onBlur={onBlur}']
       : []
   return root
-    ? ['ref={ref}', ...slot, ...own, 'className={className}']
+    ? ['ref={ref}', 'className={className}', ...slot, ...own]
     : [...slot, ...own, ...handlers]
 }
 

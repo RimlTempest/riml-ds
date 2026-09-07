@@ -14,8 +14,9 @@ describe('vueFiles', () => {
       `import type { ButtonVariant } from '@rimltempest/riml-ds-elements/button'`,
     )
     expect(source).toContain(
-      `h('rd-button', { variant: props.variant, loading: props.loading || undefined }`,
+      `h('rd-button', { ...(props.variant === undefined ? {} : { variant: props.variant })`,
     )
+    expect(source).toContain(`...(props.loading === true ? { loading: true } : {})`)
     expect(source).toContain(
       `h('button', { type: props.type }, slots['default']?.() ?? props.label)`,
     )

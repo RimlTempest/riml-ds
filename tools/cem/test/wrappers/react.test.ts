@@ -32,7 +32,12 @@ export const RdButton = ({
   className,
   ref,
 }: RdButtonProps): ReactNode => (
-  <rd-button ref={ref} variant={variant} loading={loading || undefined} className={className}>
+  <rd-button
+    ref={ref}
+    className={className}
+    {...(variant === undefined ? {} : { variant })}
+    {...(loading === true ? { loading } : {})}
+  >
     <button type={type}>{children ?? label}</button>
   </rd-button>
 )
@@ -57,6 +62,8 @@ export const RdButton = ({
     expect(source).toContain('<h2 slot="label">{label}</h2>')
     expect(source).toContain('{children}')
     expect(source).not.toContain('dangerouslySetInnerHTML')
+    // custom element は「キーがある」だけでプロパティが書かれる。未指定なら落とす
+    expect(source).toContain('{...(dismissible === true ? { dismissible } : {})}')
   })
 
   it("既定 export には 'use client' が無く、client/ には有る", () => {
