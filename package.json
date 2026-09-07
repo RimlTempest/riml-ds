@@ -22,7 +22,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --build",
-    "build": "bun run --filter './system/*' build && bun run --filter @rimltempest/riml-ds-elements build && bun run gen && bun run --filter @rimltempest/riml-ds-react build && bun run --filter @rimltempest/riml-ds-vue build && bun run --filter @rimltempest/riml-ds-astro build",
+    "build": "bun run --filter './system/*' build && bun run --filter @rimltempest/riml-ds-elements build && bun run gen && bun run --filter @rimltempest/riml-ds-react build && bun run --filter @rimltempest/riml-ds-vue build && bun run --filter @rimltempest/riml-ds-astro build && bun run --filter @rimltempest/riml-ds-mcp build",
     "design-md": "bun run --filter @rimltempest/riml-ds-design-md generate",
     "gen": "bun run --filter @rimltempest/riml-ds-elements gen && bun run tools/cem/src/registry.ts && bunx oxfmt tools/cem/registry.json && bun run tools/cem/src/wrappers/index.ts && bun run gen:argtypes",
     "gen:argtypes": "bun run tools/cem/src/argtypes.ts",

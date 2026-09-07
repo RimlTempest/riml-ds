@@ -17,6 +17,9 @@
       "path": "./tools/cem"
     },
     {
+      "path": "./tools/mcp"
+    },
+    {
       "path": "./library/elements/tsconfig.test.json"
     },
     {

@@ -50,6 +50,9 @@
     "tools/design-md": {
       "entry": ["test/**/*.ts"]
     },
+    "tools/mcp": {
+      "entry": ["src/cli.ts", "tsdown.config.ts", "test/**/*.ts"]
+    },
     "tools/lint": {
       "entry": ["test/**/*.ts"],
       "ignoreDependencies": ["estree"]
