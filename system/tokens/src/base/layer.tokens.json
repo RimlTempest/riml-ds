@@ -1,0 +1,21 @@
+{
+  "layer": {
+    "$type": "number",
+    "base": {
+      "$value": 0,
+      "$description": "通常の重なり順"
+    },
+    "raised": {
+      "$value": 10,
+      "$description": "浮いた面（カード・ドロップダウン）の重なり順"
+    },
+    "overlay": {
+      "$value": 100,
+      "$description": "モーダルと背面の覆いの重なり順"
+    },
+    "toast": {
+      "$value": 1000,
+      "$description": "通知の重なり順。常に最前面"
+    }
+  }
+}

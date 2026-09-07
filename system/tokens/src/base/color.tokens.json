@@ -1,0 +1,259 @@
+{
+  "color": {
+    "palette": {
+      "$type": "color",
+      "neutral": {
+        "0": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.99, 0.005, 200]
+          },
+          "$description": "最も明るい面。ライトの既定背景・ダークの本文色に使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "100": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.96, 0.008, 200]
+          },
+          "$description": "わずかに沈んだ面。ライトの浮いたカードに使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "200": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.9, 0.012, 200]
+          },
+          "$description": "沈んだ面。ライトの窪んだ領域に使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "300": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.8, 0.015, 200]
+          },
+          "$description": "淡い灰。ダークの補助テキストに使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "500": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.55, 0.02, 200]
+          },
+          "$description": "中間の灰。境界線に使う素材（面に対して 3:1 以上）",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.44, 0.02, 200]
+          },
+          "$description": "濃い灰。ライトの補助テキストと強い境界線に使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "800": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.25, 0.02, 200]
+          },
+          "$description": "ほぼ黒。ライトの本文色とダークの浮いた面に使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "900": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.16, 0.01, 200]
+          },
+          "$description": "最も暗い面。ダークの既定背景に使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        }
+      },
+      "accent": {
+        "300": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.86, 0.08, 175]
+          },
+          "$description": "最も明るいアクセント。ダークの hover とダーク高コントラストの文字に使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.78, 0.11, 175]
+          },
+          "$description": "明るいアクセント。ダークの既定アクセントに使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.42, 0.09, 175]
+          },
+          "$description": "既定のアクセント。ライトのアクセントとフォーカスリングに使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "700": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.36, 0.08, 175]
+          },
+          "$description": "濃いアクセント。ライトの hover と高コントラストの文字に使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        }
+      },
+      "danger": {
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.78, 0.17, 25]
+          },
+          "$description": "危険・破壊的操作を表す明るい色。ダークで使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.44, 0.17, 25]
+          },
+          "$description": "危険・破壊的操作を表す既定の色。ライトで使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        }
+      },
+      "warning": {
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.78, 0.1, 75]
+          },
+          "$description": "注意・確認が要る状態を表す明るい色。ダークで使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.44, 0.1, 75]
+          },
+          "$description": "注意・確認が要る状態を表す既定の色。ライトで使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        }
+      },
+      "success": {
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.78, 0.11, 150]
+          },
+          "$description": "成功・完了を表す明るい色。ダークで使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.44, 0.11, 150]
+          },
+          "$description": "成功・完了を表す既定の色。ライトで使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        }
+      },
+      "info": {
+        "400": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.78, 0.13, 240]
+          },
+          "$description": "補足・進行中の通知を表す明るい色。ダークで使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "600": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.44, 0.13, 240]
+          },
+          "$description": "補足・進行中の通知を表す既定の色。ライトで使う素材",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        }
+      }
+    }
+  }
+}

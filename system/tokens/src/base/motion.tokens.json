@@ -1,0 +1,28 @@
+{
+  "motion": {
+    "duration": {
+      "$type": "duration",
+      "fast": {
+        "$value": {
+          "value": 120,
+          "unit": "ms"
+        },
+        "$description": "小さな状態変化（hover・フォーカス）の時間"
+      },
+      "base": {
+        "$value": {
+          "value": 200,
+          "unit": "ms"
+        },
+        "$description": "出現・消滅の既定の時間"
+      }
+    },
+    "easing": {
+      "$type": "cubicBezier",
+      "standard": {
+        "$value": [0.2, 0, 0, 1],
+        "$description": "既定のイージング。素早く出て静かに止まる"
+      }
+    }
+  }
+}
