@@ -42,7 +42,7 @@
 | 002 | [トークン（DTCG + Terrazzo + AAA lint + DESIGN.md 生成）](002-tokens.md)      | P1   | L    | 001      | DONE（`52e38a3`。89 トークン、テスト 133 件。判断は `docs/tokens.md` §実装で確定した判断） |
 | 003 | [基盤 CSS（@rimltempest/riml-ds-css）と stylelint](003-foundation-css.md) | P1 | M | 002 | DONE（`bb5ff0c`。6 レイヤーファイル + stylelint 独自ルール 3 本、テスト +15） |
 | 004 | [Lit 部品の土台と最初の 4 部品（A/A/B/C）](004-elements-infra-and-first-five.md) | P0 | L | 003 | DONE（`db95768`。標準デコレータ→`static properties`（ADR-0005 §4 追記）、`color.overlay.default` 追加、`custom-elements.json` はコミットする、live-region の sr テストは仮想 SR が shadow を読まないため skip 1） |
-| 005 | [Storybook・a11y ゲート・VRT・JS 無し検証・addon-mcp](005-storybook-a11y-vrt.md) | P1 | L | 004 | TODO（`7bf04e8` で改訂） |
+| 005 | [Storybook・a11y ゲート・VRT・JS 無し検証・addon-mcp](005-storybook-a11y-vrt.md) | P1 | L | 004 | DONE（`82f59e1`。story 39、a11y 除外 0、VRT 165 枚 1.21 MB（Docker）、pe 12 / a11y 8、markuplint 39/39（shadow 平坦化の例外 2 つ）。VRT 除外はタグ `no-vrt`、`pe-axe` project 追加。部品側の欠陥 2 件は 009 Step 0 へ） |
 | 006 | [フレームワーク包装（React/Vue/Svelte/Astro）](006-framework-wrappers.md) | P1 | L | 004 | DONE（`dd880ae`。テスト +37、e2e 17 件。`@lit/react` は不使用（ref + addEventListener で統一、複雑なプロパティを渡す部品が出たら切替）、`id` は `name` フォールバック、未指定 props は属性ごと落とす。申し送り: CEM の modules 順が非決定（009 で修正）、`define` はハイドレーション後に読む） |
 | 007 | [ガバナンスと公開（changesets・api-diff・release.yml）](007-governance-and-release.md) | P1 | M | 005, 006 | TODO |
 | 008 | [AI ネイティブ層（@rimltempest/riml-ds-mcp・design-md）](008-agent-native-layer.md) | P1 | M | 007 | TODO |
