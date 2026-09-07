@@ -1,0 +1,41 @@
+---
+import RdButton from '@rimltempest/riml-ds-astro/button.astro'
+import RdDialog from '@rimltempest/riml-ds-astro/dialog.astro'
+import RdTextField from '@rimltempest/riml-ds-astro/text-field.astro'
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>riml-ds Astro e2e</title>
+  </head>
+  <body>
+    <div id="root">
+      <main>
+        <h1>お問い合わせ</h1>
+        <form id="contact" method="get" action="/thanks.html">
+          <RdTextField label="メール" name="email" type="email" required hint="確認メールを送ります" />
+          <RdButton type="submit">送信</RdButton>
+        </form>
+        <RdDialog label="送信しました"><p>確認メールを送りました。</p></RdDialog>
+        <rd-live-region></rd-live-region>
+      </main>
+    </div>
+    <script>
+      document.addEventListener('submit', (event) => {
+        const form = event.target
+        if (!(form instanceof HTMLFormElement) || form.id !== 'contact') {
+          return
+        }
+        event.preventDefault()
+        const dialog = document.querySelector('rd-dialog')
+        if (dialog !== null && 'show' in dialog && typeof dialog.show === 'function') {
+          dialog.show()
+        }
+      })
+    </script>
+  </body>
+</html>

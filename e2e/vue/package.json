@@ -1,0 +1,21 @@
+{
+  "name": "e2e-vue",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build && vite build --ssr src/entry-server.ts --outDir ssr/dist && bun run prerender.ts"
+  },
+  "dependencies": {
+    "@rimltempest/riml-ds-css": "workspace:*",
+    "@rimltempest/riml-ds-elements": "workspace:*",
+    "@rimltempest/riml-ds-tokens": "workspace:*",
+    "@rimltempest/riml-ds-vue": "workspace:*",
+    "vue": "3.5.42"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.8",
+    "@vue/server-renderer": "3.5.42",
+    "vite": "8.2.2"
+  }
+}
