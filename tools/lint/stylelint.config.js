@@ -30,7 +30,7 @@ const colorKeywords = [
 /** @type {import('stylelint').Config} */
 export default {
   extends: ['stylelint-config-standard'],
-  plugins: ['stylelint-declaration-strict-value'],
+  plugins: ['stylelint-declaration-strict-value', './stylelint-plugin/index.js'],
   overrides: [{ files: ['**/*.ts'], customSyntax: 'postcss-lit' }],
   rules: {
     // 生値禁止。色・寸法・字・影・時間・角丸は var(--rd-*) だけ（ADR-0004）
@@ -151,6 +151,10 @@ export default {
     'selector-class-pattern': null,
     'no-descending-specificity': null,
     'import-notation': 'string',
+    // riml-ds 独自ルール（tools/lint/stylelint-plugin）。skill riml-ds-css §6 のメッセージ表と対応する
+    'riml-ds/motion-in-media': true,
+    'riml-ds/baseline-newly-needs-supports': true,
+    'riml-ds/no-palette-token': true,
   },
   ignoreFiles: ['**/dist/**', '**/node_modules/**', '**/*.d.ts'],
 }
