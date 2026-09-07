@@ -1,0 +1,38 @@
+{
+  "name": "@rimltempest/riml-ds-css",
+  "version": "0.0.0",
+  "description": "riml-ds の基盤 CSS。@layer の順序、リセット、ベース、ユーティリティ、印刷、強制配色",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": "./dist/index.css",
+    "./layers.css": "./dist/layers.css",
+    "./reset.css": "./dist/reset.css",
+    "./base.css": "./dist/base.css",
+    "./utilities.css": "./dist/utilities.css",
+    "./print.css": "./dist/print.css",
+    "./forced-colors.css": "./dist/forced-colors.css",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "bun run scripts/build.ts",
+    "test": "vitest run --project node --dir system/css"
+  },
+  "devDependencies": {
+    "postcss": "8.5.28"
+  },
+  "peerDependencies": {
+    "@rimltempest/riml-ds-tokens": "workspace:*"
+  }
+}

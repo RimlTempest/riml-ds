@@ -1,0 +1,2 @@
+/* 利用側はこのファイルを最初に読み込む。順序はここだけで決まる（ADR-0004） */
+@layer rd.reset, rd.tokens, rd.base, rd.components, rd.utilities, rd.overrides;

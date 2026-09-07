@@ -1,0 +1,49 @@
+@layer rd.reset {
+  /* 見た目の決定（色・余白・字）は書かない。ブラウザ差だけを潰す */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-inline-size: 100%;
+    block-size: auto;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+
+  /* button は「押せる箱」に戻す。background: none / border: none は生値なので
+     打ち消しは longhand で書く（stylelint の declaration-strict-value） */
+  button {
+    padding: 0;
+    border-style: none;
+    background-color: transparent;
+    background-image: none;
+  }
+}
