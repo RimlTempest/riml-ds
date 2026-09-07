@@ -56,7 +56,7 @@
 | 012 | [小さな追随（mcp の lit 混入ゲート・underline-offset トークン・印刷の改ページ）](012-small-follow-ups.md) | P3 | S | 011 | DONE |
 | 013 | [テーマ × スキームの解決と themes/qrcc に qrcc の実色を入れる](013-theme-scheme-and-qrcc-palette.md) | P1 | M | 012 | DONE |
 | 014 | [既定ブランドを riml の色にし「まど」の形・影・文字をトークンへ](014-riml-brand-tokens.md) | P1 | M | 013 | DONE（`0c941c3`。palette 26 段（+neutral.700 / accent.500 / signature.400・500）、`brand.*` / `chrome.*` / `font.family.display`、radius 8/12/16、硬い影。contrastAgainst 15、葉 104、テスト 568 → 594、8 モード AAA を L 調整なしで通過。noter は旧既定 26 段。VRT 319/321 更新） |
-| 015 | [「まど」を部品に当てる（.rd-window・ピルのボタン・rd-meter）](015-mado-components.md) | P1 | L | 014 | TODO |
+| 015 | [「まど」を部品に当てる（.rd-window・ピルのボタン・rd-meter）](015-mado-components.md) | P1 | L | 014 | DONE（`9d2e26a`: patterns.css の `.rd-window`、tier A ピル化、dialog/toast 窓化、`rd-meter` 実験、VRT 359 枚撮り直し） |
 | 016 | [Storybook のブランド切替と Foundations Brand / Mado](016-brand-showcase.md) | P2 | S | 015 | TODO |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
@@ -137,3 +137,19 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - `core/duplicate-values` は base 層だけ見る。テーマ内の同値（qrcc の `neutral.700` = `800`）は通る
 - design-md のフロントマターは `text: "{colors.neutral-700}"`、見出しの `fontFamily` は display スタックの実値
 - `bun.lock` の workspace version が 0.1.0 のままだった（`chore(release)` が lock を更新していなかった）→ main で同期
+
+### 015 の実行メモ（2026-09-08）
+
+- **レーン外の 1 行**: `library/react/test/markup.test.tsx` の experimental export 一覧に `RdMeter` を足す必要があり、
+  レビュアーが merge 前に branch 上で直した。要素を足す計画は、この一覧テストを **Done criteria と所有パスに含める**こと
+- `.rd-window-title` は `text-align` が stylelint で禁止のため `place-items: center`。素のテキストは匿名グリッド項目になり
+  `text-overflow` が効かない → 1 行で切りたいタイトルは `<span>` で包む（`system/css/README.md`）
+- `data-tone` は **`.rd-window-title`（見出し）に付ける**（`.rd-window` ではない）。qrcc2 plan 011 の `<Window>` もこれに合わせる
+- `rd-meter` の tone は `tone` 属性（`data-tone` ではない）。ラッパー生成器がハイフン付き JSX prop を出せない
+- Chromium は `appearance: none` でも `<meter>` の内側を描く → `::-webkit-meter-inner-element` / `::-webkit-progress-bar` を消す
+  （ベンダ接頭辞の唯一の例外）。強制配色ではネイティブ表示に戻す
+- **未解決（016 か次の小計画で）**: (a) 狭いダイアログで題と丸 3 つの間隔が 3px（`components-dialog--open.png`）→ 帯グリッドに
+  `column-gap` を足す; (b) meter の塗りの右端が角丸でない（グラデーションの限界。内側要素で描くか検討）;
+  (c) toast の影が `shadow.raised`、`docs/brand.md` §5 の表は `overlay` → brand.md 側を「小さな窓は raised」に直す;
+  (d) `e2e/frameworks` に meter が無い（4 アプリへの手組み込みが要る）
+- `Result` 型が `meter.logic.ts` にローカル定義。2 つ目の要素が必要になったら `_shared/result.ts` に出す

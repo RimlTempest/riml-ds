@@ -139,7 +139,7 @@ info は主役の青と混ざらないよう色相 200（青緑）に置く。
 | トークン | 値 | 使う所 |
 | --- | --- | --- |
 | `shadow.raised` | `0.25rem 0.25rem 0 0` / インク（`[0.22, 0.03, 270.31]`）alpha 0.16 | 窓・カード |
-| `shadow.overlay` | `0.5rem 0.5rem 0 0` / 同色 alpha 0.24 | ダイアログ・トースト |
+| `shadow.overlay` | `0.5rem 0.5rem 0 0` / 同色 alpha 0.24 | ダイアログ（トーストは小さな窓なので `raised`、§7.7） |
 
 ぼかしが無いので描画が軽い（`filter` も `backdrop-filter` も使わない）。
 
