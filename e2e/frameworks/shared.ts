@@ -179,8 +179,8 @@ export const frameworkSuite = (framework: string): void => {
 }
 
 /**
- * `rd-meter` と `rd-window`（plan 017）。`@rimltempest/riml-ds-astro` の `package.json` が
- * この 2 つの `.astro` をまだ export していないので、astro 以外の 3 つで回す。
+ * `rd-meter` と `rd-window`（plan 017）。`library/astro/package.json` の `exports` を
+ * `bun run gen` が書くようになった（plan 023）ので、**4 フレームワークすべて**で回す。
  */
 export const meterAndWindowSuite = (framework: string): void => {
   test.describe(`${framework}: meter と window`, () => {
@@ -243,9 +243,8 @@ const PLAN_OPTIONS = [
 ].join('')
 
 /**
- * `rd-radio-group` と `rd-slider`（plan 019）。`@rimltempest/riml-ds-astro` の `package.json` が
- * この 2 つの `.astro` をまだ export していないので、astro 以外の 3 つで回す
- * （`meterAndWindowSuite` と同じ理由。`library/astro/package.json` は別レーンの持ち物）。
+ * `rd-radio-group` と `rd-slider`（plan 019）。`meterAndWindowSuite` と同じく、astro の
+ * `exports` が生成物になった（plan 023）ので 4 フレームワークすべてで回す。
  */
 export const radioGroupAndSliderSuite = (framework: string): void => {
   test.describe(`${framework}: radio-group と slider`, () => {

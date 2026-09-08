@@ -5,8 +5,12 @@ import RdSelect from '@rimltempest/riml-ds-astro/experimental/select.astro'
 import RdDialog from '@rimltempest/riml-ds-astro/dialog.astro'
 import RdTextField from '@rimltempest/riml-ds-astro/text-field.astro'
 import RdMenu from '@rimltempest/riml-ds-astro/experimental/menu.astro'
+import RdMeter from '@rimltempest/riml-ds-astro/experimental/meter.astro'
 import RdPopover from '@rimltempest/riml-ds-astro/experimental/popover.astro'
+import RdRadioGroup from '@rimltempest/riml-ds-astro/experimental/radio-group.astro'
+import RdSlider from '@rimltempest/riml-ds-astro/experimental/slider.astro'
 import RdTabs from '@rimltempest/riml-ds-astro/experimental/tabs.astro'
+import RdWindow from '@rimltempest/riml-ds-astro/experimental/window.astro'
 ---
 
 <!doctype html>
@@ -32,6 +36,13 @@ import RdTabs from '@rimltempest/riml-ds-astro/experimental/tabs.astro'
           <RdButton type="submit">送信</RdButton>
         </form>
         <RdDialog label="送信しました" placement="end"><p>確認メールを送りました。</p></RdDialog>
+        <RdMeter id="disk" label="ディスク使用量" value="3.2" max="10" text="3.2 GB / 10 GB" />
+        <RdWindow title="バックアップの設定" collapsible><p>毎晩 3 時に実行します。</p></RdWindow>
+        <RdRadioGroup label="プラン">
+          <label><input type="radio" id="plan-free" name="plan" value="free" />無料</label>
+          <label><input type="radio" id="plan-pro" name="plan" value="pro" />有料</label>
+        </RdRadioGroup>
+        <RdSlider id="volume" label="音量" name="volume" defaultValue="3" min="0" max="10" />
         <RdTabs label="ドキュメント">
           <Fragment slot="tabs"><a href="#overview">概要</a><a href="#usage">使い方</a></Fragment>
           <Fragment slot="panels"

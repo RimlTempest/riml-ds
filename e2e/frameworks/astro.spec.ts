@@ -1,4 +1,11 @@
-import { frameworkSuite, navigationSuite } from './shared.js'
+import {
+  frameworkSuite,
+  meterAndWindowSuite,
+  navigationSuite,
+  radioGroupAndSliderSuite,
+} from './shared.js'
 
 frameworkSuite('astro')
+meterAndWindowSuite('astro')
+radioGroupAndSliderSuite('astro')
 navigationSuite('astro')
