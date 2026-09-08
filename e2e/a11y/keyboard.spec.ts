@@ -142,3 +142,57 @@ test('menu: context は右クリックで開き、見えるボタンも残る', 
   // ポインタの位置に置くあいだは CSS の anchor に任せない
   await expect(page.locator('rd-menu [popover]')).toHaveAttribute('style', /left/u)
 })
+
+/**
+ * `rd-splitter`（plan 030）。APG「Window Splitter」のキー操作は **JS がある**ときだけの話なので
+ * ここ（Storybook）で見る。つまみは shadow にあるので、焦点は host に再標的化される。
+ */
+const splitterStory = async (page: Page): Promise<void> => {
+  await page.goto(storyUrl('components-splitter--default'))
+  await waitForStoryFinished(page, 'components-splitter--default')
+}
+
+/** つまみは shadow の中。Playwright の CSS セレクタは open な shadow を貫く */
+const splitterHandle = (page: Page) => page.locator('rd-splitter [part=handle]')
+
+test('splitter: Tab でつまみに届く（フォーカスは host に再標的化される）', async ({ page }) => {
+  await splitterStory(page)
+  await page.keyboard.press('Tab')
+  await expect
+    .poll(async () =>
+      page.evaluate(
+        () =>
+          document.activeElement?.tagName.toLowerCase() === 'rd-splitter'
+          && document.activeElement?.shadowRoot?.activeElement?.getAttribute('part') === 'handle',
+      ),
+    )
+    .toBe(true)
+})
+
+test('splitter: → で 1%、Shift+→ で 10% 動く', async ({ page }) => {
+  await splitterStory(page)
+  const handle = splitterHandle(page)
+  await expect(handle).toHaveAttribute('aria-valuenow', '50')
+  await handle.press('ArrowRight')
+  await expect(handle).toHaveAttribute('aria-valuenow', '51')
+  await handle.press('Shift+ArrowRight')
+  await expect(handle).toHaveAttribute('aria-valuenow', '61')
+})
+
+test('splitter: End で max、Home で min まで行く', async ({ page }) => {
+  await splitterStory(page)
+  const handle = splitterHandle(page)
+  await handle.press('End')
+  await expect(handle).toHaveAttribute('aria-valuenow', '80')
+  await handle.press('Home')
+  await expect(handle).toHaveAttribute('aria-valuenow', '20')
+  // 割合は host のインライン変数に出る（shadow の grid-template-* が読む）
+  await expect
+    .poll(async () =>
+      page.evaluate(() => {
+        const el = document.querySelector('rd-splitter')
+        return el instanceof HTMLElement ? el.style.getPropertyValue('--rd-splitter-position') : ''
+      }),
+    )
+    .toBe('20%')
+})

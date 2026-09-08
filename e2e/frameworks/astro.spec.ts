@@ -5,6 +5,7 @@ import {
   meterAndWindowSuite,
   navigationSuite,
   radioGroupAndSliderSuite,
+  splitterSuite,
   toggleSuite,
 } from './shared.js'
 
@@ -15,3 +16,4 @@ navigationSuite('astro')
 formWave4Suite('astro')
 toggleSuite('astro')
 comboboxSuite('astro')
+splitterSuite('astro')

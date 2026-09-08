@@ -12,6 +12,7 @@
     RdRadioGroup,
     RdSelect,
     RdSlider,
+    RdSplitter,
     RdTabs,
     RdToggle,
     RdWindow,
@@ -90,6 +91,10 @@
     <option value="kanji">かんじ</option>
     <option value="romaji">ローマ字</option>
   </RdCombobox>
+  <RdSplitter label="面の割合">
+    {#snippet start()}<p>一覧の面。</p>{/snippet}
+    {#snippet end()}<p>本文の面。</p>{/snippet}
+  </RdSplitter>
   <RdToggle label="太字" pressed="false" />
   <rd-live-region></rd-live-region>
 </main>

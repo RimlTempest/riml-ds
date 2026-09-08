@@ -21,6 +21,7 @@ export default defineConfig({
         'experimental/popover',
         'experimental/radio-group',
         'experimental/slider',
+        'experimental/splitter',
         'experimental/tabs',
         'experimental/toggle',
         'experimental/window',

@@ -6,6 +6,7 @@ import {
   meterAndWindowSuite,
   navigationSuite,
   radioGroupAndSliderSuite,
+  splitterSuite,
   toggleSuite,
 } from './shared.js'
 
@@ -16,6 +17,7 @@ navigationSuite('vue')
 formWave4Suite('vue')
 toggleSuite('vue')
 comboboxSuite('vue')
+splitterSuite('vue')
 
 test.describe('vue: <select> の v-model', () => {
   test('選択すると v-model の値が変わる', async ({ page }) => {

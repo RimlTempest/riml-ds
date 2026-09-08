@@ -11,6 +11,7 @@ import {
   RdRadioGroup,
   RdSelect,
   RdSlider,
+  RdSplitter,
   RdTabs,
   RdToggle,
   RdWindow,
@@ -176,6 +177,14 @@ export const App = defineComponent(
           RdCombobox,
           { id: 'reading', listId: 'reading-list', label: '読み', name: 'reading' },
           readings,
+        ),
+        h(
+          RdSplitter,
+          { label: '面の割合' },
+          {
+            start: () => h('p', null, '一覧の面。'),
+            end: () => h('p', null, '本文の面。'),
+          },
         ),
         h(RdToggle, { label: '太字', pressed: 'false' }),
         h('rd-live-region'),

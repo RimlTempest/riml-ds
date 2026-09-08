@@ -31,6 +31,7 @@ import {
 } from '../../library/elements/src/radio-group/index.js'
 import { selectMarkup } from '../../library/elements/src/select/index.js'
 import { sliderMarkup } from '../../library/elements/src/slider/index.js'
+import { splitterMarkup } from '../../library/elements/src/splitter/index.js'
 import {
   markup as tabsMarkup,
   panelMarkup,
@@ -61,6 +62,7 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/meter/meter.css', 'meter.css'],
   ['library/elements/src/radio-group/radio-group.css', 'radio-group.css'],
   ['library/elements/src/slider/slider.css', 'slider.css'],
+  ['library/elements/src/splitter/splitter.css', 'splitter.css'],
   ['library/elements/src/window/window.css', 'window.css'],
   ['library/elements/src/tabs/tabs.css', 'tabs.css'],
   ['library/elements/src/menu/menu.css', 'menu.css'],
@@ -484,6 +486,20 @@ const PAGES: Readonly<Record<string, string>> = {
           ${buttonMarkup({ label: '検索', type: 'submit' })}
         </div>
       </form>`,
+  ),
+  /**
+   * ティア B。JS が無いあいだは **2 つの面が縦に積まれて両方読める**（`:not(:defined)`）。
+   * つまみ（`role="separator"`）は shadow にしか無いので、定義前は 1 つも現れない。
+   */
+  'splitter.html': page(
+    '2 面の割合',
+    `      ${splitterMarkup({
+      label: 'サイドバーの幅',
+      start: '<h2>一覧</h2><p>条件で絞った結果がここに出る。</p>',
+      end: '<h2>本文</h2><p>選んだものの中身がここに出る。</p>',
+      min: 30,
+      max: 70,
+    })}`,
   ),
   'echo.html': page('送信済み', '      <p>フォームはネイティブに送信された。</p>'),
 }

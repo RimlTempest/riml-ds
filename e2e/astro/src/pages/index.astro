@@ -12,6 +12,7 @@ import RdMeter from '@rimltempest/riml-ds-astro/experimental/meter.astro'
 import RdPopover from '@rimltempest/riml-ds-astro/experimental/popover.astro'
 import RdRadioGroup from '@rimltempest/riml-ds-astro/experimental/radio-group.astro'
 import RdSlider from '@rimltempest/riml-ds-astro/experimental/slider.astro'
+import RdSplitter from '@rimltempest/riml-ds-astro/experimental/splitter.astro'
 import RdTabs from '@rimltempest/riml-ds-astro/experimental/tabs.astro'
 import RdToggle from '@rimltempest/riml-ds-astro/experimental/toggle.astro'
 import RdWindow from '@rimltempest/riml-ds-astro/experimental/window.astro'
@@ -103,6 +104,10 @@ import RdWindow from '@rimltempest/riml-ds-astro/experimental/window.astro'
           <option value="kanji">かんじ</option>
           <option value="romaji">ローマ字</option>
         </RdCombobox>
+        <RdSplitter label="面の割合">
+          <Fragment slot="start"><p>一覧の面。</p></Fragment>
+          <Fragment slot="end"><p>本文の面。</p></Fragment>
+        </RdSplitter>
         <RdToggle label="太字" pressed="false" />
         <rd-live-region></rd-live-region>
       </main>

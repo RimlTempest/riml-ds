@@ -17,8 +17,8 @@ import { type SplitterMarkupProps, splitterMarkup } from './index.js'
 
 type Args = SplitterMarkupProps
 
-const START = '<h3>一覧</h3><p>左の面。狭くしても中身は面ごと転がる。</p>'
-const END = '<h3>本文</h3><p>右の面。つまみを動かすと両方の割合が変わる。</p>'
+const START = '<h2>一覧</h2><p>左の面。狭くしても中身は面ごと転がる。</p>'
+const END = '<h2>本文</h2><p>右の面。つまみを動かすと両方の割合が変わる。</p>'
 
 /** つまみは shadow にしか無いので、story の検査も shadow から掴む（`splitter.test.ts` と同じ形） */
 const handleOf = (canvas: HTMLElement, index = 0): HTMLElement => {
@@ -86,8 +86,8 @@ export const Nested: Story = {
     end: splitterMarkup({
       label: '内側（縦）',
       direction: 'vertical',
-      start: '<h3>本文</h3><p>上の面。</p>',
-      end: '<h3>下書き</h3><p>下の面。</p>',
+      start: '<h2>本文</h2><p>上の面。</p>',
+      end: '<h2>下書き</h2><p>下の面。</p>',
     }),
   },
   play: async ({ canvasElement }) => {

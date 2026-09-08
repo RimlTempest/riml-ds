@@ -27,6 +27,7 @@ import {
 } from '@rimltempest/riml-ds-elements/experimental/radio-group'
 import { selectMarkup } from '@rimltempest/riml-ds-elements/experimental/select'
 import { sliderMarkup } from '@rimltempest/riml-ds-elements/experimental/slider'
+import { splitterMarkup } from '@rimltempest/riml-ds-elements/experimental/splitter'
 import {
   tabMarkup,
   tabsMarkup,
@@ -561,6 +562,66 @@ export const comboboxSuite = (framework: string): void => {
       await page.keyboard.press('Enter')
       await expect(control).toHaveValue('kana')
       await expect(control).toHaveAttribute('aria-expanded', 'false')
+    })
+  })
+}
+
+/** 4 フレームワークで同じ 2 面を出す（`splitterMarkup` が唯一の正） */
+const SPLITTER_START = '<p>一覧の面。</p>'
+const SPLITTER_END = '<p>本文の面。</p>'
+
+/**
+ * `rd-splitter`（plan 030）。`start` / `end` は**名前つきの `{ raw }`** なので、4 つの生成器が
+ * 同じ 2 つの `<div slot>` を出すことを固定する。つまみは shadow にしか無いので、
+ * JS 無しでは 1 つも現れず、2 面がそのまま読める（ティア B、ADR-0012）。
+ */
+export const splitterSuite = (framework: string): void => {
+  test.describe(`${framework}: splitter`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-splitter',
+          splitterMarkup({ label: '面の割合', start: SPLITTER_START, end: SPLITTER_END }),
+        )
+      })
+
+      test('JS 無しでも 2 つの面が両方読め、つまみは出ない（ティア B）', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.getByText('一覧の面。')).toBeVisible()
+        await expect(page.getByText('本文の面。')).toBeVisible()
+        await expect(page.locator('rd-splitter [role=separator]')).toHaveCount(0)
+      })
+    })
+
+    test('つまみは名前と現在値を持つ separator になる', async ({ page }) => {
+      await page.goto('/')
+      const handle = page.locator('rd-splitter [part=handle]')
+      await expect(handle).toHaveAttribute('role', 'separator')
+      await expect(handle).toHaveAttribute('aria-label', '面の割合')
+      // 横に並ぶ 2 面のあいだの仕切りは**縦線**（APG の separator）
+      await expect(handle).toHaveAttribute('aria-orientation', 'vertical')
+      await expect(handle).toHaveAttribute('aria-valuenow', '50')
+    })
+
+    test('→ で割合が増え、host の CSS 変数に書き戻される', async ({ page }) => {
+      await page.goto('/')
+      const handle = page.locator('rd-splitter [part=handle]')
+      await handle.press('ArrowRight')
+      await expect(handle).toHaveAttribute('aria-valuenow', '51')
+      await expect
+        .poll(async () =>
+          page.evaluate(() => {
+            const el = document.querySelector('rd-splitter')
+            return el instanceof HTMLElement
+              ? el.style.getPropertyValue('--rd-splitter-position')
+              : ''
+          }),
+        )
+        .toBe('51%')
     })
   })
 }

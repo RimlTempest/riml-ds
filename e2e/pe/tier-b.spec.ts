@@ -170,3 +170,23 @@ test('nav-menu: 現在地は太字 + 下の縦罫（色だけに頼らない）'
   await expect(current).toHaveCSS('font-weight', '700')
   await expect(current).not.toHaveCSS('border-block-end-color', 'rgba(0, 0, 0, 0)')
 })
+
+/**
+ * `rd-splitter` は JS が無ければ **2 つの面が縦に積まれてどちらも読める**（ティア B）。
+ * 割合を変えるのは JS が来てからで、それまでは全部見えているのが正しい姿。
+ */
+test('splitter: JS 無しでも 2 つの面がどちらも読める', async ({ page }) => {
+  await page.goto('/splitter.html')
+  await expect(page.getByRole('heading', { name: '一覧' })).toBeVisible()
+  await expect(page.getByText('条件で絞った結果がここに出る。')).toBeVisible()
+  await expect(page.getByRole('heading', { name: '本文' })).toBeVisible()
+  await expect(page.getByText('選んだものの中身がここに出る。')).toBeVisible()
+  await expect(page.locator('rd-splitter')).toHaveCSS('display', 'grid')
+})
+
+test('splitter: JS 無しではつまみ（separator）が 1 つも無い', async ({ page }) => {
+  await page.goto('/splitter.html')
+  // つまみは shadow にしか無い。定義前に role を先取りしない（押せない仕切りを置かない）
+  await expect(page.getByRole('separator')).toHaveCount(0)
+  await expect(page.locator('rd-splitter [role=separator]')).toHaveCount(0)
+})
