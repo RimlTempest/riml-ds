@@ -91,3 +91,15 @@ test('meter: JS 無しでもフォールバック文言が読める', async ({ p
   await page.goto('/meter.html')
   await expect(page.locator('rd-meter > meter')).toContainText('3.2 GB / 10 GB')
 })
+
+test('input group: JS 無しでも検索語がネイティブに送信される', async ({ page }) => {
+  await page.goto('/input-group.html')
+  await page.getByLabel('検索').fill('qr')
+  await page.getByRole('button', { name: '検索' }).click()
+  await expect(page).toHaveURL(/q=qr/u)
+})
+
+test('input group: JS 無しでもピルの枕が当たる（.rd-input-group）', async ({ page }) => {
+  await page.goto('/input-group.html')
+  await expect(page.locator('.rd-input-group')).toHaveCSS('border-radius', '9999px')
+})

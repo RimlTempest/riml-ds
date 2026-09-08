@@ -18,6 +18,7 @@ const PAGES = [
   '/dialog.html',
   '/window.html',
   '/live-region.html',
+  '/input-group.html',
 ] as const
 
 for (const path of PAGES) {

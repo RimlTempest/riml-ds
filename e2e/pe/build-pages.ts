@@ -143,6 +143,16 @@ const PAGES: Readonly<Record<string, string>> = {
     })}`,
   ),
   'live-region.html': page('ライブリージョン', '      <rd-live-region></rd-live-region>'),
+  'input-group.html': page(
+    '入力の枕',
+    `      <form method="get" action="/echo.html">
+        <div class="rd-input-group">
+          <label class="rd-visually-hidden" for="q">検索</label>
+          <input id="q" name="q" type="search" />
+          ${buttonMarkup({ label: '検索', type: 'submit' })}
+        </div>
+      </form>`,
+  ),
   'echo.html': page('送信済み', '      <p>フォームはネイティブに送信された。</p>'),
 }
 
