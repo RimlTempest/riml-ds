@@ -1,3 +1,4 @@
-import { frameworkSuite } from './shared.js'
+import { frameworkSuite, navigationSuite } from './shared.js'
 
 frameworkSuite('astro')
+navigationSuite('astro')

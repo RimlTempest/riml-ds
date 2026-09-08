@@ -15,6 +15,11 @@ import {
 } from '@rimltempest/riml-ds-elements/experimental/radio-group'
 import { selectMarkup } from '@rimltempest/riml-ds-elements/experimental/select'
 import { sliderMarkup } from '@rimltempest/riml-ds-elements/experimental/slider'
+import {
+  tabMarkup,
+  tabsMarkup,
+  tabsPanelMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/tabs'
 import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 
 const AAA_TAGS = ['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag22aa'] as const
@@ -296,6 +301,99 @@ export const radioGroupAndSliderSuite = (framework: string): void => {
       const group = page.locator('rd-radio-group')
       await expect
         .poll(async () => group.evaluate((element) => element.matches(':state(filled)')))
+        .toBe(true)
+    })
+  })
+}
+
+/** 4 フレームワークで同じタブとパネルを出す（`tabMarkup` / `tabsPanelMarkup` が唯一の正） */
+const TAB_LINKS = [
+  tabMarkup({ href: '#overview', label: '概要' }),
+  tabMarkup({ href: '#usage', label: '使い方' }),
+].join('')
+
+const TAB_PANELS = [
+  tabsPanelMarkup({ id: 'overview', children: '<p>この部品の概要。</p>' }),
+  tabsPanelMarkup({ id: 'usage', children: '<p>使い方の説明。</p>' }),
+].join('')
+
+/**
+ * `rd-tabs` / `rd-menu` / `rd-popover`（plan 020）。契約の木に**名前つきの `{ raw }`** があり、
+ * plan 023 まで vue / svelte / astro の生成器が既定 slot に潰していた（同じ子を 2 回描いた）ので
+ * 4 フレームワークに載せられなかった。
+ *
+ * `compareMarkup` は `rd-tabs` だけ。menu / popover のトリガーは利用側が書く生 HTML で、
+ * `id` の付け方がフレームワークごとに違うため振る舞いで固定する。
+ */
+export const navigationSuite = (framework: string): void => {
+  test.describe(`${framework}: tabs と menu と popover`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('tabs の初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-tabs',
+          tabsMarkup({ label: 'ドキュメント', tabs: TAB_LINKS, panels: TAB_PANELS }),
+        )
+      })
+
+      test('tabs は JS 無しならすべてのパネルが見える（ティア B）', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.getByText('この部品の概要。')).toBeVisible()
+        await expect(page.getByText('使い方の説明。')).toBeVisible()
+      })
+
+      test('menu は JS 無しでもすべての項目が見える', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.getByRole('link', { name: '複製' })).toBeVisible()
+        await expect(page.getByRole('button', { name: '削除' })).toBeVisible()
+      })
+
+      test('popover は JS 無しでも見出しと本文が見える', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.getByRole('heading', { name: '絞り込み' })).toBeVisible()
+        await expect(page.getByText('条件を選ぶと一覧がその場で変わる。')).toBeVisible()
+      })
+    })
+
+    test('tabs: 2 つ目のタブを押すと 1 つ目のパネルが隠れる', async ({ page }) => {
+      await page.goto('/')
+      const overview = page.locator('#overview')
+      await expect(overview).toBeVisible()
+      await page.getByRole('tab', { name: '使い方' }).click()
+      await expect(overview).toBeHidden()
+      await expect(page.locator('#usage')).toBeVisible()
+    })
+
+    test('menu: トリガーを押すと開き、Esc で閉じてトリガーに戻る', async ({ page }) => {
+      await page.goto('/')
+      const list = page.locator('rd-menu [popover]')
+      // 定義されると `[popover]` 自身が role="menu" を持つ（項目を直接持つ形）
+      await expect(list).toHaveAttribute('role', 'menu')
+      // 見た目ではなく `:popover-open` で見る。`menu.css` の `display: grid` が UA の
+      // `[popover]:not(:popover-open) { display: none }` を上書きしているため
+      // （`rd-popover` は上書きしていない）。CSS は別レーンの持ち物
+      const open = async (): Promise<boolean> =>
+        list.evaluate((element) => element.matches(':popover-open'))
+      expect(await open()).toBe(false)
+      const trigger = page.getByRole('button', { name: '操作' })
+      await trigger.click()
+      await expect.poll(open).toBe(true)
+      await page.keyboard.press('Escape')
+      await expect.poll(open).toBe(false)
+      await expect(trigger).toBeFocused()
+    })
+
+    test('popover: トリガーを押すと [popover] が開く', async ({ page }) => {
+      await page.goto('/')
+      const panel = page.locator('rd-popover [popover]')
+      await expect(panel).toBeHidden()
+      await page.getByRole('button', { name: '絞り込み' }).click()
+      await expect(panel).toBeVisible()
+      await expect
+        .poll(async () => panel.evaluate((element) => element.matches(':popover-open')))
         .toBe(true)
     })
   })

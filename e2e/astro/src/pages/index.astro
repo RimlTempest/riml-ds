@@ -4,6 +4,9 @@ import RdCheckbox from '@rimltempest/riml-ds-astro/experimental/checkbox.astro'
 import RdSelect from '@rimltempest/riml-ds-astro/experimental/select.astro'
 import RdDialog from '@rimltempest/riml-ds-astro/dialog.astro'
 import RdTextField from '@rimltempest/riml-ds-astro/text-field.astro'
+import RdMenu from '@rimltempest/riml-ds-astro/experimental/menu.astro'
+import RdPopover from '@rimltempest/riml-ds-astro/experimental/popover.astro'
+import RdTabs from '@rimltempest/riml-ds-astro/experimental/tabs.astro'
 ---
 
 <!doctype html>
@@ -29,6 +32,28 @@ import RdTextField from '@rimltempest/riml-ds-astro/text-field.astro'
           <RdButton type="submit">送信</RdButton>
         </form>
         <RdDialog label="送信しました" placement="end"><p>確認メールを送りました。</p></RdDialog>
+        <RdTabs label="ドキュメント">
+          <Fragment slot="tabs"><a href="#overview">概要</a><a href="#usage">使い方</a></Fragment>
+          <Fragment slot="panels"
+            ><div id="overview"><p>この部品の概要。</p></div><div id="usage">
+              <p>使い方の説明。</p>
+            </div></Fragment
+          >
+        </RdTabs>
+        <RdMenu label="操作" id="row-actions">
+          <rd-button slot="trigger"
+            ><button type="button" popovertarget="row-actions">操作</button></rd-button
+          >
+          <Fragment slot="items"
+            ><a href="/thanks.html">複製</a><button type="button">削除</button></Fragment
+          >
+        </RdMenu>
+        <RdPopover id="filters" label="絞り込み">
+          <rd-button slot="trigger"
+            ><button type="button" popovertarget="filters">絞り込み</button></rd-button
+          >
+          <p>条件を選ぶと一覧がその場で変わる。</p>
+        </RdPopover>
         <rd-live-region></rd-live-region>
       </main>
     </div>

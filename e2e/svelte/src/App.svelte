@@ -3,10 +3,13 @@
   // experimental は専用サブパスからしか出ない（ADR-0009）
   import {
     RdCheckbox,
+    RdMenu,
     RdMeter,
+    RdPopover,
     RdRadioGroup,
     RdSelect,
     RdSlider,
+    RdTabs,
     RdWindow,
   } from '@rimltempest/riml-ds-svelte/experimental'
 </script>
@@ -31,5 +34,23 @@
     <label><input type="radio" id="plan-pro" name="plan" value="pro" />有料</label>
   </RdRadioGroup>
   <RdSlider id="volume" label="音量" name="volume" defaultValue="3" min="0" max="10" />
+  <RdTabs label="ドキュメント">
+    {#snippet tabs()}<a href="#overview">概要</a><a href="#usage">使い方</a>{/snippet}
+    {#snippet panels()}<div id="overview"><p>この部品の概要。</p></div><div id="usage">
+        <p>使い方の説明。</p>
+      </div>{/snippet}
+  </RdTabs>
+  <RdMenu label="操作" id="row-actions">
+    {#snippet trigger()}<rd-button slot="trigger"
+        ><button type="button" popovertarget="row-actions">操作</button></rd-button
+      >{/snippet}
+    {#snippet items()}<a href="/thanks.html">複製</a><button type="button">削除</button>{/snippet}
+  </RdMenu>
+  <RdPopover id="filters" label="絞り込み">
+    {#snippet trigger()}<rd-button slot="trigger"
+        ><button type="button" popovertarget="filters">絞り込み</button></rd-button
+      >{/snippet}
+    {#snippet children()}<p>条件を選ぶと一覧がその場で変わる。</p>{/snippet}
+  </RdPopover>
   <rd-live-region></rd-live-region>
 </main>
