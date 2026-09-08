@@ -2,7 +2,7 @@
  * 部品の雛形を作る（`bun run scaffold:element <name> --pe A|B|C`）。
  *
  * 出すファイルは `.claude/skills/riml-ds-element/SKILL.md` §1.1 のファイル構成そのまま
- * （ティア A は 10 / B は 11 / C は 9）。中身は TDD の出発点：`it.todo` 入りのテスト、
+ * （ティア A は 11 / B は 12 / C は 9）。中身は TDD の出発点：`it.todo` 入りのテスト、
  * `@pe` / `@status experimental` / `@summary TODO` 入りの element、契約の骨。
  * 生成直後に `bun run check` が通る（`it.todo` は許容）。
  *
@@ -685,11 +685,72 @@ export type { ${pascal}MarkupProps } from './${name}.contract.js'
 export { Rd${pascal} } from './${name}.element.js'
 `
 
-/** skill §1.1 のファイル構成。ティア A は 10 / B は 11 / C は 9 ファイル */
+/** 契約のテスト。node project で回す（DOM を立てず querySelector だけを差し替える）。toggle / checkbox-group が手本 */
+const contractTestFile = ({ name, tag, pascal }: Names, tier: Tier): string => {
+  const requiredRoles = tier === 'A' ? "['label', 'control']" : "['label']"
+  const missingRole = tier === 'A' ? 'control' : 'label'
+  const presentSelectors =
+    tier === 'A'
+      ? "[contract.roles['label'] ?? '', contract.roles['control'] ?? '']"
+      : "[contract.roles['label'] ?? '']"
+  const markupCall =
+    tier === 'A'
+      ? "markup({ id: 'f', label: '見出し', name: 'f' })"
+      : "markup({ label: '見出し', children: '<p>本文</p>' })"
+  const markupExpect =
+    tier === 'A'
+      ? `'<${tag}><label for="f">見出し</label><input id="f" name="f"></${tag}>'`
+      : `'<${tag}><h2 slot="label">見出し</h2><p>本文</p></${tag}>'`
+  return `import { describe, expect, it } from 'vitest'
+import { checkContract, type ContractHost } from '../_shared/contract.js'
+import { contract, markup } from './${name}.contract.js'
+
+/** DOM を立てずに querySelector だけを差し替える（node project で回すため） */
+const hostWith = (present: readonly string[]): ContractHost<string> => ({
+  querySelector: (selector) => (present.includes(selector) ? selector : null),
+})
+
+describe('markup', () => {
+  // TODO: roles / tree を書き換えたら期待値も直す（${pascal}MarkupProps の形に合わせる）
+  it('契約の tree どおりの HTML を返す', () => {
+    const expected = ${markupExpect}
+    expect(${markupCall}).toBe(expected)
+  })
+
+  it('文言をエスケープする', () => {
+    expect(${markupCall.replace("'見出し'", "'<b>x</b>'")}).toContain('&lt;b&gt;x&lt;/b&gt;')
+  })
+})
+
+describe('contract', () => {
+  it('必須の役割が揃っていれば ok', () => {
+    expect(contract.required).toEqual(${requiredRoles})
+    expect(checkContract(hostWith(${presentSelectors}), contract).kind).toBe('ok')
+  })
+
+  it('必須の役割が無ければ missing になり、無い役割名が返る', () => {
+    expect(checkContract(hostWith([]), contract)).toEqual({
+      kind: 'missing',
+      roles: ${requiredRoles},
+    })
+  })
+
+  // oxlint-disable-next-line vitest/warn-todo -- 雛形。実装のときに本物のテストへ置き換える
+  it.todo('${missingRole} だけ欠けた場合を足す（部品の形が決まってから）')
+})
+`
+}
+
+/** skill §1.1 のファイル構成。ティア A は 11 / B は 12 / C は 9 ファイル */
 export const filesFor = (names: Names, tier: Tier): readonly GeneratedFile[] => {
   const { name } = names
   const contract: readonly GeneratedFile[] =
-    tier === 'C' ? [] : [{ path: `${name}.contract.ts`, content: contractFile(names, tier) }]
+    tier === 'C'
+      ? []
+      : [
+          { path: `${name}.contract.ts`, content: contractFile(names, tier) },
+          { path: `${name}.contract.test.ts`, content: contractTestFile(names, tier) },
+        ]
   const css: readonly GeneratedFile[] =
     tier === 'C' ? [] : [{ path: `${name}.css`, content: cssFile(names, tier) }]
   const styles: readonly GeneratedFile[] =

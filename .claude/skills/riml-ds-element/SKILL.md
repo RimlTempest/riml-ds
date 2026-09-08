@@ -62,8 +62,8 @@ library/elements/src/live-region/         ティア C の例
   （Vue `slots['trigger']`、Svelte `{@render trigger?.()}`、Astro `<slot name="trigger" />`、React `{trigger}` — 023）。
   属性値の `'$prop'` は `HTML_ENUM_ATTRS`（`tools/cem/src/wrappers/core/common.ts`）に列挙された属性なら
   リテラル型に絞られる（`button.aria-pressed` → `'true' | 'false'`）。新しい enum 属性はそこに足す。
-- `bun run scaffold:element` は `*.contract.test.ts` を**作らない**（構成表と 1 本ずれる）。手本
-  （`button` / `checkbox-group` / `toggle`）から写して足す。
+- `bun run scaffold:element` は `*.contract.test.ts` も作る（ティア A 11 / B 12 / C 9 ファイル）。
+  雛形の期待値は既定の roles / tree のものなので、契約を書き換えたら期待値も直す。
 
 ## 2. 命名
 
