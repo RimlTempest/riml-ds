@@ -16,6 +16,8 @@
     "./layers.css": "./dist/layers.css",
     "./reset.css": "./dist/reset.css",
     "./base.css": "./dist/base.css",
+    "./typography.css": "./dist/typography.css",
+    "./atoms.css": "./dist/atoms.css",
     "./patterns.css": "./dist/patterns.css",
     "./utilities.css": "./dist/utilities.css",
     "./print.css": "./dist/print.css",
@@ -35,5 +37,10 @@
   },
   "peerDependencies": {
     "@rimltempest/riml-ds-tokens": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@rimltempest/riml-ds-tokens": {
+      "optional": true
+    }
   }
 }

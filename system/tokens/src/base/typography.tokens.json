@@ -69,6 +69,29 @@
       "small": {
         "$value": 1.5,
         "$description": "補助テキストと等幅の行間"
+      },
+      "display": {
+        "$value": 1.1,
+        "$description": "ヒーロー見出し（type.display）の行間。大きい文字ほど行間は詰める"
+      }
+    }
+  },
+  "letter": {
+    "spacing": {
+      "$type": "dimension",
+      "normal": {
+        "$value": {
+          "value": 0,
+          "unit": "em"
+        },
+        "$description": "字間を触らない既定。継承した字間を打ち消したいときに明示する"
+      },
+      "wide": {
+        "$value": {
+          "value": 0.12,
+          "unit": "em"
+        },
+        "$description": "キャプションとラベルの広い字間。欧数字・かなの短い語だけに使う（本文には使わない）"
       }
     }
   }

@@ -16,11 +16,50 @@ const LAYER_ORDER = 'rd.reset, rd.tokens, rd.base, rd.components, rd.utilities, 
 const SOURCES = [
   'reset.css',
   'base.css',
+  'typography.css',
+  'atoms.css',
   'patterns.css',
   'utilities.css',
   'print.css',
   'forced-colors.css',
 ]
+/**
+ * トークンではなく「利用側が渡すつまみ」。`var(--rd-…, 既定値)` の形で使い、
+ * tokens.css には定義が無いのが正しい（typography.css / atoms.css のコメントが契約）。
+ */
+const KNOBS = new Set([
+  '--rd-clamp-lines',
+  '--rd-avatar-size',
+  '--rd-tile-size',
+  '--rd-skeleton-width',
+  '--rd-alert-tone',
+  '--rd-legend-swatch',
+])
+
+/** plan 018 の 2 表。dist に出ていることだけをここで押さえる（中身は typography / atoms の各テスト） */
+const PUBLIC_CLASSES = [
+  '.rd-display',
+  '.rd-heading-1',
+  '.rd-heading-4',
+  '.rd-body',
+  '.rd-caption',
+  '.rd-truncate',
+  '.rd-clamp',
+  '.rd-prose',
+  '.rd-badge',
+  '.rd-avatar',
+  '.rd-separator',
+  '.rd-skeleton',
+  '.rd-kbd',
+  '.rd-tile',
+  '.rd-icon-button',
+  '.rd-toolbar',
+  '.rd-list-row',
+  '.rd-table',
+  '.rd-alert',
+  '.rd-legend-item',
+] as const
+
 const MOTION_PROPS = new Set([
   'transition',
   'transition-property',
@@ -110,7 +149,18 @@ describe('@rimltempest/riml-ds-css の build', () => {
       ),
     )
     expect(used.size).toBeGreaterThan(0)
-    expect([...used].filter((name) => !defined.has(name))).toEqual([])
+    expect([...used].filter((name) => !defined.has(name) && !KNOBS.has(name))).toEqual([])
+  })
+
+  it('typography.css / atoms.css のクラスが dist/index.css に出る（plan 018 の完了条件）', () => {
+    const selectors: string[] = []
+    parse(read(distIndex)).walkRules((rule) => {
+      selectors.push(rule.selector)
+    })
+    const missing = PUBLIC_CLASSES.filter(
+      (name) => !selectors.some((selector) => selector.includes(name)),
+    )
+    expect(missing).toEqual([])
   })
 
   it('a の下線は text-underline-offset をトークンで指定する（plan 003 の見送りを回収）', () => {

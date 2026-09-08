@@ -21,6 +21,7 @@ const deps = {
     accessibility: repoFile('system/guidelines/accessibility.md'),
     'color-and-theming': repoFile('system/guidelines/color-and-theming.md'),
     'motion-and-responsive': repoFile('system/guidelines/motion-and-responsive.md'),
+    typography: repoFile('system/guidelines/typography.md'),
     writing: repoFile('system/guidelines/writing.md'),
   },
   designMd: repoFile('DESIGN.md'),
@@ -69,6 +70,7 @@ describe('resources', () => {
         'riml-ds://tokens/color.text.default',
         'riml-ds://elements/rd-button',
         'riml-ds://guidelines/accessibility',
+        'riml-ds://guidelines/typography',
       ]),
     )
     const templates = await client.listResourceTemplates()
@@ -96,6 +98,11 @@ describe('resources', () => {
   it('riml-ds://guidelines/{topic} は Markdown をそのまま返す', async () => {
     const read = await client.readResource({ uri: 'riml-ds://guidelines/accessibility' })
     expect(readText(read.contents)).toBe(deps.guidelines.accessibility)
+  })
+
+  it('riml-ds://guidelines/typography も返る（plan 018 で足した topic）', async () => {
+    const read = await client.readResource({ uri: 'riml-ds://guidelines/typography' })
+    expect(readText(read.contents)).toBe(deps.guidelines.typography)
   })
 })
 
