@@ -907,6 +907,213 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/menu/menu.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-menu",
+          "declaration": {
+            "name": "RdMenu",
+            "module": "/src/menu/menu.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/menu/menu.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "押すと項目が開くメニュー。**HTML だけで開閉する**（`popovertarget` + `[popover]`）ので\nJS が無くても項目に辿り着ける（ティア B、ADR-0012）。項目の `click` は `preventDefault`\nしない——ルーターに横取りさせる（plan 020 保守メモ）。",
+          "name": "RdMenu",
+          "cssParts": [
+            {
+              "description": "shadow の枠",
+              "name": "control"
+            }
+          ],
+          "slots": [
+            {
+              "description": "`[popover]` のリスト。省略不可",
+              "name": ""
+            },
+            {
+              "description": "開くボタン（`popovertarget` を持つ）。省略不可",
+              "name": "trigger"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, serializable: true }"
+            },
+            {
+              "kind": "field",
+              "name": "placement",
+              "privacy": "public",
+              "type": {
+                "text": "'start' | 'end'"
+              },
+              "description": "インライン方向の揃え。`end` はトリガーの終端に揃える",
+              "default": "'start'",
+              "attribute": "placement",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#open",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#name",
+              "privacy": "private",
+              "default": "`rd-menu-${(sequence += 1)}`"
+            },
+            {
+              "kind": "field",
+              "name": "#wire",
+              "privacy": "private",
+              "description": "id と `popovertarget` を結ぶ。利用側が書いていればそのまま尊重する"
+            },
+            {
+              "kind": "field",
+              "name": "#list",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#trigger",
+              "privacy": "private",
+              "description": "押せるのはトリガーの中のネイティブ要素（`rd-button` に包まれていることが多い）"
+            },
+            {
+              "kind": "field",
+              "name": "#items",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#onToggle",
+              "privacy": "private",
+              "description": "開いたら最初の項目へ、閉じたらトリガーへ（Esc はネイティブが閉じる）"
+            },
+            {
+              "kind": "field",
+              "name": "#onKeydown",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#onSelect",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ index: number; href: string }>"
+              },
+              "description": "項目を押したとき（リンクでなければ href は空）",
+              "name": "rd-select"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "placement",
+              "type": {
+                "text": "'start' | 'end'"
+              },
+              "description": "インライン方向の揃え。`end` はトリガーの終端に揃える",
+              "default": "'start'",
+              "fieldName": "placement"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "label"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "open",
+              "description": "開いている"
+            },
+            {
+              "name": "unlabeled",
+              "description": "label が無い"
+            },
+            {
+              "name": "malformed",
+              "description": "slot=\"trigger\" か [popover] が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "メニュー。JS 無しでも popovertarget で開く",
+          "status": "experimental",
+          "pe": "B",
+          "tagName": "rd-menu",
+          "customElement": true
+        },
+        {
+          "kind": "variable",
+          "name": "index"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdMenu",
+          "declaration": {
+            "name": "RdMenu",
+            "module": "src/menu/menu.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/meter/meter.define.ts",
       "declarations": [],
       "exports": [

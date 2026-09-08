@@ -49,6 +49,15 @@
     "dependsOn": []
   },
   {
+    "name": "menu",
+    "tag": "rd-menu",
+    "pe": "B",
+    "status": "experimental",
+    "summary": "メニュー。JS 無しでも popovertarget で開く",
+    "files": ["menu/index.js", "menu/menu.define.js", "menu/menu.css"],
+    "dependsOn": []
+  },
+  {
     "name": "meter",
     "tag": "rd-meter",
     "pe": "A",

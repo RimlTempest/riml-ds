@@ -16,6 +16,11 @@ import {
   markup as radioGroupMarkup,
   radioOptionMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/radio-group/contract'
+import {
+  markup as menuMarkup,
+  menuItemMarkup,
+  menuSeparatorMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/menu/contract'
 import { markup as selectMarkup } from '@rimltempest/riml-ds-elements/experimental/select/contract'
 import { markup as sliderMarkup } from '@rimltempest/riml-ds-elements/experimental/slider/contract'
 import {
@@ -96,6 +101,14 @@ const TABS = {
     panelMarkup({ id: 'overview', children: '<p>この製品の概要。</p>' })
     + panelMarkup({ id: 'usage', children: '<p>使い方の説明。</p>' }),
 } as const
+const MENU = {
+  id: 'row-actions',
+  label: '操作',
+  items:
+    menuItemMarkup({ label: '複製', href: '/items/1/duplicate' })
+    + menuSeparatorMarkup()
+    + menuItemMarkup({ label: '削除' }),
+} as const
 const DISCLOSURE = {
   label: '送料について',
   children: '<p>5,000 円以上で無料です。</p>',
@@ -120,6 +133,7 @@ export const elementExamples = {
   'rd-select': { html: selectMarkup(SELECT), props: SELECT },
   'rd-checkbox': { html: checkboxMarkup(CHECKBOX), props: CHECKBOX },
   'rd-disclosure': { html: disclosureMarkup(DISCLOSURE), props: DISCLOSURE },
+  'rd-menu': { html: menuMarkup(MENU), props: MENU },
   'rd-meter': { html: meterMarkup(METER), props: METER },
   'rd-radio-group': { html: radioGroupMarkup(RADIO_GROUP), props: RADIO_GROUP },
   'rd-slider': { html: sliderMarkup(SLIDER), props: SLIDER },

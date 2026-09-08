@@ -176,6 +176,19 @@
       "default": "./dist/tabs/tabs.define.js"
     },
     "./experimental/tabs/style.css": "./dist/tabs/tabs.css",
+    "./experimental/menu": {
+      "types": "./dist/experimental/menu/index.d.ts",
+      "default": "./dist/experimental/menu/index.js"
+    },
+    "./experimental/menu/contract": {
+      "types": "./dist/menu/menu.contract.d.ts",
+      "default": "./dist/menu/menu.contract.js"
+    },
+    "./experimental/menu/define": {
+      "types": "./dist/menu/menu.define.d.ts",
+      "default": "./dist/menu/menu.define.js"
+    },
+    "./experimental/menu/style.css": "./dist/menu/menu.css",
     "./experimental/tooltip": {
       "types": "./dist/experimental/tooltip/index.d.ts",
       "default": "./dist/experimental/tooltip/index.js"
