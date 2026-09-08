@@ -186,6 +186,13 @@ const PAGES: Readonly<Record<string, string>> = {
         ${submit}
       </form>`,
   ),
+  'button-group.html': page(
+    'ボタンの枕',
+    `      <div class="rd-button-group" role="group" aria-label="表示">
+        ${buttonMarkup({ label: '一覧' })}
+        ${buttonMarkup({ label: '格子', variant: 'secondary' })}
+      </div>`,
+  ),
   'input-group.html': page(
     '入力の枕',
     `      <form method="get" action="/echo.html">

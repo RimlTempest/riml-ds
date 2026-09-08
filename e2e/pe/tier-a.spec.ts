@@ -104,6 +104,17 @@ test('input group: JS 無しでもピルの枕が当たる（.rd-input-group）'
   await expect(page.locator('.rd-input-group')).toHaveCSS('border-radius', '9999px')
 })
 
+test('button group: JS 無しでもピルの枕が当たる（.rd-button-group）', async ({ page }) => {
+  await page.goto('/button-group.html')
+  await expect(page.locator('.rd-button-group')).toHaveCSS('border-radius', '9999px')
+  await expect(page.getByRole('group', { name: '表示' })).toBeVisible()
+  // 中のボタンはピルのまま（角を削らない。docs/brand.md §7.2）
+  await expect(page.locator('.rd-button-group rd-button > button').first()).toHaveCSS(
+    'border-radius',
+    '9999px',
+  )
+})
+
 test('radio group: JS 無しでも選んだ値が送信される', async ({ page }) => {
   await page.goto('/radio-group.html')
   await page.getByRole('group', { name: 'プラン' }).getByLabel('有料').check()

@@ -18,6 +18,7 @@ const PAGES = [
   '/dialog.html',
   '/window.html',
   '/live-region.html',
+  '/button-group.html',
   '/input-group.html',
   '/radio-group.html',
   '/slider.html',
