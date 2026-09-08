@@ -49,18 +49,31 @@ const nextFrame = (): Promise<void> =>
 /**
  * 開いた状態で描く story は、`@starting-style` の opacity 遷移が終わるまで待つ。
  * 遷移の途中を axe が掴むと、半透明の枠が背面（backdrop）と混ざってコントラスト違反に見える。
- * 待つのは `document.getAnimations()`（shadow 内の遷移も含まれる）。
+ *
+ * `document.getAnimations()` だけを見ると、遷移がまだ始まっていない瞬間（空を返す）を
+ * 「終わった」と誤認する（CI で RTL / Default が落ちた）。そこで遷移の結果そのものを見る:
+ * 開いている枠は opacity が 1 に戻り、閉じた枠は display が none になるまで待つ。
  */
-const settled = async (): Promise<void> => {
-  // `close()` 直後は遷移がまだ始まっておらず `getAnimations()` が空を返すことがある。
-  // 1 フレーム待ってから集め、全部終わるまで再帰する（CI の flake 対策）
-  await nextFrame()
-  const animations = document.getAnimations()
-  if (animations.length === 0) {
-    return
+const controlIsSteady = (dialog: RdDialog): boolean => {
+  const control = dialog.shadowRoot?.querySelector("[part='control']")
+  if (control === null || control === undefined) {
+    return true
   }
-  await Promise.all(animations.map((animation) => animation.finished))
-  await settled()
+  const style = getComputedStyle(control)
+  return dialog.open
+    ? style.opacity === '1' && style.translate === 'none'
+    : style.display === 'none'
+}
+
+const settled = async (): Promise<void> => {
+  await nextFrame()
+  await waitFor(async () => {
+    const dialogs = [...document.querySelectorAll('rd-dialog')].filter(
+      (element) => element instanceof RdDialog,
+    )
+    await expect(dialogs.every((dialog) => controlIsSteady(dialog))).toBe(true)
+    await expect(document.getAnimations()).toHaveLength(0)
+  })
 }
 
 const meta: Meta<Args> = {
