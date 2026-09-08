@@ -4,7 +4,7 @@
 （executor は会話の文脈を持たない前提）。テンプレートは qrcc の
 `.claude/skills/improve/references/plan-template.md`。
 
-**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）、017〜018 は `b501378`（2026-09-08。窓の丸はボタン = ADR-0014）、019〜020 は `da4200a`（2026-09-08。017・018 マージ後）、021〜022 は `9cfed6d`（2026-09-08。019 マージ後。020 と並行）、023 は `c661a96`（2026-09-08。022 マージ後。021 と並行）、024・027 は `b61ee24`（2026-09-08。023 マージ後。並行）、025・026 は `7684d09`（2026-09-08。024・027 マージ後。並行）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
+**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）、017〜018 は `b501378`（2026-09-08。窓の丸はボタン = ADR-0014）、019〜020 は `da4200a`（2026-09-08。017・018 マージ後）、021〜022 は `9cfed6d`（2026-09-08。019 マージ後。020 と並行）、023 は `c661a96`（2026-09-08。022 マージ後。021 と並行）、024・027 は `b61ee24`（2026-09-08。023 マージ後。並行）、025・026 は `7684d09`（2026-09-08。024・027 マージ後。並行）。028・029・030 は `fa1835c`（2026-09-08。025・026 マージ後。並行）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
 `system/guidelines/**`, `.claude/skills/riml-ds-*`）が仕様の正で、計画はそれを手順に落としたもの。
 矛盾を見つけたら計画側を直すのではなく STOP して advisor に返す。
 
@@ -76,7 +76,10 @@
 | 024 | [rd-toggle（021 の STOP 分）、rd-menu の閉じたメニューが見えるバグ、frameworks e2e の穴埋め](024-toggle-and-menu-fix.md) | P1 | M | 023 | DONE（`fb0c2c2`） |
 | 027 | [ダークの面を 4 段にする（neutral.750 / 950、ダークでも見える影）](027-tokens-dark-surfaces.md) | P1 | M | 014 | DONE（`631000d`） |
 | 025 | [rd-combobox（`<input list>` + `<datalist>` を包むティア A の候補つき入力欄）](025-combobox.md) | P1 | L | 024 | DONE（`0d566a3`） |
-| 026 | [Hover Card（rd-popover hover）・Context Menu（rd-menu context）・Navigation Menu（.rd-nav-menu + Patterns/Navigation story）](026-hover-card-context-menu-nav-menu.md) | P1 | M | 024 | IN PROGRESS |
+| 026 | [Hover Card（rd-popover hover）・Context Menu（rd-menu context）・Navigation Menu（.rd-nav-menu + Patterns/Navigation story）](026-hover-card-context-menu-nav-menu.md) | P1 | M | 024 | DONE（`fa1835c`） |
+| 028 | [rd-command（検索欄 + グループ化された項目のコマンドパレット。`_shared/text-filter.ts` へ絞り込みを共通化）](028-command.md) | P1 | M | 025 | IN PROGRESS |
+| 029 | [rd-data-table（`<table class="rd-table">` を包み `th[data-sort]` でクライアント並べ替え）](029-data-table-sort.md) | P1 | M | 022 | IN PROGRESS |
+| 030 | [rd-splitter（`role="separator"` のハンドルで 2 面をドラッグ・キーボードで分割するティア B）](030-splitter.md) | P2 | M | 020 | IN PROGRESS |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
@@ -339,3 +342,13 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - 025 の保守メモ: `filterCandidates` / `normalize` は 028（`rd-command`）で `_shared/text-filter.ts` に移す
 - 検証（main マージ後の worktree）: check 0、test 1297 passed / 1 skipped、guard 0、pe 70、e2e:frameworks 122、vrt 1111（新規 50 枚、既存の変更 0）、a11y 25、release:check 0
 - 宿題（advisor）: skill `riml-ds-element` に「ラッパーの props は契約の `tree.attrs` から作られる」「`box-shadow: inset` は書けない → 罫線」「JS ありの e2e は `keyboard.spec.ts`」「`<datalist>` / 空の listbox の markuplint 規則」を追記
+
+### 026 の実行メモ（2026-09-08）
+
+- `feat/hover-context-nav` を `fa1835c` で `--no-ff` マージ（executor 7 コミット + `8f4abe5 chore(merge)`）。025 と並行し、コンフリクト無し。76 ファイル、+1524/−47
+- `rd-popover hover`（Hover Card）: `hover` 属性で pointerenter / focusin に開き、pointerleave / focusout で閉じる。開閉の遅延は `popover.logic.ts` の純関数で決め、タイマーは注入。`rd-menu context`（Context Menu）: `contextmenu` を受けて `menu.dom.ts` の `contextController` がポインタ位置に `[popover]` を出す。`.rd-nav-menu`（Navigation Menu）は `system/css/src/navigation.css` の CSS だけ（要素を増やさない）+ `Patterns/Navigation` story
+- 先行リファクタ（`821d5ef`）: `rd-menu` の配線と項目解決を `menu.dom.ts` に移し、`menu.element.ts` を 148 行に収めた
+- レビュー指摘 2 件を修正（`aee690f`）: (1) 開いている popover に `showPopover()` を再度呼ぶと `InvalidStateError` → `:popover-open` なら `hidePopover()` してから開き直す（テスト 2 本追加）。(2) `.rd-nav-menu a` の下線（`border-block-end`）が `border-radius` で両端で曲がっていた → `border-start-start-radius` / `border-start-end-radius` だけにし、nav の VRT 17 枚を撮り直し（026 の新規 45 枚の内数）
+- 計画からの逸脱: 無し（`docs/proposals/hover-card.md` / `context-menu.md` は計画どおり）
+- 検証（main マージ後の worktree）: check 0、test 1348 passed / 1 skipped（148 files）、guard 0、pe 79、e2e:frameworks 122、vrt 1167（既存の変更 0）、a11y 27、release:check 0。main 側: build/gen 0、guard 0
+- 宿題（advisor、対応済み `71edf37`）: `riml-ds-element` skill に「`showPopover()` の再呼び出しは `InvalidStateError`」「ラッパーの props は契約の `tree.attrs`」「`box-shadow: inset` 不可」「markuplint の落とし穴」を追記、`riml-ds-tdd` に e2e の 2 層（`e2e/pe` JS 無し / `keyboard.spec.ts`）、`riml-ds-css` に stylelint の `box-shadow` 行を追加
