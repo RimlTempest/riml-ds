@@ -4,6 +4,7 @@ import {
   RdCheckbox,
   RdCheckboxGroup,
   RdCombobox,
+  RdCommand,
   RdInputOtp,
   RdMenu,
   RdMeter,
@@ -32,6 +33,31 @@ const readings = (
     <option value="kana">かな</option>
     <option value="kanji">かんじ</option>
     <option value="romaji">ローマ字</option>
+  </>
+)
+
+/** 4 フレームワークで同じ項目。リンクとボタンのままなので JS 無しでも辿れる */
+const commandGroups = (
+  <>
+    <ul aria-label="ページ">
+      <li>
+        <a href="#home" data-keywords="home top">
+          ホーム
+        </a>
+      </li>
+      <li>
+        <a href="#settings" data-keywords="せってい preferences">
+          設定
+        </a>
+      </li>
+    </ul>
+    <ul aria-label="操作">
+      <li>
+        <button type="button" value="new">
+          新しいノート<kbd className="rd-kbd">⌘N</kbd>
+        </button>
+      </li>
+    </ul>
   </>
 )
 
@@ -152,6 +178,7 @@ export const App = (): ReactNode => (
     <RdCombobox id="reading" listId="reading-list" label="読み" name="reading">
       {readings}
     </RdCombobox>
+    <RdCommand id="palette" label="コマンド" groups={commandGroups} />
     <RdToggle label="太字" pressed="false" />
     <rd-live-region />
   </main>

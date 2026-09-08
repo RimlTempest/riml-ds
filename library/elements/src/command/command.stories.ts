@@ -28,14 +28,14 @@ type Args = CommandMarkupProps
 const PAGES = commandGroupMarkup({
   label: 'ページ',
   items:
-    commandItemMarkup({ label: 'ホーム', href: '#home', keywords: 'home top', shortcut: '⌘1' })
+    commandItemMarkup({ label: 'ホーム', href: '/', keywords: 'home top', shortcut: '⌘1' })
     + commandItemMarkup({
       label: '設定',
-      href: '#settings',
+      href: '/settings',
       keywords: 'せってい settings preferences',
       shortcut: '⌘,',
     })
-    + commandItemMarkup({ label: '下書き', href: '#drafts', keywords: 'したがき drafts' }),
+    + commandItemMarkup({ label: '下書き', href: '/drafts', keywords: 'したがき drafts' }),
 })
 
 const ACTIONS = commandGroupMarkup({

@@ -17,6 +17,11 @@ import {
   comboboxOptionMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/combobox'
 import {
+  commandGroupMarkup,
+  commandItemMarkup,
+  commandMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/command'
+import {
   inputOtpMarkup,
   otpCellsMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/input-otp'
@@ -518,6 +523,60 @@ const READING_OPTIONS = [
   comboboxOptionMarkup({ value: 'kanji', label: 'かんじ' }),
   comboboxOptionMarkup({ value: 'romaji', label: 'ローマ字' }),
 ].join('')
+
+/** 4 フレームワークで同じ項目。**リンクとボタンのまま**なので JS 無しでも辿れる */
+const COMMAND_GROUPS =
+  commandGroupMarkup({
+    label: 'ページ',
+    items:
+      commandItemMarkup({ label: 'ホーム', href: '#home', keywords: 'home top' })
+      + commandItemMarkup({ label: '設定', href: '#settings', keywords: 'せってい preferences' }),
+  })
+  + commandGroupMarkup({
+    label: '操作',
+    items: commandItemMarkup({ label: '新しいノート', value: 'new', shortcut: '⌘N' }),
+  })
+
+/**
+ * `rd-command`（plan 028）。項目は利用側が書いたリンクとボタンのままで、部品は
+ * `<li hidden>` を書くだけ。JS が無ければ全部見えていて、そのまま辿れる。
+ */
+export const commandSuite = (framework: string): void => {
+  test.describe(`${framework}: command`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-command',
+          commandMarkup({ id: 'palette', label: 'コマンド', groups: COMMAND_GROUPS }),
+        )
+      })
+
+      test('JS 無しでも項目がすべて見えていて、リンクは本物のまま', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.locator('rd-command > ul > li')).toHaveCount(3)
+        await expect(page.locator('rd-command > ul > li[hidden]')).toHaveCount(0)
+        await expect(
+          page.locator('rd-command').getByRole('link', { name: /ホーム/u }),
+        ).toHaveAttribute('href', '#home')
+      })
+    })
+
+    test('打つと項目が隠れ、↓ で見えている項目へ移る', async ({ page }) => {
+      await page.goto('/')
+      const control = page.getByRole('searchbox', { name: 'コマンド' })
+      const visible = page.locator('rd-command > ul > li:not([hidden])')
+      await control.click()
+      await control.pressSequentially('せ')
+      await expect(visible).toHaveCount(1)
+      await page.keyboard.press('ArrowDown')
+      await expect(page.locator('rd-command').getByRole('link', { name: /設定/u })).toBeFocused()
+    })
+  })
+}
 
 /**
  * `rd-combobox`（plan 025）。候補は `<datalist>` に書くので、JS が無ければネイティブの

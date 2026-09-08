@@ -92,6 +92,69 @@ test('combobox: ↓ で候補が開き、打つと絞られ、Enter で確定す
   await expect(control).toBeFocused()
 })
 
+const COMMAND = 'components-command--default'
+
+const openCommand = async (page: Page) => {
+  await page.goto(storyUrl(COMMAND))
+  await waitForStoryFinished(page, COMMAND)
+  const control = page.getByRole('searchbox', { name: 'コマンド' })
+  await control.click()
+  return control
+}
+
+test('command: 打つと項目が隠れ、0 件なら status で知らせる', async ({ page }) => {
+  const control = await openCommand(page)
+  const visible = page.locator('rd-command > ul > li:not([hidden])')
+  await expect(visible).toHaveCount(5)
+  await control.pressSequentially('せ')
+  await expect(visible).toHaveCount(1)
+  // 項目が全部隠れたグループは <ul> ごと隠れる（見出しだけ残さない）
+  await expect(page.locator('rd-command > ul:not([hidden])')).toHaveCount(1)
+  await expect(page.locator("rd-command [part='empty']")).toBeHidden()
+  await control.pressSequentially('zzz')
+  await expect(visible).toHaveCount(0)
+  const empty = page.locator("rd-command [part='empty']")
+  await expect(empty).toBeVisible()
+  await expect(empty).toHaveAttribute('role', 'status')
+  await expect(empty).toHaveText('見つかりません')
+})
+
+test('command: 入力欄の ↓ で項目へ移り、印字キーで入力欄に戻る', async ({ page }) => {
+  const control = await openCommand(page)
+  await page.keyboard.press('ArrowDown')
+  await expect(page.getByRole('link', { name: /ホーム/u })).toBeFocused()
+  await page.keyboard.press('ArrowDown')
+  await expect(page.getByRole('link', { name: /設定/u })).toBeFocused()
+  // 項目に居ても打ち続けられる（1 文字が入力欄の末尾に足される）
+  await page.keyboard.press('a')
+  await expect(control).toBeFocused()
+  await expect(control).toHaveValue('a')
+  await page.keyboard.press('Backspace')
+  await expect(control).toHaveValue('')
+})
+
+test('command: 入力欄の Enter が見えている 1 件目を押す', async ({ page }) => {
+  const control = await openCommand(page)
+  // 項目は本物のリンクなので既定動作は「飛ぶ」。story のページを離れないように止めて記録する
+  await page.evaluate(() => {
+    document.addEventListener(
+      'click',
+      (event) => {
+        event.preventDefault()
+        const target = event.target
+        if (target instanceof HTMLElement) {
+          document.documentElement.dataset['pressed'] = target.textContent ?? ''
+        }
+      },
+      true,
+    )
+  })
+  await control.pressSequentially('したがき')
+  await expect(page.locator('rd-command > ul > li:not([hidden])')).toHaveCount(1)
+  await page.keyboard.press('Enter')
+  await expect(page.locator('html')).toHaveAttribute('data-pressed', '下書き')
+})
+
 test('skip link: Tab で現れ、Enter で本文へ飛ぶ', async ({ page }) => {
   await page.goto(storyUrl('foundations-skiplink--default'))
   await waitForStoryFinished(page, 'foundations-skiplink--default')

@@ -4,6 +4,7 @@ import {
   RdCheckbox,
   RdCheckboxGroup,
   RdCombobox,
+  RdCommand,
   RdInputOtp,
   RdMenu,
   RdMeter,
@@ -22,6 +23,22 @@ const countries = () => [
   h('option', { value: '' }, '選択してください'),
   h('option', { value: 'jp' }, '日本'),
   h('option', { value: 'us' }, 'アメリカ'),
+]
+
+/** 4 フレームワークで同じ項目。リンクとボタンのままなので JS 無しでも辿れる */
+const commandGroups = () => [
+  h('ul', { 'aria-label': 'ページ' }, [
+    h('li', [h('a', { href: '#home', 'data-keywords': 'home top' }, 'ホーム')]),
+    h('li', [h('a', { href: '#settings', 'data-keywords': 'せってい preferences' }, '設定')]),
+  ]),
+  h('ul', { 'aria-label': '操作' }, [
+    h('li', [
+      h('button', { type: 'button', value: 'new' }, [
+        '新しいノート',
+        h('kbd', { class: 'rd-kbd' }, '⌘N'),
+      ]),
+    ]),
+  ]),
 ]
 
 /** 4 フレームワークで同じ候補を出す。候補の唯一の出どころは `<datalist>` */
@@ -177,6 +194,7 @@ export const App = defineComponent(
           { id: 'reading', listId: 'reading-list', label: '読み', name: 'reading' },
           readings,
         ),
+        h(RdCommand, { id: 'palette', label: 'コマンド' }, { groups: commandGroups }),
         h(RdToggle, { label: '太字', pressed: 'false' }),
         h('rd-live-region'),
       ])

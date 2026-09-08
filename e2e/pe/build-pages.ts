@@ -16,6 +16,11 @@ import {
   checkboxOptionMarkup,
 } from '../../library/elements/src/checkbox-group/index.js'
 import { comboboxMarkup, comboboxOptionMarkup } from '../../library/elements/src/combobox/index.js'
+import {
+  commandGroupMarkup,
+  commandItemMarkup,
+  commandMarkup,
+} from '../../library/elements/src/command/index.js'
 import { dialogMarkup } from '../../library/elements/src/dialog/index.js'
 import { disclosureMarkup } from '../../library/elements/src/disclosure/index.js'
 import { inputOtpMarkup, otpCellsMarkup } from '../../library/elements/src/input-otp/index.js'
@@ -56,6 +61,7 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/checkbox/checkbox.css', 'checkbox.css'],
   ['library/elements/src/checkbox-group/checkbox-group.css', 'checkbox-group.css'],
   ['library/elements/src/combobox/combobox.css', 'combobox.css'],
+  ['library/elements/src/command/command.css', 'command.css'],
   ['library/elements/src/disclosure/disclosure.css', 'disclosure.css'],
   ['library/elements/src/input-otp/input-otp.css', 'input-otp.css'],
   ['library/elements/src/meter/meter.css', 'meter.css'],
@@ -230,6 +236,41 @@ const PAGES: Readonly<Record<string, string>> = {
         })}
         ${submit}
       </form>`,
+  ),
+  /**
+   * ティア A。JS が無ければ入力欄は飾りになるが、**一覧はそのまま辿れる**
+   * （項目は本物のリンクとボタン。部品が `role` を書き換えない理由がここにある）。
+   */
+  'command.html': page(
+    'コマンドパレット',
+    `      ${commandMarkup({
+      id: 'palette',
+      label: 'コマンド',
+      placeholder: '打って絞り込む',
+      groups:
+        commandGroupMarkup({
+          label: 'ページ',
+          items:
+            commandItemMarkup({
+              label: 'ホーム',
+              href: '/echo.html?item=home',
+              keywords: 'home top',
+              shortcut: '⌘1',
+            })
+            + commandItemMarkup({
+              label: '設定',
+              href: '/echo.html?item=settings',
+              keywords: 'せってい preferences',
+            })
+            + commandItemMarkup({ label: '下書き', href: '/echo.html?item=drafts' }),
+        })
+        + commandGroupMarkup({
+          label: '操作',
+          items:
+            commandItemMarkup({ label: '新しいノート', value: 'new', shortcut: '⌘N' })
+            + commandItemMarkup({ label: '共有', value: 'share' }),
+        }),
+    })}`,
   ),
   'checkbox.html': page(
     'チェックボックス',

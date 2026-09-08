@@ -15,6 +15,7 @@ export default defineConfig({
         'experimental/checkbox',
         'experimental/checkbox-group',
         'experimental/combobox',
+        'experimental/command',
         'experimental/input-otp',
         'experimental/menu',
         'experimental/meter',
