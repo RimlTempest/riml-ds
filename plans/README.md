@@ -78,7 +78,7 @@
 | 025 | [rd-combobox（`<input list>` + `<datalist>` を包むティア A の候補つき入力欄）](025-combobox.md) | P1 | L | 024 | DONE（`0d566a3`） |
 | 026 | [Hover Card（rd-popover hover）・Context Menu（rd-menu context）・Navigation Menu（.rd-nav-menu + Patterns/Navigation story）](026-hover-card-context-menu-nav-menu.md) | P1 | M | 024 | DONE（`fa1835c`） |
 | 028 | [rd-command（検索欄 + グループ化された項目のコマンドパレット。`_shared/text-filter.ts` へ絞り込みを共通化）](028-command.md) | P1 | M | 025 | IN PROGRESS |
-| 029 | [rd-data-table（`<table class="rd-table">` を包み `th[data-sort]` でクライアント並べ替え）](029-data-table-sort.md) | P1 | M | 022 | IN PROGRESS |
+| 029 | [rd-data-table（`<table class="rd-table">` を包み `th[data-sort]` でクライアント並べ替え）](029-data-table-sort.md) | P1 | M | 022 | DONE（`1bff5b7`） |
 | 030 | [rd-splitter（`role="separator"` のハンドルで 2 面をドラッグ・キーボードで分割するティア B）](030-splitter.md) | P2 | M | 020 | IN PROGRESS |
 | 031 | [rd-toggle-group（`<fieldset>` + `<button aria-pressed>` の列。単一／複数選択と roving focus）](031-toggle-group.md) | P1 | M | 024 | TODO |
 | 032 | [rd-carousel（`<ul><li>` を包み「前へ／次へ」と枚数を足す。scroll-snap + IntersectionObserver）](032-carousel.md) | P2 | M | 020 | TODO |
@@ -361,3 +361,13 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - 計画からの逸脱: 無し（`docs/proposals/hover-card.md` / `context-menu.md` は計画どおり）
 - 検証（main マージ後の worktree）: check 0、test 1348 passed / 1 skipped（148 files）、guard 0、pe 79、e2e:frameworks 122、vrt 1167（既存の変更 0）、a11y 27、release:check 0。main 側: build/gen 0、guard 0
 - 宿題（advisor、対応済み `71edf37`）: `riml-ds-element` skill に「`showPopover()` の再呼び出しは `InvalidStateError`」「ラッパーの props は契約の `tree.attrs`」「`box-shadow: inset` 不可」「markuplint の落とし穴」を追記、`riml-ds-tdd` に e2e の 2 層（`e2e/pe` JS 無し / `keyboard.spec.ts`）、`riml-ds-css` に stylelint の `box-shadow` 行を追加
+
+### 029 の実行メモ（2026-09-09）
+
+- `feat/table-sort` を `1bff5b7` で `--no-ff` マージ（executor 6 コミット + `980d7f1 chore(merge)`）。028・030 と並行。82 ファイル、+1953
+- `rd-data-table`（experimental、ティア A、light DOM）: `<table class="rd-table">`（`caption` / `thead` / `tbody` 必須）を包み、定義後に `th[data-sort]` の中身を `<button part="sort">` に移す。行は `tbody.append` の**移動**で並べ替え（作り直さない）。`text`（`Intl.Collator`、最も近い `[lang]`）/ `number` / `date`、比較キーは `td[data-value]`。`manual` は `aria-sort` + `rd-sort` だけ。`data-table/define` 6.72 kB / 12 kB
+- 計画からの逸脱（すべて受け入れ）: `wrapHeader` は子ノードを先に配列へ取ってから包む（計画の順だと `HierarchyRequestError`）、ラッパーの props は CEM の型から `column?: number` / `direction?: SortDirection` / `manual?: boolean` で生成された（計画の「文字列になる」予測は誤り。望ましい形なので proposal に課題として書かず）、`applyOrder` に恒等チェック（`MutationObserver` の再入で鳴き続けないため）
+- 検証（main マージ後の worktree）: check 0、test 1412 passed / 1 skipped、guard 0、pe 82、e2e:frameworks 138、a11y 31、vrt 1211（新規 42、既存の変更 0。VRT・pe・a11y は Docker と同時に回すと `page.goto` の 30 秒タイムアウトが出る → 単独で回し直して全通過）、release:check 0
+- **事故と対策**（`2b574f0`）: レビュー中に **worktree の中から `git push`** を叩いた → lefthook の pre-push が `scripts/guard.test.ts` を回し、フックが export する `GIT_DIR` を継承した偽リポジトリの `git init` / `commit` が**本物のリポジトリ**に当たった（main の `.git/config` が `core.bare = true` になり、`feat/table-sort` が `base` コミットで上書き、`work` / `feat/tokens` ブランチが生えた）。`core.bare` と `user.*` を戻し、本来の先端 `980d7f1` を直接 main にマージして復旧。`guard.test.ts` の子プロセスに `GIT_*` を渡さないよう修正。**`git push` は必ず main のチェックアウトから叩く**（worktree からは叩かない）
+- 宿題（advisor）: 360px でヘッダ「サイズ」が折り返す（許容。`th { white-space: nowrap }` は次の見直しで検討）。executor 報告の `bun run lint:html` が別 worktree の `apps/storybook/rendered/**` を読む件は `tools/markuplint` の設定を確認
+
