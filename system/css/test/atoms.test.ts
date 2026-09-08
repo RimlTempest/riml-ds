@@ -125,7 +125,7 @@ describe('atoms.css', () => {
     expect(forced.map((atRule) => atRule.toString()).join('\n')).toContain('Highlight')
   })
 
-  it('build の ORDER は typography → atoms → patterns（patterns が atoms を上書きできる）', () => {
+  it('build の ORDER は typography → atoms → navigation → patterns（後ろが前を上書きできる）', () => {
     const build = read(fileURLToPath(new URL('../scripts/build.ts', import.meta.url)))
     const order = /const ORDER = \[([\s\S]*?)\]/.exec(build)?.[1] ?? ''
     const names = [...order.matchAll(/'([a-z-]+)'/g)].map((match) => match[1])
@@ -135,6 +135,7 @@ describe('atoms.css', () => {
       'base',
       'typography',
       'atoms',
+      'navigation',
       'patterns',
       'utilities',
       'print',

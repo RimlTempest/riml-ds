@@ -18,6 +18,7 @@
     "./base.css": "./dist/base.css",
     "./typography.css": "./dist/typography.css",
     "./atoms.css": "./dist/atoms.css",
+    "./navigation.css": "./dist/navigation.css",
     "./patterns.css": "./dist/patterns.css",
     "./utilities.css": "./dist/utilities.css",
     "./print.css": "./dist/print.css",
