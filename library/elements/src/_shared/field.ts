@@ -67,7 +67,7 @@ export const computeMessage = (input: MessageInput): string => {
 }
 
 /** 言語の見分けは `_shared/lang.ts` に置いてある（窓の操作ボタンも使うため）。ここからも出す */
-export { type LangHost, usesJapaneseCopy } from './lang.js'
+export { usesJapaneseCopy } from './lang.js'
 
 export type StateInput = {
   readonly malformed: boolean
