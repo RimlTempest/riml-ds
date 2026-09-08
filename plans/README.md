@@ -63,7 +63,7 @@
 | 015 | [「まど」を部品に当てる（.rd-window・ピルのボタン・rd-meter）](015-mado-components.md) | P1 | L | 014 | DONE（`9d2e26a`: patterns.css の `.rd-window`、tier A ピル化、dialog/toast 窓化、`rd-meter` 実験、VRT 359 枚撮り直し） |
 | 016 | [Storybook のブランド切替と Foundations Brand / Mado](016-brand-showcase.md) | P2 | S | 015 | DONE |
 | 017 | [窓の左端の丸を本物のボタンにする（rd-window・.rd-window-bar・dialog の ×）](017-window-controls.md) | P1 | L | 016 | TODO |
-| 018 | [Typography（typography.css）と静的パターン集 atoms.css](018-typography-and-atoms.md) | P1 | M | 016 | TODO |
+| 018 | [Typography（typography.css）と静的パターン集 atoms.css](018-typography-and-atoms.md) | P1 | M | 016 | DONE（`6275931`） |
 | 019 | [フォーム第 3 波（rd-radio-group・rd-slider・.rd-input-group）](019-form-wave3.md) | P1 | L | 017, 018 | TODO |
 | 020 | [ナビゲーションと重ね窓（rd-tabs・rd-menu・rd-popover・rd-tooltip・navigation.css）](020-navigation-and-overlays.md) | P1 | XL | 017, 018 | TODO |
 
@@ -178,3 +178,20 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - 気づき: ダークでは `shadow.raised` / `shadow.overlay` がほぼ見えない（影色がインクの alpha）。トークン側の設計判断が要る
 - 気づき（ユーザー指摘 2026-09-08）: **タイトル帯の 3 つの丸は装飾ではなくボタン**（閉じる / 最大化 / 最小化）。`patterns.css` の `::before` と
   brand.md §7 の記述は誤り。plan 017 系で作り直す
+
+### 018 の実行メモ（2026-09-08）
+
+- マージ `6275931`。`typography.css`（`.rd-display` / `.rd-heading-1..4` / `.rd-body` / `.rd-small` / `.rd-caption` / `.rd-label` / `.rd-mono` / `.rd-numeric` /
+  `.rd-truncate` / `.rd-clamp` / `.rd-prose`）と `atoms.css`（badge / dot / avatar / separator / skeleton / kbd / tile / icon-button / toolbar / list / table /
+  alert / legend）。トークンは `type.display`（流体）/ `type.heading.3-4` / `letter.spacing.{normal,wide}`。VRT 403 → 542 枚
+- 計画から変えたもの: `type.caption` は作らない（terrazzo `a11y/min-font-size` が 0.75rem を落とす。`.rd-caption` = `type.small` + 字間 + muted）。
+  縦の区切りは `<hr class="rd-separator" aria-orientation="vertical">`（markuplint が `role="separator"` に `aria-valuenow` を要求）。
+  装飾の空要素（`.rd-dot` / `.rd-skeleton`）は HTML コメントを 1 つ入れる（`no-empty-palpable-content` 対策）。
+  `.rd-table` の `text-align: start/end` は `stylelint-disable-next-line` 3 行（論理値なので RTL に追随する）
+- レビューで直したもの: 強制配色の選択行を `Highlight` 塗りから **`Highlight` の罫線（outline）**に（Chromium のバックプレートで白地に白になるため）
+- **`system/css/package.json` に `peerDependenciesMeta.optional`** が入った。qrcc2 の `scripts/vendor-riml-ds.sh` の詰め直しは不要になる（qrcc2 plan 013 で確認）
+- 気づき（未解決 → 次の小 plan）: **ダークでは `surface.sunken` = `surface.default`（どちらも `neutral.900`）**なので、ページ地に直置きした
+  `.rd-alert` / `.rd-badge` / `.rd-kbd` / `.rd-skeleton` / 選択行が見えない（`vrt-dark-1024/patterns-atoms--dark.png`）。`neutral.950` を足してダークの
+  sunken に当てるのが筋（前景は全部明るい側なので比は上がるだけ）。016 の影の件と一緒に tokens レーンで
+- `docs/agent-integration.md` に guidelines の topic 一覧は無い（テンプレート行だけ）ので追記なし。`DESIGN.md` は typography トークンを載せていないため差分なし
+
