@@ -64,7 +64,7 @@
 | 016 | [Storybook のブランド切替と Foundations Brand / Mado](016-brand-showcase.md) | P2 | S | 015 | DONE |
 | 017 | [窓の左端の丸を本物のボタンにする（rd-window・.rd-window-bar・dialog の ×）](017-window-controls.md) | P1 | L | 016 | DONE（`da4200a`） |
 | 018 | [Typography（typography.css）と静的パターン集 atoms.css](018-typography-and-atoms.md) | P1 | M | 016 | DONE（`6275931`） |
-| 019 | [フォーム第 3 波（rd-radio-group・rd-slider・.rd-input-group）](019-form-wave3.md) | P1 | L | 017, 018 | TODO |
+| 019 | [フォーム第 3 波（rd-radio-group・rd-slider・.rd-input-group）](019-form-wave3.md) | P1 | L | 017, 018 | DONE（`d1cf0c2`） |
 | 020 | [ナビゲーションと重ね窓（rd-tabs・rd-menu・rd-popover・rd-tooltip・navigation.css）](020-navigation-and-overlays.md) | P1 | XL | 017, 018 | TODO |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
@@ -212,4 +212,20 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
   始めたいなら `slot="actions"` に `autofocus`。guidepup は shadow 内の名前を読めないので `.sr.test.ts` は light DOM の投影で確認
 - 見つけた穴（未解決 → 021 候補）: astro に `experimental/meter.astro` / `window.astro` の export が無く、frameworks e2e から astro を外している。
   vue / svelte の wrapper 生成が boolean 属性を `="true"` で出す（`reflect` する Boolean プロパティと噛み合わない）。`vitest.config.ts` の include に `apps/**/*.test.ts` が無い
+
+### 019 の実行メモ（2026-09-08）
+
+- マージ `d1cf0c2`。`rd-radio-group`（experimental、ティア A。`segmented` は見た目だけ、無効化は `<fieldset disabled>`）、`rd-slider`（experimental、ティア A。
+  塗りは `--rd-slider-fill` を `[part='fill']` に写す。縦向きは `@supports selector(:state(vertical))` の中、未対応なら横）、`.rd-input-group`（`patterns.css`）、
+  text-field の `Types` story。VRT 新規 96 枚・既存の変更 0。size-limit: radio-group 7.03 kB / slider 7.29 kB（予算 12 kB）
+- 計画から変えたもの: `--rd-elevation-1` / `--rd-type-label` は無い → `--rd-shadow-raised` / `--rd-type-body` + 太字。`.rd-input-group` は入力自身が輪を描き
+  枕は `:has(:focus-visible)` で面の色を変える（`outline: none` を使わない方針を優先）。slider の `checkValidity()` は無し（150 行制限）。rangeOverflow は
+  UA が丸めるので logic 側だけで固定。astro には置かない（`library/astro/package.json` の exports が別レーン → 021 候補のまま）
+- レビューで直したもの: **`aria-invalid` は `role="radio"` では ARIA 1.2 非推奨**（markuplint `wai-aria` エラー）→ 外して hint / error を**各 radio** の
+  `aria-describedby` で結ぶ。`<fieldset>` には付けない。slider の `<datalist><option label>` は名前が無いと `require-accessible-name` に落ちる →
+  目盛の文言を本文に、`<datalist>` に `aria-label`
+- main 側で解決したもの: `library/react/test/markup.test.tsx` は experimental バレルの export 名を固定しているので 019 / 020 のレーンに `library/react/test` を追加。
+  `.markuplintrc.json` に `[aria-hidden="true"]` 系の `no-empty-palpable-content` 除外（slider の track / fill）。`docs/baseline.md` に縦向き range の行
+- 既知のまま: ダークで `surface.sunken` = `surface.default` なので segmented のピル・slider の未塗り・input-group の枕が見えない（018 メモと同じ → tokens plan）
+- check 0 / test 865 / pe 36 / e2e:frameworks 46 / a11y 16 / VRT 704 / lint:html 0 / release:check 0
 
