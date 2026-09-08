@@ -67,6 +67,15 @@
     "dependsOn": []
   },
   {
+    "name": "popover",
+    "tag": "rd-popover",
+    "pe": "B",
+    "status": "experimental",
+    "summary": "非モーダルの重ね物。JS 無しでも popovertarget で開く",
+    "files": ["popover/index.js", "popover/popover.define.js", "popover/popover.css"],
+    "dependsOn": []
+  },
+  {
     "name": "radio-group",
     "tag": "rd-radio-group",
     "pe": "A",

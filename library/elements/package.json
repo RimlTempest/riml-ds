@@ -189,6 +189,19 @@
       "default": "./dist/menu/menu.define.js"
     },
     "./experimental/menu/style.css": "./dist/menu/menu.css",
+    "./experimental/popover": {
+      "types": "./dist/experimental/popover/index.d.ts",
+      "default": "./dist/experimental/popover/index.js"
+    },
+    "./experimental/popover/contract": {
+      "types": "./dist/popover/popover.contract.d.ts",
+      "default": "./dist/popover/popover.contract.js"
+    },
+    "./experimental/popover/define": {
+      "types": "./dist/popover/popover.define.d.ts",
+      "default": "./dist/popover/popover.define.js"
+    },
+    "./experimental/popover/style.css": "./dist/popover/popover.css",
     "./experimental/tooltip": {
       "types": "./dist/experimental/tooltip/index.d.ts",
       "default": "./dist/experimental/tooltip/index.js"

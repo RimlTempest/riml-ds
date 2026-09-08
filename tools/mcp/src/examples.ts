@@ -12,6 +12,7 @@ import { markup as dialogMarkup } from '@rimltempest/riml-ds-elements/dialog/con
 import { markup as checkboxMarkup } from '@rimltempest/riml-ds-elements/experimental/checkbox/contract'
 import { markup as disclosureMarkup } from '@rimltempest/riml-ds-elements/experimental/disclosure/contract'
 import { markup as meterMarkup } from '@rimltempest/riml-ds-elements/experimental/meter/contract'
+import { markup as popoverMarkup } from '@rimltempest/riml-ds-elements/experimental/popover/contract'
 import {
   markup as radioGroupMarkup,
   radioOptionMarkup,
@@ -109,6 +110,11 @@ const MENU = {
     + menuSeparatorMarkup()
     + menuItemMarkup({ label: '削除' }),
 } as const
+const POPOVER = {
+  id: 'filters',
+  label: '絞り込み',
+  children: '<p>条件を選ぶと一覧がその場で変わる。</p>',
+} as const
 const DISCLOSURE = {
   label: '送料について',
   children: '<p>5,000 円以上で無料です。</p>',
@@ -135,6 +141,7 @@ export const elementExamples = {
   'rd-disclosure': { html: disclosureMarkup(DISCLOSURE), props: DISCLOSURE },
   'rd-menu': { html: menuMarkup(MENU), props: MENU },
   'rd-meter': { html: meterMarkup(METER), props: METER },
+  'rd-popover': { html: popoverMarkup(POPOVER), props: POPOVER },
   'rd-radio-group': { html: radioGroupMarkup(RADIO_GROUP), props: RADIO_GROUP },
   'rd-slider': { html: sliderMarkup(SLIDER), props: SLIDER },
   'rd-window': { html: windowMarkup(WINDOW), props: WINDOW },

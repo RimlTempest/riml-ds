@@ -1220,6 +1220,181 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/popover/popover.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-popover",
+          "declaration": {
+            "name": "RdPopover",
+            "module": "/src/popover/popover.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/popover/popover.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "トリガーの脇に開く軽い重ね物。中身は自由（見出し・本文・フォーム）で、**モーダルにしない**\n——画面を止めて確定を迫るものは `rd-dialog`（ティア B、ADR-0012）。\n`popovertarget` + `[popover]` が開閉するので JS が無くても中身に辿り着ける。",
+          "name": "RdPopover",
+          "cssParts": [
+            {
+              "description": "shadow の枠",
+              "name": "control"
+            }
+          ],
+          "slots": [
+            {
+              "description": "`[popover]` の中身（先頭に `[slot=\"label\"]` の見出しを置く）。省略不可",
+              "name": ""
+            },
+            {
+              "description": "開くボタン（`popovertarget` を持つ）。省略不可",
+              "name": "trigger"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, serializable: true }"
+            },
+            {
+              "kind": "field",
+              "name": "placement",
+              "privacy": "public",
+              "type": {
+                "text": "'start' | 'end'"
+              },
+              "description": "インライン方向の揃え。`end` はトリガーの終端に揃える",
+              "default": "'start'",
+              "attribute": "placement",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#open",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#name",
+              "privacy": "private",
+              "default": "`rd-popover-${(sequence += 1)}`"
+            },
+            {
+              "kind": "field",
+              "name": "#wire",
+              "privacy": "private",
+              "description": "id と `popovertarget` を結ぶ。利用側が書いていればそのまま尊重する"
+            },
+            {
+              "kind": "field",
+              "name": "#panel",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#label",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#trigger",
+              "privacy": "private",
+              "description": "押せるのはトリガーの中のネイティブ要素（`rd-button` に包まれていることが多い）"
+            },
+            {
+              "kind": "field",
+              "name": "#onToggle",
+              "privacy": "private",
+              "description": "開いたら中の最初の行き先へ、閉じたらトリガーへ（Esc はネイティブが閉じる）"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ open: boolean }>"
+              },
+              "description": "開閉したとき（popover の toggle を写す）",
+              "name": "rd-toggle"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "placement",
+              "type": {
+                "text": "'start' | 'end'"
+              },
+              "description": "インライン方向の揃え。`end` はトリガーの終端に揃える",
+              "default": "'start'",
+              "fieldName": "placement"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "open",
+              "description": "開いている"
+            },
+            {
+              "name": "unlabeled",
+              "description": "[slot=\"label\"] の見出しが無い"
+            },
+            {
+              "name": "malformed",
+              "description": "slot=\"trigger\" か [popover] が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "非モーダルの重ね物。JS 無しでも popovertarget で開く",
+          "status": "experimental",
+          "pe": "B",
+          "tagName": "rd-popover",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdPopover",
+          "declaration": {
+            "name": "RdPopover",
+            "module": "src/popover/popover.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/radio-group/radio-group.define.ts",
       "declarations": [],
       "exports": [
