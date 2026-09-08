@@ -19,6 +19,16 @@ const CHECKED_MODES: readonly Mode[] = [
 /** qrcc 取り込みの前提を固定する（既定より落ちないこと）。 */
 const QRCC_MODES: readonly Mode[] = ['theme-qrcc', 'theme-qrcc-dark']
 
+/** ダークの面は 4 段（sunken / default / raised / hover）を持つ。 */
+const DARK_MODES: readonly Mode[] = ['dark', 'theme-qrcc-dark', 'theme-noter-dark']
+
+const SURFACE_IDS = [
+  'color.surface.default',
+  'color.surface.raised',
+  'color.surface.sunken',
+  'color.surface.hover',
+] as const
+
 const ratio = (foreground: string, background: string): number => {
   const a = parse(foreground)
   const b = parse(background)
@@ -85,6 +95,33 @@ describe('コントラスト（WCAG 2.2 AAA）', () => {
     }))
     expect(ratios).toEqual(QRCC_MODES.map((mode) => ({ mode, enough: true })))
   })
+
+  it.each(DARK_MODES.map((mode) => ({ mode })))(
+    'ダークの surface.default / raised / sunken / hover は 4 つとも違う色（$mode）',
+    ({ mode }) => {
+      const colours = SURFACE_IDS.map((id) => {
+        const surface = byId.get(id)
+        return surface === undefined ? id : toCss(valueIn(surface, mode))
+      })
+      expect(new Set(colours).size).toBe(4)
+    },
+  )
+
+  it.each(CHECKED_MODES.map((mode) => ({ mode })))(
+    'text.muted は surface.hover の上でも 7:1 以上（$mode）',
+    ({ mode }) => {
+      const muted = byId.get('color.text.muted')
+      const hover = byId.get('color.surface.hover')
+      expect(muted).toBeDefined()
+      expect(hover).toBeDefined()
+      if (muted === undefined || hover === undefined) {
+        return
+      }
+      expect(
+        ratio(toCss(valueIn(muted, mode)), toCss(valueIn(hover, mode))),
+      ).toBeGreaterThanOrEqual(7)
+    },
+  )
 
   it.each(cases)(
     '$foreground は $background に対して $mode で $minimum:1 以上',

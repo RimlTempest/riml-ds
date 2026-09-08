@@ -37,8 +37,10 @@ sRGB 近似は Terrazzo のガマットマップ後の値（C は自動で縮む
 | `neutral.500` | `[0.60, 0.026, 273.03]` | `#7b8090` | blogs `slate.dark` | 境界線（紙に 3.63:1、ダーク面に 4.38:1） |
 | `neutral.600` | `[0.40, 0.025, 273.03]` | `#434756` | blogs `slate.base`（L 48→40） | ライトの補助文字（紙 8.46:1・肌 7.19:1）、強い境界、ダークのタイトルバー |
 | `neutral.700` | `[0.38, 0.045, 270.31]` | `#39415b` | blogs `navy.base`（L 43.76→38） | **インク**。ライトの本文・タイトルバー |
+| `neutral.750` | `[0.31, 0.035, 270.31]` | `#293042` | 800 と 700 の間（plan 027） | ダークの行の hover `surface.hover` |
 | `neutral.800` | `[0.28, 0.032, 270.31]` | `#232839` | blogs `navy.surface`（27→28） | ダークの浮いた面 |
 | `neutral.900` | `[0.22, 0.03, 270.31]` | `#151a29` | blogs `navy.deep` そのまま | ダークの既定面・ライトの `on-accent` の下地 |
+| `neutral.950` | `[0.17, 0.025, 270.31]` | `#0b0f1a` | `navy.deep` をさらに暗く（plan 027） | ダークの窪んだ面 `surface.sunken` |
 
 blogs の `navy.base`（L 43.76%）は cream 上 7.22:1 だが peach 上 6.13:1 で AAA を割る。
 riml-ds は**どの面の上でも本文 7:1** を守るので、インクを L 38% に落とした。`slate` も同じ理由で 40% に落とした。
@@ -87,8 +89,8 @@ info は主役の青と混ざらないよう色相 200（青緑）に置く。
 | --- | --- | --- | --- |
 | `color.surface.default` | `neutral.0` 紙 | `neutral.900` | 既定の面 |
 | `color.surface.raised` | `neutral.100` 窓 | `neutral.800` | 窓・カード・ダイアログ |
-| `color.surface.sunken` | `neutral.200` 肌 | `neutral.900` | 入力の窪み・リスト見出し |
-| `color.surface.hover` | `neutral.200` | `neutral.800` | 行の hover |
+| `color.surface.sunken` | `neutral.200` 肌 | `neutral.950` | 入力の窪み・リスト見出し |
+| `color.surface.hover` | `neutral.200` | `neutral.750` | 行の hover |
 | `color.text.default` | `neutral.700` インク | `neutral.0` 紙 | 本文（旧 `neutral.800`。段を 1 つ増やして分離） |
 | `color.text.muted` | `neutral.600` | `neutral.300` | 補助 |
 | `color.text.on-accent` / `on-status` | `neutral.0` | `neutral.900` | 塗りの上の文字 |
@@ -108,9 +110,10 @@ info は主役の青と混ざらないよう色相 200（青緑）に置く。
 | --- | --- | --- | --- |
 | text / surface.default | 9.22 | 15.90 | 7 |
 | text / surface.raised | 9.78 | 13.41 | 7（参考） |
-| text / surface.sunken | 7.83 | 15.90 | 7（参考） |
+| text / surface.sunken | 7.83 | 17.54 | 7（参考） |
 | muted / surface.default | 8.46 | 9.28 | 7 |
-| muted / surface.sunken | 7.19 | 9.28 | 7（参考） |
+| muted / surface.sunken | 7.19 | 10.24 | 7（参考） |
+| muted / surface.hover | 7.19 | 7.06 | 7 |
 | on-accent / accent.default・hover | 7.81・10.04 | 9.28・12.01 | 7 |
 | on-status / danger・danger.hover・warning・success・info | 8.14・10.29・7.88・7.37・7.50 | 8.23・11.03・8.57・9.04・9.04 | 7 |
 | accent.text / surface | 7.81 | 9.28 | 7 |
@@ -140,6 +143,9 @@ info は主役の青と混ざらないよう色相 200（青緑）に置く。
 | --- | --- | --- |
 | `shadow.raised` | `0.25rem 0.25rem 0 0` / インク（`[0.22, 0.03, 270.31]`）alpha 0.16 | 窓・カード |
 | `shadow.overlay` | `0.5rem 0.5rem 0 0` / 同色 alpha 0.24 | ダイアログ（トーストは小さな窓なので `raised`、§7.7） |
+
+ダークは寸法をそのままに**色だけ黒 alpha 0.5 / 0.6** にする（インク色 `[0.22, 0.03, 270.31]` の影は
+同じ明度のダークの面の上では見えないため。plan 027）。`tokens.css` は `light-dark()` で**色だけ**を畳む。
 
 ぼかしが無いので描画が軽い（`filter` も `backdrop-filter` も使わない）。
 

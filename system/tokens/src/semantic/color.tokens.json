@@ -45,13 +45,14 @@
       },
       "muted": {
         "$value": "{color.palette.neutral.600}",
-        "$description": "補助テキスト（説明文・単位）の文字色。窓の本体（raised）や入力欄（sunken）の上にも置くので 3 面すべてで 7:1",
+        "$description": "補助テキスト（説明文・単位）の文字色。窓の本体（raised）や入力欄（sunken）や hover 中の行の上にも置くので 4 面すべてで 7:1",
         "$extensions": {
           "riml-ds": {
             "contrastAgainst": [
               "color.surface.default",
               "color.surface.raised",
-              "color.surface.sunken"
+              "color.surface.sunken",
+              "color.surface.hover"
             ]
           }
         }

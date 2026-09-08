@@ -21,6 +21,37 @@ const sectionMap = (
   gamut: Gamut,
 ): ReadonlyMap<string, string> => findSection(sections, scope, gamut)?.declarations ?? EMPTY
 
+const TRAILING_COLOR = /^(.*?)((?:oklch|oklab|color|rgba?|hsla?|lab|lch)\([^()]*\))$/
+
+/**
+ * `0.25rem 0.25rem 0rem 0rem oklch(…)` のように**末尾が 1 つの色**なら、
+ * その前までを接頭辞として返す。色そのもの（接頭辞が空）は対象にしない。
+ */
+export const splitTrailingColor = (
+  value: string,
+): { readonly prefix: string; readonly color: string } | undefined => {
+  const matched = TRAILING_COLOR.exec(value)
+  if (matched === null) {
+    return undefined
+  }
+  const [, prefix, color] = matched
+  return prefix === undefined || prefix === '' || color === undefined
+    ? undefined
+    : { prefix, color }
+}
+
+/**
+ * `light-dark()` は `<color>` にしか使えない。寸法が同じで色だけが違う値
+ * （shadow）は色だけを包み、それ以外は今までどおり値全体を包む。
+ */
+const foldValue = (lightValue: string, darkValue: string): string => {
+  const light = splitTrailingColor(lightValue)
+  const dark = splitTrailingColor(darkValue)
+  return light !== undefined && dark !== undefined && light.prefix === dark.prefix
+    ? `${light.prefix}light-dark(${light.color}, ${dark.color})`
+    : `light-dark(${lightValue}, ${darkValue})`
+}
+
 /** light と dark の同名変数を `light-dark()` に畳む。同じ値なら畳まない。 */
 const fold = (
   names: readonly string[],
@@ -38,7 +69,7 @@ const fold = (
       name,
       darkValue === undefined || darkValue === lightValue
         ? lightValue
-        : `light-dark(${lightValue}, ${darkValue})`,
+        : foldValue(lightValue, darkValue),
     )
   }
   return ok(folded)

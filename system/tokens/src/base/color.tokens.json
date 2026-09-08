@@ -87,6 +87,18 @@
             }
           }
         },
+        "750": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.31, 0.035, 270.31]
+          },
+          "$description": "ダークの行の hover に使う素材（800 より 1 段明るい）",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
         "800": {
           "$value": {
             "colorSpace": "oklch",
@@ -105,6 +117,18 @@
             "components": [0.22, 0.03, 270.31]
           },
           "$description": "ダークの既定の面に使う素材（blogs の navy.deep）",
+          "$extensions": {
+            "riml-ds": {
+              "status": "internal"
+            }
+          }
+        },
+        "950": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.17, 0.025, 270.31]
+          },
+          "$description": "ダークの窪んだ面に使う素材（900 より 1 段暗い）",
           "$extensions": {
             "riml-ds": {
               "status": "internal"
