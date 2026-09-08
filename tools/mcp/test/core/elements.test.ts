@@ -29,6 +29,7 @@ describe('listElements', () => {
       'rd-select',
       'rd-text-field',
       'rd-toast',
+      'rd-window',
     ])
     expect(result.value[0]).toMatchObject({ pe: 'A', status: 'stable' })
     expect(result.value[0]?.summary).not.toBe('')
@@ -45,6 +46,7 @@ describe('listElements', () => {
       'rd-select',
       'rd-text-field',
       'rd-toast',
+      'rd-window',
     ])
   })
 

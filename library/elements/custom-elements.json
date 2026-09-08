@@ -1672,6 +1672,344 @@
           }
         }
       ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/window/window.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-window",
+          "declaration": {
+            "name": "RdWindow",
+            "module": "/src/window/window.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/window/window.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "窓。帯の左端に 閉じる / 広げる / たたむ の丸を持つ（ティア B、ADR-0012 / ADR-0014）。\n見出しは `slot=\"title\"` に**利用側が h 要素を置く**。JS が無いときは `:not(:defined)` の\nCSS が帯だけを見せ、ボタンは出ない（押せない丸を置かないため）。",
+          "name": "RdWindow",
+          "cssProperties": [
+            {
+              "description": "広げたときの画面からの余白。既定 var(--rd-space-4)",
+              "name": "--rd-window-expanded-inset"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "帯（操作と見出しの入れ物）",
+              "name": "bar"
+            },
+            {
+              "description": "操作の入れ物。使う操作が無ければ描かれない",
+              "name": "controls"
+            },
+            {
+              "description": "操作の丸（data-action で close / expand / collapse を見分ける）",
+              "name": "control"
+            },
+            {
+              "description": "見出し slot の入れ物",
+              "name": "title"
+            },
+            {
+              "description": "本文の入れ物",
+              "name": "body"
+            }
+          ],
+          "slots": [
+            {
+              "description": "本文",
+              "name": ""
+            },
+            {
+              "description": "見出し。省略不可（h 要素を置く）",
+              "name": "title"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true, serializable: true }",
+              "type": {
+                "text": "object"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "closable",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "closable",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "expandable",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "expandable",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "collapsible",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "collapsible",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "collapsed",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "collapsed",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "expanded",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "expanded",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "tone",
+              "privacy": "public",
+              "type": {
+                "text": "'chrome' | 'accent' | 'warning' | 'danger'"
+              },
+              "description": "帯の色。4 通り（brand.md §7.1）。既定は chrome（インク）",
+              "default": "'chrome'",
+              "attribute": "tone",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "method",
+              "name": "close",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "description": "閉じる。`rd-dismiss` を preventDefault すれば `hidden` は付かない（SPA が自分で消す）"
+            },
+            {
+              "kind": "method",
+              "name": "toggleCollapsed",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "force",
+                  "optional": true,
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "toggleExpanded",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "force",
+                  "optional": true,
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "#press",
+              "privacy": "private",
+              "type": {
+                "text": "Readonly<Record<WindowAction, () => void>>"
+              },
+              "default": "{ close: () => { this.close() }, expand: () => { this.toggleExpanded() }, collapse: () => { this.toggleCollapsed() }, }",
+              "description": "丸を押したときの動作。`controlsFor` の並びと 1 対 1"
+            },
+            {
+              "kind": "field",
+              "name": "#onKeydown",
+              "privacy": "private",
+              "description": "広げているときだけ Esc で戻す。モーダルではないのでフォーカスは閉じ込めない"
+            },
+            {
+              "kind": "field",
+              "name": "#emit",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "'region'"
+            }
+          ],
+          "events": [
+            {
+              "name": "rd-dismiss",
+              "type": {
+                "text": "CustomEvent<{ reason: 'button' }>"
+              },
+              "description": "× を押したとき。preventDefault で hidden を止める"
+            },
+            {
+              "type": {
+                "text": "CustomEvent<{ collapsed: boolean }>"
+              },
+              "description": "たたむ / 戻すたび",
+              "name": "rd-toggle"
+            },
+            {
+              "type": {
+                "text": "CustomEvent<{ expanded: boolean }>"
+              },
+              "description": "広げる / 戻すたび",
+              "name": "rd-expand"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "closable",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "closable"
+            },
+            {
+              "name": "expandable",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "expandable"
+            },
+            {
+              "name": "collapsible",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "collapsible"
+            },
+            {
+              "name": "collapsed",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "collapsed"
+            },
+            {
+              "name": "expanded",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "expanded"
+            },
+            {
+              "name": "tone",
+              "type": {
+                "text": "'chrome' | 'accent' | 'warning' | 'danger'"
+              },
+              "description": "帯の色。4 通り（brand.md §7.1）。既定は chrome（インク）",
+              "default": "'chrome'",
+              "fieldName": "tone"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "collapsed",
+              "description": "たたまれている"
+            },
+            {
+              "name": "expanded",
+              "description": "広がっている"
+            },
+            {
+              "name": "malformed",
+              "description": "slot=\"title\" の子が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "窓。帯と閉じる/広げる/たたむ。見出しは slot=\"title\" に利用側が置く",
+          "status": "experimental",
+          "pe": "B",
+          "tagName": "rd-window",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdWindow",
+          "declaration": {
+            "name": "RdWindow",
+            "module": "src/window/window.element.ts"
+          }
+        }
+      ]
     }
   ]
 }

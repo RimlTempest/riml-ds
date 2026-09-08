@@ -1,3 +1,4 @@
-import { frameworkSuite } from './shared.js'
+import { frameworkSuite, meterAndWindowSuite } from './shared.js'
 
 frameworkSuite('svelte')
+meterAndWindowSuite('svelte')

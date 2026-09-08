@@ -1,6 +1,6 @@
 import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-vue'
 // experimental は専用サブパスからしか出ない（ADR-0009）
-import { RdCheckbox, RdSelect } from '@rimltempest/riml-ds-vue/experimental'
+import { RdCheckbox, RdMeter, RdSelect, RdWindow } from '@rimltempest/riml-ds-vue/experimental'
 import { defineComponent, h, ref } from 'vue'
 
 /** 4 フレームワークで同じ選択肢を出す */
@@ -41,6 +41,16 @@ export const App = defineComponent(
           h(RdButton, { type: 'submit' }, () => '送信'),
         ]),
         h(RdDialog, { label: '送信しました' }, () => h('p', null, '確認メールを送りました。')),
+        h(RdMeter, {
+          id: 'disk',
+          label: 'ディスク使用量',
+          value: '3.2',
+          max: '10',
+          text: '3.2 GB / 10 GB',
+        }),
+        h(RdWindow, { title: 'バックアップの設定', collapsible: true }, () =>
+          h('p', null, '毎晩 3 時に実行します。'),
+        ),
         // <select> の v-model が効いているかを e2e が読む
         h('p', { id: 'country-echo' }, country.value),
         h('rd-live-region'),

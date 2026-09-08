@@ -124,6 +124,19 @@
       "types": "./dist/toast/toast.define.d.ts",
       "default": "./dist/toast/toast.define.js"
     },
+    "./experimental/window": {
+      "types": "./dist/experimental/window/index.d.ts",
+      "default": "./dist/experimental/window/index.js"
+    },
+    "./experimental/window/contract": {
+      "types": "./dist/window/window.contract.d.ts",
+      "default": "./dist/window/window.contract.js"
+    },
+    "./experimental/window/define": {
+      "types": "./dist/window/window.define.d.ts",
+      "default": "./dist/window/window.define.js"
+    },
+    "./experimental/window/style.css": "./dist/window/window.css",
     "./styles.css": "./dist/styles.css",
     "./custom-elements.json": "./custom-elements.json",
     "./package.json": "./package.json"

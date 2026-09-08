@@ -31,3 +31,19 @@ export const syncAttribute = (
     element.setAttribute(name, value)
   }
 }
+
+/** `ariaLabelledByElements` はまだ全エンジンに無い。あるときだけ使う */
+type LabelLinkable = { ariaLabelledByElements: readonly Element[] | null }
+
+const canLinkLabel = (internals: ElementInternals): internals is ElementInternals & LabelLinkable =>
+  'ariaLabelledByElements' in internals
+
+/**
+ * slot 先の要素をホストの名前にする（ID 文字列の `aria-labelledby` は shadow を越えられない）。
+ * 未対応のエンジンでは何もしない——利用側がホストに `aria-labelledby` を書ける（ADR-0008 §4）。
+ */
+export const linkLabelledBy = (internals: ElementInternals, element: Element | undefined): void => {
+  if (element !== undefined && canLinkLabel(internals)) {
+    internals.ariaLabelledByElements = [element]
+  }
+}

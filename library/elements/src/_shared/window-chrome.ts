@@ -7,7 +7,7 @@
  * **記号の data URI は 2 か所で同じ文字列**であることを
  * `library/elements/test/window-chrome.test.ts` が固定する。色・寸法は VRT でしか揃わない。
  */
-import { css, type CSSResult, unsafeCSS } from 'lit'
+import { css, type CSSResult, html, nothing, type TemplateResult, unsafeCSS } from 'lit'
 import { type LangHost, usesJapaneseCopy } from './lang.js'
 
 export type WindowAction = 'close' | 'expand' | 'collapse'
@@ -41,6 +41,58 @@ const EN: Readonly<Record<WindowAction, string>> = {
 /** ボタンの `aria-label`。最も近い `[lang]` で日英を選ぶ（`_shared/lang.ts`） */
 export const windowControlLabels = (host: LangHost): Readonly<Record<WindowAction, string>> =>
   usesJapaneseCopy(host) ? JA : EN
+
+export type WindowControlView = {
+  readonly action: WindowAction
+  readonly label: string
+  readonly collapsed: boolean
+  readonly expanded: boolean
+  /** `aria-controls` の先（たたむボタンだけが使う） */
+  readonly bodyId: string
+  readonly onClick: () => void
+}
+
+/**
+ * 帯の丸 1 つ。**ネイティブ `<button>`**（Enter / Space が無料）。記号は CSS の mask が描くので
+ * 中身は空。`rd-window` と `rd-dialog` が同じものを使う（ADR-0014 決定 1 / 決定 4）。
+ */
+export const windowControl = (view: WindowControlView): TemplateResult =>
+  html`<button
+    part="control"
+    type="button"
+    data-action=${view.action}
+    aria-label=${view.label}
+    aria-expanded=${view.action === 'collapse' ? String(!view.collapsed) : nothing}
+    aria-controls=${view.action === 'collapse' ? view.bodyId : nothing}
+    aria-pressed=${view.action === 'expand' ? String(view.expanded) : nothing}
+    @click=${view.onClick}
+  ></button>`
+
+/**
+ * 帯の左端の丸の列。使う操作が 1 つも無ければ**入れ物ごと省く**（ADR-0014 決定 1）。
+ */
+export const windowControls = (view: {
+  readonly actions: readonly WindowAction[]
+  readonly labels: Readonly<Record<WindowAction, string>>
+  readonly collapsed: boolean
+  readonly expanded: boolean
+  readonly bodyId: string
+  readonly on: Readonly<Record<WindowAction, () => void>>
+}): TemplateResult | typeof nothing =>
+  view.actions.length === 0
+    ? nothing
+    : html`<div part="controls">
+        ${view.actions.map((action) =>
+          windowControl({
+            action,
+            label: view.labels[action],
+            collapsed: view.collapsed,
+            expanded: view.expanded,
+            bodyId: view.bodyId,
+            onClick: view.on[action],
+          }),
+        )}
+      </div>`
 
 /**
  * shadow の帯。`[part='bar']` ⊃ `[part='controls']` + 見出しの入れ物。
