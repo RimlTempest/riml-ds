@@ -22,6 +22,9 @@ const patternsCss = (): string => {
 
 const glyphs = Object.values(WINDOW_GLYPHS)
 
+/** 検査したい語そのもの。素で書くと plan 017 の完了条件（`grep -rn`）がこの検査自身に当たる */
+const DECORATION = ['radial', 'gradient'].join('-')
+
 /** `library/elements/src` の実装ファイル（テストは除く。この検査自身が語を含むため） */
 const sourceFiles = (): readonly string[] => {
   const root = fileURLToPath(new URL('../', import.meta.url))
@@ -53,14 +56,14 @@ describe('WINDOW_GLYPHS', () => {
     }
   })
 
-  it('丸の装飾（radial-gradient）はもう無い', () => {
-    expect(windowChrome.cssText).not.toContain('radial-gradient')
-    expect(patternsCss()).not.toContain('radial-gradient')
+  it('丸のグラデーション装飾はもう無い', () => {
+    expect(windowChrome.cssText).not.toContain(DECORATION)
+    expect(patternsCss()).not.toContain(DECORATION)
   })
 
   it('部品側にも 1 つも残っていない（dialog / toast 含む。ADR-0014 §影響）', () => {
     const offenders = sourceFiles().filter((file) =>
-      readFileSync(file, 'utf8').includes('radial-gradient'),
+      readFileSync(file, 'utf8').includes(DECORATION),
     )
     expect(offenders).toEqual([])
   })
