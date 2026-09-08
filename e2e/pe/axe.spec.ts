@@ -19,6 +19,8 @@ const PAGES = [
   '/window.html',
   '/live-region.html',
   '/input-group.html',
+  '/radio-group.html',
+  '/slider.html',
 ] as const
 
 for (const path of PAGES) {

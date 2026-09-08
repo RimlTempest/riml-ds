@@ -1,6 +1,13 @@
 import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-react'
 // experimental は専用サブパスからしか出ない（ADR-0009）
-import { RdCheckbox, RdMeter, RdSelect, RdWindow } from '@rimltempest/riml-ds-react/experimental'
+import {
+  RdCheckbox,
+  RdMeter,
+  RdRadioGroup,
+  RdSelect,
+  RdSlider,
+  RdWindow,
+} from '@rimltempest/riml-ds-react/experimental'
 import type { ReactNode } from 'react'
 
 /** 4 フレームワークで同じ選択肢を出す */
@@ -31,6 +38,17 @@ export const App = (): ReactNode => (
     <RdWindow title="バックアップの設定" collapsible>
       <p>毎晩 3 時に実行します。</p>
     </RdWindow>
+    <RdRadioGroup label="プラン">
+      <label>
+        <input type="radio" id="plan-free" name="plan" value="free" />
+        無料
+      </label>
+      <label>
+        <input type="radio" id="plan-pro" name="plan" value="pro" />
+        有料
+      </label>
+    </RdRadioGroup>
+    <RdSlider id="volume" label="音量" name="volume" defaultValue="3" min="0" max="10" />
     <rd-live-region />
   </main>
 )

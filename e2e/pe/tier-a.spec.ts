@@ -103,3 +103,39 @@ test('input group: JS 無しでもピルの枕が当たる（.rd-input-group）'
   await page.goto('/input-group.html')
   await expect(page.locator('.rd-input-group')).toHaveCSS('border-radius', '9999px')
 })
+
+test('radio group: JS 無しでも選んだ値が送信される', async ({ page }) => {
+  await page.goto('/radio-group.html')
+  await page.getByRole('group', { name: 'プラン' }).getByLabel('有料').check()
+  await page.getByRole('button', { name: '送信' }).click()
+  await expect(page).toHaveURL(/plan=pro/u)
+})
+
+test('radio group: required が未選択なら遷移しない（ネイティブ検証）', async ({ page }) => {
+  await page.goto('/radio-group.html')
+  await page.getByRole('button', { name: '送信' }).click()
+  await expect(page).toHaveURL(/\/radio-group\.html$/u)
+})
+
+test('radio group: JS 無しでは segmented の見た目にならない（:state() は JS が付ける）', async ({
+  page,
+}) => {
+  await page.goto('/radio-group.html')
+  // 区画の見た目は付かないが、選択肢はそのまま押せて送信できる（正しい縮退）
+  await expect(page.locator('rd-radio-group[segmented] label').first()).toHaveCSS(
+    'min-block-size',
+    '44px',
+  )
+})
+
+test('slider: JS 無しでも値が送信される', async ({ page }) => {
+  await page.goto('/slider.html')
+  await page.getByRole('button', { name: '送信' }).click()
+  await expect(page).toHaveURL(/volume=3/u)
+})
+
+test('slider: JS 無しでは塗りが出ない（ネイティブの range そのもの）', async ({ page }) => {
+  await page.goto('/slider.html')
+  await expect(page.getByRole('slider', { name: '音量' })).toBeVisible()
+  await expect(page.locator("rd-slider [part='track']")).toHaveCount(0)
+})

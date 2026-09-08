@@ -14,7 +14,12 @@ import { checkboxMarkup } from '../../library/elements/src/checkbox/index.js'
 import { dialogMarkup } from '../../library/elements/src/dialog/index.js'
 import { disclosureMarkup } from '../../library/elements/src/disclosure/index.js'
 import { meterMarkup } from '../../library/elements/src/meter/index.js'
+import {
+  radioGroupMarkup,
+  radioOptionMarkup,
+} from '../../library/elements/src/radio-group/index.js'
 import { selectMarkup } from '../../library/elements/src/select/index.js'
+import { sliderMarkup } from '../../library/elements/src/slider/index.js'
 import { textFieldMarkup } from '../../library/elements/src/text-field/index.js'
 import { windowMarkup } from '../../library/elements/src/window/index.js'
 
@@ -34,6 +39,8 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/checkbox/checkbox.css', 'checkbox.css'],
   ['library/elements/src/disclosure/disclosure.css', 'disclosure.css'],
   ['library/elements/src/meter/meter.css', 'meter.css'],
+  ['library/elements/src/radio-group/radio-group.css', 'radio-group.css'],
+  ['library/elements/src/slider/slider.css', 'slider.css'],
   ['library/elements/src/window/window.css', 'window.css'],
 ]
 
@@ -65,6 +72,19 @@ const submit = buttonMarkup({ label: '送信', type: 'submit' })
 const OPTIONS =
   '<option value="">選択してください</option>'
   + '<option value="jp">日本</option><option value="us">アメリカ</option>'
+
+/** `required` は最初の 1 個にだけ付ける（HTML の仕様で group 全体が必須になる） */
+const plans = (name: string, required: boolean): string =>
+  [
+    radioOptionMarkup({
+      id: `${name}-free`,
+      name,
+      value: 'free',
+      label: '無料',
+      ...(required ? { required: true } : {}),
+    }),
+    radioOptionMarkup({ id: `${name}-pro`, name, value: 'pro', label: '有料' }),
+  ].join('')
 
 const PAGES: Readonly<Record<string, string>> = {
   'button.html': page(
@@ -143,6 +163,29 @@ const PAGES: Readonly<Record<string, string>> = {
     })}`,
   ),
   'live-region.html': page('ライブリージョン', '      <rd-live-region></rd-live-region>'),
+  'radio-group.html': page(
+    '択一',
+    `      <form method="get" action="/echo.html">
+        ${radioGroupMarkup({ label: 'プラン', children: plans('plan', true) })}
+        ${radioGroupMarkup({ label: '表示', children: plans('view', false), segmented: true })}
+        ${submit}
+      </form>`,
+  ),
+  'slider.html': page(
+    '連続値',
+    `      <form method="get" action="/echo.html">
+        ${sliderMarkup({
+          id: 'volume',
+          label: '音量',
+          name: 'volume',
+          defaultValue: '3',
+          min: '0',
+          max: '10',
+          step: '1',
+        })}
+        ${submit}
+      </form>`,
+  ),
   'input-group.html': page(
     '入力の枕',
     `      <form method="get" action="/echo.html">

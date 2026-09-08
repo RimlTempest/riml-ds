@@ -12,7 +12,12 @@ import { markup as dialogMarkup } from '@rimltempest/riml-ds-elements/dialog/con
 import { markup as checkboxMarkup } from '@rimltempest/riml-ds-elements/experimental/checkbox/contract'
 import { markup as disclosureMarkup } from '@rimltempest/riml-ds-elements/experimental/disclosure/contract'
 import { markup as meterMarkup } from '@rimltempest/riml-ds-elements/experimental/meter/contract'
+import {
+  markup as radioGroupMarkup,
+  radioOptionMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/radio-group/contract'
 import { markup as selectMarkup } from '@rimltempest/riml-ds-elements/experimental/select/contract'
+import { markup as sliderMarkup } from '@rimltempest/riml-ds-elements/experimental/slider/contract'
 import { markup as windowMarkup } from '@rimltempest/riml-ds-elements/experimental/window/contract'
 import { markup as textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field/contract'
 import type { ElementExampleMap } from './core/elements.js'
@@ -56,6 +61,27 @@ const WINDOW = {
   closable: true,
   collapsible: true,
 } as const
+/** `required` は最初の 1 個にだけ付ける（HTML の仕様で group 全体が必須になる） */
+const RADIO_GROUP = {
+  label: 'プラン',
+  children:
+    radioOptionMarkup({
+      id: 'plan-free',
+      name: 'plan',
+      value: 'free',
+      label: '無料',
+      required: true,
+    }) + radioOptionMarkup({ id: 'plan-pro', name: 'plan', value: 'pro', label: '有料' }),
+} as const
+const SLIDER = {
+  id: 'volume',
+  label: '音量',
+  name: 'volume',
+  defaultValue: '3',
+  min: '0',
+  max: '10',
+  step: '1',
+} as const
 const DISCLOSURE = {
   label: '送料について',
   children: '<p>5,000 円以上で無料です。</p>',
@@ -75,6 +101,8 @@ export const elementExamples = {
   'rd-checkbox': { html: checkboxMarkup(CHECKBOX), props: CHECKBOX },
   'rd-disclosure': { html: disclosureMarkup(DISCLOSURE), props: DISCLOSURE },
   'rd-meter': { html: meterMarkup(METER), props: METER },
+  'rd-radio-group': { html: radioGroupMarkup(RADIO_GROUP), props: RADIO_GROUP },
+  'rd-slider': { html: sliderMarkup(SLIDER), props: SLIDER },
   'rd-window': { html: windowMarkup(WINDOW), props: WINDOW },
   'rd-toast': { html: '<rd-toast></rd-toast>', props: TOAST },
 } as const satisfies ElementExampleMap

@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test'
-import { frameworkSuite, meterAndWindowSuite } from './shared.js'
+import { frameworkSuite, meterAndWindowSuite, radioGroupAndSliderSuite } from './shared.js'
 
 frameworkSuite('vue')
 meterAndWindowSuite('vue')
+radioGroupAndSliderSuite('vue')
 
 test.describe('vue: <select> の v-model', () => {
   test('選択すると v-model の値が変わる', async ({ page }) => {

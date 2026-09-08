@@ -1,4 +1,5 @@
-import { frameworkSuite, meterAndWindowSuite } from './shared.js'
+import { frameworkSuite, meterAndWindowSuite, radioGroupAndSliderSuite } from './shared.js'
 
 frameworkSuite('svelte')
 meterAndWindowSuite('svelte')
+radioGroupAndSliderSuite('svelte')
