@@ -19,6 +19,11 @@ import {
   markup as comboboxMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/combobox/contract'
 import {
+  commandGroupMarkup,
+  commandItemMarkup,
+  markup as commandMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/command/contract'
+import {
   dataTableBodyMarkup,
   dataTableHeadMarkup,
   markup as dataTableMarkup,
@@ -140,6 +145,37 @@ const COMBOBOX = {
     + comboboxOptionMarkup({ value: 'katakana', label: 'カナ' }),
 } as const
 /**
+ * 項目は**リンクとボタンのまま**（部品は生成しない）。グループは `<ul>` を分けるだけで、
+ * 見出しは `aria-label` から CSS が描く。⌘K で開く窓は利用側が `rd-dialog` で作る。
+ */
+const COMMAND = {
+  id: 'palette',
+  label: 'コマンド',
+  placeholder: '打って絞り込む',
+  groups:
+    commandGroupMarkup({
+      label: 'ページ',
+      items:
+        commandItemMarkup({ label: 'ホーム', href: '/', keywords: 'home top' })
+        + commandItemMarkup({
+          label: '設定',
+          href: '/settings',
+          keywords: 'せってい preferences config',
+          shortcut: '⌘,',
+        }),
+    })
+    + commandGroupMarkup({
+      label: '操作',
+      items: commandItemMarkup({
+        label: '新しいノート',
+        value: 'new-note',
+        keywords: 'あたらしい new note',
+        shortcut: '⌘N',
+      }),
+    }),
+} as const
+
+/**
  * 並べ替えだけを持つ表（ページ送り・行の選択・絞り込みは外側で既存の部品と組み合わせる）。
  * 表そのものは利用側が書く。表示と比較キーが違う列（「1,234」「2026/01/02」）は機械が読める形を
  * `data-value` に書く。属性は文字列なので `column` は `'1'` の形で渡す（0 始まり）。
@@ -231,6 +267,7 @@ export const elementExamples = {
   'rd-checkbox': { html: checkboxMarkup(CHECKBOX), props: CHECKBOX },
   'rd-checkbox-group': { html: checkboxGroupMarkup(CHECKBOX_GROUP), props: CHECKBOX_GROUP },
   'rd-combobox': { html: comboboxMarkup(COMBOBOX), props: COMBOBOX },
+  'rd-command': { html: commandMarkup(COMMAND), props: COMMAND },
   'rd-data-table': { html: dataTableMarkup(DATA_TABLE), props: DATA_TABLE },
   'rd-disclosure': { html: disclosureMarkup(DISCLOSURE), props: DISCLOSURE },
   'rd-input-otp': { html: inputOtpMarkup(INPUT_OTP), props: INPUT_OTP },

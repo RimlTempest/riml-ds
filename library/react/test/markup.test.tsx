@@ -1,5 +1,10 @@
 import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
 import {
+  commandGroupMarkup,
+  commandItemMarkup,
+  commandMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/command'
+import {
   dataTableBodyMarkup,
   dataTableHeadMarkup,
   dataTableRowMarkup,
@@ -8,7 +13,7 @@ import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import * as experimental from '../src/experimental.js'
-import { RdDataTable } from '../src/experimental.js'
+import { RdCommand, RdDataTable } from '../src/experimental.js'
 import * as index from '../src/index.js'
 import { RdButton, RdTextField } from '../src/index.js'
 import { normalize } from './normalize.js'
@@ -38,6 +43,36 @@ describe('既定 export の部品', () => {
     )
   })
 
+  it('RdCommand の renderToString が commandMarkup と同じ HTML になる（groups は子として渡す）', () => {
+    const rendered = renderToString(
+      <RdCommand
+        id="palette"
+        label="コマンド"
+        filter="prefix"
+        groups={
+          <ul aria-label="ページ">
+            <li>
+              <a href="/">ホーム</a>
+            </li>
+          </ul>
+        }
+      />,
+    )
+    expect(normalize(rendered)).toBe(
+      normalize(
+        commandMarkup({
+          id: 'palette',
+          label: 'コマンド',
+          filter: 'prefix',
+          groups: commandGroupMarkup({
+            label: 'ページ',
+            items: commandItemMarkup({ label: 'ホーム', href: '/' }),
+          }),
+        }),
+      ),
+    )
+  })
+
   it('className は custom element でも class 属性になる（React 19）', () => {
     expect(renderToString(<RdButton className="wide">保存</RdButton>)).toContain('class="wide"')
   })
@@ -53,6 +88,7 @@ describe('既定 export の部品', () => {
       'RdCheckbox',
       'RdCheckboxGroup',
       'RdCombobox',
+      'RdCommand',
       'RdDataTable',
       'RdDisclosure',
       'RdInputOtp',

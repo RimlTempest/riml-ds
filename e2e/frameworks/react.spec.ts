@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test'
 import {
   comboboxSuite,
+  commandSuite,
   dataTableSuite,
   formWave4Suite,
   frameworkSuite,
@@ -17,6 +18,7 @@ navigationSuite('react')
 formWave4Suite('react')
 toggleSuite('react')
 comboboxSuite('react')
+commandSuite('react')
 dataTableSuite('react')
 
 test.describe('react: controlled の再同期', () => {

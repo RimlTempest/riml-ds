@@ -21,6 +21,7 @@
     "./experimental/checkbox.astro": "./src/generated/experimental/checkbox.astro",
     "./experimental/checkbox-group.astro": "./src/generated/experimental/checkbox-group.astro",
     "./experimental/combobox.astro": "./src/generated/experimental/combobox.astro",
+    "./experimental/command.astro": "./src/generated/experimental/command.astro",
     "./experimental/data-table.astro": "./src/generated/experimental/data-table.astro",
     "./experimental/disclosure.astro": "./src/generated/experimental/disclosure.astro",
     "./experimental/input-otp.astro": "./src/generated/experimental/input-otp.astro",

@@ -5,6 +5,7 @@
     RdCheckbox,
     RdCheckboxGroup,
     RdCombobox,
+    RdCommand,
     RdDataTable,
     RdInputOtp,
     RdMenu,
@@ -91,6 +92,17 @@
     <option value="kanji">かんじ</option>
     <option value="romaji">ローマ字</option>
   </RdCombobox>
+  <RdCommand id="palette" label="コマンド">
+    {#snippet groups()}
+      <ul aria-label="ページ">
+        <li><a href="#home" data-keywords="home top">ホーム</a></li>
+        <li><a href="#settings" data-keywords="せってい preferences">設定</a></li>
+      </ul>
+      <ul aria-label="操作">
+        <li><button type="button" value="new">新しいノート<kbd class="rd-kbd">⌘N</kbd></button></li>
+      </ul>
+    {/snippet}
+  </RdCommand>
   <RdDataTable caption="保存したコード">
     {#snippet head()}<thead
         ><tr

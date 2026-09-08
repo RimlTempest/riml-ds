@@ -932,6 +932,218 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/command/command.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-command",
+          "declaration": {
+            "name": "RdCommand",
+            "module": "/src/command/command.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/command/command.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "打って絞って選ぶコマンドパレット。子の `<label for>`・`<input type=\"search\">`・\nリンクとボタンの `<ul>` を包む（ティア A、ADR-0012）。**JS が無くても一覧はそのまま辿れる**\n——入力欄は飾りになるが、全項目が見えていて押せる。項目は本物のリンク／ボタンのままで、\n`role=\"option\"` に書き換えない（`docs/proposals/command.md`）。",
+          "name": "RdCommand",
+          "cssParts": [
+            {
+              "description": "0 件のときの知らせ",
+              "name": "empty"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "filter",
+              "privacy": "public",
+              "type": {
+                "text": "CommandFilter"
+              },
+              "description": "絞り込みの仕方。`none` は候補をサーバー側で絞る利用側向け",
+              "default": "'contains'",
+              "attribute": "filter"
+            },
+            {
+              "kind": "field",
+              "name": "emptyText",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "empty-text"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#wiring",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#name",
+              "privacy": "private",
+              "default": "`rd-command-${(sequence += 1)}`"
+            },
+            {
+              "kind": "field",
+              "name": "#query",
+              "privacy": "private",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "#nodes",
+              "privacy": "private",
+              "type": {
+                "text": "readonly dom.ItemNode[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "#view",
+              "privacy": "private",
+              "type": {
+                "text": "dom.FilterResult"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#binding",
+              "privacy": "private",
+              "type": {
+                "text": "Binding | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#hostBinding",
+              "privacy": "private",
+              "type": {
+                "text": "Binding | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#observer",
+              "privacy": "private",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#setup",
+              "privacy": "private",
+              "description": "初回だけ。契約を見て子を掴み、入力欄とホスト（項目の分）にリスナを配る"
+            },
+            {
+              "kind": "field",
+              "name": "#sync",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#press",
+              "privacy": "private",
+              "description": "入力欄の keydown はホストにも上がってくる。項目に居ないときは何もしない"
+            },
+            {
+              "kind": "field",
+              "name": "#run",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ value: string; label: string }>"
+              },
+              "description": "項目が押されたとき",
+              "name": "rd-select"
+            }
+          ],
+          "attributes": [
+            {
+              "description": "絞り込みの仕方。`none` は候補をサーバー側で絞る利用側向け",
+              "name": "filter",
+              "type": {
+                "text": "CommandFilter"
+              },
+              "default": "'contains'",
+              "fieldName": "filter"
+            },
+            {
+              "description": "0 件のときの文言。既定はページの言語で決まる",
+              "name": "empty-text",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "emptyText"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "filtering",
+              "description": "入力欄に文字が入っている"
+            },
+            {
+              "name": "empty",
+              "description": "見えている項目が 0 件"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子（<label for> と <input type=\"search\"> と <ul>）が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "打って絞って選ぶコマンドパレット。項目の <ul> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-command",
+          "customElement": true
+        },
+        {
+          "kind": "variable",
+          "name": "current"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdCommand",
+          "declaration": {
+            "name": "RdCommand",
+            "module": "src/command/command.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/data-table/data-table.define.ts",
       "declarations": [],
       "exports": [
