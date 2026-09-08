@@ -3304,6 +3304,165 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/toggle/toggle.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-toggle",
+          "declaration": {
+            "name": "RdToggle",
+            "module": "/src/toggle/toggle.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/toggle/toggle.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "押下状態を持つボタン。ネイティブの `<button type=\"button\" aria-pressed>` を子として包む\n（ティア A、ADR-0012）。部品がするのは押下で `aria-pressed` を反転し `:state(pressed)` に\n写すことだけ。JS が無いときは「押しても変わらない普通のボタン」に縮退する（害は無い）。\n**送信に載せる値なら `rd-checkbox`（`switch`）を使う**。",
+          "name": "RdToggle",
+          "members": [
+            {
+              "kind": "field",
+              "name": "variant",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'outline'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#control",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLButtonElement | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#binding",
+              "privacy": "private",
+              "type": {
+                "text": "Binding | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#observer",
+              "privacy": "private",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "pressed",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "押下はネイティブ要素の `aria-pressed` が持つ。部品は委譲するだけ"
+            },
+            {
+              "kind": "field",
+              "name": "#observe",
+              "privacy": "private",
+              "description": "属性が外から書き換わったら追随する。`disconnectedCallback` で切る"
+            },
+            {
+              "kind": "field",
+              "name": "#onClick",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#view",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ pressed: boolean }>"
+              },
+              "description": "押下が切り替わったときに発火",
+              "name": "rd-toggle"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'outline'",
+              "fieldName": "variant"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "outline",
+              "description": "variant=outline（既定）。罫線のピル"
+            },
+            {
+              "name": "ghost",
+              "description": "variant=ghost。罫線の無いピル"
+            },
+            {
+              "name": "pressed",
+              "description": "aria-pressed=\"true\""
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子（<button>）が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "押下状態を持つボタン。<button aria-pressed> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-toggle",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdToggle",
+          "declaration": {
+            "name": "RdToggle",
+            "module": "src/toggle/toggle.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/tooltip/tooltip.define.ts",
       "declarations": [],
       "exports": [

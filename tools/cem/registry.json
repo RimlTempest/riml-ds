@@ -160,6 +160,15 @@
     "dependsOn": ["rd-live-region"]
   },
   {
+    "name": "toggle",
+    "tag": "rd-toggle",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "押下状態を持つボタン。<button aria-pressed> は利用側が書く",
+    "files": ["toggle/index.js", "toggle/toggle.define.js", "toggle/toggle.css"],
+    "dependsOn": []
+  },
+  {
     "name": "tooltip",
     "tag": "rd-tooltip",
     "pe": "C",

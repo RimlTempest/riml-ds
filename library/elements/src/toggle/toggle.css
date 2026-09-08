@@ -1,0 +1,100 @@
+@layer rd.components {
+  /* ピルの面（docs/brand.md §7.2）。押下は面・文字色の 2 つで示す（色だけに頼らない） */
+  rd-toggle {
+    display: inline-block;
+  }
+
+  rd-toggle > button {
+    display: inline-flex;
+    gap: var(--rd-space-2);
+    align-items: center;
+    justify-content: center;
+    min-block-size: var(--rd-sizing-target-min);
+    min-inline-size: var(--rd-sizing-target-min);
+    padding-inline: var(--rd-space-4);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-strong);
+    border-radius: var(--rd-radius-full);
+    background: transparent;
+    color: var(--rd-color-text-default);
+    font: var(--rd-type-body);
+    line-height: var(--rd-line-height-body);
+    cursor: pointer;
+  }
+
+  /* ghost は罫線を持たない。面の切り替えだけで区切る */
+  rd-toggle[variant='ghost'] > button {
+    border-color: transparent;
+  }
+
+  /* 押下はアクセントの面 + 反転した文字。太字も足して形でも示す（accessibility.md 9） */
+  rd-toggle > button[aria-pressed='true'] {
+    border-color: transparent;
+    background: var(--rd-color-accent-default);
+    color: var(--rd-color-text-on-accent);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  @media (hover: hover) {
+    rd-toggle > button:hover:enabled {
+      background: var(--rd-color-surface-hover);
+    }
+
+    /* `:where()` で :enabled を包むのは詳細度を 0,3,0 に収めるため（stylelint） */
+    rd-toggle > button[aria-pressed='true']:hover:where(:enabled) {
+      background: var(--rd-color-accent-hover);
+    }
+  }
+
+  rd-toggle > button:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* disabled はネイティブに任せる。部品は disabled 属性を持たない */
+  rd-toggle > button:disabled {
+    border-color: GrayText;
+    background: transparent;
+    color: GrayText;
+    cursor: not-allowed;
+  }
+
+  @supports selector(:state(ghost)) {
+    rd-toggle:state(ghost) > button {
+      border-color: transparent;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    rd-toggle > button {
+      transition:
+        background-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard),
+        color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+    }
+  }
+
+  /* 強制配色では自前の面が消える。押下は Highlight の輪で示す（background: Highlight は
+     Chromium のバックプレートで文字が読めなくなる） */
+  @media (forced-colors: active) {
+    rd-toggle > button {
+      border-color: ButtonText;
+      color: ButtonText;
+    }
+
+    rd-toggle > button[aria-pressed='true'] {
+      border-color: ButtonText;
+      outline: var(--rd-border-width-default) solid Highlight;
+      outline-offset: calc(-1 * var(--rd-space-1));
+    }
+
+    rd-toggle > button:focus-visible {
+      outline-color: Highlight;
+    }
+
+    rd-toggle > button:disabled {
+      border-color: GrayText;
+      color: GrayText;
+    }
+  }
+}

@@ -176,6 +176,19 @@
       "types": "./dist/toast/toast.define.d.ts",
       "default": "./dist/toast/toast.define.js"
     },
+    "./experimental/toggle": {
+      "types": "./dist/experimental/toggle/index.d.ts",
+      "default": "./dist/experimental/toggle/index.js"
+    },
+    "./experimental/toggle/contract": {
+      "types": "./dist/toggle/toggle.contract.d.ts",
+      "default": "./dist/toggle/toggle.contract.js"
+    },
+    "./experimental/toggle/define": {
+      "types": "./dist/toggle/toggle.define.d.ts",
+      "default": "./dist/toggle/toggle.define.js"
+    },
+    "./experimental/toggle/style.css": "./dist/toggle/toggle.css",
     "./experimental/window": {
       "types": "./dist/experimental/window/index.d.ts",
       "default": "./dist/experimental/window/index.js"
