@@ -41,13 +41,26 @@ const dialogIn = (canvasElement: HTMLElement): RdDialog | undefined => {
   return element instanceof RdDialog ? element : undefined
 }
 
+const nextFrame = (): Promise<void> =>
+  new Promise((resolve) => {
+    requestAnimationFrame(() => resolve())
+  })
+
 /**
  * 開いた状態で描く story は、`@starting-style` の opacity 遷移が終わるまで待つ。
  * 遷移の途中を axe が掴むと、半透明の枠が背面（backdrop）と混ざってコントラスト違反に見える。
  * 待つのは `document.getAnimations()`（shadow 内の遷移も含まれる）。
  */
 const settled = async (): Promise<void> => {
-  await Promise.all(document.getAnimations().map((animation) => animation.finished))
+  // `close()` 直後は遷移がまだ始まっておらず `getAnimations()` が空を返すことがある。
+  // 1 フレーム待ってから集め、全部終わるまで再帰する（CI の flake 対策）
+  await nextFrame()
+  const animations = document.getAnimations()
+  if (animations.length === 0) {
+    return
+  }
+  await Promise.all(animations.map((animation) => animation.finished))
+  await settled()
 }
 
 const meta: Meta<Args> = {
