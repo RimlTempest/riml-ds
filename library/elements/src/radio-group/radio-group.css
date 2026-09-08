@@ -1,0 +1,145 @@
+@layer rd.components {
+  rd-radio-group {
+    display: block;
+  }
+
+  /* <fieldset> の枕と罫線は消す。見出しの役割は <legend> が持つ */
+  rd-radio-group fieldset {
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+  }
+
+  /* ラベルは太字のインク（docs/brand.md §7.3）。--rd-type-label は無いので body + 太字 */
+  rd-radio-group legend {
+    padding: 0;
+    color: var(--rd-color-text-default);
+    font: var(--rd-type-body);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  rd-radio-group [part='options'] {
+    display: grid;
+    gap: var(--rd-radio-group-gap, var(--rd-space-2));
+    margin-block-start: var(--rd-space-1);
+  }
+
+  /* 文言まで含めてタップ標的にする（WCAG 2.2 Target Size）。<label> が <input> を包む契約 */
+  rd-radio-group label {
+    position: relative;
+    display: flex;
+    gap: var(--rd-space-2);
+    align-items: center;
+    min-block-size: var(--rd-sizing-target-min);
+    color: var(--rd-color-text-default);
+    line-height: var(--rd-line-height-body);
+  }
+
+  rd-radio-group input {
+    flex: none;
+    inline-size: var(--rd-space-4);
+    block-size: var(--rd-space-4);
+    accent-color: var(--rd-color-accent-default);
+  }
+
+  rd-radio-group input:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  rd-radio-group input:user-invalid {
+    outline: var(--rd-focus-ring-width) solid var(--rd-color-status-danger-default);
+  }
+
+  rd-radio-group > [part='hint'] {
+    margin-block: var(--rd-space-1) 0;
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+  }
+
+  /* 色だけに頼らない：太字と縦罫で「エラー」を形でも示す（accessibility.md 9） */
+  rd-radio-group > [part='error'] {
+    margin-block: var(--rd-space-1) 0;
+    padding-inline-start: var(--rd-space-2);
+    border-inline-start: var(--rd-focus-ring-width) solid var(--rd-color-status-danger-default);
+    color: var(--rd-color-status-danger-text);
+    font: var(--rd-type-small);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  /* 区画（セグメント）の見た目。太いピルの枕に区画を並べる（docs/brand.md §7.2）。
+     `:state()` は Newly なので @supports の中だけ（docs/baseline.md）。
+     `:state()` も `:has()` も無いブラウザでは**普通の radio に見える**（退行しない） */
+  @supports selector(:state(segmented)) {
+    rd-radio-group:state(segmented) [part='options'] {
+      display: inline-flex;
+      gap: 0;
+      padding: var(--rd-space-1);
+      border-radius: var(--rd-radius-full);
+      background: var(--rd-color-surface-sunken);
+    }
+
+    rd-radio-group:state(segmented) label {
+      justify-content: center;
+      padding-inline: var(--rd-space-4);
+      border-radius: var(--rd-radius-full);
+    }
+
+    /* 消さずに隠す（読み上げと矢印キーはネイティブのまま）。0.0625rem は 1px 相当 */
+    rd-radio-group:state(segmented) input {
+      position: absolute;
+      overflow: hidden;
+      appearance: none;
+      inline-size: 0.0625rem;
+      block-size: 0.0625rem;
+      clip-path: inset(50%);
+    }
+
+    /* 選択は面・影・太字で示す。色だけに頼らない（accessibility.md 9） */
+    rd-radio-group:state(segmented) label:has(input:checked) {
+      background: var(--rd-color-surface-raised);
+      box-shadow: var(--rd-shadow-raised);
+      font-weight: var(--rd-font-weight-bold);
+    }
+
+    /* <input> を隠したので、フォーカスの輪は区画そのものに出す */
+    rd-radio-group:state(segmented) label:has(input:focus-visible) {
+      outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+      outline-offset: var(--rd-focus-ring-offset);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      rd-radio-group:state(segmented) label {
+        transition: background-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+      }
+    }
+
+    /* 強制配色では自前の面が消えるので、ネイティブの radio 表示に戻す（checkbox の switch と同じ） */
+    @media (forced-colors: active) {
+      rd-radio-group:state(segmented) input {
+        position: static;
+        overflow: visible;
+        appearance: auto;
+        inline-size: var(--rd-space-4);
+        block-size: var(--rd-space-4);
+        clip-path: none;
+      }
+
+      rd-radio-group:state(segmented) label:has(input:checked) {
+        background: transparent;
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    rd-radio-group input:focus-visible {
+      outline-color: Highlight;
+    }
+
+    rd-radio-group > [part='error'] {
+      border-inline-start-color: MarkText;
+      color: MarkText;
+    }
+  }
+}

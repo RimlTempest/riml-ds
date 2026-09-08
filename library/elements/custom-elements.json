@@ -1013,6 +1013,235 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/radio-group/radio-group.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-radio-group",
+          "declaration": {
+            "name": "RdRadioGroup",
+            "module": "/src/radio-group/radio-group.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/radio-group/radio-group.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "択一。`<legend>` と `<label>` が包む `<input type=\"radio\">` に状態と文言を足す（ティア A、\nADR-0012）。送信・検証・矢印キーはブラウザが素で行う。`segmented` は見た目だけを区画に変え、\n無効化は `<fieldset disabled>` をそのまま使う。",
+          "name": "RdRadioGroup",
+          "cssProperties": [
+            {
+              "description": "選択肢の間隔。既定 var(--rd-space-2)",
+              "name": "--rd-radio-group-gap"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "選択肢の入れ物",
+              "name": "options"
+            },
+            {
+              "description": "補足文言",
+              "name": "hint"
+            },
+            {
+              "description": "エラー文言",
+              "name": "error"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "hint",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "hint"
+            },
+            {
+              "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "error"
+            },
+            {
+              "kind": "field",
+              "name": "segmented",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "segmented",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#touched",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#bindings",
+              "privacy": "private",
+              "type": {
+                "text": "readonly Binding[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "description": "選択はネイティブ要素が持つ。部品は委譲するだけ"
+            },
+            {
+              "kind": "method",
+              "name": "checkValidity",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#radios",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#anchor",
+              "privacy": "private",
+              "description": "検証と文言の基準にする radio。`required` は group のどれか 1 つに付いていればよい"
+            },
+            {
+              "kind": "field",
+              "name": "#setTouched",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#listeners",
+              "privacy": "private",
+              "type": {
+                "text": "Listeners"
+              },
+              "default": "{ change: this.#setTouched, blur: this.#setTouched, invalid: (event) => { event.preventDefault() this.#setTouched() }, }"
+            },
+            {
+              "kind": "field",
+              "name": "#view",
+              "privacy": "private"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "hint",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "hint"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "error"
+            },
+            {
+              "name": "segmented",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "segmented"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "segmented",
+              "description": "segmented 属性が付いている（見た目だけ区画になる）"
+            },
+            {
+              "name": "invalid",
+              "description": "検証に通っていない（操作後、または error 属性がある）"
+            },
+            {
+              "name": "errored",
+              "description": "error 属性で文言を強制表示している"
+            },
+            {
+              "name": "hinted",
+              "description": "hint がある"
+            },
+            {
+              "name": "filled",
+              "description": "どれかを選んでいる"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "択一。<fieldset><legend> と <input type=radio> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-radio-group",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdRadioGroup",
+          "declaration": {
+            "name": "RdRadioGroup",
+            "module": "src/radio-group/radio-group.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/select/select.define.ts",
       "declarations": [],
       "exports": [
@@ -1239,6 +1468,272 @@
           "declaration": {
             "name": "RdSelect",
             "module": "src/select/select.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/slider/slider.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-slider",
+          "declaration": {
+            "name": "RdSlider",
+            "module": "/src/slider/slider.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/slider/slider.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "連続値を 1 つ。`<label for>` と `<input type=\"range\">`（任意で `<output for>`）を包む（ティア A、\nADR-0012）。値・範囲・刻み・キーボード操作はネイティブが持ち、部品がするのは塗りの割合を\n`--rd-slider-fill` に写すことと `<output>` に現在値を書くことだけ。",
+          "name": "RdSlider",
+          "cssProperties": [
+            {
+              "description": "塗りの割合（0–1）。部品が書く。読む側は上書きしない",
+              "name": "--rd-slider-fill"
+            },
+            {
+              "description": "縦向きのときの長さ。既定 10rem",
+              "name": "--rd-slider-block-size"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "塗りのトラック（装飾。aria-hidden）",
+              "name": "track"
+            },
+            {
+              "description": "トラックの塗り",
+              "name": "fill"
+            },
+            {
+              "description": "補足文言",
+              "name": "hint"
+            },
+            {
+              "description": "エラー文言",
+              "name": "error"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "hint",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "hint"
+            },
+            {
+              "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "error"
+            },
+            {
+              "kind": "field",
+              "name": "unit",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "unit"
+            },
+            {
+              "kind": "field",
+              "name": "orientation",
+              "privacy": "public",
+              "type": {
+                "text": "SliderOrientation"
+              },
+              "default": "'horizontal'",
+              "attribute": "orientation",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#control",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLInputElement | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#touched",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#binding",
+              "privacy": "private",
+              "type": {
+                "text": "Binding | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#observer",
+              "privacy": "private",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "description": "値はネイティブ要素が持つ。部品は委譲するだけ"
+            },
+            {
+              "kind": "field",
+              "name": "valueAsNumber",
+              "type": {
+                "text": "number"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "#redraw",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#setTouched",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#listeners",
+              "privacy": "private",
+              "type": {
+                "text": "Listeners"
+              },
+              "default": "{ input: this.#redraw, change: this.#setTouched, blur: this.#setTouched, invalid: (event) => { event.preventDefault() this.#setTouched() }, }"
+            },
+            {
+              "kind": "field",
+              "name": "#view",
+              "privacy": "private"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "hint",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "hint"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "error"
+            },
+            {
+              "name": "unit",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "unit"
+            },
+            {
+              "name": "orientation",
+              "type": {
+                "text": "SliderOrientation"
+              },
+              "default": "'horizontal'",
+              "fieldName": "orientation"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "vertical",
+              "description": "orientation=\"vertical\""
+            },
+            {
+              "name": "invalid",
+              "description": "検証に通っていない（操作後、または error 属性がある）"
+            },
+            {
+              "name": "errored",
+              "description": "error 属性で文言を強制表示している"
+            },
+            {
+              "name": "hinted",
+              "description": "hint がある"
+            },
+            {
+              "name": "filled",
+              "description": "値がある（range は常に値を持つ）"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "連続値を 1 つ。<label for> と <input type=range> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-slider",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdSlider",
+          "declaration": {
+            "name": "RdSlider",
+            "module": "src/slider/slider.element.ts"
           }
         }
       ]

@@ -1,0 +1,163 @@
+@layer rd.components {
+  /* 行 1 = ラベル、行 2 = トラックと range を重ねる、行 3 = <output>、行 4/5 = hint / error。
+     DOM の順（部品が足すノードは末尾）に依らず置けるよう、行は明示的に指定する */
+  rd-slider {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    gap: var(--rd-slider-gap, var(--rd-space-1));
+  }
+
+  rd-slider > label {
+    grid-row: 1;
+    color: var(--rd-color-text-default);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  /* トラックは太いピル（docs/brand.md §7.5）。塗りは --rd-slider-fill（部品が書く）で決まる。
+     つまみの半径ぶんだけ内側に寄せて、ネイティブのつまみの動く幅と端をそろえる */
+  rd-slider > [part='track'] {
+    display: grid;
+    grid-row: 2;
+    grid-column: 1;
+    align-items: center;
+    block-size: var(--rd-space-3);
+    margin-inline: calc(var(--rd-space-6) / 2);
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-surface-sunken);
+  }
+
+  /* 論理プロパティなので RTL では自動で右から伸びる。JS が無ければ 0（正しい縮退） */
+  rd-slider [part='fill'] {
+    inline-size: calc(var(--rd-slider-fill, 0) * 100%);
+    block-size: 100%;
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-accent-default);
+  }
+
+  /* range 自身のトラックは透かし、つまみだけを描く。トラックの上に重ねる */
+  rd-slider > input {
+    position: relative;
+    z-index: 1;
+    grid-row: 2;
+    grid-column: 1;
+    appearance: none;
+    inline-size: 100%;
+    min-block-size: var(--rd-space-6);
+    margin: 0;
+    background: transparent;
+  }
+
+  /* つまみは radius.full（brand.md §4）。24px 以上の標的（WCAG 2.5.8） */
+  rd-slider > input::-webkit-slider-thumb {
+    appearance: none;
+    inline-size: var(--rd-space-6);
+    block-size: var(--rd-space-6);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-strong);
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-surface-raised);
+    box-shadow: var(--rd-shadow-raised);
+  }
+
+  rd-slider > input::-moz-range-thumb {
+    inline-size: var(--rd-space-6);
+    block-size: var(--rd-space-6);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-strong);
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-surface-raised);
+    box-shadow: var(--rd-shadow-raised);
+  }
+
+  /* 擬似要素に outline が効かないエンジンがあるので、輪は <input> 自身に出して外へずらす */
+  rd-slider > input:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  rd-slider > output {
+    grid-row: 3;
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+    font-variant-numeric: tabular-nums;
+  }
+
+  rd-slider > [part='hint'] {
+    grid-row: 4;
+    margin: 0;
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+  }
+
+  /* 色だけに頼らない：太字と縦罫で「エラー」を形でも示す（accessibility.md 9） */
+  rd-slider > [part='error'] {
+    grid-row: 5;
+    margin: 0;
+    padding-inline-start: var(--rd-space-2);
+    border-inline-start: var(--rd-focus-ring-width) solid var(--rd-color-status-danger-default);
+    color: var(--rd-color-status-danger-text);
+    font: var(--rd-type-small);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  /* 縦向き。Vertical form controls は Baseline 2024（docs/baseline.md）。
+     `direction: rtl` で下が最小・上が最大になる。`:state()` は Newly なので @supports の中だけ */
+  @supports selector(:state(vertical)) {
+    rd-slider:state(vertical) {
+      display: inline-grid;
+      grid-template-rows: auto 1fr auto;
+      justify-items: center;
+      block-size: var(--rd-slider-block-size, 10rem);
+    }
+
+    rd-slider:state(vertical) > input {
+      writing-mode: vertical-lr;
+      direction: rtl;
+      inline-size: auto;
+      block-size: 100%;
+      min-inline-size: var(--rd-space-6);
+    }
+
+    rd-slider:state(vertical) > [part='track'] {
+      align-items: end;
+      inline-size: var(--rd-space-3);
+      block-size: 100%;
+      margin-block: calc(var(--rd-space-6) / 2);
+      margin-inline: 0;
+    }
+
+    rd-slider:state(vertical) [part='fill'] {
+      inline-size: 100%;
+      block-size: calc(var(--rd-slider-fill, 0) * 100%);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    rd-slider [part='fill'] {
+      transition: inline-size var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+    }
+  }
+
+  /* 強制配色では自前のトラックを消し、ネイティブの range に戻す（rd-meter と同じ扱い） */
+  @media (forced-colors: active) {
+    rd-slider > input {
+      appearance: auto;
+    }
+
+    rd-slider > [part='track'] {
+      display: none;
+    }
+
+    rd-slider > input:focus-visible {
+      outline-color: Highlight;
+    }
+
+    rd-slider > [part='error'] {
+      border-inline-start-color: MarkText;
+      color: MarkText;
+    }
+  }
+}
