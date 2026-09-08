@@ -13,6 +13,10 @@ import {
   checkboxOptionMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/checkbox-group'
 import {
+  comboboxMarkup,
+  comboboxOptionMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/combobox'
+import {
   inputOtpMarkup,
   otpCellsMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/input-otp'
@@ -504,6 +508,59 @@ export const toggleSuite = (framework: string): void => {
       await expect
         .poll(async () => toggle.evaluate((element) => element.matches(':state(pressed)')))
         .toBe(false)
+    })
+  })
+}
+
+/** 4 フレームワークで同じ候補を出す（`comboboxOptionMarkup` が唯一の正） */
+const READING_OPTIONS = [
+  comboboxOptionMarkup({ value: 'kana', label: 'かな' }),
+  comboboxOptionMarkup({ value: 'kanji', label: 'かんじ' }),
+  comboboxOptionMarkup({ value: 'romaji', label: 'ローマ字' }),
+].join('')
+
+/**
+ * `rd-combobox`（plan 025）。候補は `<datalist>` に書くので、JS が無ければネイティブの
+ * 吹き出しがそのまま候補を出す。JS が来たら APG の combobox パターンに置き換わる。
+ */
+export const comboboxSuite = (framework: string): void => {
+  test.describe(`${framework}: combobox`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-combobox',
+          comboboxMarkup({
+            id: 'reading',
+            listId: 'reading-list',
+            label: '読み',
+            name: 'reading',
+            children: READING_OPTIONS,
+          }),
+        )
+      })
+
+      test('JS 無しでも <input list> と <datalist> の候補がそのまま残る', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.getByLabel('読み')).toHaveAttribute('list', 'reading-list')
+        await expect(page.locator('#reading-list > option')).toHaveCount(3)
+      })
+    })
+
+    test('↓ で候補が開き、Enter で値が入る', async ({ page }) => {
+      await page.goto('/')
+      const control = page.getByRole('combobox', { name: '読み' })
+      const options = page.locator("rd-combobox [role='option']")
+      await control.click()
+      await page.keyboard.press('ArrowDown')
+      await expect(control).toHaveAttribute('aria-expanded', 'true')
+      await expect(options).toHaveCount(3)
+      await page.keyboard.press('Enter')
+      await expect(control).toHaveValue('kana')
+      await expect(control).toHaveAttribute('aria-expanded', 'false')
     })
   })
 }

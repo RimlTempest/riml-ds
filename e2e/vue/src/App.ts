@@ -3,6 +3,7 @@ import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-vue'
 import {
   RdCheckbox,
   RdCheckboxGroup,
+  RdCombobox,
   RdInputOtp,
   RdMenu,
   RdMeter,
@@ -21,6 +22,13 @@ const countries = () => [
   h('option', { value: '' }, '選択してください'),
   h('option', { value: 'jp' }, '日本'),
   h('option', { value: 'us' }, 'アメリカ'),
+]
+
+/** 4 フレームワークで同じ候補を出す。候補の唯一の出どころは `<datalist>` */
+const readings = () => [
+  h('option', { value: 'kana' }, 'かな'),
+  h('option', { value: 'kanji' }, 'かんじ'),
+  h('option', { value: 'romaji' }, 'ローマ字'),
 ]
 
 /** React / Svelte / Astro と同じ 1 ページ。`#country-echo` だけ Vue の v-model 用（plan 011） */
@@ -164,6 +172,11 @@ export const App = defineComponent(
             required: true,
           }),
         ]),
+        h(
+          RdCombobox,
+          { id: 'reading', listId: 'reading-list', label: '読み', name: 'reading' },
+          readings,
+        ),
         h(RdToggle, { label: '太字', pressed: 'false' }),
         h('rd-live-region'),
       ])

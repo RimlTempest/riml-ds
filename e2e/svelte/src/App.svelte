@@ -4,6 +4,7 @@
   import {
     RdCheckbox,
     RdCheckboxGroup,
+    RdCombobox,
     RdInputOtp,
     RdMenu,
     RdMeter,
@@ -84,6 +85,11 @@
       required
     />
   </RdInputOtp>
+  <RdCombobox id="reading" listId="reading-list" label="読み" name="reading">
+    <option value="kana">かな</option>
+    <option value="kanji">かんじ</option>
+    <option value="romaji">ローマ字</option>
+  </RdCombobox>
   <RdToggle label="太字" pressed="false" />
   <rd-live-region></rd-live-region>
 </main>

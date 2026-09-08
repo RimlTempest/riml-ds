@@ -103,6 +103,19 @@
       "default": "./dist/checkbox-group/checkbox-group.define.js"
     },
     "./experimental/checkbox-group/style.css": "./dist/checkbox-group/checkbox-group.css",
+    "./experimental/combobox": {
+      "types": "./dist/experimental/combobox/index.d.ts",
+      "default": "./dist/experimental/combobox/index.js"
+    },
+    "./experimental/combobox/contract": {
+      "types": "./dist/combobox/combobox.contract.d.ts",
+      "default": "./dist/combobox/combobox.contract.js"
+    },
+    "./experimental/combobox/define": {
+      "types": "./dist/combobox/combobox.define.d.ts",
+      "default": "./dist/combobox/combobox.define.js"
+    },
+    "./experimental/combobox/style.css": "./dist/combobox/combobox.css",
     "./experimental/meter": {
       "types": "./dist/experimental/meter/index.d.ts",
       "default": "./dist/experimental/meter/index.js"

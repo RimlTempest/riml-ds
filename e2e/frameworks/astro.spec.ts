@@ -1,4 +1,5 @@
 import {
+  comboboxSuite,
   formWave4Suite,
   frameworkSuite,
   meterAndWindowSuite,
@@ -13,3 +14,4 @@ radioGroupAndSliderSuite('astro')
 navigationSuite('astro')
 formWave4Suite('astro')
 toggleSuite('astro')
+comboboxSuite('astro')
