@@ -1,5 +1,5 @@
 # Storybook / registry.json / DESIGN.md を GitHub Pages に出す（ADR-0011 決定 2）。
-# 公開先は https://rimltempest.github.io/riml-ds/。
+# 公開先は https://www.riml.work/riml-ds/（ユーザーサイトの CNAME 配下に出るため github.io ではない）。
 #
 # **main へのマージ時だけ**デプロイする（ADR-0011 決定 7）。PR のプレビューは作らない
 # （環境が 1 つしかない）。PR では ci.yml の artifact（VRT の差分画像・Playwright レポート）で見る。

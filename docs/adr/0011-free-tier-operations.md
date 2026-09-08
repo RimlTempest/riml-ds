@@ -20,7 +20,7 @@ GitHub の public リポジトリは Actions の実行時間が無制限、Pages
    > Pages 配線の直前に public へ切り替える。private の間は Actions 2,000 分/月に収める（`release.yml` の
    > `paths` フィルタ、`affected.sh`、Docker ジョブの `timeout-minutes`）。切替はユーザーが
    > `gh repo edit --visibility public` で行う（plan 010 Step 5）。
-2. **Storybook / registry.json / DESIGN.md の配布は GitHub Pages**（`https://rimltempest.github.io/riml-ds/`）。
+2. **Storybook / registry.json / DESIGN.md の配布は GitHub Pages**（`https://www.riml.work/riml-ds/`。ユーザーサイトの CNAME 配下）。
    カスタムドメインは任意（後で `ds.riml4i.com` を CNAME しても費用ゼロ）。
 3. **VRT は Playwright + Docker、ベースラインをコミット**（ADR-0007）。Chromatic は使わない。
 4. **npm は public scope、Trusted Publishing**（ADR-0009）。private packages は持たない。

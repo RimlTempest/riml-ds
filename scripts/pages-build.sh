@@ -35,7 +35,7 @@ node -e '
   const fs = require("node:fs")
   const path = require("node:path")
   const registry = JSON.parse(fs.readFileSync("tools/cem/registry.json", "utf8"))
-  const base = "https://rimltempest.github.io/riml-ds/r"
+  const base = "https://www.riml.work/riml-ds/r"
   const typeOf = (file) => (file.endsWith(".css") ? "registry:style" : "registry:file")
   for (const entry of registry) {
     const files = entry.files.map((file) => ({
