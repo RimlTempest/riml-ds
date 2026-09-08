@@ -42,6 +42,31 @@ const FULL = raw(`
 }
 `)
 
+const SHADOW = raw(`
+:root {
+  --rd-color-surface-default: oklch(97% 0.018 78.24);
+  --rd-shadow-raised: 0.25rem 0.25rem 0rem 0rem oklch(22% 0.03 270.31 / 0.16);
+}
+@media (prefers-color-scheme: dark) {
+:root {
+  --rd-color-surface-default: oklch(22% 0.03 270.31);
+  --rd-shadow-raised: 0.25rem 0.25rem 0rem 0rem oklch(0% 0 0 / 0.5);
+}
+}
+@media (prefers-contrast: more) {
+:root {
+  --rd-color-surface-default: oklch(97% 0.018 78.24);
+  --rd-shadow-raised: 0.25rem 0.25rem 0rem 0rem oklch(22% 0.03 270.31 / 0.16);
+}
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+:root {
+  --rd-color-surface-default: oklch(22% 0.03 270.31);
+  --rd-shadow-raised: 0.25rem 0.25rem 0rem 0rem oklch(0% 0 0 / 0.5);
+}
+}
+`)
+
 describe('foldLightDark', () => {
   it('light と dark の差を light-dark() に畳み、同じ値はそのまま残す', () => {
     const result = foldLightDark(FULL)
@@ -66,6 +91,46 @@ describe('foldLightDark', () => {
     expect(result.value).toContain('[data-density="compact"] {')
     expect(result.value).toContain('--rd-a: 0.75rem;')
     expect(result.value).not.toContain('green')
+  })
+
+  it('ライトとダークで色だけが違う shadow は、末尾の色だけを light-dark() で包む', () => {
+    const result = foldLightDark(SHADOW)
+    expect(result.ok).toBe(true)
+    if (!result.ok) {
+      return
+    }
+    expect(result.value).toContain(
+      '--rd-shadow-raised: 0.25rem 0.25rem 0rem 0rem'
+        + ' light-dark(oklch(22% 0.03 270.31 / 0.16), oklch(0% 0 0 / 0.5));',
+    )
+  })
+
+  it('寸法まで違う shadow は今までどおり値全体を包む', () => {
+    const result = foldLightDark(
+      SHADOW.replace(
+        '0.25rem 0.25rem 0rem 0rem oklch(0% 0 0 / 0.5)',
+        '0.5rem 0.5rem 0rem 0rem oklch(0% 0 0 / 0.5)',
+      ),
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) {
+      return
+    }
+    expect(result.value).toContain(
+      '--rd-shadow-raised: light-dark(0.25rem 0.25rem 0rem 0rem oklch(22% 0.03 270.31 / 0.16),'
+        + ' 0.5rem 0.5rem 0rem 0rem oklch(0% 0 0 / 0.5));',
+    )
+  })
+
+  it('色そのものの変数は値全体が light-dark() のまま（接頭辞が無い）', () => {
+    const result = foldLightDark(SHADOW)
+    expect(result.ok).toBe(true)
+    if (!result.ok) {
+      return
+    }
+    expect(result.value).toContain(
+      '--rd-color-surface-default: light-dark(oklch(97% 0.018 78.24), oklch(22% 0.03 270.31));',
+    )
   })
 
   it('ダークにしか無い変数は err（dark-only）になる', () => {
