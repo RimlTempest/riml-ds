@@ -74,6 +74,7 @@ export const RdButton = ({
       'button.tsx',
       'dialog.tsx',
       'menu.tsx',
+      'note.tsx',
       'select.tsx',
       'text-field.tsx',
       'toggle.tsx',
@@ -140,6 +141,7 @@ export const RdButton = ({
       'button.tsx',
       'dialog.tsx',
       'menu.tsx',
+      'note.tsx',
       'select.tsx',
       'text-field.tsx',
       'toggle.tsx',
@@ -148,6 +150,7 @@ export const RdButton = ({
       'client/dialog.tsx',
       'client/live-region.tsx',
       'client/menu.tsx',
+      'client/note.tsx',
       'client/select.tsx',
       'client/text-field.tsx',
       'client/toggle.tsx',
@@ -157,5 +160,13 @@ export const RdButton = ({
       'client.ts',
       'client/experimental.ts',
     ])
+  })
+
+  it('ハイフンを含むホスト属性はオブジェクトのキーと JSX 型で引用する', () => {
+    const source = find('note.tsx')
+    expect(source).toContain(`{...(emptyText === undefined ? {} : { 'empty-text': emptyText })}`)
+    expect(source).not.toContain('{ empty-text:')
+    const jsx = find('jsx.ts')
+    expect(jsx).toContain(`'rd-note': RdElementAttrs<{ 'empty-text'?: string | undefined }>`)
   })
 })

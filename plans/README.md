@@ -4,7 +4,7 @@
 （executor は会話の文脈を持たない前提）。テンプレートは qrcc の
 `.claude/skills/improve/references/plan-template.md`。
 
-**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）、017〜018 は `b501378`（2026-09-08。窓の丸はボタン = ADR-0014）、019〜020 は `da4200a`（2026-09-08。017・018 マージ後）、021〜022 は `9cfed6d`（2026-09-08。019 マージ後。020 と並行）、023 は `c661a96`（2026-09-08。022 マージ後。021 と並行）、024・027 は `b61ee24`（2026-09-08。023 マージ後。並行）、025・026 は `7684d09`（2026-09-08。024・027 マージ後。並行）。028・029・030 は `fa1835c`（2026-09-08。025・026 マージ後。並行）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
+**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）、017〜018 は `b501378`（2026-09-08。窓の丸はボタン = ADR-0014）、019〜020 は `da4200a`（2026-09-08。017・018 マージ後）、021〜022 は `9cfed6d`（2026-09-08。019 マージ後。020 と並行）、023 は `c661a96`（2026-09-08。022 マージ後。021 と並行）、024・027 は `b61ee24`（2026-09-08。023 マージ後。並行）、025・026 は `7684d09`（2026-09-08。024・027 マージ後。並行）。028・029・030 は `fa1835c`（2026-09-08。025・026 マージ後。並行）。031・032・033 は `__MAIN_SHA__`（2026-09-09。028・029・030 マージ後。並行）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
 `system/guidelines/**`, `.claude/skills/riml-ds-*`）が仕様の正で、計画はそれを手順に落としたもの。
 矛盾を見つけたら計画側を直すのではなく STOP して advisor に返す。
 
@@ -80,6 +80,9 @@
 | 028 | [rd-command（検索欄 + グループ化された項目のコマンドパレット。`_shared/text-filter.ts` へ絞り込みを共通化）](028-command.md) | P1 | M | 025 | IN PROGRESS |
 | 029 | [rd-data-table（`<table class="rd-table">` を包み `th[data-sort]` でクライアント並べ替え）](029-data-table-sort.md) | P1 | M | 022 | IN PROGRESS |
 | 030 | [rd-splitter（`role="separator"` のハンドルで 2 面をドラッグ・キーボードで分割するティア B）](030-splitter.md) | P2 | M | 020 | IN PROGRESS |
+| 031 | [rd-toggle-group（`<fieldset>` + `<button aria-pressed>` の列。単一／複数選択と roving focus）](031-toggle-group.md) | P1 | M | 024 | TODO |
+| 032 | [rd-carousel（`<ul><li>` を包み「前へ／次へ」と枚数を足す。scroll-snap + IntersectionObserver）](032-carousel.md) | P2 | M | 020 | TODO |
+| 033 | [rd-calendar（`<label>` + `<input type="date">` を包み、JS で `role="grid"` の月表を描くティア B）](033-calendar.md) | P1 | L | 023 | TODO |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
@@ -116,6 +119,12 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - **全部品を light DOM にする**: 包含が要る部品（dialog / toast / tooltip）は shadow のほうが安全。
   ティア C を残す（ADR-0012）
 - **npm org（`@riml-ds`）**: ユーザー名 scope `@rimltempest/riml-ds-*` で足りる。org は管理対象が増える
+- **Chart（shadcn）**: 図表ライブラリの選定はデザインシステムの外。トークン（色・字）を渡す口だけ `DESIGN.md` に書く
+- **Progress / Switch / Textarea / Sheet / Drawer を別部品にする**: それぞれ `rd-meter`（`<progress>`）/ `rd-checkbox switch` /
+  `rd-text-field`（`<textarea>`）/ `rd-dialog placement` が既に受けている。名前を増やさない
+- **`Intl.Locale.prototype.getWeekInfo` で週の始まりを決める**: TS 7 の lib に型が無く Firefox も未実装。`rd-calendar` は
+  `week-start` 属性で受ける（plan 033）
+- **`Temporal`**: Safari 未対応。日付は `Date.UTC` の往復だけで扱う（plan 033）
 - **`@wc-toolkit/*` の生成器を使う**: React（`@lit/react`）以外は入力（CEM）から自前で出すほうが
   RSC 用の markup コンポーネントとティア情報を扱いやすい（plan 006）
 - **Customizable `<select>`（`appearance: base-select`）**: Baseline 未到達。rd-select はネイティブ

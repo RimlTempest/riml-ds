@@ -66,4 +66,12 @@ export { default as RdToggle } from './toggle.svelte'
     expect(source).toContain(`'rd-live-region':`)
     expect(find('index.js')).toContain(`export { default as RdButton } from './button.svelte'`)
   })
+
+  it('ハイフンを含むホスト属性はオブジェクトのキーと svelteHTML の型で引用する', () => {
+    const source = find('note.svelte')
+    expect(source).toContain(`{...(emptyText === undefined ? {} : { 'empty-text': emptyText })}`)
+    expect(source).not.toContain('{ empty-text:')
+    const types = find('elements.d.ts')
+    expect(types).toContain(`      'empty-text'?: string`)
+  })
 })

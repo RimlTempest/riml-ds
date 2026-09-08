@@ -94,6 +94,11 @@ a11y 検査は addon-a11y が全 story に自動で当てる。除外は `parame
 - `sleep` を書かない。`await el.updateComplete`、`expect.poll`、`waitFor`。
 - アニメーションは既定で無い（`prefers-reduced-motion` 既定 off）ので待つ必要がない。
   VRT でも `animations: 'disabled'`。
+- 例外は `@starting-style` の入場遷移を持つ部品（dialog）。addon-a11y の axe が遷移の途中を
+  掴むとコントラスト違反に見える。**`document.getAnimations()` が空かだけで判断しない**
+  （遷移がまだ始まっていない瞬間も空を返す）。`waitFor` で「遷移の結果」を見る:
+  開いている枠は computed `opacity === '1'`、閉じた枠は `display === 'none'`
+  （`dialog.stories.ts` の `settled()`）。
 - テストごとに新しい要素を作る。`document.body` に残さない（`fixture` が cleanup を登録）。
 - VRT の差分が出たら、**まず意図した変更か**を見る。意図どおりなら `bun run vrt:update`
   （Docker 内）。macOS で撮った画像はコミットしない（guard が落とす）。

@@ -131,7 +131,7 @@ export const computeStates = (input: { dragging: boolean; direction: SplitterDir
 
 ### 3. DOM 層（`splitter.dom.ts`）
 
-- `DragController { wire(handle: HTMLElement): void; dispose(): void }` — `pointerdown`（`button === 0` のみ。`setPointerCapture`、`onStart()`）、`pointermove`（`positionFromPointer` → `onMove(position)`）、`pointerup` / `pointercancel`（`releasePointerCapture`、`onEnd()`）
+- `dragController(callbacks): DragController`（`DragController` は **型**（`{ wire(handle: HTMLElement): void; dispose(): void }`）で、実装は `menu.dom.ts` の `contextController` と同じ**関数 + クロージャ**。`class` は `*.element.ts` 以外に書けない — ADR-0005）— `pointerdown`（`button === 0` のみ。`setPointerCapture`、`onStart()`）、`pointermove`（`positionFromPointer` → `onMove(position)`）、`pointerup` / `pointercancel`（`releasePointerCapture`、`onEnd()`）
 - `isRtl(host)`: `host.matches(':dir(rtl)')`
 - `hostRect(host, direction)`: `{ start, size }` を `getBoundingClientRect()` から
 - `applyPosition(host, position)`: `host.style.setProperty('--rd-splitter-position', `${position}%`)`
@@ -140,7 +140,7 @@ export const computeStates = (input: { dragging: boolean; direction: SplitterDir
 
 - properties: `label: { reflect: true }`、`direction: { reflect: true }`、`position: { type: Number, reflect: true }`（既定 50）、`min: { type: Number }`（20）、`max: { type: Number }`（80）
 - `render()`: 上の shadow 構造。つまみに `role="separator"` `tabindex="0"` `aria-orientation` `aria-valuenow=${position}` `aria-valuemin` `aria-valuemax` `aria-label=${label}` `@keydown`
-- `firstUpdated`: `checkContract` → `malformed`、`DragController.wire(handle)`。`updated`: `position` を `clampPosition` で正規化（違えば書き戻す）→ `applyPosition` → `syncStates`
+- `firstUpdated`: `checkContract` → `malformed`、`dragController(…).wire(handle)`。`updated`: `position` を `clampPosition` で正規化（違えば書き戻す）→ `applyPosition` → `syncStates`
 - `#setPosition(next, byUser)`: 変わったときだけ `position` を更新し、`byUser` なら `rd-resize` を発火（`bubbles: true, composed: true`）
 - JSDoc: `@summary` / `@status experimental` / `@pe B` / `@slot start|end` / `@csspart start|handle|end` / `@cssprop --rd-splitter-size` / `@event rd-resize` / `@state dragging|vertical|malformed` / `@attr label|direction|position|min|max`
 

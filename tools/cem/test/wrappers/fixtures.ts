@@ -1,4 +1,4 @@
-/** 7 部品の CEM 断片と契約。生成器のテストが共有する（実物の写し）。`rd-select` / `rd-menu` / `rd-toggle` が `@status experimental` */
+/** 8 部品の CEM 断片と契約。生成器のテストが共有する（実物の写し）。`rd-select` / `rd-menu` / `rd-toggle` が `@status experimental` */
 import type { Package } from 'custom-elements-manifest/schema'
 import type { Contract } from '../../src/wrappers/core/common.js'
 
@@ -46,6 +46,17 @@ export const manifest: Package = {
             { name: 'hint', type: { text: 'string' } },
             { name: 'error', type: { text: 'string' } },
           ],
+        }),
+      ],
+    },
+    {
+      kind: 'javascript-module',
+      path: 'src/note/note.element.js',
+      declarations: [
+        declaration('rd-note', {
+          pe: 'A',
+          // ホスト属性がハイフンを含む場合。react / svelte / vue のどの生成器もキーを引用しないと構文エラーになる
+          attributes: [{ name: 'empty-text', type: { text: 'string' } }],
         }),
       ],
     },
@@ -220,6 +231,16 @@ export const contracts: Readonly<Record<string, Contract>> = {
           children: [{ prop: 'label' }],
         },
       ],
+    },
+  },
+  note: {
+    pe: 'A',
+    roles: { body: ':scope > p' },
+    required: ['body'],
+    tree: {
+      tag: 'rd-note',
+      attrs: { 'empty-text': '$emptyText' },
+      children: [{ tag: 'p', children: [{ prop: 'body' }] }],
     },
   },
   dialog: {
