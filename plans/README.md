@@ -73,7 +73,7 @@
 | 021 | [フォーム第 4 波（rd-toggle・rd-checkbox-group・rd-input-otp・.rd-button-group）](021-form-wave4.md) | P1 | L | 019 | DONE（`5588b47`。rd-toggle は STOP → 024） |
 | 022 | [面と待ち（.rd-card / .rd-empty / .rd-spinner / .rd-accordion / .rd-carousel / .rd-scroll-area / .rd-aspect、rd-dialog の alert / placement）](022-surfaces-and-feedback.md) | P1 | L | 017, 018 | DONE（`4f9b19e`） |
 | 023 | [ラッパー生成器の追随（名前つき raw → 名前つき slot、astro exports 生成、frameworks e2e に tabs / menu / popover）](023-wrappers-named-slots.md) | P1 | M | 020 | DONE（`887beb1`） |
-| 024 | [rd-toggle（021 の STOP 分）、rd-menu の閉じたメニューが見えるバグ、frameworks e2e の穴埋め](024-toggle-and-menu-fix.md) | P1 | M | 023 | IN PROGRESS |
+| 024 | [rd-toggle（021 の STOP 分）、rd-menu の閉じたメニューが見えるバグ、frameworks e2e の穴埋め](024-toggle-and-menu-fix.md) | P1 | M | 023 | DONE（`fb0c2c2`） |
 | 027 | [ダークの面を 4 段にする（neutral.750 / 950、ダークでも見える影）](027-tokens-dark-surfaces.md) | P1 | M | 014 | DONE（`631000d`） |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
@@ -316,4 +316,15 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - **VRT の閾値の問題**: `threshold: 0.05`（YIQ）では dark の sunken `#151a29 → #0b0f1a` / hover `#232839 → #293042` の差が拾えず、面の変更で baseline が更新されなかった（更新されたのは影が出た 58 枚だけ）。面の段差は隣接コントラスト比（sunken↔default 1.103、raised↔hover 1.108）で確認。閾値の見直しは既存の課題（VRT 1024 threshold）と一緒に扱う
 - `bunx oxfmt docs/*.md` は Markdown が対象外で動かない（既知）。手で体裁を揃えた
 - 検証（worktree）: check 0、test 1201 passed / 1 skipped、a11y 22 passed、vrt 1012 passed、release:check 0（tokens.css 1.66 kB brotli）、guard 0
+
+### 024 の実行メモ（2026-09-08）
+
+- `feat/form-wave5` を `fb0c2c2` で `--no-ff` マージ（executor 6 コミット + `9084acb chore(merge)`）。027 と並行。main（027）を取り込むときに dark の `components-menu--{closed,variants}` 4 枚がコンフリクト → 024 側（閉じた状態＝バグ修正後）を採用し、その後 `bash scripts/vrt.sh` 1055 passed で差分無しを確認
+- `rd-toggle`（experimental、ティア A）: 021 で退避したコードをテスト → 実装の順で入れ直し、`build → gen` で 4 ラッパーが出た（vue の `'aria-pressed'` 引用、react の `'true' | 'false'`、astro の exports は生成器が追加）。`toggle/define` 6.05 kB / 12 kB
+- 退避版への手当て: `vi.fn<(event: Event) => void>()`（`vitest/require-mock-type-parameters`）、`:hover:where(:enabled)`（詳細度 0,3,0）、JSDoc「載せたい」→「載せる」（MCP の 2-gram サジェストが `…したい` に誤ヒットして `suggest.test.ts` が落ちた）
+- レビュー指摘 1 件を修正（`30a6999`）: 強制配色で押下（内側の細い Highlight の輪）とフォーカスが同じ形になっていた → `:focus-visible` を完全な `outline` 一括指定に。CSSOM を読むテストを追加
+- 計画からの逸脱: `Menu/Closed` story は既に存在し（`d5aca33`）、そのベースラインがバグの画（閉じているのにリストが出ている）だった。`Variants` も閉じた story。この 8 枚（light/dark × 360/1024 × 2）だけ変わり、開いた状態の画像は不変 → STOP 条件には当てず続行。**`Menu/Variants` は閉じた 2 つのトリガーだけになり `placement` の違いが画に出ない**（story の見直しは advisor の宿題）
+- ラッパーは `pressed` を既定 `'false'` にしない（計画の記述が誤り）。4 アプリで `pressed="false"` を明示
+- 検証（main マージ前の worktree、027 込み）: check 0、test 1235 passed / 1 skipped、e2e:frameworks 110 passed（98 → 110）、pe 66、a11y 23、vrt 1055、release:check 0、guard 0
+- 宿題（advisor）: `riml-ds-element` skill に「`[popover]` を持つ部品は通常状態に `display` を書かない」「raw の `children` は既定 slot、他は名前つき slot」を追記。`scaffold:element` が `*.contract.test.ts` を作らない（skill の構成と 1 本ずれ）
 
