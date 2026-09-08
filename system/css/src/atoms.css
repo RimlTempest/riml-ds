@@ -1,0 +1,485 @@
+@layer rd.components {
+  /* JS が要らない小さなパターン（ADR-0012 §6）。部品にせず CSS のクラスで出す。
+     各クラスの先頭に想定マークアップを書いてある — これが CSS 版の「契約」で、
+     読み上げに要る属性（aria-label / aria-hidden / role / scope）はそこに書いてある。
+     色だけで意味を伝えるものは 1 つも無い（必ず文字か属性が付く）。 */
+
+  /* 短い語で数や状態を出すピル。色は補助で、意味は必ず文字が持つ。
+     <span class="rd-badge" data-tone="success">3 件</span> */
+  .rd-badge {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--rd-space-6);
+    padding-inline: var(--rd-space-2);
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-surface-sunken);
+    color: var(--rd-color-text-default);
+    font: var(--rd-type-small);
+    font-weight: var(--rd-font-weight-bold);
+    white-space: nowrap;
+  }
+
+  /* 文字を載せる面なので brand.* は使わない（brand.md §9）。文字色は対応する on-* */
+  .rd-badge[data-tone='accent'] {
+    background: var(--rd-color-accent-default);
+    color: var(--rd-color-text-on-accent);
+  }
+
+  .rd-badge[data-tone='success'] {
+    background: var(--rd-color-status-success-default);
+    color: var(--rd-color-text-on-status);
+  }
+
+  .rd-badge[data-tone='warning'] {
+    background: var(--rd-color-status-warning-default);
+    color: var(--rd-color-text-on-status);
+  }
+
+  .rd-badge[data-tone='danger'] {
+    background: var(--rd-color-status-danger-default);
+    color: var(--rd-color-text-on-status);
+  }
+
+  .rd-badge[data-tone='info'] {
+    background: var(--rd-color-status-info-default);
+    color: var(--rd-color-text-on-status);
+  }
+
+  /* 通知の点。点は装飾で、件数と意味は必ず文字で別に出す（aria-label や隣の文字）。
+     <button type="button" class="rd-icon-button rd-has-dot" aria-label="通知（3 件）">
+       <svg aria-hidden="true">…</svg><span class="rd-dot" aria-hidden="true"></span>
+     </button> */
+  .rd-has-dot {
+    position: relative;
+  }
+
+  .rd-dot {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    inline-size: 0.625rem;
+    aspect-ratio: 1;
+    border-radius: var(--rd-radius-full);
+    outline: 0.125rem solid var(--rd-color-surface-raised);
+    background: var(--rd-color-status-danger-default);
+  }
+
+  /* 丸いアバター。大きさは --rd-avatar-size（既定 space-8）。
+     写真なら <img alt="">（名前は隣の文字が持つ）、頭文字なら装飾なので aria-hidden。
+     <span class="rd-avatar"><img src="…" alt=""></span>
+     <span class="rd-avatar" aria-hidden="true">RT</span> */
+  .rd-avatar {
+    display: inline-grid;
+    overflow: hidden;
+    place-items: center;
+    inline-size: var(--rd-avatar-size, var(--rd-space-8));
+    aspect-ratio: 1;
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-surface-sunken);
+    color: var(--rd-color-text-default);
+    font: var(--rd-type-small);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  .rd-avatar > img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  /* 重ねて並べる。並び順は DOM の順（重なりの見た目だけで順序を表さない）。
+     <span class="rd-avatar-group"><span class="rd-avatar">…</span>…</span> */
+  .rd-avatar-group {
+    display: inline-flex;
+  }
+
+  .rd-avatar-group > * {
+    outline: 0.125rem solid var(--rd-color-surface-raised);
+  }
+
+  .rd-avatar-group > * + * {
+    margin-inline-start: calc(var(--rd-space-2) * -1);
+  }
+
+  /* 点線の区切り（brand.md §7.6）。面の切り替えで区切れるときは線を引かない。
+     <hr class="rd-separator">
+     <div class="rd-separator" role="separator" aria-orientation="vertical"></div> */
+  .rd-separator {
+    margin-block: var(--rd-space-4);
+    border-width: 0;
+    border-block-start: 0.125rem dotted var(--rd-color-border-default);
+  }
+
+  .rd-separator[aria-orientation='vertical'] {
+    align-self: stretch;
+    inline-size: 0;
+    margin-block: 0;
+    margin-inline: var(--rd-space-3);
+    border-block-start-width: 0;
+    border-inline-start: 0.125rem dotted var(--rd-color-border-default);
+  }
+
+  /* 読み込み中の骨組み。幅は --rd-skeleton-width。骨組みは読み上げに出さず、
+     親の aria-busy="true" が「読み込み中」を伝える。
+     <div aria-busy="true"><div class="rd-skeleton" aria-hidden="true" style="--rd-skeleton-width: 12ch"></div></div> */
+  .rd-skeleton {
+    display: block;
+    inline-size: var(--rd-skeleton-width, 100%);
+    min-block-size: 1em;
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-surface-sunken);
+  }
+
+  .rd-skeleton[data-shape='circle'] {
+    inline-size: var(--rd-skeleton-width, var(--rd-space-8));
+    aspect-ratio: 1;
+  }
+
+  .rd-skeleton[data-shape='block'] {
+    min-block-size: var(--rd-space-16);
+    border-radius: var(--rd-radius-md);
+  }
+
+  /* 明滅は opt-in（WCAG 2.3.3）。動かすのは opacity だけで、
+     グラデーションの shimmer は使わない（brand.md §8） */
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes rd-skeleton-pulse {
+      from {
+        opacity: 1;
+      }
+
+      to {
+        opacity: 0.55;
+      }
+    }
+
+    .rd-skeleton {
+      animation-name: rd-skeleton-pulse;
+      animation-duration: calc(var(--rd-motion-duration-base) * 8);
+      animation-timing-function: var(--rd-motion-easing-standard);
+      animation-iteration-count: infinite;
+      animation-direction: alternate;
+    }
+  }
+
+  /* キーキャップ。押すキーそのものを書く（「⌘ + K」の「+」は文字で）。
+     <kbd class="rd-kbd">⌘</kbd> */
+  .rd-kbd {
+    padding-inline: var(--rd-space-1);
+    border-block-end: 0.125rem solid var(--rd-color-border-strong);
+    border-radius: var(--rd-radius-sm);
+    background: var(--rd-color-surface-sunken);
+    font: var(--rd-type-mono);
+  }
+
+  /* インクの角丸タイル。アイコン 1 つを載せる入れ物で、大きさは --rd-tile-size（既定 space-12）。
+     押せるタイルにするなら a / button にして aria-label で名前を付ける。
+     <a class="rd-tile" href="/settings" aria-label="設定"><svg aria-hidden="true">…</svg></a>
+     <span class="rd-tile" aria-hidden="true"><svg>…</svg></span> */
+  .rd-tile {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--rd-tile-size, var(--rd-space-12));
+    aspect-ratio: 1;
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-chrome-default);
+    color: var(--rd-color-chrome-text);
+    text-decoration: none;
+  }
+
+  .rd-tile > :is(svg, img) {
+    inline-size: 50%;
+    block-size: 50%;
+  }
+
+  .rd-tile[data-tone='accent'] {
+    background: var(--rd-color-accent-default);
+    color: var(--rd-color-text-on-accent);
+  }
+
+  /* 押せるタイルは塗りを変えず輪郭で応える（帯やアイコンの色と喧嘩しない） */
+  .rd-tile:is(a, button):hover {
+    outline: 0.125rem solid var(--rd-color-focus-ring);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* アイコンだけのボタン。当たり判定は target-min（44px）。**aria-label は必須** —
+     絵だけでは何をするボタンか読み上げに出ない。
+     <button type="button" class="rd-icon-button" aria-label="閉じる"><svg aria-hidden="true">…</svg></button> */
+  .rd-icon-button {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--rd-sizing-target-min);
+    block-size: var(--rd-sizing-target-min);
+    padding: 0;
+    border-width: 0;
+    border-radius: var(--rd-radius-full);
+    background: transparent;
+    color: var(--rd-color-text-default);
+  }
+
+  .rd-icon-button > :is(svg, img) {
+    inline-size: 50%;
+    block-size: 50%;
+  }
+
+  .rd-icon-button:hover {
+    background: var(--rd-color-surface-hover);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .rd-icon-button:active {
+      translate: 0 0.0625rem;
+    }
+  }
+
+  /* 押せるものを並べる帯。role="toolbar" と aria-label は利用側が付ける
+     （並べただけの入れ物にも使えるように、CSS では role を前提にしない）。
+     <div class="rd-toolbar" role="toolbar" aria-label="書式">…</div> */
+  .rd-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--rd-space-1);
+    padding: var(--rd-space-1) var(--rd-space-2);
+    border-block-start: 0.125rem dotted var(--rd-color-border-default);
+  }
+
+  .rd-toolbar[data-position='top'] {
+    border-block-start-width: 0;
+    border-block-end: 0.125rem dotted var(--rd-color-border-default);
+  }
+
+  /* 一覧。選ばれている行は aria-current / aria-selected が持つ（沈んだ色は補助）。
+     <ul class="rd-list">
+       <li class="rd-list-row" aria-current="true">
+         <span class="rd-avatar" aria-hidden="true">RT</span>
+         <span>りむる</span>
+         <span class="rd-list-meta">3 分前</span>
+       </li>
+     </ul> */
+  .rd-list {
+    display: grid;
+    gap: var(--rd-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .rd-list-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    column-gap: var(--rd-space-3);
+    min-block-size: var(--rd-sizing-target-min);
+    padding-inline: var(--rd-space-3);
+    border-radius: var(--rd-radius-md);
+  }
+
+  .rd-list-row:is([aria-selected='true'], [aria-current]) {
+    background: var(--rd-color-surface-sunken);
+  }
+
+  .rd-list-row:has(> :is(a, button)):hover {
+    background: var(--rd-color-surface-hover);
+  }
+
+  /* 行ぜんぶをリンクにするなら subgrid で親の列を引き継ぐ（当たり判定が行全体になる） */
+  .rd-list-row > :is(a, button) {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: center;
+    column-gap: var(--rd-space-3);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .rd-list-meta {
+    justify-self: end;
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+  }
+
+  /* 表。見出しセルには scope を、表題には caption を必ず付ける。
+     横に溢れる表は入れ物ごと転がす（拡大しても読める。WCAG 1.4.10）。
+     <div class="rd-table-scroll">
+       <table class="rd-table"><caption>使用量</caption>
+         <thead><tr><th scope="col">種類</th><th scope="col" data-numeric>GB</th></tr></thead>
+       </table>
+     </div> */
+  .rd-table-scroll {
+    overflow-x: auto;
+  }
+
+  .rd-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font: var(--rd-type-body);
+  }
+
+  .rd-table :where(caption) {
+    padding-block: var(--rd-space-2);
+    font-weight: var(--rd-font-weight-bold);
+    /* stylelint-disable-next-line property-disallowed-list -- start は論理値。RTL で自動的に反転する */
+    text-align: start;
+  }
+
+  .rd-table :where(th) {
+    padding: var(--rd-space-2) var(--rd-space-3);
+    border-block-end: 0.125rem dotted var(--rd-color-border-default);
+    font-weight: var(--rd-font-weight-bold);
+    /* stylelint-disable-next-line property-disallowed-list -- start は論理値。RTL で自動的に反転する */
+    text-align: start;
+  }
+
+  .rd-table :where(td) {
+    padding: var(--rd-space-2) var(--rd-space-3);
+    border-block-end: var(--rd-border-width-default) dotted var(--rd-color-border-default);
+  }
+
+  /* 数の列は桁を揃えて行末に寄せる（比べるのは末尾から） */
+  .rd-table :where(th, td)[data-numeric] {
+    font-variant-numeric: tabular-nums;
+    /* stylelint-disable-next-line property-disallowed-list -- end は論理値。RTL で自動的に反転する */
+    text-align: end;
+  }
+
+  .rd-table[data-sticky] :where(thead th) {
+    position: sticky;
+    inset-block-start: 0;
+    background: var(--rd-color-surface-raised);
+  }
+
+  /* 注意書き。トーストと同じ左の帯（brand.md §7.7）。
+     **role は利用側が付ける** — 手を止めさせたいなら role="alert"、
+     ついでに知らせるだけなら role="status"（何も付けなければただの文章）。
+     <div class="rd-alert" data-tone="warning" role="status">
+       <span class="rd-alert-icon" aria-hidden="true"><svg>…</svg></span>
+       <div><p class="rd-alert-title">保存できません</p><p>接続を確かめてください。</p></div>
+     </div> */
+  .rd-alert {
+    --rd-alert-tone: var(--rd-color-status-info-default);
+
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: var(--rd-space-3);
+    padding: var(--rd-space-3) var(--rd-space-4);
+    border-inline-start: var(--rd-space-2) solid var(--rd-alert-tone);
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-surface-sunken);
+    color: var(--rd-color-text-default);
+  }
+
+  .rd-alert[data-tone='success'] {
+    --rd-alert-tone: var(--rd-color-status-success-default);
+  }
+
+  .rd-alert[data-tone='warning'] {
+    --rd-alert-tone: var(--rd-color-status-warning-default);
+  }
+
+  .rd-alert[data-tone='danger'] {
+    --rd-alert-tone: var(--rd-color-status-danger-default);
+  }
+
+  /* アイコンは装飾（非テキストなので 3:1）。意味はタイトルと本文が持つ */
+  .rd-alert-icon {
+    color: var(--rd-alert-tone);
+  }
+
+  /* アイコンを置かないなら 1 列に畳む */
+  .rd-alert-icon:empty {
+    display: none;
+  }
+
+  .rd-alert-title {
+    margin: 0;
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  /* 区分メーターの凡例。色の順は rd-meter と同じ（brand.md §7.5）。
+     色だけでは伝わらないので、項目には必ずラベル文字を書く。
+     <ul class="rd-legend"><li class="rd-legend-item" data-series="1">写真 12 GB</li></ul> */
+  .rd-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rd-space-2) var(--rd-space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font: var(--rd-type-small);
+  }
+
+  .rd-legend-item::before {
+    display: inline-block;
+    inline-size: 0.75rem;
+    aspect-ratio: 1;
+    margin-inline-end: var(--rd-space-1);
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-legend-swatch, var(--rd-color-border-strong));
+    vertical-align: -0.1em;
+    content: '';
+  }
+
+  .rd-legend-item[data-series='1'] {
+    --rd-legend-swatch: var(--rd-color-brand-primary);
+  }
+
+  .rd-legend-item[data-series='2'] {
+    --rd-legend-swatch: var(--rd-color-status-success-default);
+  }
+
+  .rd-legend-item[data-series='3'] {
+    --rd-legend-swatch: var(--rd-color-status-warning-default);
+  }
+
+  .rd-legend-item[data-series='4'] {
+    --rd-legend-swatch: var(--rd-color-border-strong);
+  }
+
+  /* 強制配色ではシステム色で描き直す（ADR-0004 §9）。塗り分けが消えるので、
+     面には輪郭を、選択行には Highlight を与えて区別を残す */
+  @media (forced-colors: active) {
+    .rd-badge,
+    .rd-tile,
+    .rd-kbd,
+    .rd-alert {
+      border-width: var(--rd-border-width-default);
+      border-style: solid;
+      border-color: CanvasText;
+    }
+
+    .rd-separator,
+    .rd-toolbar,
+    .rd-table :where(th, td) {
+      border-color: CanvasText;
+    }
+
+    .rd-avatar,
+    .rd-avatar-group > * {
+      outline: var(--rd-border-width-default) solid CanvasText;
+    }
+
+    .rd-dot {
+      outline-color: CanvasText;
+      background: Highlight;
+    }
+
+    .rd-skeleton {
+      background: GrayText;
+    }
+
+    .rd-list-row:is([aria-selected='true'], [aria-current]) {
+      background: Highlight;
+      color: HighlightText;
+    }
+
+    .rd-alert-icon {
+      color: CanvasText;
+    }
+
+    .rd-legend-item::before {
+      background: CanvasText;
+    }
+  }
+}

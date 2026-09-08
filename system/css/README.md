@@ -43,6 +43,7 @@ tokens を `file:` / `workspace:` で取り込む利用側が 404 で止まら�
 | `reset.css`         | `rd.reset`      | `box-sizing`、`margin: 0`、メディア要素、フォームの `font: inherit`               |
 | `base.css`          | `rd.base`       | `body`・見出し・行長・`hr`（点線）・リンク・`:focus-visible`・等幅                |
 | `typography.css`    | `rd.components` | 文字のクラス（`.rd-display` … `.rd-prose`）                                       |
+| `atoms.css`         | `rd.components` | JS が要らない小さなパターン（`.rd-badge` … `.rd-legend`）                         |
 | `patterns.css`      | `rd.components` | 窓（`.rd-window` / `.rd-window-title` / `.rd-window-body`）                       |
 | `utilities.css`     | `rd.utilities`  | `.rd-visually-hidden`、`.rd-skip-link`、`.rd-stack`、`.rd-cluster`、`[hidden]`    |
 | `print.css`         | `rd.base`       | `@media print`（リンク先の URL、ナビを消す、システム色）                          |
@@ -75,6 +76,46 @@ tokens を `file:` / `workspace:` で取り込む利用側が 404 で止まら�
   <p>本文。<code>--rd-*</code> だけで組んである。</p>
 </article>
 ```
+
+## 小さなパターン（`atoms.css`）
+
+JS が要らないもの（バッジ・アバター・区切り・表・注意書き…）は部品にせず CSS のクラスで出す
+（[ADR-0012](../../docs/adr/0012-progressive-enhancement-tiers.md) §6）。**想定マークアップは
+`src/atoms.css` の各クラスの直前のコメントが持つ**（読み上げに要る `aria-label` / `aria-hidden` /
+`role` / `scope` もそこに書いてある）。色だけで意味を伝えるクラスは 1 つも無い。
+
+| クラス                                             | 使うところ                                                                     |
+| -------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `.rd-badge`                                        | 数や状態のピル。`data-tone="accent \| success \| warning \| danger \| info"`   |
+| `.rd-dot` / `.rd-has-dot`                          | 通知の点。件数と意味は文字で別に出す                                           |
+| `.rd-avatar` / `.rd-avatar-group`                  | 丸いアバターと重ね並べ。大きさは `--rd-avatar-size`                            |
+| `.rd-separator`                                    | 点線の区切り。`aria-orientation="vertical"` で縦線                             |
+| `.rd-skeleton`                                     | 読み込み中の骨組み。幅は `--rd-skeleton-width`、`data-shape="circle \| block"` |
+| `.rd-kbd`                                          | キーキャップ                                                                   |
+| `.rd-tile`                                         | インクの角丸タイル。大きさは `--rd-tile-size`、`data-tone="accent"`            |
+| `.rd-icon-button`                                  | アイコンだけのボタン（44px の当たり判定）。`aria-label` 必須                   |
+| `.rd-toolbar`                                      | 押せるものを並べる帯。`data-position="top"` で罫線が上下入れ替わる             |
+| `.rd-list` / `.rd-list-row` / `.rd-list-meta`      | 一覧。選択は `aria-current` / `aria-selected` が持つ                           |
+| `.rd-table` / `.rd-table-scroll`                   | 表と横スクロールの入れ物。`data-numeric` で桁揃え、`data-sticky` で見出し固定  |
+| `.rd-alert` / `.rd-alert-title` / `.rd-alert-icon` | 注意書き。`data-tone` で左の帯の色。`role` は利用側が付ける                    |
+| `.rd-legend` / `.rd-legend-item`                   | 区分メーターの凡例。`data-series="1".."4"` の色は `rd-meter` と同じ順          |
+
+```html
+<div class="rd-alert" data-tone="warning" role="status">
+  <span class="rd-alert-icon" aria-hidden="true"></span>
+  <div>
+    <p class="rd-alert-title">保存できません</p>
+    <p>接続を確かめてください。</p>
+  </div>
+</div>
+```
+
+つまみ（`--rd-avatar-size` / `--rd-tile-size` / `--rd-skeleton-width` / `--rd-legend-swatch` /
+`--rd-clamp-lines`）は**トークンではない**。`tokens.css` に定義は無く、利用側が
+`style="--rd-skeleton-width: 12ch"` のように渡す。
+
+`prefers-reduced-motion: no-preference` の中でだけ `.rd-skeleton` が明滅し、`.rd-icon-button`
+が押し込まれる。`forced-colors: active` では面に輪郭が付き、選択行が `Highlight` になる。
 
 ## 窓（`.rd-window`）
 
