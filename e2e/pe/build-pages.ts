@@ -315,6 +315,54 @@ const PAGES: Readonly<Record<string, string>> = {
       children: '<p>条件を選ぶと一覧がその場で変わる。</p>',
     })}`,
   ),
+  /**
+   * Hover Card（plan 026）。`hover` はホバーという**近道**を足すだけで、
+   * JS 無しでは今までどおり `popovertarget` のボタンだけが働く。
+   */
+  'hover-card.html': page(
+    'ホバーカード',
+    `      ${popoverMarkup({
+      id: 'profile',
+      label: 'riml',
+      children: '<p>デザインシステムを作っている。</p>',
+      hover: true,
+    })}`,
+  ),
+  /**
+   * Context Menu（plan 026）。`context` は右クリックという**近道**を足すだけで、
+   * JS 無しでは目に見えるボタンだけが働く（APG: 常に見える代替を用意する）。
+   */
+  'context-menu.html': page(
+    'コンテキストメニュー',
+    `      ${menuMarkup({
+      id: 'row-context',
+      label: '操作',
+      items:
+        menuItemMarkup({ label: '複製', href: '/echo.html' })
+        + menuItemMarkup({ label: '削除', separated: true }),
+      context: true,
+    })}`,
+  ),
+  /** 主要ナビの帯（plan 026）。落ちるメニューが要る項目にだけ `rd-menu` を入れる */
+  'nav-menu.html': page(
+    '主要ナビの帯',
+    `      <nav class="rd-nav-menu" aria-label="主要">
+        <ul>
+          <li><a href="/" aria-current="page">ホーム</a></li>
+          <li><a href="/docs">ドキュメント</a></li>
+          <li>
+            ${menuMarkup({
+              id: 'nav-make',
+              label: '作る',
+              items:
+                menuItemMarkup({ label: '新しい書類', href: '/echo.html' })
+                + menuItemMarkup({ label: '新しいフォルダ', href: '/echo.html' }),
+            })}
+          </li>
+          <li><a href="/help">ヘルプ</a></li>
+        </ul>
+      </nav>`,
+  ),
   /** ティア C。JS が無ければ吹き出しは出ず、対象の `title` が代わりに説明する */
   'tooltip.html': page(
     'ツールチップ',

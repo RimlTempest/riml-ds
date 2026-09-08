@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { computeMenuView, menuItemAttributes, triggerAttributes } from './menu.logic.js'
+import {
+  computeMenuView,
+  contextPosition,
+  menuItemAttributes,
+  triggerAttributes,
+} from './menu.logic.js'
 
 const base = { open: false, disabled: [false, false], label: '操作', malformed: false } as const
 
@@ -51,5 +56,26 @@ describe('triggerAttributes', () => {
       'aria-haspopup': 'menu',
       'aria-expanded': 'true',
     })
+  })
+})
+
+describe('contextPosition', () => {
+  const popover = { width: 200, height: 120 }
+  const viewport = { width: 1000, height: 800 }
+
+  it('ポインタの右下に出る', () => {
+    expect(contextPosition({ x: 300, y: 200 }, popover, viewport)).toEqual({ top: 200, left: 300 })
+  })
+
+  it('下に入らなければ上へ倒れる', () => {
+    expect(contextPosition({ x: 300, y: 760 }, popover, viewport)).toEqual({ top: 640, left: 300 })
+  })
+
+  it('右端では画面の中に収まるまで左へ寄る', () => {
+    expect(contextPosition({ x: 950, y: 200 }, popover, viewport).left).toBe(800)
+  })
+
+  it('画面より大きい重ね物でも負の位置には出さない', () => {
+    expect(contextPosition({ x: 10, y: 10 }, { width: 1200, height: 60 }, viewport).left).toBe(0)
   })
 })

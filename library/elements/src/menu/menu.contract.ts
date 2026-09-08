@@ -25,7 +25,7 @@ export const contract = {
   required: ['trigger', 'list'],
   tree: {
     tag: 'rd-menu',
-    attrs: { placement: '$placement', label: '$label' },
+    attrs: { placement: '$placement', label: '$label', context: '$context' },
     children: [
       // trigger / items は生 HTML。利用側が menuTriggerMarkup() / menuItemMarkup() で組み立てる。
       // トリガーを木のノードにしないのは、ラッパー生成器が `popovertarget` を
@@ -48,6 +48,11 @@ export type MenuMarkupProps = {
   readonly items: string
   /** インライン方向の揃え。`end` はトリガーの終端に揃える */
   readonly placement?: 'start' | 'end'
+  /**
+   * 中の面で右クリックするとポインタの位置に開く（Context Menu）。
+   * **トリガーのボタンは残る**——右クリックは近道でしかない
+   */
+  readonly context?: boolean
 }
 
 export type MenuItemMarkupProps = {

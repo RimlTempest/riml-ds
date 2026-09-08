@@ -1757,6 +1757,18 @@
             },
             {
               "kind": "field",
+              "name": "context",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "中の面で右クリックするとポインタの位置に開く（Context Menu）。**初期化時にだけ**読む",
+              "default": "false",
+              "attribute": "context",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "#internals",
               "privacy": "private"
             },
@@ -1783,6 +1795,11 @@
               "name": "#name",
               "privacy": "private",
               "default": "`rd-menu-${(sequence += 1)}`"
+            },
+            {
+              "kind": "field",
+              "name": "#context",
+              "privacy": "private"
             },
             {
               "kind": "field",
@@ -1833,6 +1850,15 @@
             }
           ],
           "attributes": [
+            {
+              "description": "中の面で右クリックするとポインタの位置に開く（Context Menu）。**初期化時にだけ**読む",
+              "name": "context",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "context"
+            },
             {
               "name": "placement",
               "type": {
@@ -2060,6 +2086,18 @@
             },
             {
               "kind": "field",
+              "name": "hover",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "乗せる / フォーカスすると遅れて開く（Hover Card）。**初期化時にだけ**読む",
+              "default": "false",
+              "attribute": "hover",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "#internals",
               "privacy": "private"
             },
@@ -2089,6 +2127,21 @@
             },
             {
               "kind": "field",
+              "name": "#byHover",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "いま開いている面を hover で開いたか。閉じるまで立ったまま"
+            },
+            {
+              "kind": "field",
+              "name": "#hover",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
               "name": "#wire",
               "privacy": "private",
               "description": "id と `popovertarget` を結ぶ。利用側が書いていればそのまま尊重する"
@@ -2113,7 +2166,7 @@
               "kind": "field",
               "name": "#onToggle",
               "privacy": "private",
-              "description": "開いたら中の最初の行き先へ、閉じたらトリガーへ（Esc はネイティブが閉じる）"
+              "description": "開いたら中の最初の行き先へ、閉じたらトリガーへ（Esc はネイティブが閉じる）。\n**hover で開いた面ではフォーカスを動かさない**——読み中の人から奪わず、\n閉じるときも勝手に戻さない（そもそもトリガーに居ない）。"
             }
           ],
           "events": [
@@ -2126,6 +2179,15 @@
             }
           ],
           "attributes": [
+            {
+              "description": "乗せる / フォーカスすると遅れて開く（Hover Card）。**初期化時にだけ**読む",
+              "name": "hover",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "hover"
+            },
             {
               "name": "placement",
               "type": {

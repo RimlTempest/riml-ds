@@ -28,6 +28,13 @@ describe('markup', () => {
     )
   })
 
+  it('hover は指定したときだけ存在する属性として出る（Hover Card）', () => {
+    expect(markup({ id: 'f', label: 'x', children: '', hover: true })).toContain(
+      '<rd-popover hover>',
+    )
+    expect(markup({ id: 'f', label: 'x', children: '' })).toContain('<rd-popover>')
+  })
+
   it('本文はエスケープしない（信頼済みの断片）が、見出しはエスケープする', () => {
     const html = markup({ id: 'f', label: '<b>名</b>', children: '<p>そのまま</p>' })
     expect(html).toContain('&lt;b&gt;名&lt;/b&gt;')

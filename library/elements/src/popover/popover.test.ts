@@ -5,6 +5,7 @@ import { markup } from './popover.contract.js'
 // oxlint-disable-next-line import/no-unassigned-import
 import './popover.define.js'
 import { RdPopover } from './popover.element.js'
+import { hoverTimings } from './popover.logic.js'
 
 const FIXTURE = markup({
   id: 'filters',
@@ -20,6 +21,33 @@ const triggerOf = (el: RdPopover): HTMLElement | undefined => {
 const panelOf = (el: RdPopover): HTMLElement | undefined => {
   const panel = el.querySelector('[popover]')
   return panel instanceof HTMLElement ? panel : undefined
+}
+
+const HOVER_FIXTURE = markup({
+  id: 'profile',
+  label: 'riml',
+  children: '<p>デザインシステムを作っている。</p><a href="#profile">くわしく</a>',
+  hover: true,
+})
+
+/** ポインタが乗る / 離れる。`pointerenter` / `pointerleave` は伝播しないので直接投げる */
+const point = (el: HTMLElement | undefined, type: 'pointerenter' | 'pointerleave'): void => {
+  el?.dispatchEvent(new PointerEvent(type))
+}
+
+const waitOpen = async (el: RdPopover, open: boolean): Promise<void> => {
+  await vi.waitFor(
+    () => {
+      expect(el.matches(':state(open)')).toBe(open)
+    },
+    { timeout: hoverTimings.open + 500 },
+  )
+  await el.updateComplete
+}
+
+/** 「開かない」ことを見る唯一の待ち方。開く待ち時間を十分に過ぎるまで置く */
+const settle = async (): Promise<void> => {
+  await new Promise((resolve) => setTimeout(resolve, hoverTimings.open + 150))
 }
 
 const open = async (el: RdPopover): Promise<void> => {
@@ -121,4 +149,65 @@ it('[popover] が無ければ malformed と console.error', async () => {
   expect(el.matches(':state(malformed)')).toBe(true)
   expect(error).toHaveBeenCalled()
   error.mockRestore()
+})
+
+it('hover を付けるとポインタが乗って少ししてから開く', async () => {
+  const el = await fixtureOf(RdPopover, HOVER_FIXTURE)
+  expect(el.hover).toBe(true)
+  point(triggerOf(el), 'pointerenter')
+  // すぐには開かない（通り過ぎただけで開かせない）
+  expect(el.matches(':state(open)')).toBe(false)
+  await waitOpen(el, true)
+  expect(panelOf(el)?.matches(':popover-open')).toBe(true)
+})
+
+it('hover で開いてもフォーカスはトリガー側に残る（読み中の人から奪わない）', async () => {
+  const el = await fixtureOf(RdPopover, HOVER_FIXTURE)
+  const before = document.activeElement
+  point(triggerOf(el), 'pointerenter')
+  await waitOpen(el, true)
+  expect(document.activeElement).toBe(before)
+  expect(document.activeElement).not.toBe(panelOf(el))
+})
+
+it('ポインタが外へ離れると少ししてから閉じる', async () => {
+  const el = await fixtureOf(RdPopover, HOVER_FIXTURE)
+  point(triggerOf(el), 'pointerenter')
+  await waitOpen(el, true)
+  triggerOf(el)?.dispatchEvent(new PointerEvent('pointerleave'))
+  await waitOpen(el, false)
+  expect(panelOf(el)?.matches(':popover-open')).toBe(false)
+})
+
+it('トリガーから面へ渡るあいだは閉じない（focusout の行き先が中身なら残す）', async () => {
+  const el = await fixtureOf(RdPopover, HOVER_FIXTURE)
+  point(triggerOf(el), 'pointerenter')
+  await waitOpen(el, true)
+  const link = el.querySelector('a[href]')
+  triggerOf(el)?.dispatchEvent(new FocusEvent('focusout', { relatedTarget: link }))
+  await settle()
+  expect(el.matches(':state(open)')).toBe(true)
+})
+
+it('hover ではトリガーにフォーカスが入ると待たずに開く', async () => {
+  const el = await fixtureOf(RdPopover, HOVER_FIXTURE)
+  triggerOf(el)?.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+  await vi.waitFor(() => {
+    expect(el.matches(':state(open)')).toBe(true)
+  })
+})
+
+it('hover が無ければポインタが乗っても開かない（既存の挙動を変えない）', async () => {
+  const el = await fixtureOf(RdPopover, FIXTURE)
+  expect(el.hover).toBe(false)
+  point(triggerOf(el), 'pointerenter')
+  await settle()
+  expect(el.matches(':state(open)')).toBe(false)
+})
+
+it('hover を付けても押して開く経路は残り、開いた先へフォーカスが移る', async () => {
+  const el = await fixtureOf(RdPopover, HOVER_FIXTURE)
+  await open(el)
+  expect(panelOf(el)?.matches(':popover-open')).toBe(true)
+  expect(document.activeElement).toBe(el.querySelector('a[href]'))
 })

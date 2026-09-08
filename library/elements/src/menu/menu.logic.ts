@@ -2,6 +2,10 @@
  * `rd-menu` の純関数。DOM を触らない。`*.element.ts` はここを呼ぶだけ（ADR-0005）。
  * 「開いているか」と「そのときトリガー・各項目に付く属性」だけを決める。
  */
+import { type AnchorStyle, computeAnchorStyle, type SizeLike } from '../_shared/popover-anchor.js'
+
+/** ビューポート基準のポインタ位置（`contextmenu` の `clientX` / `clientY`） */
+export type Point = { readonly x: number; readonly y: number }
 
 export type MenuItemView = {
   readonly role: 'menuitem'
@@ -56,3 +60,15 @@ export const triggerAttributes = (view: MenuView): Readonly<Record<string, strin
   'aria-haspopup': 'menu',
   'aria-expanded': view.expanded,
 })
+
+/**
+ * 右クリックした位置にメニューを出す（Context Menu）。**新しい算術を書かない**——
+ * 幅 0 高 0 のトリガー矩形で `computeAnchorStyle` を呼ぶだけなので、
+ * 「入らなければ倒す・画面からはみ出さない」規則は他の重ね物とまったく同じ。
+ */
+export const contextPosition = (point: Point, popover: SizeLike, viewport: SizeLike): AnchorStyle =>
+  computeAnchorStyle({
+    trigger: { top: point.y, left: point.x, width: 0, height: 0 },
+    popover,
+    viewport,
+  })

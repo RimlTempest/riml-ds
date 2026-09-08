@@ -87,6 +87,30 @@ export const WithForm: Story = {
   },
 }
 
+/**
+ * `hover` を付けると、トリガーに乗せる / フォーカスすると少し遅れて開く（Hover Card）。
+ * **押して開く経路（`popovertarget`）はそのまま残る**——ホバーは近道で、キーボード・
+ * タッチ・JS 無しでは今までどおりボタンが働く。開いてもフォーカスは奪わない。
+ */
+export const Hover: Story = {
+  args: {
+    id: 'sb-popover-hover',
+    label: 'riml',
+    children: '<p>デザインシステムを作っている。乗せているあいだだけ開く。</p>',
+    hover: true,
+  },
+  play: async ({ canvasElement }) => {
+    const el = canvasElement.querySelector('rd-popover')
+    await userEvent.hover(within(canvasElement).getByRole('button', { name: 'riml' }))
+    await waitFor(
+      async () => {
+        await expect(el?.matches(':state(open)')).toBe(true)
+      },
+      { timeout: 2000 },
+    )
+  },
+}
+
 export const Dark: Story = { ...Default, globals: { scheme: 'dark' } }
 
 export const Dense: Story = { ...Default, globals: { density: 'compact' } }
