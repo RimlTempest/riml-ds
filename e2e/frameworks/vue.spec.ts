@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test'
 import {
   comboboxSuite,
   commandSuite,
+  dataTableSuite,
   formWave4Suite,
   frameworkSuite,
   meterAndWindowSuite,
@@ -18,6 +19,7 @@ formWave4Suite('vue')
 toggleSuite('vue')
 comboboxSuite('vue')
 commandSuite('vue')
+dataTableSuite('vue')
 
 test.describe('vue: <select> の v-model', () => {
   test('選択すると v-model の値が変わる', async ({ page }) => {

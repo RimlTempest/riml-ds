@@ -95,6 +95,10 @@ library/elements/src/live-region/         ティア C の例
 ネイティブイベント（`input`、`change`、`click`）は**透過**させ、同名の独自イベントを出さない。
 独自イベントは「ネイティブに無い意味」だけ（`rd-dismiss`、`rd-announce`）。
 
+ハイフン入りのホスト属性（`empty-text`、`week-start`）はそのまま使ってよい。react / svelte / vue の
+ラッパー生成器は `tools/cem/src/wrappers/core/common.ts` の `objectKey` でキーを引用する
+（1b57a66 以前は TS1005 で落ちた）。contract の `attrs` は `'empty-text': '$emptyText'` のように書く。
+
 ## 3. `*.element.ts` の骨格（ティア C の例：shadow あり）
 
 ```ts
@@ -186,6 +190,10 @@ JSDoc の `@summary` / `@status` / `@pe` / `@slot` / `@csspart` / `@cssprop` / `
 `Default`、`Variants`（全 variant）、`Disabled`、`Invalid` / `Loading`（該当時）、`Dark`、
 `ForcedColors`、`ReducedMotion`、`RTL`、`Dense`。共通の decorator（`apps/storybook/.storybook/modes.ts`）が
 モードを当てる。`argTypes` は `tools/cem` が CEM から生成したものを spread する。
+
+時刻や乱数に依存する部品（calendar、toast の残り時間、相対時刻）は、story の args で必ず
+`today` / 時計を固定する（VRT と axe が日付で揺れないように）。時計を属性で受けられない設計は
+PE ティア B/C でもやり直す。
 
 ## 6. 完了条件
 

@@ -1,6 +1,7 @@
 import {
   comboboxSuite,
   commandSuite,
+  dataTableSuite,
   formWave4Suite,
   frameworkSuite,
   meterAndWindowSuite,
@@ -17,3 +18,4 @@ formWave4Suite('svelte')
 toggleSuite('svelte')
 comboboxSuite('svelte')
 commandSuite('svelte')
+dataTableSuite('svelte')

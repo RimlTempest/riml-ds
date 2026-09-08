@@ -259,3 +259,20 @@ test('button group: 枕の中身は押下状態を持つボタン（JS 無しで
   await expect(group.getByRole('button', { name: '一覧' })).toHaveAttribute('aria-pressed', 'true')
   await expect(group.getByRole('button', { name: '格子' })).toHaveAttribute('aria-pressed', 'false')
 })
+
+test('data table: JS 無しでも書かれた順の表がそのまま読める', async ({ page }) => {
+  await page.goto('/data-table.html')
+  await expect(page.getByRole('table', { name: '保存したコード' })).toBeVisible()
+  await expect(page.getByRole('columnheader', { name: '名前' })).toBeVisible()
+  await expect(page.locator('rd-data-table tbody > tr')).toHaveCount(4)
+  // 書かれた順のまま（並べ替えは JS が来てから）
+  await expect(page.locator('rd-data-table tbody > tr > td').first()).toHaveText('レジ横の QR')
+})
+
+test('data table: JS 無しの見出しは文字のまま（押せないボタンを置かない）', async ({ page }) => {
+  await page.goto('/data-table.html')
+  await expect(page.locator('rd-data-table thead button')).toHaveCount(0)
+  await expect(page.locator('rd-data-table [aria-sort]')).toHaveCount(0)
+  // 横に溢れる表は部品自身が転がす（WCAG 1.4.10）
+  await expect(page.locator('rd-data-table')).toHaveCSS('overflow-x', 'auto')
+})

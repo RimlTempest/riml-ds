@@ -34,6 +34,8 @@
   {
     "name": "@rimltempest/riml-ds-elements/experimental/command/define (lit 込み)",
     "path": "library/elements/dist/command/command.define.js",
+    "name": "@rimltempest/riml-ds-elements/experimental/data-table/define (lit 込み)",
+    "path": "library/elements/dist/data-table/data-table.define.js",
     "limit": "12 KB"
   },
   {

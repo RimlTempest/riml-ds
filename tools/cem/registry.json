@@ -49,6 +49,19 @@
     "dependsOn": []
   },
   {
+    "name": "data-table",
+    "tag": "rd-data-table",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "見出しを押すと並べ替えられる表。表そのものは利用側が書く",
+    "files": [
+      "data-table/index.js",
+      "data-table/data-table.define.js",
+      "data-table/data-table.css"
+    ],
+    "dependsOn": []
+  },
+  {
     "name": "dialog",
     "tag": "rd-dialog",
     "pe": "B",

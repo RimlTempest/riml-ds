@@ -22,6 +22,12 @@ import {
   commandMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/command'
 import {
+  dataTableBodyMarkup,
+  dataTableHeadMarkup,
+  dataTableMarkup,
+  dataTableRowMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/data-table'
+import {
   inputOtpMarkup,
   otpCellsMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/input-otp'
@@ -620,6 +626,76 @@ export const comboboxSuite = (framework: string): void => {
       await page.keyboard.press('Enter')
       await expect(control).toHaveValue('kana')
       await expect(control).toHaveAttribute('aria-expanded', 'false')
+    })
+  })
+}
+
+/** 4 フレームワークで同じ表を出す（`dataTableHeadMarkup` / `dataTableRowMarkup` が唯一の正） */
+const CODE_HEAD = dataTableHeadMarkup([
+  { label: '名前', sort: 'text', key: 'name' },
+  { label: 'サイズ', sort: 'number', key: 'size', numeric: true },
+])
+
+const CODE_BODY = dataTableBodyMarkup([
+  dataTableRowMarkup([{ text: 'b.png' }, { text: '1,234', value: '1234', numeric: true }]),
+  dataTableRowMarkup([{ text: 'a.png' }, { text: '820', value: '820', numeric: true }]),
+])
+
+/**
+ * `rd-data-table`（plan 029）。表そのものは利用側（＝ここでは各フレームワークのアプリ）が書き、
+ * 部品は並べ替えだけを足す。JS が無ければ書かれた順の表がそのまま読め、見出しは文字のまま。
+ */
+export const dataTableSuite = (framework: string): void => {
+  test.describe(`${framework}: data-table`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-data-table',
+          dataTableMarkup({ caption: '保存したコード', head: CODE_HEAD, body: CODE_BODY }),
+        )
+      })
+
+      test('JS 無しでは見出しが文字のまま（押せないボタンを置かない）', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.getByRole('table', { name: '保存したコード' })).toBeVisible()
+        await expect(page.locator('rd-data-table thead button')).toHaveCount(0)
+        await expect(page.locator('rd-data-table tbody > tr > td').first()).toHaveText('b.png')
+      })
+    })
+
+    test('見出しを押すと aria-sort が付き、行が並び替わる', async ({ page }) => {
+      await page.goto('/')
+      const names = page.locator('rd-data-table tbody > tr > td:first-child')
+      await expect(names.first()).toHaveText('b.png')
+      await page.getByRole('button', { name: '名前' }).click()
+      await expect(page.getByRole('columnheader', { name: '名前' })).toHaveAttribute(
+        'aria-sort',
+        'ascending',
+      )
+      await expect(names.first()).toHaveText('a.png')
+    })
+
+    test('もう一度押すと降順になり :state(sorted) が付く', async ({ page }) => {
+      await page.goto('/')
+      const button = page.getByRole('button', { name: '名前' })
+      await button.click()
+      await button.click()
+      await expect(page.getByRole('columnheader', { name: '名前' })).toHaveAttribute(
+        'aria-sort',
+        'descending',
+      )
+      await expect(page.locator('rd-data-table tbody > tr > td:first-child').first()).toHaveText(
+        'b.png',
+      )
+      await expect
+        .poll(async () =>
+          page.locator('rd-data-table').evaluate((element) => element.matches(':state(sorted)')),
+        )
+        .toBe(true)
     })
   })
 }
