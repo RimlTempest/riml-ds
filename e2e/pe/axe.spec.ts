@@ -36,6 +36,7 @@ const PAGES = [
   '/input-group.html',
   '/radio-group.html',
   '/slider.html',
+  '/data-table.html',
 ] as const
 
 for (const path of PAGES) {

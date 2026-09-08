@@ -16,6 +16,12 @@ import {
   checkboxOptionMarkup,
 } from '../../library/elements/src/checkbox-group/index.js'
 import { comboboxMarkup, comboboxOptionMarkup } from '../../library/elements/src/combobox/index.js'
+import {
+  dataTableBodyMarkup,
+  dataTableHeadMarkup,
+  dataTableMarkup,
+  dataTableRowMarkup,
+} from '../../library/elements/src/data-table/index.js'
 import { dialogMarkup } from '../../library/elements/src/dialog/index.js'
 import { disclosureMarkup } from '../../library/elements/src/disclosure/index.js'
 import { inputOtpMarkup, otpCellsMarkup } from '../../library/elements/src/input-otp/index.js'
@@ -56,6 +62,7 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/checkbox/checkbox.css', 'checkbox.css'],
   ['library/elements/src/checkbox-group/checkbox-group.css', 'checkbox-group.css'],
   ['library/elements/src/combobox/combobox.css', 'combobox.css'],
+  ['library/elements/src/data-table/data-table.css', 'data-table.css'],
   ['library/elements/src/disclosure/disclosure.css', 'disclosure.css'],
   ['library/elements/src/input-otp/input-otp.css', 'input-otp.css'],
   ['library/elements/src/meter/meter.css', 'meter.css'],
@@ -183,6 +190,22 @@ const tags = (name: string): string =>
     checkboxOptionMarkup({ id: `${name}-work`, name, value: 'a', label: '仕事' }),
     checkboxOptionMarkup({ id: `${name}-private`, name, value: 'b', label: '私用' }),
   ].join('')
+
+/** 3 列 × 4 行。表示（「1,234」「2026/01/02」）と比較キー（`data-value`）を分ける */
+const CODES = dataTableBodyMarkup(
+  [
+    { name: 'レジ横の QR', size: '1,234', bytes: '1234', updated: '2026-01-02' },
+    { name: '会員証バーコード', size: '820', bytes: '820', updated: '2025-12-31' },
+    { name: '展示のカタログ', size: '12,000', bytes: '12000', updated: '2026-02-14' },
+    { name: '社内 Wi-Fi', size: '96', bytes: '96', updated: '2025-08-09' },
+  ].map((code) =>
+    dataTableRowMarkup([
+      { text: code.name },
+      { text: code.size, value: code.bytes, numeric: true },
+      { text: code.updated.replaceAll('-', '/'), value: code.updated },
+    ]),
+  ),
+)
 
 const PAGES: Readonly<Record<string, string>> = {
   'button.html': page(
@@ -484,6 +507,18 @@ const PAGES: Readonly<Record<string, string>> = {
           ${buttonMarkup({ label: '検索', type: 'submit' })}
         </div>
       </form>`,
+  ),
+  'data-table.html': page(
+    '並べ替えられる表',
+    `      ${dataTableMarkup({
+      caption: '保存したコード',
+      head: dataTableHeadMarkup([
+        { label: '名前', sort: 'text', key: 'name' },
+        { label: 'サイズ', sort: 'number', key: 'size', numeric: true },
+        { label: '更新', sort: 'date', key: 'updated' },
+      ]),
+      body: CODES,
+    })}`,
   ),
   'echo.html': page('送信済み', '      <p>フォームはネイティブに送信された。</p>'),
 }

@@ -3,6 +3,7 @@ import RdButton from '@rimltempest/riml-ds-astro/button.astro'
 import RdCheckbox from '@rimltempest/riml-ds-astro/experimental/checkbox.astro'
 import RdCheckboxGroup from '@rimltempest/riml-ds-astro/experimental/checkbox-group.astro'
 import RdCombobox from '@rimltempest/riml-ds-astro/experimental/combobox.astro'
+import RdDataTable from '@rimltempest/riml-ds-astro/experimental/data-table.astro'
 import RdInputOtp from '@rimltempest/riml-ds-astro/experimental/input-otp.astro'
 import RdSelect from '@rimltempest/riml-ds-astro/experimental/select.astro'
 import RdDialog from '@rimltempest/riml-ds-astro/dialog.astro'
@@ -103,6 +104,23 @@ import RdWindow from '@rimltempest/riml-ds-astro/experimental/window.astro'
           <option value="kanji">かんじ</option>
           <option value="romaji">ローマ字</option>
         </RdCombobox>
+        <RdDataTable caption="保存したコード">
+          <thead slot="head"
+            ><tr
+              ><th scope="col" data-sort="text" data-key="name">名前</th><th
+                scope="col"
+                data-sort="number"
+                data-key="size"
+                data-numeric=""
+              >サイズ</th></tr
+            ></thead
+          >
+          <tbody slot="body"
+            ><tr><td>b.png</td><td data-value="1234" data-numeric="">1,234</td></tr><tr
+              ><td>a.png</td><td data-value="820" data-numeric="">820</td></tr
+            ></tbody
+          >
+        </RdDataTable>
         <RdToggle label="太字" pressed="false" />
         <rd-live-region></rd-live-region>
       </main>

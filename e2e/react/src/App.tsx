@@ -4,6 +4,7 @@ import {
   RdCheckbox,
   RdCheckboxGroup,
   RdCombobox,
+  RdDataTable,
   RdInputOtp,
   RdMenu,
   RdMeter,
@@ -152,6 +153,37 @@ export const App = (): ReactNode => (
     <RdCombobox id="reading" listId="reading-list" label="読み" name="reading">
       {readings}
     </RdCombobox>
+    <RdDataTable
+      caption="保存したコード"
+      head={
+        <thead>
+          <tr>
+            <th scope="col" data-sort="text" data-key="name">
+              名前
+            </th>
+            <th scope="col" data-sort="number" data-key="size" data-numeric="">
+              サイズ
+            </th>
+          </tr>
+        </thead>
+      }
+      body={
+        <tbody>
+          <tr>
+            <td>b.png</td>
+            <td data-value="1234" data-numeric="">
+              1,234
+            </td>
+          </tr>
+          <tr>
+            <td>a.png</td>
+            <td data-value="820" data-numeric="">
+              820
+            </td>
+          </tr>
+        </tbody>
+      }
+    />
     <RdToggle label="太字" pressed="false" />
     <rd-live-region />
   </main>

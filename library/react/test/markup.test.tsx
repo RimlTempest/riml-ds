@@ -1,4 +1,9 @@
 import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
+import {
+  dataTableBodyMarkup,
+  dataTableHeadMarkup,
+  dataTableRowMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/data-table/contract'
 import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
@@ -47,6 +52,7 @@ describe('既定 export の部品', () => {
       'RdCheckbox',
       'RdCheckboxGroup',
       'RdCombobox',
+      'RdDataTable',
       'RdDisclosure',
       'RdInputOtp',
       'RdMenu',
@@ -59,5 +65,33 @@ describe('既定 export の部品', () => {
       'RdToggle',
       'RdWindow',
     ])
+  })
+})
+
+describe('experimental の部品', () => {
+  const head = dataTableHeadMarkup([
+    { label: '名前', sort: 'text', key: 'name' },
+    { label: 'サイズ', sort: 'number', key: 'size', numeric: true },
+  ])
+  const body = dataTableBodyMarkup([
+    dataTableRowMarkup([{ text: 'a.png' }, { text: '1,234', value: '1234', numeric: true }]),
+  ])
+
+  it('RdDataTable は column / direction / manual を属性として出す', () => {
+    const rendered = renderToString(
+      <experimental.RdDataTable
+        caption="保存したコード"
+        column={1}
+        direction="descending"
+        manual
+        head={<span dangerouslySetInnerHTML={{ __html: head }} />}
+        body={<span dangerouslySetInnerHTML={{ __html: body }} />}
+      />,
+    )
+    expect(normalize(rendered)).toContain('column="1"')
+    expect(normalize(rendered)).toContain('direction="descending"')
+    expect(normalize(rendered)).toContain('manual=""')
+    // 表そのものは利用側が書く（部品は行を作らない）
+    expect(normalize(rendered)).toContain('<caption>保存したコード</caption>')
   })
 })
