@@ -197,9 +197,6 @@
       "peerDependencies": {
         "@rimltempest/riml-ds-tokens": "workspace:*",
       },
-      "optionalPeers": [
-        "@rimltempest/riml-ds-tokens",
-      ],
     },
     "system/tokens": {
       "name": "@rimltempest/riml-ds-tokens",
