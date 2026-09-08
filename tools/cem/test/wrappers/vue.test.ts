@@ -66,7 +66,9 @@ describe('vueFiles', () => {
     // ADR-0009: プラグインが登録するのは stable だけ。experimental は利用側が個別に登録する
     const index = find('index.ts')
     expect(index).not.toContain('RdSelect')
-    expect(index).toContain('export const rdComponents = { RdButton, RdDialog, RdTextField }')
+    expect(index).toContain(
+      'export const rdComponents = { RdButton, RdDialog, RdNote, RdTextField }',
+    )
     const experimental = find('experimental.ts')
     expect(experimental).toContain("import { RdSelect } from './select.js'")
     expect(experimental).toContain(
@@ -83,5 +85,12 @@ describe('vueFiles', () => {
     expect(source).toContain('interface IntrinsicElementAttributes')
     expect(source).toContain(`'rd-live-region': Record<string, never>`)
     expect(source).toContain(`'rd-button': { variant?: ButtonVariant; loading?: boolean }`)
+  })
+
+  it('ハイフンを含むホスト属性は h() のキーと IntrinsicElementAttributes で引用する', () => {
+    const source = find('note.ts')
+    expect(source).toContain(`'empty-text': props.emptyText`)
+    const types = find('elements.ts')
+    expect(types).toContain(`'rd-note': { 'empty-text'?: string }`)
   })
 })

@@ -6,7 +6,7 @@
  * `<rd-*>` を直接書くときの型は `svelteHTML` の拡張（`elements.d.ts`）が受ける。
  */
 import type { WrapperSpec } from './common.js'
-import { childrenTextOf, typeText } from './common.js'
+import { childrenTextOf, objectKey, typeText } from './common.js'
 import type { Dialect } from './markup-lang.js'
 import { renderTree } from './markup-lang.js'
 import type { GeneratedFile } from './react.js'
@@ -18,7 +18,7 @@ const dialect: Dialect = {
   attr: (name, expression, shorthand) =>
     shorthand ? `{${expression}}` : `${name}={${expression}}`,
   customAttr: (name, prop, isBoolean) => {
-    const entry = name === prop ? `{ ${name} }` : `{ ${name}: ${prop} }`
+    const entry = name === prop ? `{ ${name} }` : `{ ${objectKey(name)}: ${prop} }`
     return isBoolean
       ? `{...(${prop} === true ? ${entry} : {})}`
       : `{...(${prop} === undefined ? {} : ${entry})}`
@@ -66,7 +66,7 @@ const inlineType = (spec: WrapperSpec, text: string): string =>
 const elementsFile = (specs: readonly WrapperSpec[]): GeneratedFile => {
   const rows = specs.flatMap((spec) => {
     const attrs = spec.attrs.map(
-      (attr) => `      ${attr.name}?: ${inlineType(spec, typeText(attr.type))}`,
+      (attr) => `      ${objectKey(attr.name)}?: ${inlineType(spec, typeText(attr.type))}`,
     )
     const events = spec.events.map(
       (event) => `      '${event.name.replace('rd-', 'onrd-')}'?: (event: ${event.detail}) => void`,
