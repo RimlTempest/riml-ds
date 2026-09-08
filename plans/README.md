@@ -75,7 +75,7 @@
 | 023 | [ラッパー生成器の追随（名前つき raw → 名前つき slot、astro exports 生成、frameworks e2e に tabs / menu / popover）](023-wrappers-named-slots.md) | P1 | M | 020 | DONE（`887beb1`） |
 | 024 | [rd-toggle（021 の STOP 分）、rd-menu の閉じたメニューが見えるバグ、frameworks e2e の穴埋め](024-toggle-and-menu-fix.md) | P1 | M | 023 | DONE（`fb0c2c2`） |
 | 027 | [ダークの面を 4 段にする（neutral.750 / 950、ダークでも見える影）](027-tokens-dark-surfaces.md) | P1 | M | 014 | DONE（`631000d`） |
-| 025 | [rd-combobox（`<input list>` + `<datalist>` を包むティア A の候補つき入力欄）](025-combobox.md) | P1 | L | 024 | IN PROGRESS |
+| 025 | [rd-combobox（`<input list>` + `<datalist>` を包むティア A の候補つき入力欄）](025-combobox.md) | P1 | L | 024 | DONE（`0d566a3`） |
 | 026 | [Hover Card（rd-popover hover）・Context Menu（rd-menu context）・Navigation Menu（.rd-nav-menu + Patterns/Navigation story）](026-hover-card-context-menu-nav-menu.md) | P1 | M | 024 | IN PROGRESS |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
@@ -330,3 +330,12 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - 検証（main マージ前の worktree、027 込み）: check 0、test 1235 passed / 1 skipped、e2e:frameworks 110 passed（98 → 110）、pe 66、a11y 23、vrt 1055、release:check 0、guard 0
 - 宿題（advisor）: `riml-ds-element` skill に「`[popover]` を持つ部品は通常状態に `display` を書かない」「raw の `children` は既定 slot、他は名前つき slot」を追記。`scaffold:element` が `*.contract.test.ts` を作らない（skill の構成と 1 本ずれ）
 
+### 025 の実行メモ（2026-09-08）
+
+- `feat/combobox` を `0d566a3` で `--no-ff` マージ（executor 5 コミット + `0f4290d chore(merge)`）。026 と並行し、コンフリクト無し
+- `rd-combobox`（experimental、ティア A、light DOM）: 定義前は `<input list>` + `<datalist>` のネイティブ候補、定義後は `list` を外して `[part=list][popover=manual]` の listbox に写す。`combobox/define` 9 kB / 14 kB
+- 計画からの逸脱（すべて受け入れ）: `decideKey` / `reduceKey` の純関数分割と `combobox.dom.ts`（277 行）への DOM 分離、契約検査を `willUpdate` で行う、`<datalist>` に `aria-hidden="true"`（markuplint がアクセシブル名を要求）、候補 0 件では `role="listbox"` を出さない（空の listbox は markuplint が落とす）、
+  選択行の縦罫は `border-inline-start`（stylelint の `declaration-strict-value` が `box-shadow: inset …` を落とす）、JS ありの挙動テストは `e2e/a11y/keyboard.spec.ts`（`e2e/pe` は `javaScriptEnabled: false`）、Disabled story は `unsafeHTML`（lit のコメントノードが `<datalist>` の permitted-contents に引っかかる）、`ComboboxFilter` 型を公開
+- 025 の保守メモ: `filterCandidates` / `normalize` は 028（`rd-command`）で `_shared/text-filter.ts` に移す
+- 検証（main マージ後の worktree）: check 0、test 1297 passed / 1 skipped、guard 0、pe 70、e2e:frameworks 122、vrt 1111（新規 50 枚、既存の変更 0）、a11y 25、release:check 0
+- 宿題（advisor）: skill `riml-ds-element` に「ラッパーの props は契約の `tree.attrs` から作られる」「`box-shadow: inset` は書けない → 罫線」「JS ありの e2e は `keyboard.spec.ts`」「`<datalist>` / 空の listbox の markuplint 規則」を追記
