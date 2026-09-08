@@ -20,7 +20,7 @@ export const contract = {
   required: ['trigger', 'panel'],
   tree: {
     tag: 'rd-popover',
-    attrs: { placement: '$placement' },
+    attrs: { placement: '$placement', hover: '$hover' },
     children: [
       // trigger / children は生 HTML。`popovertarget` を木のノードにしないのは
       // ラッパー生成器が React の `popoverTarget` に読み替えられないため
@@ -46,6 +46,11 @@ export type PopoverMarkupProps = {
   readonly children: string
   /** インライン方向の揃え。`end` はトリガーの終端に揃える */
   readonly placement?: 'start' | 'end'
+  /**
+   * トリガーに乗せる / フォーカスすると遅れて開く（Hover Card）。
+   * **押して開く経路は残る**——ホバーは近道でしかない
+   */
+  readonly hover?: boolean
 }
 
 /**
