@@ -129,6 +129,10 @@ export const SegmentedDisabled: Story = {
   },
 }
 
+/**
+ * `aria-invalid` は使わない（ARIA 1.2 で `role="radio"` では非推奨）。
+ * 文言は**各 radio** の `aria-describedby` で結び、状態は `:state(invalid)` と `:user-invalid` で示す。
+ */
 export const Invalid: Story = {
   args: { children: options(true) },
   play: async ({ canvasElement }) => {
@@ -143,6 +147,10 @@ export const Invalid: Story = {
       'このプランは選べません。別のプランを選んでください。',
     )
     await expect(error).toBeInTheDocument()
+    await expect(el?.matches(':state(invalid)')).toBe(true)
+    const free = within(canvasElement).getByLabelText('無料')
+    await expect(free).toHaveAttribute('aria-describedby', error.id)
+    await expect(free).not.toHaveAttribute('aria-invalid')
   },
 }
 

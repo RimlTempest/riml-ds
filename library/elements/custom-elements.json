@@ -1093,15 +1093,6 @@
             },
             {
               "kind": "field",
-              "name": "#fieldset",
-              "privacy": "private",
-              "type": {
-                "text": "HTMLFieldSetElement | undefined"
-              },
-              "default": "undefined"
-            },
-            {
-              "kind": "field",
               "name": "#contractOk",
               "privacy": "private",
               "type": {

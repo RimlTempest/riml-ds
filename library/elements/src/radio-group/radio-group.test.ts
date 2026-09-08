@@ -74,13 +74,24 @@ it('required が未選択なら invalid のあとに日本語の文言が出る'
   expect(el.querySelector('[part=error]')).toBeNull()
   radios(el)[0]?.dispatchEvent(new Event('invalid', { cancelable: true }))
   await el.updateComplete
-  expect(el.querySelector('[part=error]')?.textContent).toBe('未入力です。入力してください。')
-  // fieldset に aria-invalid は効かないので、最初の radio に付ける
-  expect(radios(el)[0]?.getAttribute('aria-invalid')).toBe('true')
+  const error = el.querySelector('[part=error]')
+  expect(error?.textContent).toBe('未入力です。入力してください。')
+  expect(el.matches(':state(invalid)')).toBe(true)
+  // 文言は各 radio から aria-describedby で引く
+  expect(radios(el).map((radio) => radio.getAttribute('aria-describedby'))).toEqual([
+    error?.id,
+    error?.id,
+    error?.id,
+  ])
+})
+
+it('aria-invalid は使わない（ARIA 1.2 で role="radio" では非推奨）', async () => {
+  const el = await fixtureOf(RdRadioGroup, group('error="選んでください。"', 'required'))
+  expect(radios(el).some((radio) => radio.hasAttribute('aria-invalid'))).toBe(false)
   expect(el.querySelector('fieldset')?.hasAttribute('aria-invalid')).toBe(false)
 })
 
-it('hint と error は fieldset の aria-describedby に載る', async () => {
+it('hint と error は各 radio の aria-describedby に載る（fieldset には付けない）', async () => {
   const el = await fixtureOf(
     RdRadioGroup,
     group('hint="あとで変更できます" error="選んでください。"'),
@@ -89,9 +100,13 @@ it('hint と error は fieldset の aria-describedby に載る', async () => {
   const error = el.querySelector('[part=error]')
   expect(hint?.textContent).toBe('あとで変更できます')
   expect(error?.textContent).toBe('選んでください。')
-  expect(el.querySelector('fieldset')?.getAttribute('aria-describedby')).toBe(
-    `${hint?.id ?? ''} ${error?.id ?? ''}`,
-  )
+  const expected = `${hint?.id ?? ''} ${error?.id ?? ''}`
+  expect(radios(el).map((radio) => radio.getAttribute('aria-describedby'))).toEqual([
+    expected,
+    expected,
+    expected,
+  ])
+  expect(el.querySelector('fieldset')?.hasAttribute('aria-describedby')).toBe(false)
   expect(el.matches(':state(hinted)')).toBe(true)
   expect(el.matches(':state(errored)')).toBe(true)
 })

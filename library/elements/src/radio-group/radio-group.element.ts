@@ -40,7 +40,6 @@ export class RdRadioGroup extends LitElement {
   declare error: string
   declare segmented: boolean
   #internals = this.attachInternals()
-  #fieldset: HTMLFieldSetElement | undefined = undefined
   #contractOk = false
   #touched = false
   #bindings: readonly Binding[] = []
@@ -70,17 +69,17 @@ export class RdRadioGroup extends LitElement {
       console.error(`[rd-radio-group] <fieldset><legend> と radio が必要（不足: ${missing}）`)
     }
     this.#contractOk = result.kind === 'ok'
-    const found = result.kind === 'ok' ? result.found['fieldset'] : undefined
-    this.#fieldset = found instanceof HTMLFieldSetElement ? found : undefined
     this.#bindings = this.#radios().map((radio) => bindListeners(radio, this.#listeners))
   }
 
+  /** hint / error は**各 radio** の `aria-describedby` で結ぶ（`<fieldset>` には付けない）。
+   * `aria-invalid` は ARIA 1.2 で `role="radio"` では非推奨なので使わず、不正は `:state(invalid)` で伝える */
   override updated(): void {
     const view = this.#view()
     syncStates(this.#internals, view.states)
-    syncAttribute(this.#fieldset, 'aria-describedby', view.describedBy)
-    // `<fieldset>` に aria-invalid は効かない。最初の radio に付ける（ADR-0008 §4）
-    syncAttribute(this.#radios()[0], 'aria-invalid', view.ariaInvalid)
+    this.#radios().forEach((radio) => {
+      syncAttribute(radio, 'aria-describedby', view.describedBy)
+    })
   }
 
   /** 強化ノード（ADR-0008 §6: `aria-live` は付けない） */

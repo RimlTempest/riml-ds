@@ -33,19 +33,20 @@ afterEach(async () => {
   cleanupFixtures()
 })
 
-it('legend が group の名前として読まれ、hint も一緒に読まれる', async () => {
+it('legend が group の名前として読まれる', async () => {
   const el = await fixtureOf(RdRadioGroup, GROUP)
   await virtual.start({ container: el })
   const spoken = await advanceTo('group', 8)
   expect(spoken).toContain('プラン')
-  expect(spoken).toContain('あとで変更できます')
 })
 
-it('選択肢は radio として何番目かとともに読まれる', async () => {
+it('選択肢は radio として何番目かとともに読まれ、hint も一緒に読まれる', async () => {
   const el = await fixtureOf(RdRadioGroup, GROUP)
   await virtual.start({ container: el })
   const spoken = await advanceTo('radio', 8)
   expect(spoken).toContain('無料')
   expect(spoken).toContain('1')
   expect(spoken).toContain('3')
+  // hint は各 radio の aria-describedby で結ぶので、選択肢と一緒に読まれる
+  expect(spoken).toContain('あとで変更できます')
 })

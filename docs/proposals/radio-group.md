@@ -27,8 +27,9 @@
 ## a11y
 
 - 名前は `<legend>`。`<fieldset>` が `group` として読まれ、選択肢は「radio、n 個中 m 番目」で読まれる
-- `aria-describedby`（hint / error）は **`<fieldset>`** に付ける。
-  `aria-invalid` は fieldset に効かないので**最初の radio** に付ける
+- `aria-describedby`（hint / error）は **各 radio** に付ける（`rd-checkbox` / `rd-text-field` と同じ流儀）。
+  `<fieldset>` には付けない。**`aria-invalid` は使わない** — ARIA 1.2 で `role="radio"` では非推奨。
+  不正は `:state(invalid)` と `:user-invalid` で示す
 - 文言は操作後（`change` / `blur` / `invalid`）にだけ出す。`error` 属性があれば最優先で出す
 - 選択は**面・影・太字**で示す（`segmented` でも色だけに頼らない）。
   タップ標的は文言まで含めて 44×44 以上（WCAG 2.2）
