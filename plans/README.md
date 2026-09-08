@@ -72,7 +72,7 @@
 | 020 | [ナビゲーションと重ね窓（rd-tabs・rd-menu・rd-popover・rd-tooltip・navigation.css）](020-navigation-and-overlays.md) | P1 | XL | 017, 018 | DONE（`4ebf45e`） |
 | 021 | [フォーム第 4 波（rd-toggle・rd-checkbox-group・rd-input-otp・.rd-button-group）](021-form-wave4.md) | P1 | L | 019 | DONE（`5588b47`。rd-toggle は STOP → 024） |
 | 022 | [面と待ち（.rd-card / .rd-empty / .rd-spinner / .rd-accordion / .rd-carousel / .rd-scroll-area / .rd-aspect、rd-dialog の alert / placement）](022-surfaces-and-feedback.md) | P1 | L | 017, 018 | DONE（`4f9b19e`） |
-| 023 | [ラッパー生成器の追随（名前つき raw → 名前つき slot、astro exports 生成、frameworks e2e に tabs / menu / popover）](023-wrappers-named-slots.md) | P1 | M | 020 | IN PROGRESS |
+| 023 | [ラッパー生成器の追随（名前つき raw → 名前つき slot、astro exports 生成、frameworks e2e に tabs / menu / popover）](023-wrappers-named-slots.md) | P1 | M | 020 | DONE（`887beb1`） |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
@@ -286,4 +286,21 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
   VRT の `maxDiffPixelRatio: 0.001` は 1024 幅だと細い罫線の色変化を拾えない（360 幅では拾った）。
   `bun install --frozen-lockfile` が `bun.lock` に `optionalPeers` 3 行を足す（bun 1.4.0 と lock の生成バージョン差。都度 `git checkout bun.lock`）
 - 残件: `.rd-button-group` / `.rd-input-group` / `Patterns/*` の Storybook story（advisor）、`segmented` CSS の重複（3 つ目が出たら `.rd-segmented` へ）
+
+### 023 の実行メモ（2026-09-08）
+
+- マージ `887beb1`（021 の後。`e2e/frameworks/*.spec.ts` / `shared.ts` / `e2e/{react,vue,svelte}/src/{App.*,defines.ts}` の union 衝突は advisor が両取り。
+  `shared.ts` は `navigationSuite` の閉じ括弧 3 行が衝突ブロックの外にあって落ちた → 手で補った。executor は指示どおり STOP して `merge --abort` していた）。
+  `Dialect.raw(name)`: `children` だけ既定 slot、`trigger` / `items` / `tabs` / `panels` は名前つき slot（Vue `<template #trigger>`、Svelte `{#snippet trigger()}`、Astro `slot="trigger"`）。
+  `astroExports()` が `library/astro/package.json` の `exports` を書く（021 の 2 つを含めて experimental 12 個）。
+  検査: check 0、test 1179、e2e:frameworks 98（着手時 50）、release:check 0、guard 0。a11y / VRT は story・CSS・要素に触っていないので省略
+- **Step 3b（021 の rd-toggle が踏んだ生成器の穴）**: Vue の `objectKey()` がハイフン付きキーを引用、`HTML_ENUM_ATTRS` に `button.aria-pressed: ['true','false']`。
+  fixture に `rd-toggle` を足して固定した（既存の生成物は 1 バイトも変わらない）→ 024 で toggle を入れ直せる
+- 計画から変えた点: §5 の `canonical` 正規化は不要だった（astro を meter / window / radio / slider の suite に載せても boolean 属性が比較対象に出ない）。
+  `navigationSuite` の menu は可視性ではなく `:popover-open` で見る（下の問題のため）
+- **見つけた問題**: `library/elements/src/menu/menu.css` の `rd-menu [popover] { display: grid }` が UA の `[popover]:not(:popover-open) { display: none }` を
+  上書きしている疑い → 閉じたメニューが可視になる。`rd-popover` は `display` を書いていない。**024 で検証して直す**（`:popover-open` 側に寄せる）
+- 残件: `formWave4Suite` の astro 除外コメントが古い（exports は生成されるようになった）→ 024 で astro を載せる。
+  `bun run gen` 単体ではクリーンな worktree で生成物が出ない（契約を `library/elements/dist` から読む）→ 計画の Step 0 は `bun run build` を先に書く。
+  skill `riml-ds-element` に「raw の名前 = slot 名（`children` は既定）」を追記（advisor）
 
