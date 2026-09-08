@@ -71,7 +71,8 @@ export class RdDialog extends LitElement {
   }
 
   override updated(): void {
-    syncStates(this.#internals, computeStates({ open: this.open, malformed: !this.#contractOk }))
+    const malformed = !this.#contractOk
+    syncStates(this.#internals, computeStates({ open: this.open, malformed, placement: 'center' }))
     this.#applyOpen()
   }
 
@@ -101,9 +102,7 @@ export class RdDialog extends LitElement {
     this.open = false
   }
 
-  #closeByButton = (): void => {
-    this.close('button')
-  }
+  #closeByButton = (): void => this.close('button')
 
   #dialog = (): HTMLDialogElement | null => this.renderRoot.querySelector('dialog')
 
@@ -122,7 +121,7 @@ export class RdDialog extends LitElement {
   }
 
   #onCancel = (event: Event): void => {
-    const decision = decideClose({ persistent: this.persistent, reason: 'esc' })
+    const decision = decideClose({ persistent: this.persistent, alert: false, reason: 'esc' })
     if (decision.kind === 'blocked') {
       event.preventDefault()
       return
@@ -132,7 +131,7 @@ export class RdDialog extends LitElement {
 
   /** `<dialog>` 自身が click の対象なら背面（backdrop）を押している */
   #onClick = (event: Event): void => {
-    const decision = decideClose({ persistent: this.persistent, reason: 'backdrop' })
+    const decision = decideClose({ persistent: this.persistent, alert: false, reason: 'backdrop' })
     const dialog = this.#dialog()
     if (decision.kind === 'close' && event.target === dialog) {
       this.#reason = decision.reason

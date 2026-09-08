@@ -4,32 +4,47 @@
 
 export type DismissReason = 'esc' | 'backdrop' | 'button' | 'api'
 
+/**
+ * 窓の置き場所。`center` が既定のモーダル、`start` / `end` が縦の帯（Sheet）、
+ * `bottom` が下からせり上がる帯（Drawer）。位置は `<dialog>` の `margin` で決まる
+ * （top layer は `inset` を無視するため）。
+ */
+export type DialogPlacement = 'center' | 'start' | 'end' | 'bottom'
+
 export type CloseDecision =
   | { readonly kind: 'blocked' }
   | { readonly kind: 'close'; readonly reason: DismissReason }
 
 /**
- * `persistent` は Esc と背面クリックだけを止める。`show()`/`close()` と帯の × は常に効く
- * （`persistent` のときは × 自体を描かない。ADR-0014 決定 4）。
+ * `persistent` は Esc と背面クリックだけを止める。`alert` は背面クリックだけを止める
+ * （WAI-APG の Alert Dialog は外側を押しても閉じない。Esc は閉じる）。
+ * `show()`/`close()` と帯の × は常に効く（`persistent` のときは × 自体を描かない。ADR-0014 決定 4）。
  * 既定 false の名前にしてあるのは、boolean 属性が HTML では「無い = false」しか表せないため。
  * 既定 true の名前だと `markup()` が属性を省くだけで既定に戻ってしまう（plan 009 Step 0 で反転した）。
  */
 export const decideClose = (input: {
   readonly persistent: boolean
+  readonly alert: boolean
   readonly reason: DismissReason
-}): CloseDecision =>
-  input.persistent && (input.reason === 'esc' || input.reason === 'backdrop')
+}): CloseDecision => {
+  const blockedByPersistent =
+    input.persistent && (input.reason === 'esc' || input.reason === 'backdrop')
+  return blockedByPersistent || (input.alert && input.reason === 'backdrop')
     ? { kind: 'blocked' }
     : { kind: 'close', reason: input.reason }
+}
 
+/** `center` は既定なので名前を持たない（`:state()` が増えると利用側の CSS が読みにくい） */
 export const computeStates = (input: {
   readonly open: boolean
   readonly malformed: boolean
+  readonly placement: DialogPlacement
 }): ReadonlySet<string> => {
   if (input.malformed) {
     return new Set(['malformed'])
   }
-  return input.open ? new Set(['open']) : new Set<string>()
+  const placed = input.placement === 'center' ? [] : [input.placement]
+  return new Set(input.open ? ['open', ...placed] : placed)
 }
 
 export type Focusable = { readonly focus: () => void; readonly isConnected: boolean }
