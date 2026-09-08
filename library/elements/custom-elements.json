@@ -1933,6 +1933,186 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/tooltip/tooltip.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-tooltip",
+          "declaration": {
+            "name": "RdTooltip",
+            "module": "/src/tooltip/tooltip.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/tooltip/tooltip.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "対象を説明する小さな吹き出し。**無くても害が無い**（ティア C、ADR-0012）——\nJS が無ければ何も出ず、代わりは利用側が対象に書く `title`。\nホバーだけに頼らずフォーカスでも出し、Esc で閉じ、吹き出しに乗っても消えない（WCAG 1.4.13）。",
+          "name": "RdTooltip",
+          "cssProperties": [
+            {
+              "description": "ポインタで開くまでの待ち時間。既定 400ms",
+              "name": "--rd-tooltip-delay"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "吹き出しの箱",
+              "name": "control"
+            }
+          ],
+          "slots": [
+            {
+              "description": "説明の文言",
+              "name": ""
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, serializable: true }"
+            },
+            {
+              "kind": "field",
+              "name": "for",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "description": "説明する相手の id（同じ木の中）",
+              "default": "''",
+              "attribute": "for"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#open",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#timer",
+              "privacy": "private",
+              "type": {
+                "text": "ReturnType<typeof setTimeout> | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#target",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#box",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#applyPopover",
+              "privacy": "private",
+              "description": "二重に呼ぶと InvalidStateError になるので、実際の表示状態と食い違うときだけ切り替える"
+            },
+            {
+              "kind": "field",
+              "name": "#setOpen",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#show",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#hide",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#hold",
+              "privacy": "private",
+              "description": "吹き出し自身に乗っている間は消さない（WCAG 1.4.13 Hoverable）"
+            },
+            {
+              "kind": "field",
+              "name": "#delayedShow",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#onKeydown",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "id"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "for",
+              "type": {
+                "text": "string"
+              },
+              "description": "説明する相手の id（同じ木の中）",
+              "default": "''",
+              "fieldName": "for"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "open",
+              "description": "表示中"
+            },
+            {
+              "name": "orphan",
+              "description": "for の先が見つからない"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "対象を説明する吹き出し。フォーカスでも出て Esc で閉じる",
+          "status": "experimental",
+          "pe": "C",
+          "tagName": "rd-tooltip",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdTooltip",
+          "declaration": {
+            "name": "RdTooltip",
+            "module": "src/tooltip/tooltip.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/window/window.define.ts",
       "declarations": [],
       "exports": [

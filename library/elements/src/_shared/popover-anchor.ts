@@ -73,3 +73,36 @@ export const supportsAnchorPositioning = (): boolean =>
   typeof CSS !== 'undefined'
   && typeof CSS.supports === 'function'
   && CSS.supports('anchor-name: --rd-a')
+
+/**
+ * 実 DOM に位置を書く（唯一 DOM を触る関数。上の純関数を呼ぶだけ）。
+ *
+ * anchor positioning が使えるならトリガーに `anchor-name`、重ね物に `position-anchor` を
+ * 書いて**あとは CSS に任せる**（`position-area` / `position-try-fallbacks` は各部品の `.css`）。
+ * 使えないときだけ `getBoundingClientRect()` から `top` / `left` を書く。
+ */
+export const anchorPopover = (
+  trigger: HTMLElement | undefined,
+  popover: HTMLElement | undefined,
+  /** `--` を除いたアンカー名。部品ごとに一意にする */
+  name: string,
+  options: { readonly placement?: AnchorPlacement; readonly side?: AnchorSide } = {},
+): void => {
+  if (trigger === undefined || popover === undefined) {
+    return
+  }
+  if (supportsAnchorPositioning()) {
+    trigger.style.setProperty('anchor-name', `--${name}`)
+    popover.style.setProperty('position-anchor', `--${name}`)
+    return
+  }
+  const style = computeAnchorStyle({
+    trigger: trigger.getBoundingClientRect(),
+    popover: popover.getBoundingClientRect(),
+    viewport: { width: window.innerWidth, height: window.innerHeight },
+    placement: options.placement,
+    side: options.side,
+  })
+  popover.style.top = `${style.top}px`
+  popover.style.left = `${style.left}px`
+}

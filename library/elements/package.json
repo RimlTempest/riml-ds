@@ -150,6 +150,14 @@
       "default": "./dist/tabs/tabs.define.js"
     },
     "./experimental/tabs/style.css": "./dist/tabs/tabs.css",
+    "./experimental/tooltip": {
+      "types": "./dist/experimental/tooltip/index.d.ts",
+      "default": "./dist/experimental/tooltip/index.js"
+    },
+    "./experimental/tooltip/define": {
+      "types": "./dist/tooltip/tooltip.define.d.ts",
+      "default": "./dist/tooltip/tooltip.define.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./custom-elements.json": "./custom-elements.json",
     "./package.json": "./package.json"

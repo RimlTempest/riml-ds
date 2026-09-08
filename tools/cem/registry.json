@@ -98,6 +98,15 @@
     "dependsOn": ["rd-live-region"]
   },
   {
+    "name": "tooltip",
+    "tag": "rd-tooltip",
+    "pe": "C",
+    "status": "experimental",
+    "summary": "対象を説明する吹き出し。フォーカスでも出て Esc で閉じる",
+    "files": ["tooltip/index.js", "tooltip/tooltip.define.js"],
+    "dependsOn": []
+  },
+  {
     "name": "window",
     "tag": "rd-window",
     "pe": "B",

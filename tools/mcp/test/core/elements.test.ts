@@ -30,6 +30,7 @@ describe('listElements', () => {
       'rd-tabs',
       'rd-text-field',
       'rd-toast',
+      'rd-tooltip',
       'rd-window',
     ])
     expect(result.value[0]).toMatchObject({ pe: 'A', status: 'stable' })
@@ -48,6 +49,7 @@ describe('listElements', () => {
       'rd-tabs',
       'rd-text-field',
       'rd-toast',
+      'rd-tooltip',
       'rd-window',
     ])
   })

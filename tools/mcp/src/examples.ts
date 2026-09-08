@@ -81,6 +81,12 @@ const DISCLOSURE = {
  */
 const TOAST = {} as const
 
+/**
+ * `rd-tooltip` もティア C（契約を持たない）。対象の id と説明文だけを載せる。
+ * 対象側に `title` を書くのが JS 無しのときの代替（ADR-0012 ティア C）。
+ */
+const TOOLTIP = { for: 'save', children: '⌘S で保存します' } as const
+
 export const elementExamples = {
   'rd-button': { html: buttonMarkup(BUTTON), props: BUTTON },
   'rd-text-field': { html: textFieldMarkup(TEXT_FIELD), props: TEXT_FIELD },
@@ -92,4 +98,10 @@ export const elementExamples = {
   'rd-window': { html: windowMarkup(WINDOW), props: WINDOW },
   'rd-tabs': { html: tabsMarkup(TABS), props: TABS },
   'rd-toast': { html: '<rd-toast></rd-toast>', props: TOAST },
+  'rd-tooltip': {
+    html:
+      '<button id="save" type="button" title="⌘S で保存します">保存</button>'
+      + '<rd-tooltip for="save">⌘S で保存します</rd-tooltip>',
+    props: TOOLTIP,
+  },
 } as const satisfies ElementExampleMap
