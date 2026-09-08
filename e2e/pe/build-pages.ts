@@ -69,6 +69,52 @@ ${body}
 
 const submit = buttonMarkup({ label: '送信', type: 'submit' })
 
+/** 1x1 の透明 SVG。外部ファイルを配らずに `.rd-card-media` / `.rd-aspect` の枠だけを見る */
+const PIXEL =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3C/svg%3E"
+
+/** `atoms.css` / `utilities.css` の面と待ち（plan 022）。JS を 1 行も使わない */
+const SURFACES = `      <h2>カード</h2>
+      <article class="rd-card">
+        <img class="rd-card-media" src="${PIXEL}" alt="" />
+        <div class="rd-card-body">
+          <h3 class="rd-card-title"><a class="rd-card-link" href="/echo.html">送料のはなし</a></h3>
+          <p>全国一律 500 円です。</p>
+        </div>
+        <div class="rd-card-footer"><span class="rd-badge">新着</span></div>
+      </article>
+
+      <h2>空のとき</h2>
+      <div class="rd-empty">
+        <span class="rd-empty-icon" aria-hidden="true"></span>
+        <p class="rd-empty-title">まだありません</p>
+        <p>最初の 1 つを作ると、ここに出ます。</p>
+        <div class="rd-empty-actions">${buttonMarkup({ label: '作る', type: 'button' })}</div>
+      </div>
+
+      <h2>待っているとき</h2>
+      <span class="rd-spinner" role="status"><span class="rd-visually-hidden">読み込み中</span></span>
+
+      <h2>よくある質問</h2>
+      <div class="rd-accordion">
+        ${disclosureMarkup({ label: '送料について', children: '<p>全国一律 500 円です。</p>', group: 'faq' })}
+        ${disclosureMarkup({ label: '返品について', children: '<p>7 日以内なら受け付けます。</p>', group: 'faq' })}
+      </div>
+
+      <h2>新着</h2>
+      <div class="rd-carousel" role="region" aria-roledescription="carousel" aria-label="新着" tabindex="0">
+        <ul class="rd-carousel-track">
+          <li class="rd-carousel-item"><div class="rd-aspect"><img src="${PIXEL}" alt="" /></div></li>
+          <li class="rd-carousel-item"><div class="rd-aspect" data-ratio="1"><img src="${PIXEL}" alt="" /></div></li>
+        </ul>
+      </div>
+
+      <h2>記録</h2>
+      <div class="rd-scroll-area" role="region" aria-label="記録" tabindex="0">
+        <p>2026-09-08 03:00 バックアップを開始した。</p>
+        <p>2026-09-08 03:04 バックアップが終わった。</p>
+      </div>`
+
 const OPTIONS =
   '<option value="">選択してください</option>'
   + '<option value="jp">日本</option><option value="us">アメリカ</option>'
@@ -143,6 +189,13 @@ const PAGES: Readonly<Record<string, string>> = {
     'ダイアログ',
     `      ${dialogMarkup({ label: '確認', children: '<p>保存しますか？</p>' })}`,
   ),
+  // plan 022。帯（Sheet）と返事を求める窓は属性が増えるだけで、JS 無しの見え方は同じ
+  'dialog-sheet.html': page(
+    'ダイアログの帯',
+    `      ${dialogMarkup({ label: '絞り込み', children: '<p>条件を選ぶ。</p>', placement: 'end' })}
+      ${dialogMarkup({ label: '削除の確認', children: '<p>元に戻せません。</p>', alert: true })}`,
+  ),
+  'card.html': page('面と待ち', SURFACES),
   'meter.html': page(
     'メーター',
     `      ${meterMarkup({

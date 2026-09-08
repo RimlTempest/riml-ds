@@ -65,6 +65,28 @@ describe('listElements', () => {
     expect(result.value.examples.html).toContain('<label for="country">')
   })
 
+  it('rd-dialog の例は placement を属性として出す（plan 022）', () => {
+    const result = getElement(manifest, elementExamples, 'rd-dialog')
+    expect(result.ok).toBe(true)
+    if (!result.ok) {
+      return
+    }
+    expect(result.value.examples.html).toContain('placement="end"')
+    expect(result.value.attributes.map((attribute) => attribute.name)).toEqual([
+      'alert',
+      'open',
+      'persistent',
+      'placement',
+    ])
+    expect(result.value.cssStates.map((state) => state.name)).toEqual([
+      'open',
+      'malformed',
+      'start',
+      'end',
+      'bottom',
+    ])
+  })
+
   it('CEM でないものは not-a-manifest で返す（throw しない）', () => {
     expect(listElements(42)).toEqual({
       ok: false,

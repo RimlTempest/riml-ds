@@ -97,10 +97,18 @@ export const frameworkSuite = (framework: string): void => {
         }),
       )
       await compareMarkup(page, 'rd-button', buttonMarkup({ label: '送信', type: 'submit' }))
+      // `placement`（plan 022）は文字列の属性。4 つのラッパー生成器が同じ値を出すことを固定する
+      // （boolean の `alert` は vue / svelte が `alert="true"`、react / astro が `alert=""` と書き、
+      //  意味は同じでも文字列が揃わない — `rd-window` の `collapsible` と同じ事情。
+      //  `alert` の振る舞いは logic / browser / story / e2e/pe が見る）
       await compareMarkup(
         page,
         'rd-dialog',
-        dialogMarkup({ label: '送信しました', children: '<p>確認メールを送りました。</p>' }),
+        dialogMarkup({
+          label: '送信しました',
+          children: '<p>確認メールを送りました。</p>',
+          placement: 'end',
+        }),
       )
     })
 
@@ -142,6 +150,25 @@ export const frameworkSuite = (framework: string): void => {
       await page.keyboard.press('Escape')
       await expect(page.getByRole('dialog')).toBeHidden()
       await expect(submit).toBeFocused()
+    })
+
+    /** `placement="end"`（plan 022）は帯（Sheet）。窓が行末の端に着く */
+    test('placement="end" の窓は行末の端に着く', async ({ page }) => {
+      await page.goto('/')
+      await page.getByLabel('メール').fill('a@example.com')
+      await page.getByRole('button', { name: '送信' }).click()
+      const dialog = page.getByRole('dialog')
+      await expect(dialog).toBeVisible()
+      const width = page.viewportSize()?.width ?? 0
+      // 入場は `@starting-style` の translate で滑り込む。着くまで見る（sleep を書かない）
+      await expect
+        .poll(async () => {
+          const box = await dialog.boundingBox()
+          return Math.round((box?.x ?? 0) + (box?.width ?? 0))
+        })
+        .toBe(width)
+      const box = await dialog.boundingBox()
+      expect(box?.x ?? 0).toBeGreaterThan(0)
     })
   })
 }

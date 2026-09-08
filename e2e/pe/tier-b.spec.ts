@@ -30,3 +30,44 @@ test('window: JS 無しでは操作の丸が 1 つも出ない', async ({ page }
   await expect(page.locator('rd-window')).toHaveCSS('display', 'block')
   await expect(page.locator('rd-window button')).toHaveCount(0)
 })
+
+/**
+ * `alert` / `placement`（plan 022）は属性が増えるだけで、JS 無しの見え方は変わらない。
+ * `:not(:defined)` の CSS はどちらも同じ（帯にするのは shadow の枠なので、定義前は関係ない）。
+ */
+test('dialog: 帯（placement）と alert でも JS 無しで内容が読める', async ({ page }) => {
+  await page.goto('/dialog-sheet.html')
+  await expect(page.getByRole('heading', { name: '絞り込み' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '削除の確認' })).toBeVisible()
+  await expect(page.getByText('元に戻せません。')).toBeVisible()
+  await expect(page.locator('rd-dialog').first()).toHaveCSS('display', 'block')
+})
+
+/**
+ * `atoms.css` / `utilities.css` の面と待ち（plan 022）は **JS を 1 行も使わない**。
+ * ここは「クラスだけで内容が読めて、転がる入れ物がキーボードで届く」ことを見る。
+ */
+test('surfaces: JS 無しでカード・空の知らせ・待ちの輪が読める', async ({ page }) => {
+  await page.goto('/card.html')
+  await expect(page.getByRole('link', { name: '送料のはなし' })).toBeVisible()
+  await expect(page.getByText('まだありません')).toBeVisible()
+  await expect(page.getByRole('status')).toContainText('読み込み中')
+})
+
+test('surfaces: アコーディオンは <details> なので JS 無しで開く', async ({ page }) => {
+  await page.goto('/card.html')
+  const answer = page.getByText('7 日以内なら受け付けます。')
+  await expect(answer).toBeHidden()
+  await page.getByRole('group').filter({ hasText: '返品について' }).locator('summary').click()
+  await expect(answer).toBeVisible()
+})
+
+test('surfaces: 転がる入れ物はキーボードで届く（tabindex="0"）', async ({ page }) => {
+  await page.goto('/card.html')
+  const carousel = page.getByRole('region', { name: '新着' })
+  await carousel.focus()
+  await expect(carousel).toBeFocused()
+  const log = page.getByRole('region', { name: '記録' })
+  await log.focus()
+  await expect(log).toBeFocused()
+})
