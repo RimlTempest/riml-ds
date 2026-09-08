@@ -1,13 +1,13 @@
 # 032: `rd-carousel` — scroll-snap の列に前へ／次へと「n / N」を足す（`<ul><li>` を包むティア A）
 
 **優先度**: P2　**規模**: M　**依存**: 020（`.rd-carousel` の CSS atom — 見た目の出どころ）、023（raw slot 付きラッパーの生成）
-**レーン**: `feat/carousel`　**計画時の main**: `__MAIN_SHA__`（028・029・030 マージ後。**031（`feat/toggle-group`）・033（`feat/calendar`）と並行** — `system/**` / `_shared/**` には触らない）
+**レーン**: `feat/carousel`　**計画時の main**: `28f2c5e`（028・029・030 マージ後。**031（`feat/toggle-group`）・033（`feat/calendar`）と並行** — `system/**` / `_shared/**` には触らない）
 
 > **Drift check（最初に実行）**:
 > `test -d library/elements/src/carousel && echo EXISTS` が何も出ないこと。出たら STOP。
 > `grep -c '\.rd-carousel {' system/css/src/atoms.css` = 1、`grep -c 'scroll-snap-type: x mandatory' system/css/src/atoms.css` ≥ 1。
 > `grep -c 'export const bindListeners' library/elements/src/_shared/native-control.ts` = 1、`grep -c 'export const usesJapaneseCopy' library/elements/src/_shared/lang.ts` = 1。
-> `grep -c "{ raw: '\$children' }" library/elements/src/window/window.contract.ts` = 1（raw の既定 slot が生成器で動いている手本）。
+> `grep -cF "{ raw: '\$children' }" library/elements/src/window/window.contract.ts` = 1（raw の既定 slot が生成器で動いている手本）。
 > 「現状のコード」の抜粋を現物と見比べる。違っていたら STOP。
 
 ## なぜ

@@ -1,7 +1,7 @@
 # 031: `rd-toggle-group` — 押下ボタンの列（`<fieldset>` + `<button aria-pressed>` を包むティア A。単一／複数選択と roving focus）
 
 **優先度**: P1　**規模**: M　**依存**: 024（`rd-toggle` の見た目・`aria-pressed` の扱い）、021（`rd-checkbox-group` の `<fieldset>` / `<legend>` 契約）
-**レーン**: `feat/toggle-group`　**計画時の main**: `__MAIN_SHA__`（028・029・030 マージ後。**032（`feat/carousel`）・033（`feat/calendar`）と並行** — `system/**` / `_shared/**` には触らない）
+**レーン**: `feat/toggle-group`　**計画時の main**: `28f2c5e`（028・029・030 マージ後。**032（`feat/carousel`）・033（`feat/calendar`）と並行** — `system/**` / `_shared/**` には触らない）
 
 > **Drift check（最初に実行）**:
 > `test -d library/elements/src/toggle-group && echo EXISTS` が何も出ないこと。出たら STOP。

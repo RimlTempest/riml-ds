@@ -1,7 +1,7 @@
 # 033: `rd-calendar` — 月の暦（light DOM の `<input type="date">` を包み、JS があるときだけ shadow に `role="grid"` の月表を描くティア B）
 
 **優先度**: P1　**規模**: L　**依存**: 023（`rd-tabs` の shadow 枠 + light DOM の roving tabindex）、`_shared/lang.ts`（日英の文言）
-**レーン**: `feat/calendar`　**計画時の main**: `__MAIN_SHA__`（028・029・030 マージ後。**031（`feat/toggle-group`）・032（`feat/carousel`）と並行** — `system/**` / `_shared/**` には触らない）
+**レーン**: `feat/calendar`　**計画時の main**: `28f2c5e`（028・029・030 マージ後。**031（`feat/toggle-group`）・032（`feat/carousel`）と並行** — `system/**` / `_shared/**` には触らない）
 
 > **Drift check（最初に実行）**:
 > `test -d library/elements/src/calendar && echo EXISTS` が何も出ないこと。出たら STOP。
