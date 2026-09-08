@@ -70,6 +70,17 @@ it('JS が無くても読める形のまま、太いピルとして描かれる'
   //（getComputedStyle は UA shadow の擬似要素に作者スタイルを返さない）
 })
 
+it('塗りの端も丸い（トラックだけでなく。plan 015 の積み残し）', async () => {
+  const el = await fixtureOf(RdMeter, METER)
+  const fill = getComputedStyle(el, '::after')
+  // --rd-radius-full: 9999px、--rd-space-4: 1rem
+  expect(fill.content).not.toBe('none')
+  expect(fill.borderRadius).toBe('9999px')
+  expect(fill.height).toBe('16px')
+  // 幅は --rd-meter-fill（0.32）× トラック
+  expect(fill.width).not.toBe('0px')
+})
+
 it('ラベルは太字のインク（brand.md §7.3）', async () => {
   const el = await fixtureOf(RdMeter, METER)
   const label = el.querySelector('label')

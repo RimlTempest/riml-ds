@@ -6,28 +6,33 @@
     "brotli": true
   },
   {
-    "name": "@rimltempest/riml-ds-css\uff08\u5168\u90e8\uff09",
+    "name": "@rimltempest/riml-ds-css（全部）",
     "path": "system/css/dist/index.css",
     "limit": "8 KB",
     "brotli": true
   },
   {
-    "name": "@rimltempest/riml-ds-elements/button/define (lit \u8fbc\u307f)",
+    "name": "@rimltempest/riml-ds-elements/button/define (lit 込み)",
     "path": "library/elements/dist/button/button.define.js",
     "limit": "12 KB"
   },
   {
-    "name": "@rimltempest/riml-ds-elements/dialog/define (lit \u8fbc\u307f)",
+    "name": "@rimltempest/riml-ds-elements/dialog/define (lit 込み)",
     "path": "library/elements/dist/dialog/dialog.define.js",
     "limit": "14 KB"
   },
   {
-    "name": "@rimltempest/riml-ds-elements/experimental/meter/define (lit \u8fbc\u307f)",
+    "name": "@rimltempest/riml-ds-elements/experimental/meter/define (lit 込み)",
     "path": "library/elements/dist/meter/meter.define.js",
     "limit": "12 KB"
   },
   {
-    "name": "@rimltempest/riml-ds-react (button \u306e\u307f import)",
+    "name": "@rimltempest/riml-ds-elements/experimental/window/define (lit 込み)",
+    "path": "library/elements/dist/window/window.define.js",
+    "limit": "10 KB"
+  },
+  {
+    "name": "@rimltempest/riml-ds-react (button のみ import)",
     "path": "library/react/dist/generated/button.js",
     "import": "{ RdButton }",
     "limit": "13 KB",

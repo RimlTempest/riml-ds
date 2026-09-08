@@ -82,6 +82,8 @@ export const Default: Story = {
       'aria-labelledby',
       'rd-dialog-label',
     )
+    // 帯の左端の × が閉じるボタン（ADR-0014 決定 4）。開く遷移の途中なので見た目は VRT が見る
+    await expect(queryShadow(dialog, 'button[data-action=close]')).toBeInTheDocument()
     // Esc はブラウザ内蔵の動作で信頼済みイベントでしか起きない（合成イベントでは閉じない）。
     // Esc の導線は `e2e/a11y/keyboard.spec.ts` が実キー入力で見る。
     // ここは閉じたあとのフォーカス復帰（部品の責務）だけを見る。
@@ -120,6 +122,8 @@ export const Persistent: Story = {
     const dialog = dialogIn(canvasElement)
     await expect(dialog?.open).toBe(true)
     await expect(dialog?.persistent).toBe(true)
+    // 閉じられないので × を出さない（押せないボタンを置かない）
+    await expect(queryShadow(dialog, 'button[data-action=close]')).toBeNull()
   },
 }
 

@@ -13,6 +13,7 @@ import { markup as checkboxMarkup } from '@rimltempest/riml-ds-elements/experime
 import { markup as disclosureMarkup } from '@rimltempest/riml-ds-elements/experimental/disclosure/contract'
 import { markup as meterMarkup } from '@rimltempest/riml-ds-elements/experimental/meter/contract'
 import { markup as selectMarkup } from '@rimltempest/riml-ds-elements/experimental/select/contract'
+import { markup as windowMarkup } from '@rimltempest/riml-ds-elements/experimental/window/contract'
 import { markup as textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field/contract'
 import type { ElementExampleMap } from './core/elements.js'
 
@@ -49,6 +50,12 @@ const METER = {
   max: '10',
   text: '3.2 GB / 10 GB',
 } as const
+const WINDOW = {
+  title: 'バックアップの設定',
+  children: '<p>毎晩 3 時に実行します。</p>',
+  closable: true,
+  collapsible: true,
+} as const
 const DISCLOSURE = {
   label: '送料について',
   children: '<p>5,000 円以上で無料です。</p>',
@@ -68,5 +75,6 @@ export const elementExamples = {
   'rd-checkbox': { html: checkboxMarkup(CHECKBOX), props: CHECKBOX },
   'rd-disclosure': { html: disclosureMarkup(DISCLOSURE), props: DISCLOSURE },
   'rd-meter': { html: meterMarkup(METER), props: METER },
+  'rd-window': { html: windowMarkup(WINDOW), props: WINDOW },
   'rd-toast': { html: '<rd-toast></rd-toast>', props: TOAST },
 } as const satisfies ElementExampleMap

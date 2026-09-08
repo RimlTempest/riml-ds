@@ -8,6 +8,7 @@ import type { Page } from '@playwright/test'
 import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
 import { dialogMarkup } from '@rimltempest/riml-ds-elements/dialog'
 import { checkboxMarkup } from '@rimltempest/riml-ds-elements/experimental/checkbox'
+import { meterMarkup } from '@rimltempest/riml-ds-elements/experimental/meter'
 import { selectMarkup } from '@rimltempest/riml-ds-elements/experimental/select'
 import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 
@@ -136,6 +137,64 @@ export const frameworkSuite = (framework: string): void => {
       await page.keyboard.press('Escape')
       await expect(page.getByRole('dialog')).toBeHidden()
       await expect(submit).toBeFocused()
+    })
+  })
+}
+
+/**
+ * `rd-meter` と `rd-window`（plan 017）。`@rimltempest/riml-ds-astro` の `package.json` が
+ * この 2 つの `.astro` をまだ export していないので、astro 以外の 3 つで回す。
+ */
+export const meterAndWindowSuite = (framework: string): void => {
+  test.describe(`${framework}: meter と window`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-meter',
+          meterMarkup({
+            id: 'disk',
+            label: 'ディスク使用量',
+            value: '3.2',
+            max: '10',
+            text: '3.2 GB / 10 GB',
+          }),
+        )
+        // `rd-window` は比べない: vue / svelte のラッパーが boolean 属性を `collapsible="true"` と
+        // 書く（react / astro は `collapsible=""`）。どちらも「存在 = true」で意味は同じだが
+        // 文字列としては一致しない。生成器（tools/cem/src/wrappers）は別レーンの持ち物なので
+        // ここでは形ではなく**振る舞い**（下の 2 つ）で固定する
+        await expect(page.locator('rd-window > [slot=title]')).toHaveText('バックアップの設定')
+      })
+
+      test('window は JS 無しでも見出しと本文が読める（ティア B）', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.getByRole('heading', { name: 'バックアップの設定' })).toBeVisible()
+        await expect(page.getByText('毎晩 3 時に実行します。')).toBeVisible()
+      })
+    })
+
+    test('meter は属性を読んで塗りの割合を CSS 変数に書く', async ({ page }) => {
+      await page.goto('/')
+      const meter = page.locator('rd-meter')
+      await expect
+        .poll(async () =>
+          meter.evaluate((element) =>
+            element instanceof HTMLElement ? element.style.getPropertyValue('--rd-meter-fill') : '',
+          ),
+        )
+        .toBe('0.32')
+    })
+
+    test('window: たたむを押すと本文が hidden になる（ADR-0014）', async ({ page }) => {
+      await page.goto('/')
+      const body = page.locator('rd-window [part=body]')
+      await expect(body).toBeVisible()
+      await page.locator('rd-window button[data-action=collapse]').click()
+      await expect(body).toBeHidden()
     })
   })
 }

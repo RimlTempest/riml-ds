@@ -58,3 +58,62 @@ fix: '<rd-button variant="$V">'
 ```
 
 `bunx @rimltempest/riml-ds-mcp migrate run --from 1 --to 2` で適用。
+
+## 0.2 → 0.3: 窓の帯（破壊的。ADR-0014）
+
+窓（`.rd-window`）とダイアログの帯の左端の丸 3 つは、**装飾ではなく操作ボタン**になった。
+併せて帯の構造が 1 段深くなる（**帯 = 見出し** → **帯 ⊃ 見出し**）。0.x なので互換の別名は残さない。
+
+### CSS で組んでいる窓（`@rimltempest/riml-ds-css`）
+
+before:
+
+```html
+<section class="rd-window">
+  <h2 class="rd-window-title" data-tone="warning"><span>タイトル</span></h2>
+  <div class="rd-window-body">…</div>
+</section>
+```
+
+after:
+
+```html
+<section class="rd-window" aria-labelledby="w1">
+  <header class="rd-window-bar" data-tone="warning">
+    <div class="rd-window-controls">
+      <button type="button" class="rd-window-control" data-action="close" aria-label="閉じる"></button>
+    </div>
+    <h2 class="rd-window-title" id="w1">タイトル</h2>
+  </header>
+  <div class="rd-window-body" id="w1-body">…</div>
+</section>
+```
+
+変わったところ:
+
+- `data-tone` の付け先が**見出しから帯（`.rd-window-bar`）へ**移った。見出しに付けても効かない
+- `.rd-window-title` は背景も高さも持たない（帯が持つ）。長いタイトルを切るための `<span>` は要らない
+- `.rd-window-title::before` の丸（`radial-gradient`）は消えた。丸が要るなら
+  `.rd-window-control[data-action="close|expand|collapse"]` を**使う分だけ**置く（押せない丸は置かない）。
+  **ボタンの動作は利用側が書く**。動作まで要るなら部品の `rd-window`
+- `.rd-window-controls` は操作が 1 つも無いなら要素ごと省く
+
+### `rd-dialog`
+
+- 帯の左端に ×（閉じる）が出る。`persistent` のときは出ない
+- `rd-dismiss` の `detail.reason` に `'button'` が増えた。`reason` で分岐しているコードは網羅を見直す
+- 開いたときの初期フォーカスが × に乗る（`showModal()` が最初のフォーカス可能要素を選ぶ）。
+  主ボタンから始めたいなら `slot="actions"` のボタンに `autofocus` を付ける
+- 新しい part: `bar` / `controls` / `close`。`::part(control)` は `<dialog>` と × の**両方**に当たる
+  （× は `part="control close"`）。`<dialog>` だけを狙うなら `::part(control):not(::part(close))` ではなく
+  `::part(bar)` の外側で当てるか、`::part(close)` を先に上書きする
+
+### `rd-meter`
+
+塗りを `rd-meter::after` のピルで描くようになった（端が丸くなる）。
+`rd-meter` に `position` を書いていたアプリは `relative` と衝突しないか見る。
+
+### 利用側の追随
+
+- qrcc2 の `<Window>` は plan 013 で追随する（帯の構造・`data-tone` の付け先・丸の廃止）
+- noter も同じ 3 点。`.rd-window-title` の見た目を借りている独自 UI があれば `.rd-window-bar` に移す

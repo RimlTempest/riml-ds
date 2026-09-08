@@ -1,0 +1,42 @@
+@layer rd.components {
+  /* 定義前（JS が無い / 遅い）の見え方だけ。帯は描くが**ボタンは出さない**
+     （押せない丸を置かない。ADR-0014 決定 1）。枠は `window.styles.ts` が持つ */
+  rd-window:not(:defined) {
+    display: block;
+    overflow: clip;
+    border-radius: var(--rd-radius-lg);
+    background: var(--rd-color-surface-raised);
+    box-shadow: var(--rd-shadow-raised);
+    color: var(--rd-color-text-default);
+  }
+
+  rd-window:not(:defined) > [slot='title'] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-block-size: var(--rd-sizing-target-min);
+    margin: 0;
+    padding-inline: var(--rd-space-2);
+    background: var(--rd-color-chrome-default);
+    color: var(--rd-color-chrome-text);
+    font: var(--rd-type-heading-2);
+  }
+
+  rd-window:not(:defined) > :not([slot='title']) {
+    margin-inline: var(--rd-space-4);
+  }
+
+  /* たたんだまま JS が来なかったら本文は出さない（属性が言っていることに従う）。
+     `:where()` は詳細度を上げない（selector-max-specificity 0,3,0 に収める） */
+  rd-window:not(:defined)[collapsed] > :where(:not([slot='title'])) {
+    display: none;
+  }
+
+  @media (forced-colors: active) {
+    rd-window:not(:defined) > [slot='title'] {
+      border-block-end: var(--rd-border-width-default) solid CanvasText;
+      background: Canvas;
+      color: CanvasText;
+    }
+  }
+}

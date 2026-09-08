@@ -1,7 +1,7 @@
 <script>
   import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-svelte'
   // experimental は専用サブパスからしか出ない（ADR-0009）
-  import { RdCheckbox, RdSelect } from '@rimltempest/riml-ds-svelte/experimental'
+  import { RdCheckbox, RdMeter, RdSelect, RdWindow } from '@rimltempest/riml-ds-svelte/experimental'
 </script>
 
 <main>
@@ -17,5 +17,7 @@
     <RdButton type="submit">送信</RdButton>
   </form>
   <RdDialog label="送信しました"><p>確認メールを送りました。</p></RdDialog>
+  <RdMeter id="disk" label="ディスク使用量" value="3.2" max="10" text="3.2 GB / 10 GB" />
+  <RdWindow title="バックアップの設定" collapsible><p>毎晩 3 時に実行します。</p></RdWindow>
   <rd-live-region></rd-live-region>
 </main>

@@ -87,5 +87,14 @@
     "summary": "一時的な通知。読み上げは rd-live-region に委譲する",
     "files": ["toast/index.js", "toast/toast.define.js"],
     "dependsOn": ["rd-live-region"]
+  },
+  {
+    "name": "window",
+    "tag": "rd-window",
+    "pe": "B",
+    "status": "experimental",
+    "summary": "窓。帯と閉じる/広げる/たたむ。見出しは slot=\"title\" に利用側が置く",
+    "files": ["window/index.js", "window/window.define.js", "window/window.css"],
+    "dependsOn": []
   }
 ]

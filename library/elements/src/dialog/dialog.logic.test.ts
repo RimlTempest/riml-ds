@@ -23,6 +23,17 @@ describe('decideClose', () => {
     expect(decideClose({ persistent: true, reason: 'backdrop' })).toEqual({ kind: 'blocked' })
   })
 
+  it('button（帯の ×）は常に閉じる。persistent では × 自体を描かない（ADR-0014 決定 4）', () => {
+    expect(decideClose({ persistent: false, reason: 'button' })).toEqual({
+      kind: 'close',
+      reason: 'button',
+    })
+    expect(decideClose({ persistent: true, reason: 'button' })).toEqual({
+      kind: 'close',
+      reason: 'button',
+    })
+  })
+
   it('api（show/close メソッド）は persistent でも閉じる', () => {
     expect(decideClose({ persistent: true, reason: 'api' })).toEqual({
       kind: 'close',

@@ -16,6 +16,7 @@ import { disclosureMarkup } from '../../library/elements/src/disclosure/index.js
 import { meterMarkup } from '../../library/elements/src/meter/index.js'
 import { selectMarkup } from '../../library/elements/src/select/index.js'
 import { textFieldMarkup } from '../../library/elements/src/text-field/index.js'
+import { windowMarkup } from '../../library/elements/src/window/index.js'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
 const outDir = fileURLToPath(new URL('pages/', import.meta.url))
@@ -33,6 +34,7 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/checkbox/checkbox.css', 'checkbox.css'],
   ['library/elements/src/disclosure/disclosure.css', 'disclosure.css'],
   ['library/elements/src/meter/meter.css', 'meter.css'],
+  ['library/elements/src/window/window.css', 'window.css'],
 ]
 
 const STYLESHEETS = CSS_SOURCES.map(
@@ -129,6 +131,15 @@ const PAGES: Readonly<Record<string, string>> = {
       value: '3.2',
       max: '10',
       text: '3.2 GB / 10 GB',
+    })}`,
+  ),
+  'window.html': page(
+    '窓',
+    `      ${windowMarkup({
+      title: 'バックアップの設定',
+      children: '<p>毎晩 3 時に実行します。</p>',
+      closable: true,
+      collapsible: true,
     })}`,
   ),
   'live-region.html': page('ライブリージョン', '      <rd-live-region></rd-live-region>'),

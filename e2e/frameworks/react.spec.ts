@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test'
-import { frameworkSuite } from './shared.js'
+import { frameworkSuite, meterAndWindowSuite } from './shared.js'
 
 frameworkSuite('react')
+meterAndWindowSuite('react')
 
 test.describe('react: controlled の再同期', () => {
   test('親が拒否した文字は入力欄から消える（<input> と同じ意味論）', async ({ page }) => {

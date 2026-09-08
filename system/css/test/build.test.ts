@@ -71,6 +71,12 @@ const MOTION_PROPS = new Set([
 
 const read = (path: string): string => readFileSync(path, 'utf8')
 
+/** その CSS が自分で定義している `--rd-*` の名前 */
+const declared = (css: string): readonly string[] =>
+  [...css.matchAll(/^\s*(--rd-[a-z0-9-]+)\s*:/gm)].flatMap((match) =>
+    match[1] === undefined ? [] : [match[1]],
+  )
+
 /** `@media (prefers-reduced-motion: no-preference)` の中にある宣言を集める */
 const declsUnderNoPreference = (root: Root): ReadonlySet<Declaration> => {
   const allowed = new Set<Declaration>()
@@ -137,17 +143,15 @@ describe('@rimltempest/riml-ds-css の build', () => {
     }
   })
 
-  it('使っている var(--rd-*) がすべて tokens.css に定義されている', () => {
+  it('使っている var(--rd-*) がすべて tokens.css か index.css 自身に定義されている', () => {
     const used = new Set(
       [...read(distIndex).matchAll(/var\((--rd-[a-z0-9-]+)/g)].flatMap((match) =>
         match[1] === undefined ? [] : [match[1]],
       ),
     )
-    const defined = new Set(
-      [...read(tokensCss).matchAll(/^\s*(--rd-[a-z0-9-]+)\s*:/gm)].flatMap((match) =>
-        match[1] === undefined ? [] : [match[1]],
-      ),
-    )
+    // トークンでない局所変数（例: `--rd-window-glyph`）は index.css 自身が定義する。
+    // 定義せずに使えばここで落ちる（plan 017 / ADR-0014）
+    const defined = new Set([...declared(read(tokensCss)), ...declared(read(distIndex))])
     expect(used.size).toBeGreaterThan(0)
     expect([...used].filter((name) => !defined.has(name) && !KNOBS.has(name))).toEqual([])
   })
@@ -209,20 +213,22 @@ describe('@rimltempest/riml-ds-css の build', () => {
     expect(read(distFile('patterns.css'))).toContain('.rd-window')
   })
 
-  it('帯の丸 3 つは ::before の装飾で、DOM にも読み上げにも出ない（brand.md §7.1）', () => {
-    const root = parse(read(srcFile('patterns.css')))
-    const before: Rule[] = []
-    root.walkRules(/\.rd-window-title::before/, (rule) => {
-      before.push(rule)
+  it('帯の丸は装飾ではなく <button>（ADR-0014 決定 1）', () => {
+    const patterns = read(srcFile('patterns.css'))
+    expect(patterns).not.toContain('radial-gradient')
+
+    const root = parse(patterns)
+    const control: Rule[] = []
+    root.walkRules(/^\.rd-window-control$/, (rule) => {
+      control.push(rule)
     })
-    expect(before.length).toBeGreaterThanOrEqual(1)
-    const decls = before.flatMap((rule) =>
+    expect(control).toHaveLength(1)
+    const decls = control.flatMap((rule) =>
       rule.nodes.flatMap((node) => (node.type === 'decl' ? [`${node.prop}:${node.value}`] : [])),
     )
-    expect(decls.some((decl) => decl.startsWith('content:'))).toBe(true)
-    expect(decls.some((decl) => decl.includes('radial-gradient'))).toBe(true)
-    // 強制配色では丸を消す（brand.md §7.1）
-    expect(decls).toContain('display:none')
+    // 当たり判定は sizing.target-min 四方。丸の見た目は ::before が描く
+    expect(decls).toContain('inline-size:var(--rd-sizing-target-min)')
+    expect(decls).toContain('block-size:var(--rd-sizing-target-min)')
   })
 
   it('h1 / h2 は display スタックの font-family を参照する（brand.md §6）', () => {

@@ -1,8 +1,16 @@
 @layer rd.components {
-  /* 窓（docs/brand.md §7.1）。JS が要らないので部品にしない（ADR-0012 §6）。
-     <section class="rd-window">
-       <h2 class="rd-window-title">タイトル</h2>
-       <div class="rd-window-body">…</div>
+  /* 窓（docs/brand.md §7.1）。JS の要らない窓はここのクラスだけで組める。
+     帯 ⊃ 見出し（ADR-0014 決定 2）で、左端の丸は装飾ではなく本物のボタン（決定 1）。
+     ボタンの動作（閉じる・たたむ・広げる）は利用側が書く。動作まで要るなら `rd-window`。
+
+     <section class="rd-window" aria-labelledby="w1">
+       <header class="rd-window-bar" data-tone="warning">
+         <div class="rd-window-controls">
+           <button type="button" class="rd-window-control" data-action="close" aria-label="閉じる"></button>
+         </div>
+         <h2 class="rd-window-title" id="w1">タイトル</h2>
+       </header>
+       <div class="rd-window-body" id="w1-body">…</div>
      </section> */
   .rd-window {
     border-radius: var(--rd-radius-lg);
@@ -11,72 +19,133 @@
     color: var(--rd-color-text-default);
   }
 
-  /* 帯 = 見出し要素そのもの。文書構造と見た目が一致する */
-  .rd-window-title {
+  /* 1 列目 = 操作、2 列目 = 見出し、3 列目 = 空（左右対称の余白）。
+     見出しは短ければ中央、長ければボタンを優先して省略記号になる */
+  .rd-window-bar {
     display: grid;
-    grid-template-columns: var(--rd-space-12) 1fr var(--rd-space-12);
-    place-items: center;
+    grid-template-columns:
+      minmax(var(--rd-space-12), 1fr)
+      minmax(0, auto)
+      minmax(var(--rd-space-12), 1fr);
+    align-items: center;
+    column-gap: var(--rd-space-2);
     min-block-size: var(--rd-sizing-target-min);
-    margin: 0;
-    padding-inline: var(--rd-space-3);
+    padding-inline: var(--rd-space-2);
     border-start-start-radius: var(--rd-radius-lg);
     border-start-end-radius: var(--rd-radius-lg);
     background: var(--rd-color-chrome-default);
     color: var(--rd-color-chrome-text);
-    font: var(--rd-type-heading-2);
   }
 
-  /* 長いタイトルを 1 行で切るには <span> などで包む（素のテキストは匿名グリッド項目になる） */
-  .rd-window-title > * {
-    grid-column: 2;
+  /* 操作が 1 つも無いなら要素ごと省く。押せない丸は置かない（ADR-0014 決定 1） */
+  .rd-window-controls {
+    display: flex;
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  /* 見出しは見た目以外の役目を持たない。背景・高さは帯（bar）側 */
+  .rd-window-title {
     overflow: hidden;
+    grid-column: 2;
+    justify-self: center;
     max-inline-size: 100%;
+    margin: 0;
+    color: inherit;
+    font: var(--rd-type-heading-2);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  /* 丸 3 つは装飾。DOM に無い・読み上げられない・押せない（brand.md §7.1 / §9） */
-  .rd-window-title::before {
-    grid-column: 1;
-    inline-size: var(--rd-space-12);
-    block-size: var(--rd-space-3);
-    background-image:
-      radial-gradient(
-        circle closest-side at 12.5% 50%,
-        var(--rd-color-brand-signature) 85%,
-        transparent 90%
-      ),
-      radial-gradient(
-        circle closest-side at 50% 50%,
-        var(--rd-color-brand-primary) 85%,
-        transparent 90%
-      ),
-      radial-gradient(
-        circle closest-side at 87.5% 50%,
-        var(--rd-color-border-default) 85%,
-        transparent 90%
-      );
+  /* 当たり判定は sizing.target-min（2.75rem）四方、見た目の丸は 1.25rem（brand.md §7.1） */
+  .rd-window-control {
+    display: grid;
+    grid-template-areas: 'glyph';
+    place-items: center;
+    inline-size: var(--rd-sizing-target-min);
+    block-size: var(--rd-sizing-target-min);
+    padding: 0;
+    border-width: 0;
+    border-radius: var(--rd-radius-full);
+    background: transparent;
+    color: inherit;
+    cursor: default;
+
+    --rd-window-control-size: 1.25rem;
+    --rd-window-glyph-size: 0.75rem;
+  }
+
+  .rd-window-control::before,
+  .rd-window-control::after {
+    grid-area: glyph;
     content: '';
   }
 
+  /* 丸は tone でも chrome.text のまま。塗りの上に文字は置かない（brand.md §9） */
+  .rd-window-control::before {
+    inline-size: var(--rd-window-control-size);
+    block-size: var(--rd-window-control-size);
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-chrome-text);
+  }
+
+  /* 記号は幾何（× / □ / −）だけ。絵・アイコンフォントは持ち込まない（ADR-0014） */
+  .rd-window-control::after {
+    inline-size: var(--rd-window-glyph-size);
+    block-size: var(--rd-window-glyph-size);
+    background: var(--rd-color-chrome-default);
+    mask: var(--rd-window-glyph) center / contain no-repeat;
+  }
+
+  .rd-window-control[data-action='close'] {
+    --rd-window-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 4 12 12'/%3E%3Cpath d='M12 4 4 12'/%3E%3C/svg%3E");
+  }
+
+  .rd-window-control[data-action='expand'] {
+    --rd-window-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Crect x='3' y='3' width='10' height='10' rx='1'/%3E%3C/svg%3E");
+  }
+
+  .rd-window-control[data-action='collapse'] {
+    --rd-window-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 8 12 8'/%3E%3C/svg%3E");
+  }
+
+  /* 既定のリングは当たり判定（2.75rem）の外に出て丸から離れるので、負の offset で
+     丸のすぐ外に置き換える。既定のリングを幅ゼロや none で消しにいかない——
+     UA 既定の輪は style が auto で、Chromium は auto のとき幅を無視して自前の輪を描く。
+     消したつもりが二重の輪になる（brand.md §7.1） */
+  .rd-window-control:hover,
+  .rd-window-control:focus-visible {
+    /* 当たり判定と丸の差の半分だけ内側に寄せ、そこから 2px 外に輪を置く */
+    outline: 2px solid var(--rd-color-chrome-text);
+    outline-offset: calc(
+      -1 * (var(--rd-sizing-target-min) - var(--rd-window-control-size)) / 2 + 2px
+    );
+  }
+
   /* 帯の色を変える。文字色は必ず対応する on-* を使う（brand.md §9） */
-  .rd-window-title[data-tone='accent'] {
+  .rd-window-bar[data-tone='accent'] {
     background: var(--rd-color-accent-default);
     color: var(--rd-color-text-on-accent);
   }
 
-  .rd-window-title[data-tone='warning'] {
+  .rd-window-bar[data-tone='warning'] {
     background: var(--rd-color-status-warning-default);
     color: var(--rd-color-text-on-status);
   }
 
-  .rd-window-title[data-tone='danger'] {
+  .rd-window-bar[data-tone='danger'] {
     background: var(--rd-color-status-danger-default);
     color: var(--rd-color-text-on-status);
   }
 
   .rd-window-body {
     padding: var(--rd-space-4);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .rd-window-control:active {
+      translate: 0 0.0625rem;
+    }
   }
 
   /* 強制配色では box-shadow は自動で none になる（CSS Forced Colors）ので消さない */
@@ -87,14 +156,29 @@
       border-color: CanvasText;
     }
 
-    .rd-window-title {
+    /* tone の規則より後に、同じ詳細度で置く（低いと tone の色が残る） */
+    .rd-window-bar,
+    .rd-window-bar[data-tone] {
       border-block-end: var(--rd-border-width-default) solid CanvasText;
       background: Canvas;
       color: CanvasText;
     }
 
-    .rd-window-title::before {
-      display: none;
+    /* 丸は消さない（操作だから。brand.md §7.1） */
+    .rd-window-control::before {
+      border-width: var(--rd-border-width-default);
+      border-style: solid;
+      border-color: ButtonText;
+      background: ButtonFace;
+    }
+
+    .rd-window-control::after {
+      background: ButtonText;
+    }
+
+    .rd-window-control:hover,
+    .rd-window-control:focus-visible {
+      outline-color: Highlight;
     }
   }
 }
