@@ -8,6 +8,7 @@ import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import * as experimental from '../src/experimental.js'
+import { RdDataTable } from '../src/experimental.js'
 import * as index from '../src/index.js'
 import { RdButton, RdTextField } from '../src/index.js'
 import { normalize } from './normalize.js'
@@ -79,7 +80,7 @@ describe('experimental の部品', () => {
 
   it('RdDataTable は column / direction / manual を属性として出す', () => {
     const rendered = renderToString(
-      <experimental.RdDataTable
+      <RdDataTable
         caption="保存したコード"
         column={1}
         direction="descending"
