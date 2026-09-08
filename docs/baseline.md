@@ -26,6 +26,7 @@
 | `popover` 属性                      | Newly  | rd-tooltip / rd-menu（plan 009）。無ければ `<dialog>` 非モーダルに退避 |
 | Invoker Commands（`commandfor`）    | Newly  | 使わない（JS 1 行で足りる。属性が増えると CEM が濁る）            |
 | `field-sizing: content`             | Newly  | rd-textarea。無ければ固定行数                                     |
+| 縦向きのフォーム部品（`writing-mode: vertical-lr` の `<input type=range>`） | Newly | rd-slider の `orientation="vertical"`。`@supports selector(:state(vertical))` の中。無ければ横向き |
 | `text-wrap: balance` / `pretty`     | Newly  | 見出し / 段落。無ければ通常折返し                                 |
 | `text-box-trim`                     | Newly  | 見出しの上下トリム。無ければ `line-height` で近似                 |
 | anchor positioning                  | Newly  | rd-tooltip の位置。無ければ Floating UI **ではなく**下固定        |
