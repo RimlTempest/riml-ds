@@ -74,7 +74,7 @@
 | 022 | [面と待ち（.rd-card / .rd-empty / .rd-spinner / .rd-accordion / .rd-carousel / .rd-scroll-area / .rd-aspect、rd-dialog の alert / placement）](022-surfaces-and-feedback.md) | P1 | L | 017, 018 | DONE（`4f9b19e`） |
 | 023 | [ラッパー生成器の追随（名前つき raw → 名前つき slot、astro exports 生成、frameworks e2e に tabs / menu / popover）](023-wrappers-named-slots.md) | P1 | M | 020 | DONE（`887beb1`） |
 | 024 | [rd-toggle（021 の STOP 分）、rd-menu の閉じたメニューが見えるバグ、frameworks e2e の穴埋め](024-toggle-and-menu-fix.md) | P1 | M | 023 | IN PROGRESS |
-| 027 | [ダークの面を 4 段にする（neutral.750 / 950、ダークでも見える影）](027-tokens-dark-surfaces.md) | P1 | M | 014 | IN PROGRESS |
+| 027 | [ダークの面を 4 段にする（neutral.750 / 950、ダークでも見える影）](027-tokens-dark-surfaces.md) | P1 | M | 014 | DONE（`631000d`） |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
@@ -305,4 +305,15 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - 残件: `formWave4Suite` の astro 除外コメントが古い（exports は生成されるようになった）→ 024 で astro を載せる。
   `bun run gen` 単体ではクリーンな worktree で生成物が出ない（契約を `library/elements/dist` から読む）→ 計画の Step 0 は `bun run build` を先に書く。
   skill `riml-ds-element` に「raw の名前 = slot 名（`children` は既定）」を追記（advisor）
+
+### 027 の実行メモ（2026-09-08）
+
+- `feat/tokens-dark` を `631000d` で `--no-ff` マージ（7 コミット、72 ファイル、+271/−14）。024 と並行し、コンフリクト無し
+- 決めた値: `neutral.750` = riml `[0.31, 0.035, 270.31]` / qrcc `[0.28, 0.013, 265]` / noter `[0.30, 0.02, 200]`（計画の既定値では dark の `text.muted` × `surface.hover` が riml 6.56 / noter 6.77 で 7:1 を割ったため、計画 §1 の指示どおり L を −0.02。riml は許容下限）。`neutral.950` は計画どおり
+- 実測（dark）: `text.muted` × `surface.hover` = riml **7.062** / qrcc 7.548 / noter 7.283。riml は AAA まで 0.06 しか余裕が無い。`neutral.300`（dark の muted）を明るくすると余裕が作れる（別件）
+- 影: `--rd-shadow-raised: 0.25rem 0.25rem 0rem 0rem light-dark(oklch(22% … / 0.16), oklch(0% 0 0 / 0.5))`。Terrazzo は modes の shadow 上書きを受け付けたので Step 4 の revert は不要だった。`fold()` に `splitTrailingColor` を足し、`light-dark(` は 26 → 28
+- 計画からの逸脱: `DESIGN.md` の再生成を Step 2 で実施（`tools/mcp/test/design-md.test.ts` がバイト比較するため Step 2 の緑に必要）。Drift check の `grep -c 'light-dark('` は 3（doc コメント 2 件）で計画の 1 と違ったが、コードの畳み箇所は 1 か所で抜粋一致 → 続行（計画の grep が粗かった）
+- **VRT の閾値の問題**: `threshold: 0.05`（YIQ）では dark の sunken `#151a29 → #0b0f1a` / hover `#232839 → #293042` の差が拾えず、面の変更で baseline が更新されなかった（更新されたのは影が出た 58 枚だけ）。面の段差は隣接コントラスト比（sunken↔default 1.103、raised↔hover 1.108）で確認。閾値の見直しは既存の課題（VRT 1024 threshold）と一緒に扱う
+- `bunx oxfmt docs/*.md` は Markdown が対象外で動かない（既知）。手で体裁を揃えた
+- 検証（worktree）: check 0、test 1201 passed / 1 skipped、a11y 22 passed、vrt 1012 passed、release:check 0（tokens.css 1.66 kB brotli）、guard 0
 
