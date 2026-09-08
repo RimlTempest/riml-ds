@@ -49,17 +49,19 @@ const atRulesOf = (css: string, name: string): readonly AtRule[] => {
   return found
 }
 
-const insideNoPreference = (node: AtRule): boolean => {
-  for (let current = node.parent; current !== undefined; current = current?.parent) {
-    if (
-      current.type === 'atrule'
-      && current.name === 'media'
-      && /prefers-reduced-motion\s*:\s*no-preference/.test(current.params)
-    ) {
-      return true
-    }
-  }
-  return false
+/**
+ * `@media (prefers-reduced-motion: no-preference)` の中に在る `@keyframes` の名前。
+ * 上（root）から降りて集める — 親を遡ると postcss の `Document` が混ざって型が緩む。
+ */
+const keyframesUnderNoPreference = (css: string): readonly string[] => {
+  const found: string[] = []
+  parse(css).walkAtRules('media', (media: AtRule) => {
+    if (!/prefers-reduced-motion\s*:\s*no-preference/.test(media.params)) return
+    media.walkAtRules('keyframes', (keyframes: AtRule) => {
+      found.push(keyframes.params)
+    })
+  })
+  return found
 }
 
 describe('atoms.css', () => {
@@ -86,9 +88,10 @@ describe('atoms.css', () => {
   })
 
   it('@keyframes rd-skeleton-pulse は prefers-reduced-motion: no-preference の中だけ', () => {
-    const keyframes = atRulesOf(read(srcAtoms), 'keyframes')
-    expect(keyframes.map((atRule) => atRule.params)).toEqual(['rd-skeleton-pulse'])
-    expect(keyframes.filter((atRule) => !insideNoPreference(atRule))).toEqual([])
+    const css = read(srcAtoms)
+    const all = atRulesOf(css, 'keyframes').map((atRule) => atRule.params)
+    expect(all).toEqual(['rd-skeleton-pulse'])
+    expect(keyframesUnderNoPreference(css)).toEqual(all)
   })
 
   it('グラデーションとぼかしを使わない（skeleton の shimmer もグラデにしない。brand.md §8）', () => {
