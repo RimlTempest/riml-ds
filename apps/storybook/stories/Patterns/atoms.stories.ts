@@ -9,6 +9,10 @@
  * 窓（`.rd-window`）と組み合わせた合成は 017 のレーンが帯を作り替えている最中なので、
  * このファイルでは使わない（合成 story は 017 マージ後に足す）。
  * アイコンはすべて自作の幾何（丸・線・四角）で、絵は持ち込まない。
+ *
+ * 点や骨組みのような「中身の無い装飾」には HTML コメントを 1 つ入れてある。
+ * markuplint の `no-empty-palpable-content` は `aria-hidden` の空要素も落とすので、
+ * 描画後の HTML（`bun run lint:html`）を通すために要る。
  */
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html, svg, type SVGTemplateResult, type TemplateResult } from 'lit'
@@ -77,7 +81,9 @@ export const Dot: Story = {
       <div class="rd-cluster">
         <button type="button" class="rd-icon-button rd-has-dot" aria-label="通知（3 件）">
           ${circleIcon()}
-          <span class="rd-dot" aria-hidden="true"></span>
+          <span class="rd-dot" aria-hidden="true"
+            ><!-- 装飾。中身は無いが、markuplint の no-empty-palpable-content が空要素を許さない --></span
+          >
         </button>
         <p>点だけでは件数が伝わらないので、名前に「3 件」を入れる。</p>
       </div>`,
@@ -104,7 +110,7 @@ export const Avatar: Story = {
       </div>`,
 }
 
-/** 点線の区切り。縦線は `role="separator"` と `aria-orientation` を書く */
+/** 点線の区切り。縦線は `<hr>` に `aria-orientation="vertical"` を書く（暗黙の role=separator） */
 export const Separator: Story = {
   render: () =>
     html`<h1 class="rd-visually-hidden">区切りの見本</h1>
@@ -114,7 +120,7 @@ export const Separator: Story = {
         <p>下の段。面の切り替えで区切れるときは線を引かない。</p>
         <div class="rd-cluster">
           <span>左</span>
-          <span class="rd-separator" role="separator" aria-orientation="vertical"></span>
+          <hr class="rd-separator" aria-orientation="vertical" />
           <span>右</span>
         </div>
       </div>`,
@@ -126,11 +132,19 @@ export const Skeleton: Story = {
     html`<h1 class="rd-visually-hidden">読み込み中の骨組みの見本</h1>
       <div class="rd-stack" aria-busy="true">
         <div class="rd-cluster">
-          <div class="rd-skeleton" data-shape="circle" aria-hidden="true"></div>
-          <div class="rd-skeleton" aria-hidden="true" style="--rd-skeleton-width: 18ch"></div>
+          <div class="rd-skeleton" data-shape="circle" aria-hidden="true">
+            <!-- 装飾。中身は無いが、markuplint の no-empty-palpable-content が空要素を許さない -->
+          </div>
+          <div class="rd-skeleton" aria-hidden="true" style="--rd-skeleton-width: 18ch">
+            <!-- 装飾。中身は無いが、markuplint の no-empty-palpable-content が空要素を許さない -->
+          </div>
         </div>
-        <div class="rd-skeleton" aria-hidden="true" style="--rd-skeleton-width: 28ch"></div>
-        <div class="rd-skeleton" data-shape="block" aria-hidden="true"></div>
+        <div class="rd-skeleton" aria-hidden="true" style="--rd-skeleton-width: 28ch">
+          <!-- 装飾。中身は無いが、markuplint の no-empty-palpable-content が空要素を許さない -->
+        </div>
+        <div class="rd-skeleton" data-shape="block" aria-hidden="true">
+          <!-- 装飾。中身は無いが、markuplint の no-empty-palpable-content が空要素を許さない -->
+        </div>
       </div>`,
 }
 
@@ -177,7 +191,7 @@ export const Toolbar: Story = {
       <div class="rd-toolbar" data-position="top" role="toolbar" aria-label="書式">
         <button type="button" class="rd-icon-button" aria-label="追加する">${plusIcon()}</button>
         <button type="button" class="rd-icon-button" aria-label="一覧を開く">${linesIcon()}</button>
-        <span class="rd-separator" role="separator" aria-orientation="vertical"></span>
+        <hr class="rd-separator" aria-orientation="vertical" />
         <button type="button" class="rd-icon-button" aria-label="閉じる">${crossIcon()}</button>
       </div>
       <p>帯の位置は <code>data-position="top"</code> で上下が入れ替わる。</p>`,
@@ -326,9 +340,11 @@ export const Composition: Story = {
         <button type="button" class="rd-icon-button" aria-label="追加する">${plusIcon()}</button>
         <button type="button" class="rd-icon-button rd-has-dot" aria-label="通知（3 件）">
           ${circleIcon()}
-          <span class="rd-dot" aria-hidden="true"></span>
+          <span class="rd-dot" aria-hidden="true"
+            ><!-- 装飾。中身は無いが、markuplint の no-empty-palpable-content が空要素を許さない --></span
+          >
         </button>
-        <span class="rd-separator" role="separator" aria-orientation="vertical"></span>
+        <hr class="rd-separator" aria-orientation="vertical" />
         <button type="button" class="rd-icon-button" aria-label="閉じる">${crossIcon()}</button>
       </div>
     </div>`,

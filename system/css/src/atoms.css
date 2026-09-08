@@ -102,8 +102,9 @@
   }
 
   /* 点線の区切り（brand.md §7.6）。面の切り替えで区切れるときは線を引かない。
+     縦線も <hr> で書く（暗黙の role=separator が付き、空要素なので中身も要らない）。
      <hr class="rd-separator">
-     <div class="rd-separator" role="separator" aria-orientation="vertical"></div> */
+     <hr class="rd-separator" aria-orientation="vertical"> */
   .rd-separator {
     margin-block: var(--rd-space-4);
     border-width: 0;
