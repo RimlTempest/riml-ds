@@ -22,6 +22,11 @@ description: riml-ds の CSS 規約。system/css や部品の *.styles.ts を書
 | `light-dark()` はトークン側。部品は変数を参照するだけ| 部品の中で `@media (prefers-color-scheme)`     |
 | `:state(open)`（`@supports selector` の中）+ `[open]` フォールバック | class の付け替え              |
 
+- **`outline: none` / `outline: 0` / `outline-width: 0` を書かない**（フォーカスリングを消す唯一の手段になる）。
+  リングの形を変えるなら `outline` の一括指定で**置き換える**。強制配色では `outline-color: Highlight` だけでなく、
+  押下などで別の `outline` を使う部品は `:focus-visible` に一括指定を書く（`rd-toggle` の 024 の修正）。
+- **グラデーション（`linear-gradient` など）を描かない**（brand.md。面は 1 色、影は硬い）。
+
 ## 1. レイヤー
 
 ```css

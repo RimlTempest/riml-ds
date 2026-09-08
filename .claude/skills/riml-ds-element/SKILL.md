@@ -55,6 +55,15 @@ library/elements/src/live-region/         ティア C の例
 - `static formAssociated` を**書かない**。form 参加者はネイティブ要素。`attachInternals()` は `states` のためだけ。
 - ネイティブの `input` / `change` / `invalid` を聞いて `:state()` と文言を更新する。値を持たない（`el.value` は
   ネイティブ要素へ委譲する getter/setter）。
+- **`[popover]` を包む部品は、通常状態のセレクタに `display` を書かない**（`rd-menu [popover] { display: grid }` は
+  author の `@layer` が UA の `[popover]:not(:popover-open) { display: none }` に勝ち、閉じても見える — 024 で直した）。
+  `display` は `[popover]:popover-open` 側か、定義前の `:not(:defined) [popover]` 側にだけ書く。
+- **契約の `tree` で `raw` を使うとき**、名前 `children` は既定 slot、それ以外の名前は名前つき slot になる
+  （Vue `slots['trigger']`、Svelte `{@render trigger?.()}`、Astro `<slot name="trigger" />`、React `{trigger}` — 023）。
+  属性値の `'$prop'` は `HTML_ENUM_ATTRS`（`tools/cem/src/wrappers/core/common.ts`）に列挙された属性なら
+  リテラル型に絞られる（`button.aria-pressed` → `'true' | 'false'`）。新しい enum 属性はそこに足す。
+- `bun run scaffold:element` は `*.contract.test.ts` を**作らない**（構成表と 1 本ずれる）。手本
+  （`button` / `checkbox-group` / `toggle`）から写して足す。
 
 ## 2. 命名
 
@@ -145,7 +154,9 @@ JSDoc の `@summary` / `@status` / `@pe` / `@slot` / `@csspart` / `@cssprop` / `
 - **ラベル**：ティア A はネイティブ `<label for>`（契約で必須）。ティア B/C は `label` 属性か既定 slot。空なら
   `console.error('[rd-x] accessible name is required')` + `states.add('unlabeled')`。
 - **`delegatesFocus: true`**。フォーカスリングは内部の `[part='control']:focus-visible`。
-- **無効**は `aria-disabled`（`disabled` 属性を内部 `<button>` に渡さない）。フォーカス可能のまま。
+- **無効**：ティア B/C の内部 `<button>` は `aria-disabled`（`disabled` を渡さない。フォーカス可能のまま）。
+  ティア A は**ネイティブの `disabled`** に任せる（`<button disabled>` / `<input disabled>` — 部品は `disabled` 属性を
+  持たない。`rd-toggle` / `rd-button` がこの形）。markuplint は `aria-disabled` と `disabled` の併用を落とす。
 - **読み込み中**は `aria-busy` + 視覚表示 + 操作の無視。`disabled` にしない。
 - **フォーム部品はティア A**（ネイティブ要素が form に参加する）。`formAssociated` は使わない。以下はティア B/C で
   独自に値を持つ部品にだけ：`static formAssociated = true`、`#internals.setFormValue(value)`、
