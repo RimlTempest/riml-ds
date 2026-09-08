@@ -7,7 +7,7 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from 'lit'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { argTypes } from '@rd-argtypes'
-import { queryShadow } from '@rd-shadow'
+import { dialogsAreSteady, queryShadow } from '@rd-shadow'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 import '../button/button.define.js'
 import '../button/button.css'
@@ -46,32 +46,11 @@ const nextFrame = (): Promise<void> =>
     requestAnimationFrame(() => resolve())
   })
 
-/**
- * 開いた状態で描く story は、`@starting-style` の opacity 遷移が終わるまで待つ。
- * 遷移の途中を axe が掴むと、半透明の枠が背面（backdrop）と混ざってコントラスト違反に見える。
- *
- * `document.getAnimations()` だけを見ると、遷移がまだ始まっていない瞬間（空を返す）を
- * 「終わった」と誤認する（CI で RTL / Default が落ちた）。そこで遷移の結果そのものを見る:
- * 開いている枠は opacity が 1 に戻り、閉じた枠は display が none になるまで待つ。
- */
-const controlIsSteady = (dialog: RdDialog): boolean => {
-  const control = dialog.shadowRoot?.querySelector("[part='control']")
-  if (control === null || control === undefined) {
-    return true
-  }
-  const style = getComputedStyle(control)
-  return dialog.open
-    ? style.opacity === '1' && style.translate === 'none'
-    : style.display === 'none'
-}
-
 const settled = async (): Promise<void> => {
   await nextFrame()
   await waitFor(async () => {
-    const dialogs = [...document.querySelectorAll('rd-dialog')].filter(
-      (element) => element instanceof RdDialog,
-    )
-    await expect(dialogs.every((dialog) => controlIsSteady(dialog))).toBe(true)
+    // 遷移の結果そのもの（opacity / display）を見る。理由は `@rd-shadow` の `dialogsAreSteady`
+    await expect(dialogsAreSteady()).toBe(true)
     await expect(document.getAnimations()).toHaveLength(0)
   })
 }

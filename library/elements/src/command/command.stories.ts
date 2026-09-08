@@ -8,6 +8,7 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from 'lit'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { argTypes } from '@rd-argtypes'
+import { dialogsAreSteady } from '@rd-shadow'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 import '../dialog/dialog.define.js'
 import '../dialog/dialog.css'
@@ -163,6 +164,11 @@ export const InDialog: Story = {
     // 窓の中でもそのまま打てる（フォーカスを入力欄へ移すのは利用側の仕事）
     await userEvent.keyboard('せ')
     await expect(shown(canvasElement)).toEqual(['設定⌘,'])
+    // 窓の枠の遷移が終わるまで待つ。途中を axe が掴むとコントラスト違反に見える（CI で落ちた）
+    await waitFor(async () => {
+      await expect(dialogsAreSteady()).toBe(true)
+      await expect(document.getAnimations()).toHaveLength(0)
+    })
   },
 }
 

@@ -5,4 +5,5 @@
 declare module '@rd-shadow' {
   export const queryShadow: (host: Element | null | undefined, selector: string) => Element | null
   export const shadowText: (host: Element | null | undefined, selector: string) => string
+  export const dialogsAreSteady: (root?: ParentNode) => boolean
 }
