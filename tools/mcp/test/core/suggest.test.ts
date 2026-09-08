@@ -12,6 +12,7 @@ const guidelines = {
   accessibility: repoFile('system/guidelines/accessibility.md'),
   'color-and-theming': repoFile('system/guidelines/color-and-theming.md'),
   'motion-and-responsive': repoFile('system/guidelines/motion-and-responsive.md'),
+  typography: repoFile('system/guidelines/typography.md'),
   writing: repoFile('system/guidelines/writing.md'),
 }
 
