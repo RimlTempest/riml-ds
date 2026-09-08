@@ -17,9 +17,12 @@ const meta: Meta<Args> = {
   tags: ['autodocs'],
   argTypes: { ...argTypes['rd-tooltip'] },
   args: { for: 'sb-tooltip-target', text: '⌘S で保存します' },
+  // 吹き出しは既定で対象の上に出る。画面の上端に貼り付けず、上に余白のある位置で見せる
   render: (args) => html`
-    <button id=${args.for} type="button" title=${args.text}>保存</button>
-    <rd-tooltip for=${args.for}>${args.text}</rd-tooltip>
+    <div class="rd-stack" style="padding-block-start: 4rem">
+      <button id=${args.for} type="button" title=${args.text}>保存</button>
+      <rd-tooltip for=${args.for}>${args.text}</rd-tooltip>
+    </div>
   `,
 }
 

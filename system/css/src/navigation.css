@@ -120,6 +120,9 @@
     place-items: center;
     inline-size: var(--rd-sizing-target-min);
     min-block-size: var(--rd-sizing-target-min);
+
+    /* 現在地のときだけ色が付く「左の太い縦罫」。--rd-border-width-thick は無いので既定の 2 倍 */
+    border-inline-start: calc(var(--rd-border-width-default) * 2) solid transparent;
     border-radius: var(--rd-radius-md);
     color: var(--rd-color-text-default);
     text-decoration: none;
@@ -140,7 +143,9 @@
     white-space: nowrap;
   }
 
+  /* 現在地は「点の色 + 左の縦罫 + 面」の 3 つで示す。色だけに頼らない */
   .rd-nav-rail [aria-current] {
+    border-inline-start-color: var(--rd-color-accent-default);
     background: var(--rd-color-surface-hover);
   }
 

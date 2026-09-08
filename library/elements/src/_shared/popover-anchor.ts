@@ -80,6 +80,10 @@ export const supportsAnchorPositioning = (): boolean =>
  * anchor positioning が使えるならトリガーに `anchor-name`、重ね物に `position-anchor` を
  * 書いて**あとは CSS に任せる**（`position-area` / `position-try-fallbacks` は各部品の `.css`）。
  * 使えないときだけ `getBoundingClientRect()` から `top` / `left` を書く。
+ *
+ * **同じ木（tree scope）に居るときだけ CSS に任せられる。** `anchor-name` の参照は宣言した
+ * 木の中でしか解決しないので、shadow の中の重ね物が light DOM のトリガーを指すことはできない
+ * （`rd-tooltip` がこれ）。木が違えば黙って外れるので、その場合は最初から手で置く。
  */
 export const anchorPopover = (
   trigger: HTMLElement | undefined,
@@ -91,7 +95,7 @@ export const anchorPopover = (
   if (trigger === undefined || popover === undefined) {
     return
   }
-  if (supportsAnchorPositioning()) {
+  if (supportsAnchorPositioning() && trigger.getRootNode() === popover.getRootNode()) {
     trigger.style.setProperty('anchor-name', `--${name}`)
     popover.style.setProperty('position-anchor', `--${name}`)
     return
