@@ -143,7 +143,17 @@ export const contextController = (parts: ContextParts): ContextController => {
   const onContextMenu = (event: MouseEvent): void => {
     event.preventDefault()
     point = pointOf(event)
-    parts.list()?.showPopover()
+    const list = parts.list()
+    if (list === undefined) {
+      return
+    }
+    // 開いている面に showPopover() を投げると InvalidStateError で落ち、位置も動かない。
+    // 開いているメニューの上でもう一度右クリックできるように、閉じてから開き直す——
+    // 同じタスクの中なので `toggle` は 1 回にまとまり（newState は open）、位置だけが変わる
+    if (list.matches(':popover-open')) {
+      list.hidePopover()
+    }
+    list.showPopover()
   }
   return {
     wire: (): void => {

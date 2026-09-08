@@ -110,6 +110,15 @@ describe('navigation.css', () => {
     expect(rule).toContain('border-block-end-color')
   })
 
+  it('.rd-nav-menu のリンクは上の 2 角だけ丸める（下の縦罫を真っ直ぐ引くため）', () => {
+    const css = read(srcNavigation)
+    const rule = /\.rd-nav-menu a \{([^}]*)\}/.exec(css)?.[1] ?? ''
+    expect(rule).toContain('border-start-start-radius')
+    expect(rule).toContain('border-start-end-radius')
+    // 一括の border-radius だと下の 2 角も丸まり、現在地の縦罫が両端で曲がる
+    expect(rule).not.toMatch(/^\s*border-radius:/m)
+  })
+
   it('build の ORDER で navigation は atoms の直後（patterns より前）', () => {
     const build = read(fileURLToPath(new URL('../scripts/build.ts', import.meta.url)))
     const order = /const ORDER = \[([\s\S]*?)\]/.exec(build)?.[1] ?? ''

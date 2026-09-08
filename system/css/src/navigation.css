@@ -232,7 +232,10 @@
     /* 現在地のときだけ色が付く「下の太い縦罫」。--rd-border-width-thick は無いので既定の 2 倍。
        透明でも場所を取らせておくと、現在地が変わっても行の高さが動かない */
     border-block-end: calc(var(--rd-border-width-default) * 2) solid transparent;
-    border-radius: var(--rd-radius-md);
+
+    /* 丸めるのは上の 2 角だけ。一括で丸めると縦罫が両端で曲がって線に見えなくなる */
+    border-start-start-radius: var(--rd-radius-md);
+    border-start-end-radius: var(--rd-radius-md);
     color: inherit;
     text-decoration: none;
   }

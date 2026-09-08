@@ -277,3 +277,35 @@ it('context が無ければ右クリックは開かず、ブラウザ既定の�
   await el.updateComplete
   expect(el.matches(':state(open)')).toBe(false)
 })
+
+it('開いているあいだにもう一度右クリックしても例外にならず、新しい位置に移る', async () => {
+  const el = await fixtureOf(RdMenu, CONTEXT_FIXTURE)
+  rightClick(triggerOf(el), 120, 90)
+  await vi.waitFor(() => {
+    expect(el.matches(':state(open)')).toBe(true)
+  })
+  await el.updateComplete
+  rightClick(triggerOf(el), 200, 150)
+  await vi.waitFor(() => {
+    expect(listOf(el)?.style.top).toBe('150px')
+  })
+  expect(listOf(el)?.style.left).toBe('200px')
+  // 開いたままで、位置だけが新しくなる
+  expect(el.matches(':state(open)')).toBe(true)
+  expect(listOf(el)?.matches(':popover-open')).toBe(true)
+})
+
+it('開いているメニューの項目を右クリックしても例外にならず、新しい位置に移る', async () => {
+  const el = await fixtureOf(RdMenu, CONTEXT_FIXTURE)
+  rightClick(triggerOf(el), 120, 90)
+  await vi.waitFor(() => {
+    expect(el.matches(':state(open)')).toBe(true)
+  })
+  await el.updateComplete
+  rightClick(itemsOf(el)[0], 240, 200)
+  await vi.waitFor(() => {
+    expect(listOf(el)?.style.top).toBe('200px')
+  })
+  expect(listOf(el)?.style.left).toBe('240px')
+  expect(el.matches(':state(open)')).toBe(true)
+})
