@@ -4,6 +4,7 @@ import {
   RdCheckbox,
   RdCheckboxGroup,
   RdCombobox,
+  RdDataTable,
   RdInputOtp,
   RdMenu,
   RdMeter,
@@ -176,6 +177,39 @@ export const App = defineComponent(
           RdCombobox,
           { id: 'reading', listId: 'reading-list', label: '読み', name: 'reading' },
           readings,
+        ),
+        h(
+          RdDataTable,
+          { caption: '保存したコード' },
+          {
+            head: () =>
+              h('thead', null, [
+                h('tr', null, [
+                  h('th', { scope: 'col', 'data-sort': 'text', 'data-key': 'name' }, '名前'),
+                  h(
+                    'th',
+                    {
+                      scope: 'col',
+                      'data-sort': 'number',
+                      'data-key': 'size',
+                      'data-numeric': '',
+                    },
+                    'サイズ',
+                  ),
+                ]),
+              ]),
+            body: () =>
+              h('tbody', null, [
+                h('tr', null, [
+                  h('td', null, 'b.png'),
+                  h('td', { 'data-value': '1234', 'data-numeric': '' }, '1,234'),
+                ]),
+                h('tr', null, [
+                  h('td', null, 'a.png'),
+                  h('td', { 'data-value': '820', 'data-numeric': '' }, '820'),
+                ]),
+              ]),
+          },
         ),
         h(RdToggle, { label: '太字', pressed: 'false' }),
         h('rd-live-region'),

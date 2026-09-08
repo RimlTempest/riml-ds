@@ -1,5 +1,6 @@
 import {
   comboboxSuite,
+  dataTableSuite,
   formWave4Suite,
   frameworkSuite,
   meterAndWindowSuite,
@@ -15,3 +16,4 @@ navigationSuite('astro')
 formWave4Suite('astro')
 toggleSuite('astro')
 comboboxSuite('astro')
+dataTableSuite('astro')

@@ -5,6 +5,7 @@
     RdCheckbox,
     RdCheckboxGroup,
     RdCombobox,
+    RdDataTable,
     RdInputOtp,
     RdMenu,
     RdMeter,
@@ -90,6 +91,25 @@
     <option value="kanji">かんじ</option>
     <option value="romaji">ローマ字</option>
   </RdCombobox>
+  <RdDataTable caption="保存したコード">
+    {#snippet head()}<thead
+        ><tr
+          ><th scope="col" data-sort="text" data-key="name">名前</th><th
+            scope="col"
+            data-sort="number"
+            data-key="size"
+            data-numeric=""
+          >
+            サイズ
+          </th></tr
+        ></thead
+      >{/snippet}
+    {#snippet body()}<tbody
+        ><tr
+          ><td>b.png</td><td data-value="1234" data-numeric="">1,234</td></tr
+        ><tr><td>a.png</td><td data-value="820" data-numeric="">820</td></tr></tbody
+      >{/snippet}
+  </RdDataTable>
   <RdToggle label="太字" pressed="false" />
   <rd-live-region></rd-live-region>
 </main>

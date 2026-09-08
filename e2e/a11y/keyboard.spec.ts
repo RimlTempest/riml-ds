@@ -142,3 +142,56 @@ test('menu: context は右クリックで開き、見えるボタンも残る', 
   // ポインタの位置に置くあいだは CSS の anchor に任せない
   await expect(page.locator('rd-menu [popover]')).toHaveAttribute('style', /left/u)
 })
+
+/**
+ * `rd-data-table`（plan 029）。**JS があるときだけ**見出しがボタンになるので、ここ（Storybook）で見る。
+ * 読み上げは `aria-sort` に任せる（`rd-live-region` を使わない。ADR-0008 §6）。
+ */
+const DATA_TABLE_STORY = 'components-datatable--default'
+
+test('data table: 見出しを押すと aria-sort が付き、その列で昇順に並ぶ', async ({ page }) => {
+  await page.goto(storyUrl(DATA_TABLE_STORY))
+  await waitForStoryFinished(page, DATA_TABLE_STORY)
+  const names = page.locator('rd-data-table tbody > tr > td:first-child')
+  await expect(names.first()).toHaveText('レジ横の QR')
+  await page.getByRole('button', { name: 'サイズ' }).click()
+  await expect(page.getByRole('columnheader', { name: 'サイズ' })).toHaveAttribute(
+    'aria-sort',
+    'ascending',
+  )
+  // 比べるのは表示（「1,234」）ではなく `td[data-value]`（1234）
+  await expect(names.first()).toHaveText('社内 Wi-Fi')
+  await expect(names.last()).toHaveText('展示のカタログ')
+})
+
+test('data table: もう一度押すと降順になる（「無し」には戻さない）', async ({ page }) => {
+  await page.goto(storyUrl(DATA_TABLE_STORY))
+  await waitForStoryFinished(page, DATA_TABLE_STORY)
+  const header = page.getByRole('columnheader', { name: 'サイズ' })
+  const button = page.getByRole('button', { name: 'サイズ' })
+  await button.click()
+  await expect(header).toHaveAttribute('aria-sort', 'ascending')
+  await button.click()
+  await expect(header).toHaveAttribute('aria-sort', 'descending')
+  // 「1,234」は data-value の 12000 より小さい（表示ではなく比較キーで比べる）
+  await expect(page.locator('rd-data-table tbody > tr > td:first-child').first()).toHaveText(
+    '展示のカタログ',
+  )
+  // 並べ替え中の列は 1 つだけ（APG）
+  await expect(page.locator('rd-data-table [aria-sort]')).toHaveCount(1)
+})
+
+test('data table: Tab で見出しのボタンに届き、Enter で並ぶ', async ({ page }) => {
+  await page.goto(storyUrl(DATA_TABLE_STORY))
+  await waitForStoryFinished(page, DATA_TABLE_STORY)
+  const button = page.getByRole('button', { name: '名前' })
+  await page.keyboard.press('Tab')
+  await expect(button).toBeFocused()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('columnheader', { name: '名前' })).toHaveAttribute(
+    'aria-sort',
+    'ascending',
+  )
+  // 行を動かすだけなのでフォーカスは見出しに残る
+  await expect(button).toBeFocused()
+})
