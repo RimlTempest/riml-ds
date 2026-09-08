@@ -115,3 +115,58 @@ test('popover: JS 無しでも見出しと本文が読める', async ({ page }) 
   await expect(page.getByRole('heading', { name: '絞り込み' })).toBeVisible()
   await expect(page.getByText('条件を選ぶと一覧がその場で変わる。')).toBeVisible()
 })
+
+/**
+ * `hover`（Hover Card、plan 026）は**ホバーという近道を足すだけ**。JS が無ければ
+ * 今までどおり見出しと本文が読め、`popovertarget` のボタンが唯一の入口として残る。
+ */
+test('popover: hover を付けても JS 無しで見出しと本文が読める', async ({ page }) => {
+  await page.goto('/hover-card.html')
+  await expect(page.getByRole('heading', { name: 'riml' })).toBeVisible()
+  await expect(page.getByText('デザインシステムを作っている。')).toBeVisible()
+})
+
+test('popover: hover を付けても押して開く経路（popovertarget）が残る', async ({ page }) => {
+  await page.goto('/hover-card.html')
+  await expect(page.locator('rd-popover')).toHaveAttribute('hover', '')
+  await expect(page.getByRole('button', { name: 'riml' })).toHaveAttribute(
+    'popovertarget',
+    'profile',
+  )
+})
+
+/**
+ * `context`（Context Menu、plan 026）も同じ。右クリックは近道で、**目に見えるボタンが
+ * 唯一の保証された入口**（APG）。JS が無ければブラウザ既定の右クリックのままになる。
+ */
+test('menu: context を付けても JS 無しですべての項目が読める', async ({ page }) => {
+  await page.goto('/context-menu.html')
+  await expect(page.getByRole('link', { name: '複製' })).toBeVisible()
+  await expect(page.getByRole('button', { name: '削除' })).toBeVisible()
+})
+
+test('menu: context を付けても目に見えるボタンが popovertarget を持つ', async ({ page }) => {
+  await page.goto('/context-menu.html')
+  await expect(page.locator('rd-menu')).toHaveAttribute('context', '')
+  await expect(page.getByRole('button', { name: '操作' })).toHaveAttribute(
+    'popovertarget',
+    'row-context',
+  )
+})
+
+/** `.rd-nav-menu` は CSS だけ（plan 026）。JS が無くてもリンクの帯として辿れる */
+test('nav-menu: JS 無しでもリンクの帯と現在地が読める', async ({ page }) => {
+  await page.goto('/nav-menu.html')
+  const nav = page.getByRole('navigation', { name: '主要' })
+  await expect(nav.getByRole('link', { name: 'ホーム' })).toHaveAttribute('aria-current', 'page')
+  await expect(nav.getByRole('link', { name: 'ヘルプ' })).toBeVisible()
+  // 落ちるメニューの中身も JS 無しでは開いたまま見える（:not(:defined)）
+  await expect(page.getByRole('link', { name: '新しい書類' })).toBeVisible()
+})
+
+test('nav-menu: 現在地は太字 + 下の縦罫（色だけに頼らない）', async ({ page }) => {
+  await page.goto('/nav-menu.html')
+  const current = page.getByRole('link', { name: 'ホーム' })
+  await expect(current).toHaveCSS('font-weight', '700')
+  await expect(current).not.toHaveCSS('border-block-end-color', 'rgba(0, 0, 0, 0)')
+})

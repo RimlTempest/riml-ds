@@ -77,3 +77,41 @@ test('skip link: Tab で現れ、Enter で本文へ飛ぶ', async ({ page }) => 
   await page.keyboard.press('Enter')
   await expect.poll(async () => new URL(page.url()).hash).toBe('#sb-main')
 })
+
+/**
+ * Hover Card（plan 026）。**JS がある**ときだけの近道なので、ここ（Storybook）で見る。
+ * トリガーにフォーカスを入れると待たずに開き、**フォーカスは奪われない**
+ * （読み中の人からフォーカスを取り上げない）。
+ */
+test('popover: hover はフォーカスで開き、フォーカスを奪わない', async ({ page }) => {
+  await page.goto(storyUrl('components-popover--hover'))
+  await waitForStoryFinished(page, 'components-popover--hover')
+  const trigger = page.locator('rd-popover > [slot=trigger] button')
+  await trigger.focus()
+  await expect
+    .poll(async () =>
+      page.evaluate(() => document.querySelector('rd-popover [popover]')?.matches(':popover-open')),
+    )
+    .toBe(true)
+  await expect(trigger).toBeFocused()
+})
+
+/**
+ * Context Menu（plan 026）。右クリックはポインタの位置に開き、
+ * **目に見えるボタンは残る**（APG: 常に見える代替を用意する）。
+ */
+test('menu: context は右クリックで開き、見えるボタンも残る', async ({ page }) => {
+  await page.goto(storyUrl('components-menu--context'))
+  await waitForStoryFinished(page, 'components-menu--context')
+  await expect(page.getByRole('button', { name: 'その他の操作' })).toHaveAttribute(
+    'popovertarget',
+    'sb-menu-context',
+  )
+  await expect
+    .poll(async () =>
+      page.evaluate(() => document.querySelector('rd-menu [popover]')?.matches(':popover-open')),
+    )
+    .toBe(true)
+  // ポインタの位置に置くあいだは CSS の anchor に任せない
+  await expect(page.locator('rd-menu [popover]')).toHaveAttribute('style', /left/u)
+})
