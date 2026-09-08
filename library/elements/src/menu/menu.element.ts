@@ -1,13 +1,14 @@
 import { html, LitElement, type PropertyDeclarations, type TemplateResult } from 'lit'
 import { checkContract } from '../_shared/contract.js'
 import { syncStates } from '../_shared/internals.js'
-import { anchorPopover } from '../_shared/popover-anchor.js'
 import { contract, ITEM_SELECTOR } from './menu.contract.js'
 import {
   applyMenuAttrs,
   asElement,
+  contextController,
   focusNextItem,
   opened,
+  positionMenu,
   reportMissing,
   resolveItem,
   wireIds,
@@ -28,6 +29,7 @@ let sequence = 0
  *
  * @slot - `[popover]` のリスト。省略不可
  * @slot trigger - 開くボタン（`popovertarget` を持つ）。省略不可
+ * @attr context - 中の面で右クリック（contextmenu）するとポインタの位置に開く（Context Menu）。トリガーのボタンは残る
  * @csspart control - shadow の枠
  * @event {CustomEvent<{ index: number; href: string }>} rd-select - 項目を押したとき（リンクでなければ href は空）
  * @state open - 開いている
@@ -40,21 +42,33 @@ export class RdMenu extends LitElement {
   // `delegatesFocus` は付けない——トリガーも項目も light DOM の押せる要素
   static override shadowRootOptions = { ...LitElement.shadowRootOptions, serializable: true }
 
-  static override properties: PropertyDeclarations = { placement: { reflect: true }, label: {} }
+  static override properties: PropertyDeclarations = {
+    placement: { reflect: true },
+    label: {},
+    context: { type: Boolean, reflect: true },
+  }
 
   /** インライン方向の揃え。`end` はトリガーの終端に揃える */
   declare placement: 'start' | 'end'
   declare label: string
+  /** 中の面で右クリックするとポインタの位置に開く（Context Menu）。**初期化時にだけ**読む */
+  declare context: boolean
 
   #internals = this.attachInternals()
   #contractOk = false
   #open = false
   #name = `rd-menu-${(sequence += 1)}`
+  #context = contextController({
+    enabled: () => this.context,
+    host: this,
+    list: () => this.#list(),
+  })
 
   constructor() {
     super()
     this.placement = 'start'
     this.label = ''
+    this.context = false
   }
 
   override firstUpdated(): void {
@@ -62,6 +76,7 @@ export class RdMenu extends LitElement {
     this.#contractOk = result.kind === 'ok'
     reportMissing(result, this.label)
     this.#wire()
+    this.#context.wire()
   }
 
   override updated(): void {
@@ -76,7 +91,8 @@ export class RdMenu extends LitElement {
     const trigger = this.#trigger()
     const list = this.#list()
     applyMenuAttrs({ trigger, list, items }, view)
-    anchorPopover(trigger, list, this.#name, { placement: this.placement })
+    const point = this.#context.point()
+    positionMenu(trigger, list, this.#name, { placement: this.placement, point })
   }
 
   override render(): TemplateResult {
@@ -110,6 +126,7 @@ export class RdMenu extends LitElement {
   /** 開いたら最初の項目へ、閉じたらトリガーへ（Esc はネイティブが閉じる） */
   #onToggle = (event: Event): void => {
     this.#open = opened(event)
+    this.#context.sync(this.#open)
     this.requestUpdate()
     ;(this.#open ? this.#items()[0] : this.#trigger())?.focus()
   }

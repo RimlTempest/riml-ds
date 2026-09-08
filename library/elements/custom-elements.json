@@ -1472,6 +1472,18 @@
             },
             {
               "kind": "field",
+              "name": "context",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "中の面で右クリックするとポインタの位置に開く（Context Menu）。**初期化時にだけ**読む",
+              "default": "false",
+              "attribute": "context",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "#internals",
               "privacy": "private"
             },
@@ -1498,6 +1510,11 @@
               "name": "#name",
               "privacy": "private",
               "default": "`rd-menu-${(sequence += 1)}`"
+            },
+            {
+              "kind": "field",
+              "name": "#context",
+              "privacy": "private"
             },
             {
               "kind": "field",
@@ -1548,6 +1565,15 @@
             }
           ],
           "attributes": [
+            {
+              "description": "中の面で右クリックするとポインタの位置に開く（Context Menu）。**初期化時にだけ**読む",
+              "name": "context",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "context"
+            },
             {
               "name": "placement",
               "type": {

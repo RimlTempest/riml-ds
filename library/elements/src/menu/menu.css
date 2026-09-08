@@ -6,6 +6,12 @@
     display: inline-block;
   }
 
+  /* `context` のときだけトリガーの領域を面にする（右クリックの当たりが要る）。
+     既定の見え方は変えない——押せるボタンだけのときは inline のまま */
+  rd-menu[context] > [slot='trigger'] {
+    display: block;
+  }
+
   /* 窓の面（brand.md §7.3）。top layer に出るので位置は fixed で、
      inset / margin を戻さないと UA の中央寄せが効いたままになる */
   rd-menu [popover] {

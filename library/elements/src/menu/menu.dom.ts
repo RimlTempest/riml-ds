@@ -5,8 +5,15 @@
  */
 import type { ContractCheck } from '../_shared/contract.js'
 import { syncAttribute } from '../_shared/internals.js'
+import { type AnchorPlacement, anchorPopover } from '../_shared/popover-anchor.js'
 import { nextIndex } from '../_shared/roving-focus.js'
-import { menuItemAttributes, type MenuView, triggerAttributes } from './menu.logic.js'
+import {
+  contextPosition,
+  menuItemAttributes,
+  type MenuView,
+  type Point,
+  triggerAttributes,
+} from './menu.logic.js'
 
 /** click の発生元をたどる先。`ITEM_SELECTOR` は `:scope` を含むので `closest` に渡せない */
 const CLICKABLE = 'a[href], button, [aria-disabled="true"]'
@@ -77,5 +84,76 @@ export const reportMissing = (result: ContractCheck<Element>, label: string): vo
   ].filter((problem) => problem !== '')
   if (missing.length > 0) {
     console.error(`[rd-menu] 必要: ${missing.join(' / ')}`)
+  }
+}
+
+/** `contextmenu` の座標。キーボード発火（Shift+F10 / Menu キー）は 0,0 なので位置を持たない */
+export const pointOf = (event: MouseEvent): Point | undefined =>
+  event.clientX === 0 && event.clientY === 0 ? undefined : { x: event.clientX, y: event.clientY }
+
+/**
+ * ポインタの位置に置くか、今までどおりトリガーに繋ぐか。`point` があるあいだは
+ * `position-anchor` を外して inline の `top` / `left` を生かす
+ * （`position-anchor` が無ければ `menu.css` の `position-area` は解決しない）。
+ * `resize` / `scroll` には追随しない——`_shared/popover-anchor.ts` と同じ判断。
+ */
+export const positionMenu = (
+  trigger: HTMLElement | undefined,
+  list: HTMLElement | undefined,
+  name: string,
+  options: { readonly placement: AnchorPlacement; readonly point: Point | undefined },
+): void => {
+  if (options.point === undefined || list === undefined) {
+    list?.style.removeProperty('top')
+    list?.style.removeProperty('left')
+    anchorPopover(trigger, list, name, { placement: options.placement })
+    return
+  }
+  list.style.removeProperty('position-anchor')
+  const style = contextPosition(options.point, list.getBoundingClientRect(), {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  })
+  list.style.top = `${style.top}px`
+  list.style.left = `${style.left}px`
+}
+
+/** `rd-menu` の `context` が読み書きする窓口。element の private を外に出さないための入口 */
+export type ContextParts = {
+  /** 初期化時にだけ読む。後から属性を切り替えても購読は変わらない */
+  readonly enabled: () => boolean
+  readonly host: HTMLElement
+  readonly list: () => HTMLElement | undefined
+}
+
+export type ContextController = {
+  readonly wire: () => void
+  /** 開いているあいだだけ位置を覚える。閉じたら忘れてトリガーに繋ぎ直す */
+  readonly sync: (open: boolean) => void
+  readonly point: () => Point | undefined
+}
+
+/**
+ * Context Menu（`rd-menu context`）。ホストに付けるので `[slot="trigger"]` の面＝
+ * light DOM の子全体が対象になる。**トリガーのボタンは触らない**——右クリックは近道で、
+ * 目に見えるボタンが唯一の保証された入口（APG）。JS 無しではボタンだけが働く。
+ */
+export const contextController = (parts: ContextParts): ContextController => {
+  let point: Point | undefined = undefined
+  const onContextMenu = (event: MouseEvent): void => {
+    event.preventDefault()
+    point = pointOf(event)
+    parts.list()?.showPopover()
+  }
+  return {
+    wire: (): void => {
+      if (parts.enabled()) {
+        parts.host.addEventListener('contextmenu', onContextMenu)
+      }
+    },
+    sync: (open: boolean): void => {
+      point = open ? point : undefined
+    },
+    point: (): Point | undefined => point,
   }
 }

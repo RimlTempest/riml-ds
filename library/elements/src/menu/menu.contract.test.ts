@@ -66,6 +66,13 @@ describe('markup', () => {
     )
   })
 
+  it('context は指定したときだけ存在する属性として出る（Context Menu）', () => {
+    expect(markup({ id: 'm', label: '操作', items: ITEMS, context: true })).toContain(
+      '<rd-menu label="操作" context>',
+    )
+    expect(markup({ id: 'm', label: '操作', items: ITEMS })).not.toContain('context')
+  })
+
   it('placement は指定したときだけ属性に出る', () => {
     expect(markup({ id: 'm', label: '操作', items: ITEMS, placement: 'end' })).toContain(
       '<rd-menu placement="end" label="操作">',

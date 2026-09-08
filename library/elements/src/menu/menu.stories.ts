@@ -101,6 +101,51 @@ export const WithSeparator: Story = {
   },
 }
 
+/**
+ * `context` を付けると、`[slot="trigger"]` の面で右クリック（長押し・Shift+F10 /
+ * Menu キー）したときにポインタの位置で開く（Context Menu）。
+ * **目に見えるボタンは必ず残す**——右クリックは近道で、ボタンが唯一の保証された入口
+ * （APG）。JS が無ければボタンだけが働く。
+ */
+export const Context: Story = {
+  args: { id: 'sb-menu-context', label: '行の操作', context: true },
+  render: (args) =>
+    html`<div class="rd-stack" style="min-block-size: 20rem">
+      <rd-menu label=${args.label} context>
+        <article class="rd-card" slot="trigger">
+          <div class="rd-card-body">
+            <h3 class="rd-card-title">四半期レポート.pdf</h3>
+            <p>面のどこを右クリックしても同じメニューが開く。</p>
+          </div>
+          <div class="rd-card-footer">
+            <rd-button variant="ghost">
+              <button type="button" popovertarget=${args.id}>その他の操作</button>
+            </rd-button>
+          </div>
+        </article>
+        <div popover id=${args.id}>${unsafeHTML(args.items)}</div>
+      </rd-menu>
+    </div>`,
+  play: async ({ canvasElement }) => {
+    const el = canvasElement.querySelector('rd-menu')
+    const card = canvasElement.querySelector('.rd-card')
+    card?.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 220,
+        clientY: 180,
+      }),
+    )
+    await waitFor(async () => {
+      await expect(el?.matches(':state(open)')).toBe(true)
+    })
+    await expect(canvasElement.querySelector('rd-menu [popover]')?.getAttribute('style')).toContain(
+      'left',
+    )
+  },
+}
+
 export const Dark: Story = { ...Default, globals: { scheme: 'dark' } }
 
 export const Dense: Story = { ...Default, globals: { density: 'compact' } }

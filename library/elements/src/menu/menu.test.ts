@@ -20,6 +20,25 @@ const FIXTURE = markup({
     + menuItemMarkup({ label: '書き出し', disabled: true }),
 })
 
+const CONTEXT_FIXTURE = markup({
+  id: 'row-context',
+  label: '操作',
+  items: menuItemMarkup({ label: '複製', href: '#duplicate' }) + menuItemMarkup({ label: '削除' }),
+  context: true,
+})
+
+/** 右クリック（長押し・Shift+F10 も同じイベント）。座標が 0 ならキーボード発火 */
+const rightClick = (el: Element | undefined, x: number, y: number): MouseEvent => {
+  const event = new MouseEvent('contextmenu', {
+    bubbles: true,
+    cancelable: true,
+    clientX: x,
+    clientY: y,
+  })
+  el?.dispatchEvent(event)
+  return event
+}
+
 const itemsOf = (el: RdMenu): readonly HTMLElement[] =>
   [...el.querySelectorAll('[popover] > :is(a[href], button, [aria-disabled])')].filter(
     (node) => node instanceof HTMLElement,
@@ -198,4 +217,63 @@ it('項目の当たり判定が 44px 以上ある', async () => {
   const el = await fixtureOf(RdMenu, FIXTURE)
   await open(el)
   expect(itemsOf(el)[0]?.getBoundingClientRect().height).toBeGreaterThanOrEqual(44)
+})
+
+it('context を付けると右クリックでポインタの位置に開く', async () => {
+  const el = await fixtureOf(RdMenu, CONTEXT_FIXTURE)
+  expect(el.context).toBe(true)
+  const event = rightClick(triggerOf(el), 120, 90)
+  expect(event.defaultPrevented).toBe(true)
+  await vi.waitFor(() => {
+    expect(el.matches(':state(open)')).toBe(true)
+  })
+  await el.updateComplete
+  const list = listOf(el)
+  expect(list?.style.top).toBe('90px')
+  expect(list?.style.left).toBe('120px')
+  // ポインタに置くあいだは CSS の anchor に任せない（position-area が勝ってしまう）
+  expect(list?.style.getPropertyValue('position-anchor')).toBe('')
+})
+
+it('閉じるとポインタの位置を忘れ、トリガーに繋ぎ直す', async () => {
+  const el = await fixtureOf(RdMenu, CONTEXT_FIXTURE)
+  rightClick(triggerOf(el), 120, 90)
+  await vi.waitFor(() => {
+    expect(el.matches(':state(open)')).toBe(true)
+  })
+  listOf(el)?.hidePopover()
+  await vi.waitFor(() => {
+    expect(el.matches(':state(open)')).toBe(false)
+  })
+  await el.updateComplete
+  expect(listOf(el)?.style.top).toBe('')
+  expect(listOf(el)?.style.left).toBe('')
+})
+
+it('キーボードからの contextmenu（座標 0）はトリガーに寄せる', async () => {
+  const el = await fixtureOf(RdMenu, CONTEXT_FIXTURE)
+  rightClick(triggerOf(el), 0, 0)
+  await vi.waitFor(() => {
+    expect(el.matches(':state(open)')).toBe(true)
+  })
+  await el.updateComplete
+  expect(listOf(el)?.style.top).toBe('')
+  expect(listOf(el)?.style.left).toBe('')
+})
+
+it('context を付けてもトリガーのボタンで開く経路は変わらない', async () => {
+  const el = await fixtureOf(RdMenu, CONTEXT_FIXTURE)
+  await open(el)
+  expect(listOf(el)?.matches(':popover-open')).toBe(true)
+  expect(document.activeElement).toBe(itemsOf(el)[0])
+  expect(listOf(el)?.style.top).toBe('')
+})
+
+it('context が無ければ右クリックは開かず、ブラウザ既定のままにする', async () => {
+  const el = await fixtureOf(RdMenu, FIXTURE)
+  expect(el.context).toBe(false)
+  const event = rightClick(triggerOf(el), 120, 90)
+  expect(event.defaultPrevented).toBe(false)
+  await el.updateComplete
+  expect(el.matches(':state(open)')).toBe(false)
 })
