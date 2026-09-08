@@ -31,6 +31,22 @@ const CLASSES = [
   '.rd-alert-icon',
   '.rd-legend',
   '.rd-legend-item',
+  // plan 022（面と待ち）。Card / Empty / Spinner / Accordion / Carousel / Scroll Area
+  '.rd-card',
+  '.rd-card-media',
+  '.rd-card-body',
+  '.rd-card-title',
+  '.rd-card-footer',
+  '.rd-empty',
+  '.rd-empty-icon',
+  '.rd-empty-title',
+  '.rd-empty-actions',
+  '.rd-spinner',
+  '.rd-accordion',
+  '.rd-carousel',
+  '.rd-carousel-track',
+  '.rd-carousel-item',
+  '.rd-scroll-area',
 ] as const
 
 const selectorsOf = (css: string): readonly string[] => {
@@ -87,10 +103,10 @@ describe('atoms.css', () => {
     expect(documented).toEqual([...CLASSES])
   })
 
-  it('@keyframes rd-skeleton-pulse は prefers-reduced-motion: no-preference の中だけ', () => {
+  it('@keyframes は prefers-reduced-motion: no-preference の中だけ', () => {
     const css = read(srcAtoms)
     const all = atRulesOf(css, 'keyframes').map((atRule) => atRule.params)
-    expect(all).toEqual(['rd-skeleton-pulse'])
+    expect(all).toEqual(['rd-skeleton-pulse', 'rd-spin'])
     expect(keyframesUnderNoPreference(css)).toEqual(all)
   })
 
@@ -151,5 +167,88 @@ describe('atoms.css', () => {
     const keys =
       typeof exportsField === 'object' && exportsField !== null ? Object.keys(exportsField) : []
     expect(keys).toContain('./atoms.css')
+  })
+})
+
+/** 指定したセレクタの規則が持つ `prop:value` を全部集める（plan 022 の面と待ちの検査用） */
+const declsOf = (pattern: RegExp): readonly string[] => {
+  const found: string[] = []
+  parse(read(srcAtoms)).walkRules(pattern, (rule: Rule) => {
+    rule.walkDecls((decl) => {
+      found.push(`${decl.prop}:${decl.value}`)
+    })
+  })
+  return found
+}
+
+/** `@media (prefers-reduced-motion: no-preference)` の中に在る宣言の `prop:value` */
+const declsUnderNoPreference = (): readonly string[] => {
+  const found: string[] = []
+  parse(read(srcAtoms)).walkAtRules('media', (media: AtRule) => {
+    if (!/prefers-reduced-motion\s*:\s*no-preference/.test(media.params)) return
+    media.walkDecls((decl) => {
+      found.push(`${decl.prop}:${decl.value}`)
+    })
+  })
+  return found
+}
+
+/** 動き（回転・滑らかな転がり）の宣言だけを拾う */
+const isMotion = (decl: string): boolean =>
+  decl.startsWith('animation') || decl.startsWith('scroll-behavior')
+
+/** ファイル全体の動きの宣言。`declsUnderNoPreference()` と一致すれば「外に 1 つも無い」 */
+const allMotionDecls = (): readonly string[] => {
+  const found: string[] = []
+  parse(read(srcAtoms)).walkDecls((decl) => {
+    found.push(`${decl.prop}:${decl.value}`)
+  })
+  return found.filter((decl) => isMotion(decl))
+}
+
+describe('atoms.css の面と待ち（plan 022）', () => {
+  it('カードは面・硬い影・点線の区切りで組む（brand.md §7.6）', () => {
+    expect(declsOf(/^\.rd-card$/)).toContain('box-shadow:var(--rd-shadow-raised)')
+    expect(declsOf(/^\.rd-card$/)).toContain('background:var(--rd-color-surface-raised)')
+    expect(declsOf(/^\.rd-card-footer$/).join('\n')).toContain('dashed')
+  })
+
+  it('リンクカードは擬似要素でカード全面を押せるようにする', () => {
+    expect(declsOf(/^\.rd-card-link::after$/)).toContain('inset:0')
+    expect(declsOf(/^\.rd-card$/)).toContain('position:relative')
+  })
+
+  it('spinner は罫線の輪で、回転は reduced-motion の外に 1 つも無い', () => {
+    const spinner = declsOf(/^\.rd-spinner$/)
+    expect(spinner).toContain('border-radius:var(--rd-radius-full)')
+    expect(spinner.some((decl) => decl.startsWith('border-width:'))).toBe(true)
+    expect(spinner).toContain('border-block-start-color:var(--rd-color-accent-default)')
+    // 動きの宣言はファイル全体で no-preference の中にしか無い（spinner の回転もそこ）
+    expect(allMotionDecls()).toEqual(declsUnderNoPreference().filter((decl) => isMotion(decl)))
+    expect(declsUnderNoPreference()).toContain('animation-name:rd-spin')
+  })
+
+  it('グラデーションを 1 つも描かない（spinner の輪も罫線。brand.md §9）', () => {
+    expect(read(srcAtoms)).not.toMatch(/gradient\(/)
+  })
+
+  it('carousel は CSS scroll snap で動く（前後ボタンの JS を持たない）', () => {
+    expect(declsOf(/^\.rd-carousel$/)).toContain('scroll-snap-type:x mandatory')
+    expect(declsOf(/^\.rd-carousel-item$/)).toContain('scroll-snap-align:start')
+    expect(declsUnderNoPreference()).toContain('scroll-behavior:smooth')
+  })
+
+  it('scroll-area は細いスクロールバーを持ち、強制配色では既定に戻す', () => {
+    const all = read(srcAtoms)
+    expect(all).toContain('scrollbar-width: thin')
+    const forced = all.slice(all.indexOf('@media (forced-colors: active)'))
+    expect(forced).toContain('scrollbar-color: auto')
+  })
+
+  it('accordion は入れ物だけで、rd-disclosure の中身に触らない', () => {
+    const inner = selectorsOf(read(srcAtoms)).filter(
+      (selector) => selector.includes('rd-disclosure') && /summary|details/.test(selector),
+    )
+    expect(inner).toEqual([])
   })
 })

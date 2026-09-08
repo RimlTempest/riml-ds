@@ -34,6 +34,10 @@ const KNOBS = new Set([
   '--rd-skeleton-width',
   '--rd-alert-tone',
   '--rd-legend-swatch',
+  // plan 022
+  '--rd-spinner-size',
+  '--rd-carousel-item',
+  '--rd-scroll-area-max',
 ])
 
 /** plan 018 の 2 表。dist に出ていることだけをここで押さえる（中身は typography / atoms の各テスト） */
