@@ -5,6 +5,7 @@
  */
 import type { Contract } from '../_shared/contract.js'
 import { renderMarkup } from '../_shared/markup.js'
+import type { DialogPlacement } from './dialog.logic.js'
 
 export const contract = {
   pe: 'B',
@@ -12,7 +13,7 @@ export const contract = {
   required: ['label'],
   tree: {
     tag: 'rd-dialog',
-    attrs: { open: '$open', persistent: '$persistent' },
+    attrs: { alert: '$alert', open: '$open', persistent: '$persistent', placement: '$placement' },
     children: [
       { tag: 'h2', slot: 'label', children: [{ prop: 'label' }] },
       // children は生 HTML。利用側が組み立てた信頼済みの断片だけを渡す（renderMarkup はエスケープしない）
@@ -28,6 +29,10 @@ export type DialogMarkupProps = {
   readonly open?: boolean
   /** Esc と背面クリックで閉じない。既定は false（閉じられる） */
   readonly persistent?: boolean
+  /** 返事を求める窓（WAI-APG の alertdialog）。背面クリックでは閉じない。Esc は閉じる */
+  readonly alert?: boolean
+  /** 窓の置き場所。既定は `center`。`start` / `end` は縦の帯、`bottom` は下からの帯 */
+  readonly placement?: DialogPlacement
 }
 
 export const markup = (props: DialogMarkupProps): string => renderMarkup(contract.tree, props)

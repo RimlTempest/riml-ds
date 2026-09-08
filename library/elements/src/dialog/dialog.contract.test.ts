@@ -14,6 +14,18 @@ describe('markup', () => {
     )
   })
 
+  it('alert と placement を属性に出す（plan 022）', () => {
+    expect(markup({ label: '削除', children: '', alert: true, placement: 'end' })).toBe(
+      '<rd-dialog alert placement="end"><h2 slot="label">削除</h2></rd-dialog>',
+    )
+  })
+
+  it('placement を省くと属性ごと出ない（既定は center）', () => {
+    expect(markup({ label: '確認', children: '', alert: false })).toBe(
+      '<rd-dialog><h2 slot="label">確認</h2></rd-dialog>',
+    )
+  })
+
   it('persistent は属性として書ける（既定 false なので存在で true）', () => {
     expect(markup({ label: '確定', children: '', persistent: true })).toBe(
       '<rd-dialog persistent><h2 slot="label">確定</h2></rd-dialog>',
