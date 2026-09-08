@@ -70,6 +70,7 @@ export const App = (): ReactNode => (
         id="code-1"
         name="code-1"
         aria-label="1 桁目"
+        title="0〜9 の数字 1 文字"
         required
         autoComplete="one-time-code"
       />
@@ -81,6 +82,7 @@ export const App = (): ReactNode => (
         id="code-2"
         name="code-2"
         aria-label="2 桁目"
+        title="0〜9 の数字 1 文字"
         required
       />
     </RdInputOtp>

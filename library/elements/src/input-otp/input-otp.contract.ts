@@ -45,6 +45,8 @@ const cellTree: MarkupTree = {
     id: '$id',
     name: '$name',
     'aria-label': '$label',
+    // `pattern` を書いたら `title` でその形を説明する（HTML の仕様。markuplint が見る）
+    title: '0〜9 の数字 1 文字',
     required: true,
     autocomplete: '$autocomplete',
   },
@@ -61,8 +63,8 @@ export type OtpCellsMarkupProps = {
 
 /**
  * 桁の `<input>` を並べた HTML を組む。属性値はエスケープされる。
- * `aria-label` は「N 桁目」で固定（`markup()` は静的なので UI 言語を見ない。
- * 英語が要る利用側は `children` を自分で組む）。
+ * `aria-label`（「N 桁目」）と `title`（`pattern` の説明）は日本語で固定
+ * （`markup()` は静的なので UI 言語を見ない。英語が要る利用側は `children` を自分で組む）。
  */
 export const otpCellsMarkup = (props: OtpCellsMarkupProps): string =>
   Array.from({ length: props.length ?? 6 }, (_, index) =>

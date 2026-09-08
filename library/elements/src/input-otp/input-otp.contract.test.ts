@@ -9,7 +9,7 @@ const hostWith = (present: readonly string[]): ContractHost<string> => ({
 
 const cell = (index: number, extra = ''): string =>
   `<input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" id="code-${index}" `
-  + `name="code-${index}" aria-label="${index} 桁目" required${extra}>`
+  + `name="code-${index}" aria-label="${index} 桁目" title="0〜9 の数字 1 文字" required${extra}>`
 
 describe('otpCellsMarkup', () => {
   it('既定は 6 桁で、autocomplete は最初の 1 桁だけに付く', () => {
