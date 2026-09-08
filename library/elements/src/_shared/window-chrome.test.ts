@@ -1,0 +1,72 @@
+/**
+ * 帯の見た目は部品側（`_shared/window-chrome.ts`）と CSS 側（`patterns.css`）の 2 か所にある
+ * （shadow は light DOM のクラスを参照できない）。記号の data URI が**同じ文字列**であることを
+ * ここで固定する（ADR-0014 決定 3）。色・寸法は VRT でしか揃わない。
+ *
+ * 置き場所が `library/elements/test/` ではなく `src/_shared/` なのは、`vitest.config.ts` が
+ * `library/elements/test/**` を browser プロジェクトに割り当てているため（node の fs が要る）。
+ */
+import { existsSync, readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { describe, expect, it } from 'vitest'
+import { WINDOW_GLYPHS, windowChrome, windowControlLabels } from './window-chrome.js'
+
+const cssFile = (relative: string): string =>
+  fileURLToPath(new URL(`../../../../system/css/${relative}`, import.meta.url))
+
+/** `bun run build` 後の dist を読む。無ければ src を読む */
+const patternsCss = (): string => {
+  const dist = cssFile('dist/patterns.css')
+  return readFileSync(existsSync(dist) ? dist : cssFile('src/patterns.css'), 'utf8')
+}
+
+const glyphs = Object.values(WINDOW_GLYPHS)
+
+describe('WINDOW_GLYPHS', () => {
+  it('3 つの data URI が patterns.css にそのまま入っている', () => {
+    const css = patternsCss()
+    for (const glyph of glyphs) {
+      expect(css).toContain(glyph)
+    }
+  })
+
+  it('部品側の共通断片も同じ data URI を使う', () => {
+    for (const glyph of glyphs) {
+      expect(windowChrome.cssText).toContain(glyph)
+    }
+  })
+
+  it('記号は幾何だけ（viewBox 0 0 16 16 の線）で、絵もロゴも持ち込まない', () => {
+    for (const glyph of glyphs) {
+      expect(glyph).toContain('data:image/svg+xml')
+      expect(glyph).toContain("viewBox='0 0 16 16'")
+      expect(glyph).toContain("stroke-width='2'")
+      expect(glyph).toContain("stroke-linecap='round'")
+    }
+  })
+
+  it('丸の装飾（radial-gradient）はもう無い', () => {
+    expect(windowChrome.cssText).not.toContain('radial-gradient')
+    expect(patternsCss()).not.toContain('radial-gradient')
+  })
+})
+
+const host = (lang: string | null): Parameters<typeof windowControlLabels>[0] => ({
+  closest: () => (lang === null ? null : { getAttribute: () => lang }),
+})
+
+describe('windowControlLabels', () => {
+  it('最も近い [lang] が無い / ja なら日本語', () => {
+    expect(windowControlLabels(host(null)).close).toBe('閉じる')
+    expect(windowControlLabels(host('ja-JP')).expand).toBe('広げる')
+    expect(windowControlLabels(host('ja')).collapse).toBe('たたむ')
+  })
+
+  it('en なら英語', () => {
+    expect(windowControlLabels(host('en-US'))).toEqual({
+      close: 'Close',
+      expand: 'Expand',
+      collapse: 'Collapse',
+    })
+  })
+})

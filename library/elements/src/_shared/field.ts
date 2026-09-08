@@ -66,18 +66,8 @@ export const computeMessage = (input: MessageInput): string => {
   return hit === undefined ? input.validationMessage : hit[1](input.attrs)
 }
 
-export type LangHost = {
-  readonly closest: (
-    selectors: string,
-  ) => { readonly getAttribute: (name: string) => string | null } | null
-}
-
-/** 最も近い `[lang]` を見る。無い / `ja-*` なら日本語の表を使う */
-export const usesJapaneseCopy = (host: LangHost): boolean => {
-  const lang = host.closest('[lang]')?.getAttribute('lang') ?? ''
-  const primary = lang.split('-')[0]?.toLowerCase() ?? ''
-  return primary === '' || primary === 'ja'
-}
+/** 言語の見分けは `_shared/lang.ts` に置いてある（窓の操作ボタンも使うため）。ここからも出す */
+export { type LangHost, usesJapaneseCopy } from './lang.js'
 
 export type StateInput = {
   readonly malformed: boolean
