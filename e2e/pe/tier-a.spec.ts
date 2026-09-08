@@ -58,6 +58,30 @@ test('select: required が未選択なら遷移しない（ネイティブ検証
   await expect(page.getByLabel('国')).toBeFocused()
 })
 
+test('combobox: JS 無しでは <input list> と <datalist> がネイティブの候補を出す', async ({
+  page,
+}) => {
+  await page.goto('/combobox.html')
+  const control = page.getByLabel('読み')
+  // 定義前は `list` が残っている（部品が外すのは定義後だけ。契約もこの形を見る）
+  await expect(control).toHaveAttribute('list', 'reading-list')
+  await expect(page.locator('#reading-list > option')).toHaveCount(5)
+  // 部品が足す listbox は JS が無いので存在しない（ネイティブの吹き出しと二重にならない）
+  await expect(page.locator("rd-combobox [part='list']")).toHaveCount(0)
+})
+
+test('combobox: JS 無しでも打った値が送信される', async ({ page }) => {
+  await page.goto('/combobox.html')
+  await page.getByLabel('読み').fill('かな')
+  await page.getByRole('button', { name: '送信' }).click()
+  await expect(page).toHaveURL(/reading=%E3%81%8B%E3%81%AA/u)
+})
+
+test('combobox: JS 無しでも <name>.css が当たる（タップ標的 44px）', async ({ page }) => {
+  await page.goto('/combobox.html')
+  await expect(page.locator('rd-combobox > input')).toHaveCSS('min-block-size', '44px')
+})
+
 test('checkbox: JS 無しでもチェックが送信される', async ({ page }) => {
   await page.goto('/checkbox.html')
   await page.getByLabel('規約に同意する').check()

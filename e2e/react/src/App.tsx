@@ -3,6 +3,7 @@ import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-react'
 import {
   RdCheckbox,
   RdCheckboxGroup,
+  RdCombobox,
   RdInputOtp,
   RdMenu,
   RdMeter,
@@ -22,6 +23,15 @@ const countries = (
     <option value="">選択してください</option>
     <option value="jp">日本</option>
     <option value="us">アメリカ</option>
+  </>
+)
+
+/** 4 フレームワークで同じ候補を出す。候補の唯一の出どころは `<datalist>` */
+const readings = (
+  <>
+    <option value="kana">かな</option>
+    <option value="kanji">かんじ</option>
+    <option value="romaji">ローマ字</option>
   </>
 )
 
@@ -139,6 +149,9 @@ export const App = (): ReactNode => (
         required
       />
     </RdInputOtp>
+    <RdCombobox id="reading" listId="reading-list" label="読み" name="reading">
+      {readings}
+    </RdCombobox>
     <RdToggle label="太字" pressed="false" />
     <rd-live-region />
   </main>

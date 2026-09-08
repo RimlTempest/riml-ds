@@ -15,6 +15,7 @@ import {
   checkboxGroupMarkup,
   checkboxOptionMarkup,
 } from '../../library/elements/src/checkbox-group/index.js'
+import { comboboxMarkup, comboboxOptionMarkup } from '../../library/elements/src/combobox/index.js'
 import { dialogMarkup } from '../../library/elements/src/dialog/index.js'
 import { disclosureMarkup } from '../../library/elements/src/disclosure/index.js'
 import { inputOtpMarkup, otpCellsMarkup } from '../../library/elements/src/input-otp/index.js'
@@ -54,6 +55,7 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/select/select.css', 'select.css'],
   ['library/elements/src/checkbox/checkbox.css', 'checkbox.css'],
   ['library/elements/src/checkbox-group/checkbox-group.css', 'checkbox-group.css'],
+  ['library/elements/src/combobox/combobox.css', 'combobox.css'],
   ['library/elements/src/disclosure/disclosure.css', 'disclosure.css'],
   ['library/elements/src/input-otp/input-otp.css', 'input-otp.css'],
   ['library/elements/src/meter/meter.css', 'meter.css'],
@@ -151,6 +153,17 @@ const OPTIONS =
   '<option value="">選択してください</option>'
   + '<option value="jp">日本</option><option value="us">アメリカ</option>'
 
+/** 候補は `<datalist>` に書く。JS が無ければネイティブの吹き出しがこれを出す */
+const READINGS = [
+  { value: 'kana', label: 'かな' },
+  { value: 'kanji', label: 'かんじ' },
+  { value: 'katakana', label: 'カナ' },
+  { value: 'romaji', label: 'ローマ字' },
+  { value: 'eisuji', label: '英数字' },
+]
+  .map((option) => comboboxOptionMarkup(option))
+  .join('')
+
 /** `required` は最初の 1 個にだけ付ける（HTML の仕様で group 全体が必須になる） */
 const plans = (name: string, required: boolean): string =>
   [
@@ -200,6 +213,20 @@ const PAGES: Readonly<Record<string, string>> = {
           name: 'country',
           required: true,
           children: OPTIONS,
+        })}
+        ${submit}
+      </form>`,
+  ),
+  'combobox.html': page(
+    '候補つき入力',
+    `      <form method="get" action="/echo.html">
+        ${comboboxMarkup({
+          id: 'reading',
+          listId: 'reading-list',
+          label: '読み',
+          name: 'reading',
+          hint: '候補から選ぶか、そのまま入力できます',
+          children: READINGS,
         })}
         ${submit}
       </form>`,

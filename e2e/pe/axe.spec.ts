@@ -14,6 +14,7 @@ const PAGES = [
   '/select.html',
   '/checkbox.html',
   '/checkbox-group.html',
+  '/combobox.html',
   '/disclosure.html',
   '/input-otp.html',
   '/meter.html',
