@@ -5,13 +5,13 @@ import { syncAttribute, syncStates } from '../_shared/internals.js'
 import type { Binding, Listeners } from '../_shared/native-control.js'
 import { bindListeners } from '../_shared/native-control.js'
 import { contract } from './input-otp.contract.js'
-import { cellsOf, moveFocus, pasteInto, setCells, valueOf } from './input-otp.cells.js'
+import { cellsOf, insideBlur, moveFocus, pasteInto, setCells, valueOf } from './input-otp.cells.js'
 import { computeOtpView, type OtpView } from './input-otp.logic.js'
 
 /**
  * ワンタイムコード。桁ごとの `<input inputmode="numeric" maxlength="1">` に状態と文言を足す
- * （ティア A、ADR-0012）。JS 無しでも Tab で 1 桁ずつ入力して送信でき、JS があるときだけ
- * 自動前進・Backspace で戻る・貼り付けで分配する。値は `name-1..N` の N フィールドで送る。
+ * （ティア A、ADR-0012）。JS 無しでも Tab で入力して送信でき（`name-1..N` の N フィールド）、
+ * JS があるときだけ自動前進・`Backspace` で戻る・貼り付けで分配する。
  *
  * @summary ワンタイムコード。<fieldset><legend> と桁の <input> は利用側が書く
  * @status experimental
@@ -96,7 +96,6 @@ export class RdInputOtp extends LitElement {
   }
 
   #cells = (): readonly HTMLInputElement[] => cellsOf(this, contract.roles.control)
-
   #values = (): readonly string[] => this.#cells().map((cell) => cell.value)
 
   #setTouched = (): void => {
@@ -120,7 +119,11 @@ export class RdInputOtp extends LitElement {
       pasteInto(this.#cells(), event)
       this.#setTouched()
     },
-    blur: this.#setTouched,
+    blur: (event) => {
+      if (!insideBlur(this.#cells(), event)) {
+        this.#setTouched()
+      }
+    },
     invalid: (event) => {
       event.preventDefault()
       this.#setTouched()

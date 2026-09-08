@@ -128,6 +128,22 @@ it('全桁埋まるまで checkValidity は通らない', async () => {
   expect(el.checkValidity()).toBe(true)
 })
 
+it('桁から桁へ移っただけでは怒らない（入力中に :state(invalid) にしない）', async () => {
+  const el = await fixtureOf(RdInputOtp, otp())
+  const [first, second] = cells(el)
+  type(first ?? new HTMLInputElement(), '1')
+  first?.dispatchEvent(new FocusEvent('blur', { relatedTarget: second ?? null }))
+  await el.updateComplete
+  expect(el.matches(':state(invalid)')).toBe(false)
+})
+
+it('部品の外へ焦点が出たら invalid になる', async () => {
+  const el = await fixtureOf(RdInputOtp, otp())
+  cells(el)[0]?.dispatchEvent(new FocusEvent('blur', { relatedTarget: document.body }))
+  await el.updateComplete
+  expect(el.matches(':state(invalid)')).toBe(true)
+})
+
 it('未入力のまま invalid が出ると日本語の文言が各桁の aria-describedby に載る', async () => {
   const el = await fixtureOf(RdInputOtp, otp())
   cells(el)[0]?.dispatchEvent(new Event('invalid', { cancelable: true }))

@@ -1060,7 +1060,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "ワンタイムコード。桁ごとの `<input inputmode=\"numeric\" maxlength=\"1\">` に状態と文言を足す\n（ティア A、ADR-0012）。JS 無しでも Tab で 1 桁ずつ入力して送信でき、JS があるときだけ\n自動前進・Backspace で戻る・貼り付けで分配する。値は `name-1..N` の N フィールドで送る。",
+          "description": "ワンタイムコード。桁ごとの `<input inputmode=\"numeric\" maxlength=\"1\">` に状態と文言を足す\n（ティア A、ADR-0012）。JS 無しでも Tab で入力して送信でき（`name-1..N` の N フィールド）、\nJS があるときだけ自動前進・`Backspace` で戻る・貼り付けで分配する。",
           "name": "RdInputOtp",
           "cssProperties": [
             {
@@ -1174,7 +1174,7 @@
               "type": {
                 "text": "Listeners"
               },
-              "default": "{ input: (event) => { moveFocus(this.#cells(), event.target, valueOf(event.target) === '' ? '' : 'input') this.requestUpdate() }, keydown: (event) => { const key = event instanceof KeyboardEvent ? event.key : '' const stay = key === 'Backspace' && valueOf(event.target) !== '' moveFocus(this.#cells(), event.target, stay ? '' : key) }, paste: (event) => { event.preventDefault() pasteInto(this.#cells(), event) this.#setTouched() }, blur: this.#setTouched, invalid: (event) => { event.preventDefault() this.#setTouched() }, }",
+              "default": "{ input: (event) => { moveFocus(this.#cells(), event.target, valueOf(event.target) === '' ? '' : 'input') this.requestUpdate() }, keydown: (event) => { const key = event instanceof KeyboardEvent ? event.key : '' const stay = key === 'Backspace' && valueOf(event.target) !== '' moveFocus(this.#cells(), event.target, stay ? '' : key) }, paste: (event) => { event.preventDefault() pasteInto(this.#cells(), event) this.#setTouched() }, blur: (event) => { if (!insideBlur(this.#cells(), event)) { this.#setTouched() } }, invalid: (event) => { event.preventDefault() this.#setTouched() }, }",
               "description": "1 文字入ったら次へ。Backspace は**空のときだけ**戻る（値があればネイティブの削除に任せる）"
             },
             {

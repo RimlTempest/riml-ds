@@ -47,3 +47,10 @@ export const pasteInto = (cells: readonly HTMLInputElement[], event: Event): voi
   fill(cells, digits, undefined)
   cells[Math.max(digits.length - 1, 0)]?.focus()
 }
+
+/**
+ * 桁から桁への移動なら true。自動前進のたびに `blur` が飛ぶので、これを「触った」に数えると
+ * 1 桁目を打った瞬間に全部の桁が危険色になる（入力中には怒らない — `riml-ds-css` §0）。
+ */
+export const insideBlur = (cells: readonly HTMLInputElement[], event: Event): boolean =>
+  event instanceof FocusEvent && cells.some((cell) => cell === event.relatedTarget)
