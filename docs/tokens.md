@@ -129,10 +129,13 @@ alias なので、palette を差し替えればライトもダークも高コン
 - **`color.border.default` は `neutral.500`**（light 4.68:1 / dark 4.03:1）。`neutral.300` は surface に対して
   1.81:1 で WCAG 1.4.11 の非テキスト 3:1 を満たさない。装飾用の薄い区切り線が要るなら
   `color.border.subtle`（3:1 を要求しない、`nonText` なし）を **別名で足す**。default を薄くしない
-- **ダークの `color.surface.sunken` は `neutral.900`（= `surface.default`）**。palette に 900 より暗い段が無い。
-  段を足すのは DESIGN.md の palette 追加＝デザイン判断
+- **ダークの `color.surface.sunken` は `neutral.950`、`hover` は `neutral.750`**（plan 027）。
+  ライトは 0 / 100 / 200 の **3 素材で 4 役**（hover = sunken）、ダークは 950 / 900 / 800 / 750 の
+  **4 素材で 4 役**。ダークで 900 / 800 の 2 素材しか無かった頃は sunken = default・hover = raised で
+  面の段差が消えていた
 - **`color.surface.hover` と `color.status.danger.hover`**（plan 013）は qrcc の移行で必要になった semantic。
-  hover は「1 段だけ動く」（light: neutral.200 / dark: neutral.800、danger は 700 / 300）で、
+  hover はライトでは「1 段だけ動く」（neutral.200）、ダークでは既定面・浮いた面のどちらから見ても
+  1 段明るい `neutral.750`（danger は 700 / 300）で、
   `color.text.on-status` は `danger.hover` に対しても 7:1 を要求する（`contrastAgainst`）
 - **DESIGN.md の `typography.*.fontSize` は clamp の最小値**（`1rem` など）。`@google/design.md` 0.4.0 が
   `clamp()` を dimension と認めないため。流体の 3 値は `tokens.css` と `tokens.json`
