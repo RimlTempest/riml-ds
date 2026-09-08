@@ -80,7 +80,10 @@ export const OnIconButton: Story = {
 
 /** `for` の先が無いと何も出さず `:state(orphan)` になる（説明する相手が居ない） */
 export const Orphan: Story = {
-  render: () => html`<rd-tooltip for="missing">出ない説明</rd-tooltip>`,
+  render: () => html`
+    <p>対象が見つからないので、この下には何も出ない。</p>
+    <rd-tooltip for="missing">出ない説明</rd-tooltip>
+  `,
   play: async ({ canvasElement }) => {
     await expect(canvasElement.querySelector('rd-tooltip')?.matches(':state(orphan)')).toBe(true)
   },
