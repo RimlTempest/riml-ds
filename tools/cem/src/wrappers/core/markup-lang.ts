@@ -14,8 +14,11 @@ export type Dialect = {
   readonly customAttr?: (name: string, prop: string, isBoolean: boolean) => string
   /** `{ prop }`。`children` に置き換わる位置かどうかを受ける */
   readonly text: (prop: string, isChildren: boolean) => string
-  /** `{ raw }` */
-  readonly raw: () => string
+  /**
+   * `{ raw }`。`name` は `$` を落とした名前。`children` は既定 slot、
+   * それ以外（`trigger` / `items` / `tabs` / `panels`）は名前つき slot になる
+   */
+  readonly raw: (name: string) => string
 }
 
 const PRINT_WIDTH = 100
@@ -79,7 +82,7 @@ const inlineOf = (
     return dialect.text(node.prop, node.prop === childrenText)
   }
   if ('raw' in node) {
-    return dialect.raw()
+    return dialect.raw(node.raw.startsWith('$') ? node.raw.slice(1) : node.raw)
   }
   return undefined
 }

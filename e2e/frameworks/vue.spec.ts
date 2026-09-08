@@ -3,12 +3,14 @@ import {
   formWave4Suite,
   frameworkSuite,
   meterAndWindowSuite,
+  navigationSuite,
   radioGroupAndSliderSuite,
 } from './shared.js'
 
 frameworkSuite('vue')
 meterAndWindowSuite('vue')
 radioGroupAndSliderSuite('vue')
+navigationSuite('vue')
 formWave4Suite('vue')
 
 test.describe('vue: <select> の v-model', () => {

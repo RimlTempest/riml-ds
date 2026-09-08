@@ -4,10 +4,13 @@ import {
   RdCheckbox,
   RdCheckboxGroup,
   RdInputOtp,
+  RdMenu,
   RdMeter,
+  RdPopover,
   RdRadioGroup,
   RdSelect,
   RdSlider,
+  RdTabs,
   RdWindow,
 } from '@rimltempest/riml-ds-vue/experimental'
 import { defineComponent, h, ref } from 'vue'
@@ -82,6 +85,49 @@ export const App = defineComponent(
           min: '0',
           max: '10',
         }),
+        h(
+          RdTabs,
+          { label: 'ドキュメント' },
+          {
+            tabs: () => [
+              h('a', { href: '#overview' }, '概要'),
+              h('a', { href: '#usage' }, '使い方'),
+            ],
+            panels: () => [
+              h('div', { id: 'overview' }, h('p', null, 'この部品の概要。')),
+              h('div', { id: 'usage' }, h('p', null, '使い方の説明。')),
+            ],
+          },
+        ),
+        h(
+          RdMenu,
+          { label: '操作', id: 'row-actions' },
+          {
+            trigger: () =>
+              h(
+                'rd-button',
+                { slot: 'trigger' },
+                h('button', { type: 'button', popovertarget: 'row-actions' }, '操作'),
+              ),
+            items: () => [
+              h('a', { href: '/thanks.html' }, '複製'),
+              h('button', { type: 'button' }, '削除'),
+            ],
+          },
+        ),
+        h(
+          RdPopover,
+          { id: 'filters', label: '絞り込み' },
+          {
+            trigger: () =>
+              h(
+                'rd-button',
+                { slot: 'trigger' },
+                h('button', { type: 'button', popovertarget: 'filters' }, '絞り込み'),
+              ),
+            default: () => h('p', null, '条件を選ぶと一覧がその場で変わる。'),
+          },
+        ),
         h(RdCheckboxGroup, { label: 'タグ' }, () => [
           h('label', null, [
             h('input', { type: 'checkbox', id: 'tag-work', name: 'tags', value: 'a' }),

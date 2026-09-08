@@ -12,7 +12,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import type { Package } from 'custom-elements-manifest/schema'
 import type { Contract, WrapperSpec } from './core/common.js'
 import { toWrapperSpecs } from './core/common.js'
-import { astroFiles } from './core/astro.js'
+import { astroExports, astroFiles } from './core/astro.js'
 import type { GeneratedFile } from './core/react.js'
 import { reactFiles } from './core/react.js'
 import { svelteFiles } from './core/svelte.js'
@@ -101,6 +101,27 @@ const sync = async (dir: string, files: readonly GeneratedFile[]): Promise<numbe
   return written.reduce<number>((total, count) => total + count, 0)
 }
 
+const astroPackagePath = join(root, 'library/astro/package.json')
+
+/**
+ * `library/astro/package.json` の `exports` だけを差し替える。`.astro` はビルドせず
+ * サブパスから直接配るので、部品が増えるたびに手で足さないといけなかった（plan 023）。
+ * 他のキーの順序と内容は触らない。差分が無ければ書かない（`sync` と同じ流儀）。
+ */
+const syncAstroExports = async (specs: readonly WrapperSpec[]): Promise<boolean> => {
+  const current = await readFile(astroPackagePath, 'utf8')
+  const parsed: unknown = JSON.parse(current)
+  if (typeof parsed !== 'object' || parsed === null) {
+    return false
+  }
+  const next = `${JSON.stringify({ ...parsed, exports: astroExports(specs) }, undefined, 2)}\n`
+  if (next === current) {
+    return false
+  }
+  await writeFile(astroPackagePath, next)
+  return true
+}
+
 const generators: readonly (readonly [
   string,
   (specs: readonly WrapperSpec[]) => readonly GeneratedFile[],
@@ -136,6 +157,10 @@ const main = async (): Promise<void> => {
       `wrappers: ${framework} ${files.length} ファイル（更新 ${written}）-> library/${framework}/src/generated\n`,
     )
   }
+  const rewritten = await syncAstroExports(specs)
+  process.stdout.write(
+    `wrappers: astro の exports ${rewritten ? 'を書き直した' : 'は最新'} -> library/astro/package.json\n`,
+  )
 }
 
 await main()

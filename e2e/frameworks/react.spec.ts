@@ -3,12 +3,14 @@ import {
   formWave4Suite,
   frameworkSuite,
   meterAndWindowSuite,
+  navigationSuite,
   radioGroupAndSliderSuite,
 } from './shared.js'
 
 frameworkSuite('react')
 meterAndWindowSuite('react')
 radioGroupAndSliderSuite('react')
+navigationSuite('react')
 formWave4Suite('react')
 
 test.describe('react: controlled の再同期', () => {

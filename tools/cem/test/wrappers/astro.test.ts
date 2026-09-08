@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { toWrapperSpecs } from '../../src/wrappers/core/common.js'
-import { astroFiles } from '../../src/wrappers/core/astro.js'
+import { astroExports, astroFiles } from '../../src/wrappers/core/astro.js'
 import { contracts, manifest } from './fixtures.js'
 
-const files = astroFiles(toWrapperSpecs(manifest, contracts))
+const specs = toWrapperSpecs(manifest, contracts)
+const files = astroFiles(specs)
 const find = (path: string): string => files.find((file) => file.path === path)?.content ?? ''
 
 describe('astroFiles', () => {
@@ -44,6 +45,13 @@ const { variant, loading, type, label, class: className } = Astro.props
     expect(source).toContain('value={defaultValue}')
   })
 
+  it('名前つきの raw は名前つきの <slot> になり、既定 slot に潰れない', () => {
+    const source = find('experimental/menu.astro')
+    expect(source).toContain('<slot name="trigger" />')
+    expect(source).toContain('<slot name="items" />')
+    expect(source).not.toContain('<slot />')
+  })
+
   it('experimental の部品は experimental/ の下に出る', () => {
     expect(files.some((file) => file.path === 'select.astro')).toBe(false)
     expect(find('experimental/select.astro')).toContain('<rd-select')
@@ -54,8 +62,42 @@ const { variant, loading, type, label, class: className } = Astro.props
     expect(files.map((file) => file.path)).toEqual([
       'button.astro',
       'dialog.astro',
+      'experimental/menu.astro',
       'experimental/select.astro',
       'text-field.astro',
+      'experimental/toggle.astro',
     ])
+  })
+})
+
+describe('astroExports', () => {
+  it('契約のある部品を stable → experimental の順で公開する', () => {
+    expect(astroExports(specs)).toEqual({
+      '.': { types: './dist/index.d.ts', default: './dist/index.js' },
+      './button.astro': './src/generated/button.astro',
+      './dialog.astro': './src/generated/dialog.astro',
+      './text-field.astro': './src/generated/text-field.astro',
+      './experimental/menu.astro': './src/generated/experimental/menu.astro',
+      './experimental/select.astro': './src/generated/experimental/select.astro',
+      './experimental/toggle.astro': './src/generated/experimental/toggle.astro',
+      './package.json': './package.json',
+    })
+  })
+
+  it('キーの並びが決まっている（生成が冪等になる）', () => {
+    expect(Object.keys(astroExports(specs))).toEqual([
+      '.',
+      './button.astro',
+      './dialog.astro',
+      './text-field.astro',
+      './experimental/menu.astro',
+      './experimental/select.astro',
+      './experimental/toggle.astro',
+      './package.json',
+    ])
+  })
+
+  it('契約を持たないティア C は公開しない', () => {
+    expect(Object.keys(astroExports(specs))).not.toContain('./live-region.astro')
   })
 })

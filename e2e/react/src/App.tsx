@@ -4,10 +4,13 @@ import {
   RdCheckbox,
   RdCheckboxGroup,
   RdInputOtp,
+  RdMenu,
   RdMeter,
+  RdPopover,
   RdRadioGroup,
   RdSelect,
   RdSlider,
+  RdTabs,
   RdWindow,
 } from '@rimltempest/riml-ds-react/experimental'
 import type { ReactNode } from 'react'
@@ -51,6 +54,55 @@ export const App = (): ReactNode => (
       </label>
     </RdRadioGroup>
     <RdSlider id="volume" label="音量" name="volume" defaultValue="3" min="0" max="10" />
+    <RdTabs
+      label="ドキュメント"
+      tabs={
+        <>
+          <a href="#overview">概要</a>
+          <a href="#usage">使い方</a>
+        </>
+      }
+      panels={
+        <>
+          <div id="overview">
+            <p>この部品の概要。</p>
+          </div>
+          <div id="usage">
+            <p>使い方の説明。</p>
+          </div>
+        </>
+      }
+    />
+    <RdMenu
+      label="操作"
+      id="row-actions"
+      trigger={
+        <rd-button slot="trigger">
+          <button type="button" popoverTarget="row-actions">
+            操作
+          </button>
+        </rd-button>
+      }
+      items={
+        <>
+          <a href="/thanks.html">複製</a>
+          <button type="button">削除</button>
+        </>
+      }
+    />
+    <RdPopover
+      id="filters"
+      label="絞り込み"
+      trigger={
+        <rd-button slot="trigger">
+          <button type="button" popoverTarget="filters">
+            絞り込み
+          </button>
+        </rd-button>
+      }
+    >
+      <p>条件を選ぶと一覧がその場で変わる。</p>
+    </RdPopover>
     <RdCheckboxGroup label="タグ">
       <label>
         <input type="checkbox" id="tag-work" name="tags" value="a" />

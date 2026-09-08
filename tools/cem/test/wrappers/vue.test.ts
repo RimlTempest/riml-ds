@@ -47,6 +47,21 @@ describe('vueFiles', () => {
     expect(source).toContain("slots['default']?.()")
   })
 
+  it('名前つきの raw は名前つきの slot になり、既定 slot に潰れない', () => {
+    const source = find('menu.ts')
+    expect(source).toContain("slots['trigger']?.()")
+    expect(source).toContain("slots['items']?.()")
+    expect(source).not.toContain("slots['default']")
+  })
+
+  it('ハイフンを含む属性はキーを引用する（h() の引数が構文エラーにならない）', () => {
+    const source = find('toggle.ts')
+    expect(source).toContain(`'aria-pressed': props.pressed`)
+    expect(source).not.toContain('aria-pressed: props.pressed')
+    // 識別子として書ける名前はそのまま（既存の生成物を変えない）
+    expect(source).toContain(`type: 'button'`)
+  })
+
   it('experimental の部品は root の index に出ず、./experimental の index に出る', () => {
     // ADR-0009: プラグインが登録するのは stable だけ。experimental は利用側が個別に登録する
     const index = find('index.ts')
@@ -54,7 +69,9 @@ describe('vueFiles', () => {
     expect(index).toContain('export const rdComponents = { RdButton, RdDialog, RdTextField }')
     const experimental = find('experimental.ts')
     expect(experimental).toContain("import { RdSelect } from './select.js'")
-    expect(experimental).toContain('export const rdExperimentalComponents = { RdSelect }')
+    expect(experimental).toContain(
+      'export const rdExperimentalComponents = { RdMenu, RdSelect, RdToggle }',
+    )
     expect(experimental).not.toContain('RdButton')
   })
 

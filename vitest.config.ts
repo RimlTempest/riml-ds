@@ -16,6 +16,8 @@ export default defineConfig({
           include: [
             'tools/**/*.test.ts',
             'scripts/**/*.test.ts',
+            // Storybook のモード表など、apps の純関数テストが拾われていなかった（plan 023）
+            'apps/**/*.test.ts',
             'system/**/*.test.ts',
             'library/**/*.logic.test.ts',
             'library/elements/src/**/*.contract.test.ts',
