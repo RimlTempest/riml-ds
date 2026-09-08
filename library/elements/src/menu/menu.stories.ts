@@ -114,7 +114,7 @@ export const Context: Story = {
       <rd-menu label=${args.label} context>
         <article class="rd-card" slot="trigger">
           <div class="rd-card-body">
-            <h3 class="rd-card-title">四半期レポート.pdf</h3>
+            <h2 class="rd-card-title">四半期レポート.pdf</h2>
             <p>面のどこを右クリックしても同じメニューが開く。</p>
           </div>
           <div class="rd-card-footer">

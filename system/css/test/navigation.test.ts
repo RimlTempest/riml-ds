@@ -13,6 +13,7 @@ const CLASSES = [
   '.rd-pagination',
   '.rd-nav-rail',
   '.rd-menubar',
+  '.rd-nav-menu',
   '.rd-sidebar',
 ] as const
 
@@ -93,6 +94,20 @@ describe('navigation.css', () => {
     expect(decls.some((decl) => /^outline: .*Highlight/.test(decl))).toBe(true)
     // 文字を載せる面に Highlight を敷かない（Chromium のバックプレートで読めなくなる）
     expect(decls).not.toContain('background: Highlight')
+  })
+
+  it('.rd-nav-menu は面が surface で、.rd-menubar（chrome）と色が違う', () => {
+    const css = read(srcNavigation)
+    const rule = /\.rd-nav-menu \{([^}]*)\}/.exec(css)?.[1] ?? ''
+    expect(rule).toContain('--rd-color-surface-default')
+    expect(rule).not.toContain('--rd-color-chrome-')
+  })
+
+  it('.rd-nav-menu の現在地は太字 + 下の縦罫（色だけに頼らない）', () => {
+    const css = read(srcNavigation)
+    const rule = /\.rd-nav-menu \[aria-current\] \{([^}]*)\}/.exec(css)?.[1] ?? ''
+    expect(rule).toContain('font-weight')
+    expect(rule).toContain('border-block-end-color')
   })
 
   it('build の ORDER で navigation は atoms の直後（patterns より前）', () => {

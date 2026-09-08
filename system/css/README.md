@@ -157,6 +157,35 @@ JS が要らないので部品にしない（[ADR-0012](../../docs/adr/0012-prog
 `data-tone="accent" | "warning" | "danger"` で変わり、文字色は対応する `on-*` が付く。
 `forced-colors: active` では帯が `Canvas` / `CanvasText` の 1px 罫線に置き換わり、丸は `ButtonFace` / `ButtonText` の輪郭で残る（操作だから消さない）。
 
+## 主要ナビの帯（`.rd-nav-menu`）
+
+ページの主要ナビ。横一列のリンクで、落ちるメニューが要る項目には `rd-menu` を入れる。
+開閉は `rd-menu` が持つので、この帯は JS を持たない
+（[ADR-0012](../../docs/adr/0012-progressive-enhancement-tiers.md) §6）。
+
+```html
+<nav class="rd-nav-menu" aria-label="主要">
+  <ul>
+    <li><a href="/" aria-current="page">ホーム</a></li>
+    <li>
+      <rd-menu label="作る">
+        <rd-button slot="trigger" variant="ghost">
+          <button type="button" popovertarget="nav-make">作る</button>
+        </rd-button>
+        <div popover id="nav-make"><a href="/new">新しい書類</a></div>
+      </rd-menu>
+    </li>
+  </ul>
+</nav>
+```
+
+`.rd-menubar` は**窓の帯**（色が chrome）、`.rd-nav-menu` は**ページの主要ナビ**（面が surface）
+——用途で色が分かれる。現在地は `aria-current="page"` を太字 + 下の縦罫で示す（色だけに頼らない）。
+`48rem` 未満では折り返さず横に流れる（帯が何行にも割れて中身を押し下げない）。
+`forced-colors: active` では縦罫が消えるので現在地に下線が付く。
+中の `rd-menu` は `placement="start"` のままで帯の左端に揃う——右端の項目は利用側が
+`placement="end"` を付ける。
+
 ## ユーティリティ
 
 ```html

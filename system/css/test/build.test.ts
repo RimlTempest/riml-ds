@@ -68,6 +68,7 @@ const PUBLIC_CLASSES = [
   '.rd-pagination',
   '.rd-nav-rail',
   '.rd-menubar',
+  '.rd-nav-menu',
   '.rd-sidebar',
 ] as const
 
