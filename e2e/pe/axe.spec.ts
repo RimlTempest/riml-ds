@@ -28,6 +28,7 @@ const PAGES = [
   '/navigation.html',
   '/live-region.html',
   '/button-group.html',
+  '/toggle.html',
   '/input-group.html',
   '/radio-group.html',
   '/slider.html',

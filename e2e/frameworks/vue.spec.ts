@@ -5,6 +5,7 @@ import {
   meterAndWindowSuite,
   navigationSuite,
   radioGroupAndSliderSuite,
+  toggleSuite,
 } from './shared.js'
 
 frameworkSuite('vue')
@@ -12,6 +13,7 @@ meterAndWindowSuite('vue')
 radioGroupAndSliderSuite('vue')
 navigationSuite('vue')
 formWave4Suite('vue')
+toggleSuite('vue')
 
 test.describe('vue: <select> の v-model', () => {
   test('選択すると v-model の値が変わる', async ({ page }) => {

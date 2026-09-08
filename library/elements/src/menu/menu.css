@@ -13,7 +13,6 @@
     box-sizing: border-box;
     inset: auto;
     z-index: var(--rd-layer-overlay);
-    display: grid;
     min-inline-size: var(--rd-space-12);
     max-inline-size: min(90vi, var(--rd-sizing-measure-max));
     margin: 0;
@@ -25,6 +24,13 @@
     background: var(--rd-color-surface-raised);
     box-shadow: var(--rd-shadow-overlay);
     color: var(--rd-color-text-default);
+  }
+
+  /* 開いているときだけ grid（UA の [popover]:popover-open { display: block } を上書き）。
+     閉じているときは UA の [popover]:not(:popover-open) { display: none } に任せる —
+     通常状態に display を書くと author の @layer が UA に勝ち、閉じても見えてしまう */
+  rd-menu [popover]:popover-open {
+    display: grid;
   }
 
   /* 項目は `[popover]` の直下に並ぶ（`<ul><li>` を挟まない。contract の comment を参照） */

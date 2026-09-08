@@ -28,6 +28,7 @@ import {
   tabsMarkup,
   tabsPanelMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/tabs'
+import { toggleMarkup } from '@rimltempest/riml-ds-elements/experimental/toggle'
 import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 
 const AAA_TAGS = ['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag22aa'] as const
@@ -379,12 +380,12 @@ export const navigationSuite = (framework: string): void => {
       const list = page.locator('rd-menu [popover]')
       // 定義されると `[popover]` 自身が role="menu" を持つ（項目を直接持つ形）
       await expect(list).toHaveAttribute('role', 'menu')
-      // 見た目ではなく `:popover-open` で見る。`menu.css` の `display: grid` が UA の
-      // `[popover]:not(:popover-open) { display: none }` を上書きしているため
-      // （`rd-popover` は上書きしていない）。CSS は別レーンの持ち物
+      // 閉じているあいだは UA の `[popover]:not(:popover-open) { display: none }` に任せる
+      // （`menu.css` は `:popover-open` の側にだけ `display` を書く）ので、描かれない
       const open = async (): Promise<boolean> =>
         list.evaluate((element) => element.matches(':popover-open'))
       expect(await open()).toBe(false)
+      await expect(list).toBeHidden()
       const trigger = page.getByRole('button', { name: '操作' })
       await trigger.click()
       await expect.poll(open).toBe(true)
@@ -413,10 +414,8 @@ const TAG_OPTIONS = [
 ].join('')
 
 /**
- * `rd-checkbox-group` と `rd-input-otp`（plan 021）。`@rimltempest/riml-ds-astro` の
- * `package.json` がこの 2 つの `.astro` をまだ export していないので、astro 以外の 3 つで回す
- * （`meterAndWindowSuite` / `radioGroupAndSliderSuite` と同じ理由。
- * `library/astro/package.json` は別レーンの持ち物）。
+ * `rd-checkbox-group` と `rd-input-otp`（plan 021）。**4 つで回す** —
+ * `.astro` の `exports` は `bun run gen` が書くようになった（plan 023）。
  */
 export const formWave4Suite = (framework: string): void => {
   test.describe(`${framework}: checkbox-group と input-otp`, () => {
@@ -471,6 +470,40 @@ export const formWave4Suite = (framework: string): void => {
       await page.getByLabel('1 桁目').fill('1')
       await page.getByLabel('1 桁目').dispatchEvent('input')
       await expect(page.getByLabel('2 桁目')).toBeFocused()
+    })
+  })
+}
+
+/**
+ * `rd-toggle`（plan 024）。押下の真実は `aria-pressed` 属性なので、
+ * 4 つのラッパーが同じ属性を出し、同じように反転することを固定する。
+ */
+export const toggleSuite = (framework: string): void => {
+  test.describe(`${framework}: toggle`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(page, 'rd-toggle', toggleMarkup({ label: '太字', pressed: 'false' }))
+      })
+    })
+
+    test('押すたびに aria-pressed が反転し :state(pressed) が付く', async ({ page }) => {
+      await page.goto('/')
+      const toggle = page.locator('rd-toggle')
+      const button = page.getByRole('button', { name: '太字' })
+      await expect(button).toHaveAttribute('aria-pressed', 'false')
+      await button.click()
+      await expect(button).toHaveAttribute('aria-pressed', 'true')
+      await expect
+        .poll(async () => toggle.evaluate((element) => element.matches(':state(pressed)')))
+        .toBe(true)
+      await button.click()
+      await expect(button).toHaveAttribute('aria-pressed', 'false')
+      await expect
+        .poll(async () => toggle.evaluate((element) => element.matches(':state(pressed)')))
+        .toBe(false)
     })
   })
 }

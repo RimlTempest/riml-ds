@@ -154,7 +154,7 @@ test('button group: JS 無しでもピルの枕が当たる（.rd-button-group�
   await expect(page.locator('.rd-button-group')).toHaveCSS('border-radius', '9999px')
   await expect(page.getByRole('group', { name: '表示' })).toBeVisible()
   // 中のボタンはピルのまま（角を削らない。docs/brand.md §7.2）
-  await expect(page.locator('.rd-button-group rd-button > button').first()).toHaveCSS(
+  await expect(page.locator('.rd-button-group rd-toggle > button').first()).toHaveCSS(
     'border-radius',
     '9999px',
   )
@@ -194,4 +194,27 @@ test('slider: JS 無しでは塗りが出ない（ネイティブの range そ�
   await page.goto('/slider.html')
   await expect(page.getByRole('slider', { name: '音量' })).toBeVisible()
   await expect(page.locator("rd-slider [part='track']")).toHaveCount(0)
+})
+
+test('toggle: JS 無しでも押下状態が読める（aria-pressed は markup が書く）', async ({ page }) => {
+  await page.goto('/toggle.html')
+  await expect(page.getByRole('button', { name: '太字' })).toHaveAttribute('aria-pressed', 'false')
+  await expect(page.getByRole('button', { name: '下線' })).toHaveAttribute('aria-pressed', 'true')
+  // JS 無しでは押しても変わらない（ただのボタンに縮退する。害は無い）
+  await page.getByRole('button', { name: '太字' }).click()
+  await expect(page.getByRole('button', { name: '太字' })).toHaveAttribute('aria-pressed', 'false')
+})
+
+test('toggle: JS 無しでも <name>.css が当たる（タップ標的 44px のピル）', async ({ page }) => {
+  await page.goto('/toggle.html')
+  await expect(page.locator('rd-toggle > button').first()).toHaveCSS('min-block-size', '44px')
+})
+
+test('button group: 枕の中身は押下状態を持つボタン（JS 無しでも aria-pressed が読める）', async ({
+  page,
+}) => {
+  await page.goto('/button-group.html')
+  const group = page.getByRole('group', { name: '表示' })
+  await expect(group.getByRole('button', { name: '一覧' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(group.getByRole('button', { name: '格子' })).toHaveAttribute('aria-pressed', 'false')
 })

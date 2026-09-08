@@ -1,3 +1,4 @@
+import { userEvent } from 'vitest/browser'
 import { afterEach, beforeAll, expect, it, vi } from 'vitest'
 import { cleanupFixtures, fixtureOf, loadStyle } from '../../test/fixture.js'
 import { markup as selectMarkup } from '../select/select.contract.js'
@@ -86,6 +87,19 @@ it('popovertarget（HTML だけ）で開き、最初の項目にフォーカス�
   await open(el)
   expect(listOf(el)?.matches(':popover-open')).toBe(true)
   expect(document.activeElement).toBe(itemsOf(el)[0])
+})
+
+it('定義後も閉じているあいだは描画されない（開くと出て、Escape でまた消える）', async () => {
+  const el = await fixtureOf(RdMenu, FIXTURE)
+  // 定義済みでも `popovertarget` で閉じている＝UA の [popover]:not(:popover-open) { display: none }
+  expect(listOf(el)?.getBoundingClientRect().height).toBe(0)
+  await open(el)
+  expect(listOf(el)?.getBoundingClientRect().height).toBeGreaterThan(0)
+  await userEvent.keyboard('{Escape}')
+  await vi.waitFor(() => {
+    expect(el.matches(':state(open)')).toBe(false)
+  })
+  expect(listOf(el)?.getBoundingClientRect().height).toBe(0)
 })
 
 it('↓ で次の項目へ、Home で先頭へ（roving tabindex）', async () => {

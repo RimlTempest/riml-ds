@@ -11,6 +11,7 @@ import {
   RdSelect,
   RdSlider,
   RdTabs,
+  RdToggle,
   RdWindow,
 } from '@rimltempest/riml-ds-vue/experimental'
 import { defineComponent, h, ref } from 'vue'
@@ -163,6 +164,7 @@ export const App = defineComponent(
             required: true,
           }),
         ]),
+        h(RdToggle, { label: '太字', pressed: 'false' }),
         h('rd-live-region'),
       ])
   },

@@ -12,6 +12,7 @@
     RdSelect,
     RdSlider,
     RdTabs,
+    RdToggle,
     RdWindow,
   } from '@rimltempest/riml-ds-svelte/experimental'
 </script>
@@ -83,5 +84,6 @@
       required
     />
   </RdInputOtp>
+  <RdToggle label="太字" pressed="false" />
   <rd-live-region></rd-live-region>
 </main>

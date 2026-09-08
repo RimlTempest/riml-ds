@@ -55,6 +55,7 @@ describe('既定 export の部品', () => {
       'RdSelect',
       'RdSlider',
       'RdTabs',
+      'RdToggle',
       'RdWindow',
     ])
   })
