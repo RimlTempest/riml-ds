@@ -1245,6 +1245,247 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/tabs/tabs.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-tabs",
+          "declaration": {
+            "name": "RdTabs",
+            "module": "/src/tabs/tabs.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/tabs/tabs.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "タブ。JS が無ければ**ページ内リンクの列**として動き、パネルはすべて見える（ティア B、ADR-0012）。\nJS が来たら tablist / tab / tabpanel と roving tabindex・自動活性化（APG）を足す。\n`location.hash` は読むだけ（履歴を汚さない）。深いリンクは利用側が `selected` に書く。",
+          "name": "RdTabs",
+          "cssParts": [
+            {
+              "description": "shadow の枠",
+              "name": "control"
+            },
+            {
+              "description": "パネルの入れ物",
+              "name": "panels"
+            }
+          ],
+          "slots": [
+            {
+              "description": "パネル。`id` が tab の href の飛び先",
+              "name": ""
+            },
+            {
+              "description": "タブの列（`<ul>`）。省略不可",
+              "name": "tabs"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, serializable: true }",
+              "description": "`delegatesFocus` は付けない——タブ自身が light DOM のリンクで、フォーカスはそこに行く"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "privacy": "public",
+              "type": {
+                "text": "'line' | 'browser'"
+              },
+              "description": "`line`（下線）か `browser`（帯から生える窓のタブ）。見た目は `[variant]` で当てる",
+              "default": "'line'",
+              "attribute": "variant",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "orientation",
+              "privacy": "public",
+              "type": {
+                "text": "'horizontal' | 'vertical'"
+              },
+              "default": "'horizontal'",
+              "attribute": "orientation",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "selected"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#index",
+              "privacy": "private",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "method",
+              "name": "select",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "index",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ],
+              "description": "タブを選ぶ。範囲外は無視。`rd-change` を出し、そのタブへフォーカスを移す"
+            },
+            {
+              "kind": "field",
+              "name": "#tabs",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#apply",
+              "privacy": "private",
+              "description": "ARIA と roving tabindex を light DOM に書き戻す。描画のたびに冪等に走る"
+            },
+            {
+              "kind": "field",
+              "name": "#onInteract",
+              "privacy": "private",
+              "description": "click は押したタブへ、矢印 / Home / End は次のタブへ（自動活性化）"
+            },
+            {
+              "kind": "field",
+              "name": "#indexOf",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "name": "rd-change",
+              "type": {
+                "text": "CustomEvent<{ id: string }>"
+              },
+              "description": "選ぶタブが変わるたび（id は開いたパネルの id）"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "variant",
+              "type": {
+                "text": "'line' | 'browser'"
+              },
+              "description": "`line`（下線）か `browser`（帯から生える窓のタブ）。見た目は `[variant]` で当てる",
+              "default": "'line'",
+              "fieldName": "variant"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "label"
+            },
+            {
+              "name": "orientation",
+              "type": {
+                "text": "'horizontal' | 'vertical'"
+              },
+              "default": "'horizontal'",
+              "fieldName": "orientation"
+            },
+            {
+              "name": "selected",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "selected"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "vertical",
+              "description": "orientation=\"vertical\""
+            },
+            {
+              "name": "unlabeled",
+              "description": "label が無い"
+            },
+            {
+              "name": "malformed",
+              "description": "slot=\"tabs\" の列かページ内リンクが無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "タブ。JS 無しではページ内リンクの列",
+          "status": "experimental",
+          "pe": "B",
+          "tagName": "rd-tabs",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdTabs",
+          "declaration": {
+            "name": "RdTabs",
+            "module": "src/tabs/tabs.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/text-field/text-field.define.ts",
       "declarations": [],
       "exports": [

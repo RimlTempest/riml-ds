@@ -48,6 +48,7 @@ describe('既定 export の部品', () => {
       'RdDisclosure',
       'RdMeter',
       'RdSelect',
+      'RdTabs',
       'RdWindow',
     ])
   })

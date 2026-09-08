@@ -67,6 +67,15 @@
     "dependsOn": []
   },
   {
+    "name": "tabs",
+    "tag": "rd-tabs",
+    "pe": "B",
+    "status": "experimental",
+    "summary": "タブ。JS 無しではページ内リンクの列",
+    "files": ["tabs/index.js", "tabs/tabs.define.js", "tabs/tabs.css"],
+    "dependsOn": []
+  },
+  {
     "name": "text-field",
     "tag": "rd-text-field",
     "pe": "A",
