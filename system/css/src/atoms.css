@@ -187,9 +187,11 @@
     text-decoration: none;
   }
 
+  /* 中の絵は箱の半分の幅。高さは絵の縦横比に任せる —
+     block-size を % にすると箱の高さと循環し、正方形が崩れる */
   .rd-tile > :is(svg, img) {
     inline-size: 50%;
-    block-size: 50%;
+    block-size: auto;
   }
 
   .rd-tile[data-tone='accent'] {
@@ -220,7 +222,7 @@
 
   .rd-icon-button > :is(svg, img) {
     inline-size: 50%;
-    block-size: 50%;
+    block-size: auto;
   }
 
   .rd-icon-button:hover {
@@ -385,6 +387,13 @@
   /* アイコンは装飾（非テキストなので 3:1）。意味はタイトルと本文が持つ */
   .rd-alert-icon {
     color: var(--rd-alert-tone);
+  }
+
+  /* 中の絵は本文 1 行ぶんの正方形。大きさを持たない <svg> は潰れるので必ず与える */
+  .rd-alert-icon > :is(svg, img) {
+    display: block;
+    inline-size: var(--rd-space-6);
+    block-size: var(--rd-space-6);
   }
 
   /* アイコンを置かないなら 1 列に畳む */
