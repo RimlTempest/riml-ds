@@ -104,8 +104,18 @@ const SURFACES = `      <h2>カード</h2>
       <h2>新着</h2>
       <div class="rd-carousel" role="region" aria-roledescription="carousel" aria-label="新着" tabindex="0">
         <ul class="rd-carousel-track">
-          <li class="rd-carousel-item"><div class="rd-aspect"><img src="${PIXEL}" alt="" /></div></li>
-          <li class="rd-carousel-item"><div class="rd-aspect" data-ratio="1"><img src="${PIXEL}" alt="" /></div></li>
+          <li class="rd-carousel-item">
+            <article class="rd-card">
+              <div class="rd-aspect" data-ratio="4-3"><img src="${PIXEL}" alt="" /></div>
+              <div class="rd-card-body"><h3 class="rd-card-title">秋の便り</h3></div>
+            </article>
+          </li>
+          <li class="rd-carousel-item">
+            <article class="rd-card">
+              <div class="rd-aspect" data-ratio="1"><img src="${PIXEL}" alt="" /></div>
+              <div class="rd-card-body"><h3 class="rd-card-title">冬の支度</h3></div>
+            </article>
+          </li>
         </ul>
       </div>
 
