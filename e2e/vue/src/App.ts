@@ -49,7 +49,9 @@ export const App = defineComponent(
           h(RdCheckbox, { label: 'お知らせを受け取る', name: 'news', defaultValue: 'yes' }),
           h(RdButton, { type: 'submit' }, () => '送信'),
         ]),
-        h(RdDialog, { label: '送信しました' }, () => h('p', null, '確認メールを送りました。')),
+        h(RdDialog, { label: '送信しました', placement: 'end' }, () =>
+          h('p', null, '確認メールを送りました。'),
+        ),
         h(RdMeter, {
           id: 'disk',
           label: 'ディスク使用量',

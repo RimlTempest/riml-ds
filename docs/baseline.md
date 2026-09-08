@@ -23,7 +23,7 @@
 | `:state()`                          | Newly  | `@supports selector(:state(x))`。外では `[open]` 属性セレクタ    |
 | `@property`                         | Newly  | 型付き変数（アニメーション用）。無くても動く                      |
 | `@starting-style` + `transition-behavior: allow-discrete` | Newly | dialog / popover の入場。無ければ瞬時表示 |
-| `popover` 属性                      | Newly  | rd-tooltip / rd-menu（plan 009）。無ければ `<dialog>` 非モーダルに退避 |
+| `popover` 属性                      | Newly  | rd-menu / rd-popover / rd-tooltip（plan 020）。無ければ流し込みのまま見える／出さない |
 | Invoker Commands（`commandfor`）    | Newly  | 使わない（JS 1 行で足りる。属性が増えると CEM が濁る）            |
 | `field-sizing: content`             | Newly  | rd-textarea。無ければ固定行数                                     |
 | 縦向きのフォーム部品（`writing-mode: vertical-lr` の `<input type=range>`） | Newly | rd-slider の `orientation="vertical"`。`@supports selector(:state(vertical))` の中。無ければ横向き |
@@ -31,6 +31,7 @@
 | `text-box-trim`                     | Newly  | 見出しの上下トリム。無ければ `line-height` で近似                 |
 | anchor positioning                  | Newly  | rd-tooltip の位置。無ければ Floating UI **ではなく**下固定        |
 | `scrollbar-gutter: stable`          | Newly  | ページ骨格                                                        |
+| `scrollbar-width` / `scrollbar-color` | Newly | .rd-scroll-area / .rd-carousel の細いスクロールバー。無ければ既定の見た目 |
 | `content-visibility: auto`          | Newly  | 長いリスト。無くても正しい                                        |
 | `@scope`                            | Newly  | 使わない（Shadow DOM で足りる）                                   |
 | `sibling-index()`                   | Newly  | 使わない（stagger アニメーション自体を置かない）                  |

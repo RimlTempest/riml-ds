@@ -18,13 +18,23 @@ import {
 import { dialogMarkup } from '../../library/elements/src/dialog/index.js'
 import { disclosureMarkup } from '../../library/elements/src/disclosure/index.js'
 import { inputOtpMarkup, otpCellsMarkup } from '../../library/elements/src/input-otp/index.js'
+import {
+  markup as menuMarkup,
+  menuItemMarkup,
+} from '../../library/elements/src/menu/menu.contract.js'
 import { meterMarkup } from '../../library/elements/src/meter/index.js'
+import { markup as popoverMarkup } from '../../library/elements/src/popover/popover.contract.js'
 import {
   radioGroupMarkup,
   radioOptionMarkup,
 } from '../../library/elements/src/radio-group/index.js'
 import { selectMarkup } from '../../library/elements/src/select/index.js'
 import { sliderMarkup } from '../../library/elements/src/slider/index.js'
+import {
+  markup as tabsMarkup,
+  panelMarkup,
+  tabMarkup,
+} from '../../library/elements/src/tabs/tabs.contract.js'
 import { textFieldMarkup } from '../../library/elements/src/text-field/index.js'
 import { windowMarkup } from '../../library/elements/src/window/index.js'
 
@@ -49,6 +59,9 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/radio-group/radio-group.css', 'radio-group.css'],
   ['library/elements/src/slider/slider.css', 'slider.css'],
   ['library/elements/src/window/window.css', 'window.css'],
+  ['library/elements/src/tabs/tabs.css', 'tabs.css'],
+  ['library/elements/src/menu/menu.css', 'menu.css'],
+  ['library/elements/src/popover/popover.css', 'popover.css'],
 ]
 
 const STYLESHEETS = CSS_SOURCES.map(
@@ -75,6 +88,62 @@ ${body}
 `
 
 const submit = buttonMarkup({ label: '送信', type: 'submit' })
+
+/** 1x1 の透明 SVG。外部ファイルを配らずに `.rd-card-media` / `.rd-aspect` の枠だけを見る */
+const PIXEL =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3C/svg%3E"
+
+/** `atoms.css` / `utilities.css` の面と待ち（plan 022）。JS を 1 行も使わない */
+const SURFACES = `      <h2>カード</h2>
+      <article class="rd-card">
+        <img class="rd-card-media" src="${PIXEL}" alt="" />
+        <div class="rd-card-body">
+          <h3 class="rd-card-title"><a class="rd-card-link" href="/echo.html">送料のはなし</a></h3>
+          <p>全国一律 500 円です。</p>
+        </div>
+        <div class="rd-card-footer"><span class="rd-badge">新着</span></div>
+      </article>
+
+      <h2>空のとき</h2>
+      <div class="rd-empty">
+        <span class="rd-empty-icon" aria-hidden="true"></span>
+        <p class="rd-empty-title">まだありません</p>
+        <p>最初の 1 つを作ると、ここに出ます。</p>
+        <div class="rd-empty-actions">${buttonMarkup({ label: '作る', type: 'button' })}</div>
+      </div>
+
+      <h2>待っているとき</h2>
+      <span class="rd-spinner" role="status"><span class="rd-visually-hidden">読み込み中</span></span>
+
+      <h2>よくある質問</h2>
+      <div class="rd-accordion">
+        ${disclosureMarkup({ label: '送料について', children: '<p>全国一律 500 円です。</p>', group: 'faq' })}
+        ${disclosureMarkup({ label: '返品について', children: '<p>7 日以内なら受け付けます。</p>', group: 'faq' })}
+      </div>
+
+      <h2>新着</h2>
+      <div class="rd-carousel" role="region" aria-roledescription="carousel" aria-label="新着" tabindex="0">
+        <ul class="rd-carousel-track">
+          <li class="rd-carousel-item">
+            <article class="rd-card">
+              <div class="rd-aspect" data-ratio="4-3"><img src="${PIXEL}" alt="" /></div>
+              <div class="rd-card-body"><h3 class="rd-card-title">秋の便り</h3></div>
+            </article>
+          </li>
+          <li class="rd-carousel-item">
+            <article class="rd-card">
+              <div class="rd-aspect" data-ratio="1"><img src="${PIXEL}" alt="" /></div>
+              <div class="rd-card-body"><h3 class="rd-card-title">冬の支度</h3></div>
+            </article>
+          </li>
+        </ul>
+      </div>
+
+      <h2>記録</h2>
+      <div class="rd-scroll-area" role="region" aria-label="記録" tabindex="0">
+        <p>2026-09-08 03:00 バックアップを開始した。</p>
+        <p>2026-09-08 03:04 バックアップが終わった。</p>
+      </div>`
 
 const OPTIONS =
   '<option value="">選択してください</option>'
@@ -157,6 +226,13 @@ const PAGES: Readonly<Record<string, string>> = {
     'ダイアログ',
     `      ${dialogMarkup({ label: '確認', children: '<p>保存しますか？</p>' })}`,
   ),
+  // plan 022。帯（Sheet）と返事を求める窓は属性が増えるだけで、JS 無しの見え方は同じ
+  'dialog-sheet.html': page(
+    'ダイアログの帯',
+    `      ${dialogMarkup({ label: '絞り込み', children: '<p>条件を選ぶ。</p>', placement: 'end' })}
+      ${dialogMarkup({ label: '削除の確認', children: '<p>元に戻せません。</p>', alert: true })}`,
+  ),
+  'card.html': page('面と待ち', SURFACES),
   'meter.html': page(
     'メーター',
     `      ${meterMarkup({
@@ -175,6 +251,91 @@ const PAGES: Readonly<Record<string, string>> = {
       closable: true,
       collapsible: true,
     })}`,
+  ),
+  'tabs.html': page(
+    'タブ',
+    `      ${tabsMarkup({
+      label: '設定',
+      tabs:
+        tabMarkup({ href: '#overview', label: '概要' })
+        + tabMarkup({ href: '#usage', label: '使い方' }),
+      panels:
+        panelMarkup({ id: 'overview', children: '<p>この部品の概要。</p>' })
+        + panelMarkup({ id: 'usage', children: '<p>使い方の説明。</p>' }),
+    })}`,
+  ),
+  /**
+   * ティア B。**HTML だけで開閉する**（`popovertarget`）。JS が来る前は
+   * `:not(:defined)` が受けて項目をその場に開いたまま見せる（内容が見える）。
+   */
+  'menu.html': page(
+    'メニュー',
+    `      ${menuMarkup({
+      id: 'row-actions',
+      label: '操作',
+      items:
+        menuItemMarkup({ label: '複製', href: '/echo.html' })
+        + menuItemMarkup({ label: '削除', separated: true }),
+    })}`,
+  ),
+  'popover.html': page(
+    '重ね物',
+    `      ${popoverMarkup({
+      id: 'filters',
+      label: '絞り込み',
+      children: '<p>条件を選ぶと一覧がその場で変わる。</p>',
+    })}`,
+  ),
+  /** ティア C。JS が無ければ吹き出しは出ず、対象の `title` が代わりに説明する */
+  'tooltip.html': page(
+    'ツールチップ',
+    `      <button id="save" type="button" title="⌘S で保存します">保存</button>
+      <rd-tooltip for="save">⌘S で保存します</rd-tooltip>`,
+  ),
+  /** `navigation.css` の 5 クラス。**ARIA は利用側の責務**なので、ここが正しい見本になる */
+  'navigation.html': page(
+    'ナビゲーション',
+    `      <nav class="rd-breadcrumb" aria-label="現在地">
+        <ol>
+          <li><a href="/">ホーム</a></li>
+          <li><a href="/docs">ドキュメント</a></li>
+          <li><a href="/docs/nav" aria-current="page">ナビゲーション</a></li>
+        </ol>
+      </nav>
+      <nav class="rd-menubar" aria-label="メニュー">
+        <ul>
+          <li><a href="/file">ファイル</a></li>
+          <li><a href="/edit">編集</a></li>
+          <li><a href="/view">表示</a></li>
+        </ul>
+      </nav>
+      <aside class="rd-sidebar">
+        <nav class="rd-nav-rail" aria-label="主要">
+          <ul>
+            <li>
+              <a href="/" aria-current="page">
+                <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8 8 3 14 8" /><path d="M4 8 4 13 12 13 12 8" /></svg>
+                <span>ホーム</span>
+              </a>
+            </li>
+            <li>
+              <a href="/settings">
+                <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="3" /><path d="M8 1 8 3" /><path d="M8 13 8 15" /></svg>
+                <span>設定</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+      <nav class="rd-pagination" aria-label="ページ">
+        <ul>
+          <li><a href="?p=1" aria-label="前のページ">‹</a></li>
+          <li><a href="?p=1">1</a></li>
+          <li><a href="?p=2" aria-current="page">2</a></li>
+          <li><a href="?p=3">3</a></li>
+          <li><a href="?p=3" aria-label="次のページ">›</a></li>
+        </ul>
+      </nav>`,
   ),
   'live-region.html': page('ライブリージョン', '      <rd-live-region></rd-live-region>'),
   'radio-group.html': page(

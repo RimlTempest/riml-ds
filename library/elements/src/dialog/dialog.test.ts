@@ -6,10 +6,17 @@ import { RdDialog } from './dialog.element.js'
 // oxlint-disable-next-line import/no-unassigned-import
 import './dialog.define.js'
 
-const DIALOG = '<rd-dialog><h2 slot="label">削除の確認</h2><p>元に戻せません。</p></rd-dialog>'
+const LABEL_AND_BODY = '<h2 slot="label">削除の確認</h2><p>元に戻せません。</p>'
+const DIALOG = `<rd-dialog>${LABEL_AND_BODY}</rd-dialog>`
 
 const nativeDialog = (el: RdDialog): HTMLDialogElement | null =>
   el.shadowRoot?.querySelector('dialog') ?? null
+
+/**
+ * 入場の遷移が終わったあとの枠の位置。`@starting-style` の translate が残っている間は
+ * 端に着いていないので、`expect.poll` で落ち着くまで見る（`sleep` を書かない。riml-ds-tdd §6）。
+ */
+const frameOf = (el: RdDialog): DOMRect | undefined => nativeDialog(el)?.getBoundingClientRect()
 
 beforeAll(async () => {
   await loadStyle('/system/tokens/dist/tokens.css')
@@ -186,4 +193,77 @@ it('× の名前はダイアログの名前に混ざらない（帯 ⊃ 見出�
 it('□ と − はダイアログに無い（brand.md §7.7）', async () => {
   const el = await fixtureOf(RdDialog, DIALOG)
   expect(el.shadowRoot?.querySelectorAll('button[data-action]')).toHaveLength(1)
+})
+
+/**
+ * `alert`（plan 022）。WAI-APG の Alert Dialog は返事を求める窓なので、
+ * 外側（背面）を押しても閉じない。Esc と帯の × は閉じる。
+ */
+it('alert のとき <dialog> の役割が alertdialog になる', async () => {
+  const el = await fixtureOf(RdDialog, `<rd-dialog alert>${LABEL_AND_BODY}</rd-dialog>`)
+  expect(el.alert).toBe(true)
+  el.show()
+  await el.updateComplete
+  expect(nativeDialog(el)?.getAttribute('role')).toBe('alertdialog')
+})
+
+it('alert でないときは role を付けない（ネイティブの dialog のまま）', async () => {
+  const el = await fixtureOf(RdDialog, DIALOG)
+  expect(nativeDialog(el)?.hasAttribute('role')).toBe(false)
+})
+
+it('alert は背面クリックで閉じない', async () => {
+  const el = await fixtureOf(RdDialog, `<rd-dialog alert>${LABEL_AND_BODY}</rd-dialog>`)
+  el.show()
+  await el.updateComplete
+  nativeDialog(el)?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+  await el.updateComplete
+  expect(el.open).toBe(true)
+  expect(nativeDialog(el)?.open).toBe(true)
+})
+
+it('alert でも Esc は閉じる（persistent と違う）', async () => {
+  const el = await fixtureOf(RdDialog, `<rd-dialog alert>${LABEL_AND_BODY}</rd-dialog>`)
+  el.show()
+  await el.updateComplete
+  await userEvent.keyboard('{Escape}')
+  await expect.poll(() => el.open).toBe(false)
+})
+
+it('placement は既定 center で、:state() を足さない', async () => {
+  const el = await fixtureOf(RdDialog, DIALOG)
+  expect(el.placement).toBe('center')
+  el.show()
+  await el.updateComplete
+  expect(el.matches(':state(open)')).toBe(true)
+  expect(el.matches(':state(end)')).toBe(false)
+})
+
+it('placement="end" で :state(end) が付き、窓が行末の端に接する', async () => {
+  const el = await fixtureOf(RdDialog, `<rd-dialog placement="end">${LABEL_AND_BODY}</rd-dialog>`)
+  expect(el.matches(':state(end)')).toBe(true)
+  el.show()
+  await el.updateComplete
+  await expect.poll(() => frameOf(el)?.right).toBe(document.documentElement.clientWidth)
+  expect(frameOf(el)?.height).toBe(document.documentElement.clientHeight)
+})
+
+it('placement="bottom" で :state(bottom) が付き、窓が下端に接する', async () => {
+  const el = await fixtureOf(
+    RdDialog,
+    `<rd-dialog placement="bottom">${LABEL_AND_BODY}</rd-dialog>`,
+  )
+  expect(el.matches(':state(bottom)')).toBe(true)
+  el.show()
+  await el.updateComplete
+  await expect.poll(() => frameOf(el)?.bottom).toBe(document.documentElement.clientHeight)
+  expect(frameOf(el)?.width).toBe(document.documentElement.clientWidth)
+})
+
+it('帯（sheet）の本文は転がる。帯そのものは残る', async () => {
+  const el = await fixtureOf(RdDialog, `<rd-dialog placement="end">${LABEL_AND_BODY}</rd-dialog>`)
+  el.show()
+  await el.updateComplete
+  const body = el.shadowRoot?.querySelector('[part=body]')
+  expect(body === null || body === undefined ? '' : getComputedStyle(body).overflowY).toBe('auto')
 })

@@ -13,6 +13,7 @@ const ORDER = [
   'base',
   'typography',
   'atoms',
+  'navigation',
   'patterns',
   'utilities',
   'print',

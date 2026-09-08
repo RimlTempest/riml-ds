@@ -18,6 +18,7 @@ const SOURCES = [
   'base.css',
   'typography.css',
   'atoms.css',
+  'navigation.css',
   'patterns.css',
   'utilities.css',
   'print.css',
@@ -34,9 +35,14 @@ const KNOBS = new Set([
   '--rd-skeleton-width',
   '--rd-alert-tone',
   '--rd-legend-swatch',
+  '--rd-sidebar-inline-size',
+  // plan 022
+  '--rd-spinner-size',
+  '--rd-carousel-item',
+  '--rd-scroll-area-max',
 ])
 
-/** plan 018 の 2 表。dist に出ていることだけをここで押さえる（中身は typography / atoms の各テスト） */
+/** plan 018 の 2 表 + plan 020 の navigation。dist に出ていることだけをここで押さえる */
 const PUBLIC_CLASSES = [
   '.rd-display',
   '.rd-heading-1',
@@ -58,6 +64,11 @@ const PUBLIC_CLASSES = [
   '.rd-table',
   '.rd-alert',
   '.rd-legend-item',
+  '.rd-breadcrumb',
+  '.rd-pagination',
+  '.rd-nav-rail',
+  '.rd-menubar',
+  '.rd-sidebar',
 ] as const
 
 const MOTION_PROPS = new Set([
@@ -156,7 +167,7 @@ describe('@rimltempest/riml-ds-css の build', () => {
     expect([...used].filter((name) => !defined.has(name) && !KNOBS.has(name))).toEqual([])
   })
 
-  it('typography.css / atoms.css のクラスが dist/index.css に出る（plan 018 の完了条件）', () => {
+  it('typography / atoms / navigation のクラスが dist/index.css に出る（plan 018 / 020 の完了条件）', () => {
     const selectors: string[] = []
     parse(read(distIndex)).walkRules((rule) => {
       selectors.push(rule.selector)

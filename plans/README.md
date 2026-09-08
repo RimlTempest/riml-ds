@@ -4,7 +4,7 @@
 （executor は会話の文脈を持たない前提）。テンプレートは qrcc の
 `.claude/skills/improve/references/plan-template.md`。
 
-**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）、017〜018 は `b501378`（2026-09-08。窓の丸はボタン = ADR-0014）、019〜020 は `da4200a`（2026-09-08。017・018 マージ後）、021〜022 は `9cfed6d`（2026-09-08。019 マージ後。020 と並行）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
+**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）、017〜018 は `b501378`（2026-09-08。窓の丸はボタン = ADR-0014）、019〜020 は `da4200a`（2026-09-08。017・018 マージ後）、021〜022 は `9cfed6d`（2026-09-08。019 マージ後。020 と並行）、023 は `c661a96`（2026-09-08。022 マージ後。021 と並行）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
 `system/guidelines/**`, `.claude/skills/riml-ds-*`）が仕様の正で、計画はそれを手順に落としたもの。
 矛盾を見つけたら計画側を直すのではなく STOP して advisor に返す。
 
@@ -69,9 +69,10 @@
 | 017 | [窓の左端の丸を本物のボタンにする（rd-window・.rd-window-bar・dialog の ×）](017-window-controls.md) | P1 | L | 016 | DONE（`da4200a`） |
 | 018 | [Typography（typography.css）と静的パターン集 atoms.css](018-typography-and-atoms.md) | P1 | M | 016 | DONE（`6275931`） |
 | 019 | [フォーム第 3 波（rd-radio-group・rd-slider・.rd-input-group）](019-form-wave3.md) | P1 | L | 017, 018 | DONE（`d1cf0c2`） |
-| 020 | [ナビゲーションと重ね窓（rd-tabs・rd-menu・rd-popover・rd-tooltip・navigation.css）](020-navigation-and-overlays.md) | P1 | XL | 017, 018 | IN PROGRESS |
+| 020 | [ナビゲーションと重ね窓（rd-tabs・rd-menu・rd-popover・rd-tooltip・navigation.css）](020-navigation-and-overlays.md) | P1 | XL | 017, 018 | DONE（`4ebf45e`） |
 | 021 | [フォーム第 4 波（rd-toggle・rd-checkbox-group・rd-input-otp・.rd-button-group）](021-form-wave4.md) | P1 | L | 019 | TODO |
-| 022 | [面と待ち（.rd-card / .rd-empty / .rd-spinner / .rd-accordion / .rd-carousel / .rd-scroll-area / .rd-aspect、rd-dialog の alert / placement）](022-surfaces-and-feedback.md) | P1 | L | 017, 018 | TODO |
+| 022 | [面と待ち（.rd-card / .rd-empty / .rd-spinner / .rd-accordion / .rd-carousel / .rd-scroll-area / .rd-aspect、rd-dialog の alert / placement）](022-surfaces-and-feedback.md) | P1 | L | 017, 018 | DONE（`4f9b19e`） |
+| 023 | [ラッパー生成器の追随（名前つき raw → 名前つき slot、astro exports 生成、frameworks e2e に tabs / menu / popover）](023-wrappers-named-slots.md) | P1 | M | 020 | IN PROGRESS |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
@@ -234,4 +235,37 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
   `.markuplintrc.json` に `[aria-hidden="true"]` 系の `no-empty-palpable-content` 除外（slider の track / fill）。`docs/baseline.md` に縦向き range の行
 - 既知のまま: ダークで `surface.sunken` = `surface.default` なので segmented のピル・slider の未塗り・input-group の枕が見えない（018 メモと同じ → tokens plan）
 - check 0 / test 865 / pe 36 / e2e:frameworks 46 / a11y 16 / VRT 704 / lint:html 0 / release:check 0
+
+### 020 の実行メモ（2026-09-08）
+
+- マージ `4ebf45e`。`rd-tabs`（B）/ `rd-menu`（B）/ `rd-popover`（B）/ `rd-tooltip`（C）を experimental に、`navigation.css`（`.rd-breadcrumb` / `.rd-pagination` / `.rd-nav-rail` / `.rd-menubar` / `.rd-sidebar`）を css に。
+  `_shared/roving-focus.ts` / `popover-anchor.ts` を新設。テスト 1036、pe 47、e2e:frameworks 46、a11y 20、VRT 887、lint:html 196 story。size: menu 7.23 / popover 6.92 KB
+- 計画から変えた点: `rd-menu` の `items` は `contract.roles` に置かず `ITEM_SELECTOR` として別 export（`checkContract` は 1 個目しか見ない。guard 検査 9 が `roles:` 周辺の `button` / `a[href]` を見てティア A を要求する）。
+  トリガーは木ではなく `menuTriggerMarkup()` / `popoverTriggerMarkup()` の生 HTML（React ラッパー生成器が `popovertarget` を扱えない）。
+  `rd-menu` は `<ul><li>` を使わず `role="menu"` を `[popover]` 自身に付けて項目を直下に置く（markuplint `wai-aria` の Required Owned Elements）。
+  区切りは要素にせず `menuItemMarkup({ separated: true })` → `data-separated` の点線。押せない項目は `<span aria-disabled="true">`
+- 要素の 150 行制限のため `menu.dom.ts` / `popover.dom.ts`（DOM 読み書きだけの薄い層）を新設。`*.logic.ts` は純関数のまま
+- `e2e/frameworks/shared.ts` には tabs / menu / popover を載せていない: **ラッパー生成器が `{ raw }` ノードを Vue / Svelte / Astro で既定 slot として 2 回描く**（`Menu.svelte` が `{@render children()}` を 2 回出す）→ 023 以降（`tools/cem/src/wrappers` のレーン）
+- 規約の食い違い: `riml-ds-element` skill §4 の「無効は `aria-disabled`」と markuplint `wai-aria`（`<button>` / `<a href>` の `aria-disabled` を落とす）が矛盾。どちらかを合わせる判断が要る（advisor）
+- `rd-menu` / `rd-popover` の `:not(:defined)` は `[popover]` を開いた状態で見せる（ティア B）。定義直前に一瞬開いて見える。実アプリで気になれば `dialog` と一緒に判断
+- 存在しないトークンは代用で通した: 太罫 `calc(var(--rd-border-width-default) * 2)`、影 `--rd-shadow-overlay`、反転文字は `chrome.default` / `chrome.text`
+- guard 検査 14 は lanes.tsv の `_shared/popover-anchor.ts` が `.test.ts` にプレフィックス一致しなかった → `aed76cd` で拡張子を落とした
+- 見直し候補: `.rd-nav-rail` の選択印（pe ページでは括弧状の線に見える）と Storybook `Patterns/Navigation` story（advisor）
+
+### 022 の実行メモ（2026-09-08）
+
+- マージ `4f9b19e`（020 の後。`tier-b.spec.ts` / `css/README.md` / `build.test.ts` の union 衝突は advisor が両取りで解消）。
+  `atoms.css` に `.rd-card` / `.rd-empty` / `.rd-spinner` / `.rd-accordion` / `.rd-carousel` / `.rd-scroll-area`、`utilities.css` に `.rd-aspect`、
+  `rd-dialog` に `alert`（`alertdialog`。背面クリックだけ止める）と `placement`（`start` / `end` / `bottom` の帯）。既存 Dialog の VRT は 1 枚も変わらず、新規 16 枚
+- 検査: check 0、test 1070、pe 53、e2e:frameworks 50、a11y 16、VRT 737（全 project）、lint:html 通過、release:check 0（dialog/define 9.19 KB）。`dialog.element.ts` 148 行 / `if` 4
+- 計画から変えた点: spinner の `linear` と強制配色の `scrollbar-color: auto` は `declaration-strict-value` を理由コメント付きで無効化。
+  `scrollbar-*` は `@supports` で囲む（`scrollbar-gutter` が baseline-newly のため）。`.rd-card:has(.rd-card-link:focus-visible)` に単純化（詳細度 0,3,0 の上限）。
+  `#onCancel` / `#onClick` は `event.type` から理由を導く `#dismiss(event)` に統合。`@starting-style` の placement 規則から `[open]` を外した（詳細度）。
+  `e2e/frameworks` の `compareMarkup` は `placement` だけ（boolean `alert` は vue/svelte が `"true"`、react/astro が `""` を書く既知の差）。
+  `tools/mcp/src/examples.ts` は 1 タグ 1 例なので dialog の例を `placement="end"` に差し替え。
+  `dialog.sr.test.ts` は `alertdialog` を直接見ない（virtual-screen-reader は shadow の `<dialog>` を走査しない）。幾何は `expect.poll`
+- guard 検査 15 は「属性追加だけでは `registry.json` が 1 バイトも変わらない」のに差分を要求して `release:check` と矛盾していた → `3e97592` で「新しい `*.element.ts` が増えたときだけ要求」に緩和。生成物の鮮度は CI の「エージェント向けの面」が見る
+- 残件: `system/css/README.md` の `.rd-window` 節が古い（丸 3 つは `radial-gradient` ではなく本物の `<button>`。ADR-0014）→ advisor が直す。
+  `.rd-card` のリンクカードは中に別の操作要素を置くと `::after` の下に隠れる（`position: relative` を付ける、と `atoms.css` に明記）。
+  `dialog.element.ts` は 148 / 150 行でほぼ満杯 — 次に属性を足すなら判断を `dialog.logic.ts` に寄せる
 

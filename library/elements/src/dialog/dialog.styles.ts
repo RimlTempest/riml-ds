@@ -63,17 +63,69 @@ export const styles: CSSResult = css`
       margin-block-start: var(--rd-space-4);
     }
 
+    /* 帯（Sheet / Drawer）。位置は margin で決める — top layer の <dialog> は inset を見ない。
+       角は面している側だけ落とす（論理プロパティなので RTL でも向きが追随する） */
+    :host([placement='start']) [part='control'],
+    :host([placement='end']) [part='control'] {
+      inline-size: min(90vi, 40ch);
+      max-inline-size: none;
+      block-size: 100dvb;
+      max-block-size: none;
+      margin-block: 0;
+    }
+
+    :host([placement='start']) [part='control'] {
+      margin-inline: 0 auto;
+      border-start-start-radius: 0;
+      border-end-start-radius: 0;
+    }
+
+    :host([placement='end']) [part='control'] {
+      margin-inline: auto 0;
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
+    }
+
+    :host([placement='bottom']) [part='control'] {
+      inline-size: 100%;
+      max-inline-size: none;
+      max-block-size: 90dvb;
+      margin-block: auto 0;
+      margin-inline: 0;
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+    }
+
+    /* 帯は縦に長くなる。転がすのは本文だけで、帯（× と見出し）は残す */
+    :host(:is([placement='start'], [placement='end'], [placement='bottom'])) [part='body'] {
+      overflow: auto;
+    }
+
     @media (prefers-reduced-motion: no-preference) {
       [part='control'] {
         transition:
           opacity var(--rd-motion-duration-fast) var(--rd-motion-easing-standard),
+          translate var(--rd-motion-duration-fast) var(--rd-motion-easing-standard),
           display var(--rd-motion-duration-fast) allow-discrete;
       }
 
+      /* 入場だけを動かす。閉じるときは center と同じ「その場で消える」（残像を作らない） */
       @supports (transition-behavior: allow-discrete) {
         @starting-style {
           [part='control'][open] {
             opacity: 0;
+          }
+
+          :host([placement='start']) [part='control'] {
+            translate: -100% 0;
+          }
+
+          :host([placement='end']) [part='control'] {
+            translate: 100% 0;
+          }
+
+          :host([placement='bottom']) [part='control'] {
+            translate: 0 100%;
           }
         }
       }

@@ -27,12 +27,16 @@ describe('listElements', () => {
       'rd-disclosure',
       'rd-input-otp',
       'rd-live-region',
+      'rd-menu',
       'rd-meter',
+      'rd-popover',
       'rd-radio-group',
       'rd-select',
       'rd-slider',
+      'rd-tabs',
       'rd-text-field',
       'rd-toast',
+      'rd-tooltip',
       'rd-window',
     ])
     expect(result.value[0]).toMatchObject({ pe: 'A', status: 'stable' })
@@ -48,12 +52,16 @@ describe('listElements', () => {
       'rd-dialog',
       'rd-disclosure',
       'rd-input-otp',
+      'rd-menu',
       'rd-meter',
+      'rd-popover',
       'rd-radio-group',
       'rd-select',
       'rd-slider',
+      'rd-tabs',
       'rd-text-field',
       'rd-toast',
+      'rd-tooltip',
       'rd-window',
     ])
   })
@@ -67,6 +75,28 @@ describe('listElements', () => {
     expect(result.value.status).toBe('experimental')
     expect(result.value.examples.html).toContain('<option value="jp">')
     expect(result.value.examples.html).toContain('<label for="country">')
+  })
+
+  it('rd-dialog の例は placement を属性として出す（plan 022）', () => {
+    const result = getElement(manifest, elementExamples, 'rd-dialog')
+    expect(result.ok).toBe(true)
+    if (!result.ok) {
+      return
+    }
+    expect(result.value.examples.html).toContain('placement="end"')
+    expect(result.value.attributes.map((attribute) => attribute.name)).toEqual([
+      'alert',
+      'open',
+      'persistent',
+      'placement',
+    ])
+    expect(result.value.cssStates.map((state) => state.name)).toEqual([
+      'open',
+      'malformed',
+      'start',
+      'end',
+      'bottom',
+    ])
   })
 
   it('CEM でないものは not-a-manifest で返す（throw しない）', () => {

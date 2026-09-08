@@ -20,12 +20,22 @@ import {
   otpCellsMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/input-otp/contract'
 import { markup as meterMarkup } from '@rimltempest/riml-ds-elements/experimental/meter/contract'
+import { markup as popoverMarkup } from '@rimltempest/riml-ds-elements/experimental/popover/contract'
 import {
   markup as radioGroupMarkup,
   radioOptionMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/radio-group/contract'
+import {
+  markup as menuMarkup,
+  menuItemMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/menu/contract'
 import { markup as selectMarkup } from '@rimltempest/riml-ds-elements/experimental/select/contract'
 import { markup as sliderMarkup } from '@rimltempest/riml-ds-elements/experimental/slider/contract'
+import {
+  markup as tabsMarkup,
+  panelMarkup,
+  tabMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/tabs/contract'
 import { markup as windowMarkup } from '@rimltempest/riml-ds-elements/experimental/window/contract'
 import { markup as textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field/contract'
 import type { ElementExampleMap } from './core/elements.js'
@@ -38,9 +48,14 @@ const TEXT_FIELD = {
   type: 'email',
   required: true,
 } as const
+/**
+ * `placement`（plan 022）で帯（Sheet / Drawer）にもできる。既定の `center` は属性を省くだけなので、
+ * 例では珍しい方（行末側の帯）を見せる。返事を求める窓にする `alert` は CEM の attributes に出る。
+ */
 const DIALOG = {
-  label: '削除の確認',
-  children: '<p>削除すると元に戻せません。</p>',
+  label: '絞り込み',
+  children: '<p>条件を選ぶとすぐに反映されます。</p>',
+  placement: 'end',
 } as const
 const SELECT = {
   id: 'country',
@@ -104,6 +119,27 @@ const INPUT_OTP = {
   hint: '6 桁の数字',
   children: otpCellsMarkup({ name: 'code' }),
 } as const
+const TABS = {
+  label: '設定',
+  tabs:
+    tabMarkup({ href: '#overview', label: '概要' })
+    + tabMarkup({ href: '#usage', label: '使い方' }),
+  panels:
+    panelMarkup({ id: 'overview', children: '<p>この製品の概要。</p>' })
+    + panelMarkup({ id: 'usage', children: '<p>使い方の説明。</p>' }),
+} as const
+const MENU = {
+  id: 'row-actions',
+  label: '操作',
+  items:
+    menuItemMarkup({ label: '複製', href: '/items/1/duplicate' })
+    + menuItemMarkup({ label: '削除', separated: true }),
+} as const
+const POPOVER = {
+  id: 'filters',
+  label: '絞り込み',
+  children: '<p>条件を選ぶと一覧がその場で変わる。</p>',
+} as const
 const DISCLOSURE = {
   label: '送料について',
   children: '<p>5,000 円以上で無料です。</p>',
@@ -115,6 +151,12 @@ const DISCLOSURE = {
  */
 const TOAST = {} as const
 
+/**
+ * `rd-tooltip` もティア C（契約を持たない）。対象の id と説明文だけを載せる。
+ * 対象側に `title` を書くのが JS 無しのときの代替（ADR-0012 ティア C）。
+ */
+const TOOLTIP = { for: 'save', children: '⌘S で保存します' } as const
+
 export const elementExamples = {
   'rd-button': { html: buttonMarkup(BUTTON), props: BUTTON },
   'rd-text-field': { html: textFieldMarkup(TEXT_FIELD), props: TEXT_FIELD },
@@ -124,9 +166,18 @@ export const elementExamples = {
   'rd-checkbox-group': { html: checkboxGroupMarkup(CHECKBOX_GROUP), props: CHECKBOX_GROUP },
   'rd-disclosure': { html: disclosureMarkup(DISCLOSURE), props: DISCLOSURE },
   'rd-input-otp': { html: inputOtpMarkup(INPUT_OTP), props: INPUT_OTP },
+  'rd-menu': { html: menuMarkup(MENU), props: MENU },
   'rd-meter': { html: meterMarkup(METER), props: METER },
+  'rd-popover': { html: popoverMarkup(POPOVER), props: POPOVER },
   'rd-radio-group': { html: radioGroupMarkup(RADIO_GROUP), props: RADIO_GROUP },
   'rd-slider': { html: sliderMarkup(SLIDER), props: SLIDER },
   'rd-window': { html: windowMarkup(WINDOW), props: WINDOW },
+  'rd-tabs': { html: tabsMarkup(TABS), props: TABS },
   'rd-toast': { html: '<rd-toast></rd-toast>', props: TOAST },
+  'rd-tooltip': {
+    html:
+      '<button id="save" type="button" title="⌘S で保存します">保存</button>'
+      + '<rd-tooltip for="save">⌘S で保存します</rd-tooltip>',
+    props: TOOLTIP,
+  },
 } as const satisfies ElementExampleMap

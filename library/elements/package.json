@@ -189,6 +189,53 @@
       "default": "./dist/window/window.define.js"
     },
     "./experimental/window/style.css": "./dist/window/window.css",
+    "./experimental/tabs": {
+      "types": "./dist/experimental/tabs/index.d.ts",
+      "default": "./dist/experimental/tabs/index.js"
+    },
+    "./experimental/tabs/contract": {
+      "types": "./dist/tabs/tabs.contract.d.ts",
+      "default": "./dist/tabs/tabs.contract.js"
+    },
+    "./experimental/tabs/define": {
+      "types": "./dist/tabs/tabs.define.d.ts",
+      "default": "./dist/tabs/tabs.define.js"
+    },
+    "./experimental/tabs/style.css": "./dist/tabs/tabs.css",
+    "./experimental/menu": {
+      "types": "./dist/experimental/menu/index.d.ts",
+      "default": "./dist/experimental/menu/index.js"
+    },
+    "./experimental/menu/contract": {
+      "types": "./dist/menu/menu.contract.d.ts",
+      "default": "./dist/menu/menu.contract.js"
+    },
+    "./experimental/menu/define": {
+      "types": "./dist/menu/menu.define.d.ts",
+      "default": "./dist/menu/menu.define.js"
+    },
+    "./experimental/menu/style.css": "./dist/menu/menu.css",
+    "./experimental/popover": {
+      "types": "./dist/experimental/popover/index.d.ts",
+      "default": "./dist/experimental/popover/index.js"
+    },
+    "./experimental/popover/contract": {
+      "types": "./dist/popover/popover.contract.d.ts",
+      "default": "./dist/popover/popover.contract.js"
+    },
+    "./experimental/popover/define": {
+      "types": "./dist/popover/popover.define.d.ts",
+      "default": "./dist/popover/popover.define.js"
+    },
+    "./experimental/popover/style.css": "./dist/popover/popover.css",
+    "./experimental/tooltip": {
+      "types": "./dist/experimental/tooltip/index.d.ts",
+      "default": "./dist/experimental/tooltip/index.js"
+    },
+    "./experimental/tooltip/define": {
+      "types": "./dist/tooltip/tooltip.define.d.ts",
+      "default": "./dist/tooltip/tooltip.define.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./custom-elements.json": "./custom-elements.json",
     "./package.json": "./package.json"

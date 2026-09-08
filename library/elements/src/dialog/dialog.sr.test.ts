@@ -48,3 +48,22 @@ it('読み上げるダイアログの名前に「閉じる」が混ざらない�
   expect(spoken).toContain('削除の確認')
   expect(spoken).not.toContain('閉じる')
 })
+
+/**
+ * `alert`（plan 022）は `<dialog role="alertdialog">` にするだけで、読み上げの中身は変えない。
+ * 役割そのものは shadow の `<dialog>` に付くので仮想 SR の走査には出ない（属性は `dialog.test.ts` が見る）。
+ * ここで固定するのは「名前と本文が変わらないこと」＝ 帯の × が名前に混ざらないこと。
+ */
+it('alert でも名前は slot のラベルのまま（× が混ざらない）', async () => {
+  const el = await fixtureOf(
+    RdDialog,
+    '<rd-dialog alert><h2 slot="label">削除の確認</h2><p>元に戻せません。</p></rd-dialog>',
+  )
+  el.show()
+  await el.updateComplete
+  await virtual.start({ container: el })
+  const spoken = await advanceTo('削除の確認', 8)
+  expect(spoken).toContain('削除の確認')
+  expect(spoken).not.toContain('閉じる')
+  expect(await advanceTo('元に戻せません。', 8)).toContain('元に戻せません。')
+})

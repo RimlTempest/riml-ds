@@ -129,6 +129,31 @@ export const Persistent: Story = {
   },
 }
 
+/**
+ * 返事を求める窓（WAI-APG の Alert Dialog、plan 022）。`alert` は `role="alertdialog"` にし、
+ * **背面クリックでは閉じない**（Esc と帯の × は閉じる）。破壊的な操作には danger のボタンを置く。
+ */
+export const Alert: Story = {
+  args: {
+    open: true,
+    alert: true,
+    label: '削除しますか',
+    children:
+      '<p>この記録は元に戻せません。</p>'
+      + '<rd-button slot="actions" variant="danger"><button type="button">削除する</button></rd-button>',
+  },
+  play: settled,
+}
+
+/** 行末側に着く帯（Sheet）。位置は `<dialog>` の margin で決める（top layer は inset を見ない） */
+export const SheetEnd: Story = { args: { open: true, placement: 'end' }, play: settled }
+
+/** 行頭側の帯。RTL では自動的に反対側に着く（論理プロパティ） */
+export const SheetStart: Story = { args: { open: true, placement: 'start' }, play: settled }
+
+/** 下からせり上がる帯（Drawer）。本文が長ければ本文だけが転がる */
+export const SheetBottom: Story = { args: { open: true, placement: 'bottom' }, play: settled }
+
 export const Dark: Story = { args: { open: true }, globals: { scheme: 'dark' }, play: settled }
 
 export const Dense: Story = {

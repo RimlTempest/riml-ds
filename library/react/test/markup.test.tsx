@@ -48,10 +48,13 @@ describe('既定 export の部品', () => {
       'RdCheckboxGroup',
       'RdDisclosure',
       'RdInputOtp',
+      'RdMenu',
       'RdMeter',
+      'RdPopover',
       'RdRadioGroup',
       'RdSelect',
       'RdSlider',
+      'RdTabs',
       'RdWindow',
     ])
   })
