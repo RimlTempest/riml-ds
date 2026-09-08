@@ -1,40 +1,69 @@
 @layer rd.components {
+  /* 横に溢れる表はこの部品自身が転がす（.rd-table-scroll を二重に要らない。WCAG 1.4.10） */
   rd-data-table {
     display: block;
+    overflow-x: auto;
   }
 
-  /* TODO: セレクタは `rd-data-table > <native>` の 1 段に留める（利用側のクラスを仮定しない） */
-  rd-data-table > input {
-    display: block;
+  /* 見出しの中のボタン。文字の見た目は th のまま（ボタンらしさは矢印とフォーカスリングで出す） */
+  rd-data-table > table > thead th > [part='sort'] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rd-space-1);
+
+    /* th の上下 padding を打ち消して、見出しの高さのまま 44px の当たり判定を作る */
+    margin-block: calc(var(--rd-space-2) * -1);
     min-block-size: var(--rd-sizing-target-min);
-    padding-block: var(--rd-space-2);
-    padding-inline: var(--rd-space-3);
-    border-width: var(--rd-border-width-default);
-    border-style: solid;
-    border-color: var(--rd-color-border-strong);
-    border-radius: var(--rd-radius-md);
-    background: var(--rd-color-surface-default);
-    color: var(--rd-color-text-default);
+    padding: 0;
+    border-width: 0;
+    background: transparent;
+    color: inherit;
     font: inherit;
+    cursor: pointer;
   }
 
-  rd-data-table > input:focus-visible {
+  /* 矢印は非文字なので 3:1。読み上げには出さない（意味は aria-sort が持つ） */
+  rd-data-table > table > thead th > [part='sort']::after {
+    color: var(--rd-color-text-muted);
+    content: '↕' / '';
+  }
+
+  rd-data-table > table > thead th[aria-sort='ascending'] > [part='sort']::after {
+    color: var(--rd-color-accent-default);
+    content: '↑' / '';
+  }
+
+  rd-data-table > table > thead th[aria-sort='descending'] > [part='sort']::after {
+    color: var(--rd-color-accent-default);
+    content: '↓' / '';
+  }
+
+  rd-data-table > table > thead th > [part='sort']:hover,
+  rd-data-table > table > thead th > [part='sort']:focus-visible {
+    color: var(--rd-color-accent-default);
+  }
+
+  rd-data-table > table > thead th > [part='sort']:focus-visible {
     outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
     outline-offset: var(--rd-focus-ring-offset);
   }
 
-  rd-data-table > [part='hint'] {
-    margin-block: var(--rd-space-1) 0;
-    color: var(--rd-color-text-muted);
-    font: var(--rd-type-small);
+  /* 数の列は矢印を行頭側へ。数字の末尾揃え（.rd-table の atoms）を崩さない */
+  rd-data-table > table > thead th[data-numeric] > [part='sort'] {
+    flex-direction: row-reverse;
   }
 
   @media (forced-colors: active) {
-    rd-data-table > input {
-      border-color: FieldText;
+    rd-data-table > table > thead th > [part='sort']::after {
+      color: ButtonText;
     }
 
-    rd-data-table > input:focus-visible {
+    /* 強制配色では色が落ちるので、並べ替え中の列は下線でも示す（色だけに頼らない） */
+    rd-data-table > table > thead th[aria-sort] > [part='sort'] {
+      text-decoration: underline;
+    }
+
+    rd-data-table > table > thead th > [part='sort']:focus-visible {
       outline-color: Highlight;
     }
   }

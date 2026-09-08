@@ -932,6 +932,186 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/data-table/data-table.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-data-table",
+          "declaration": {
+            "name": "RdDataTable",
+            "module": "/src/data-table/data-table.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/data-table/data-table.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "見出しを押すと並べ替えられる表。`<table class=\"rd-table\">` を子として包む（ティア A、ADR-0012）。\nJS が無ければ書かれた順の表がそのまま読める——定義されてはじめて `th[data-sort]` の中身が\n`<button part=\"sort\">` になる（押せないボタンを置かない）。\n\n並べ替えは `<tbody>` の `<tr>` を**動かす**だけで、行を作り直さない。読み上げは `aria-sort` に\n任せる（`rd-live-region` を使わない。ADR-0008 §6）。",
+          "name": "RdDataTable",
+          "cssParts": [
+            {
+              "description": "見出しの中の並べ替えボタン",
+              "name": "sort"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "column",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "description": "並べ替え中の列（0 始まり）。-1 は並べ替えていない",
+              "default": "-1",
+              "attribute": "column",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "direction",
+              "privacy": "public",
+              "type": {
+                "text": "SortDirection"
+              },
+              "default": "'ascending'",
+              "attribute": "direction",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "manual",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "行を動かさない。`aria-sort` と `rd-sort` だけを出す",
+              "default": "false",
+              "attribute": "manual",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#wiring",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#observer",
+              "privacy": "private",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#collator",
+              "privacy": "private",
+              "type": {
+                "text": "Intl.Collator | undefined"
+              },
+              "default": "undefined",
+              "description": "接続前は最も近い `[lang]` を引けないので、初回の更新まで作らない"
+            },
+            {
+              "kind": "field",
+              "name": "#sort",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#onClick",
+              "privacy": "private",
+              "description": "押されたら次の向きを決めて `rd-sort` を知らせる。並べ替えるのは `updated`——\nJS から `column` / `direction` を書き換えたときと同じ道を通す（そちらは `rd-sort` を出さない）。"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ column: number; key: string | undefined; direction: string }>"
+              },
+              "description": "見出しのボタンが押されたとき",
+              "name": "rd-sort"
+            }
+          ],
+          "attributes": [
+            {
+              "description": "並べ替え中の列（0 始まり）。-1 は並べ替えていない",
+              "name": "column",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "fieldName": "column"
+            },
+            {
+              "description": "並べ替えの向き（ascending / descending）",
+              "name": "direction",
+              "type": {
+                "text": "SortDirection"
+              },
+              "default": "'ascending'",
+              "fieldName": "direction"
+            },
+            {
+              "description": "行を動かさない。`aria-sort` と `rd-sort` だけを出す",
+              "name": "manual",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "manual"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "sorted",
+              "description": "どれかの列で並べ替えている"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子（<table> / <caption> / <thead> / <tbody>）が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "見出しを押すと並べ替えられる表。表そのものは利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-data-table",
+          "customElement": true
+        },
+        {
+          "kind": "variable",
+          "name": "column"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdDataTable",
+          "declaration": {
+            "name": "RdDataTable",
+            "module": "src/data-table/data-table.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/dialog/dialog.define.ts",
       "declarations": [],
       "exports": [
