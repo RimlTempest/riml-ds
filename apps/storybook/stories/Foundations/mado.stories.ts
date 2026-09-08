@@ -1,8 +1,10 @@
 // oxlint-disable import/no-unassigned-import -- define と CSS は副作用 import が正しい形
 /**
  * 視覚言語「まど」の**組み合わせ見本**（docs/brand.md §7）。
- * 窓（`.rd-window`）は JS が要らないので部品にしない（ADR-0012 §6）——
+ * ここに出るのは **JS を使わない窓**（`.rd-window`）——
  * `@rimltempest/riml-ds-css` の `patterns.css` が出すクラスを、部品と一緒に組んで見せる。
+ * 帯の左端の丸は本物の `<button>`（ADR-0014）で、**動作は利用側が書く**。
+ * ここは見本なので押しても何も起きない。動作まで要るなら部品の `rd-window`。
  *
  * 部品の `define` と `.css` は `library/elements/src` から読む（dist と二重に登録しないため。
  * `.storybook/preview.ts` の先頭コメント）。
@@ -11,7 +13,7 @@
  * 形・影・文字は全ブランド共通で、変わるのは色だけ（brand.md §10）。
  */
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { html, type TemplateResult } from 'lit'
+import { html, nothing, type TemplateResult } from 'lit'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { buttonMarkup } from '../../../../library/elements/src/button/index.js'
 import '../../../../library/elements/src/button/button.define.js'
@@ -30,11 +32,43 @@ import '../../../../library/elements/src/text-field/text-field.define.js'
 import '../../../../library/elements/src/text-field/text-field.css'
 import './mado.css'
 
-/** 長いタイトルは `<span>` で包む。素のテキストは匿名グリッド項目になり、1 行で切れない */
-const title = (text: string, tone?: 'accent' | 'warning' | 'danger'): TemplateResult =>
-  tone === undefined
-    ? html`<h2 class="rd-window-title"><span>${text}</span></h2>`
-    : html`<h2 class="rd-window-title" data-tone=${tone}><span>${text}</span></h2>`
+type Tone = 'accent' | 'warning' | 'danger'
+type Action = 'close' | 'expand' | 'collapse'
+
+/** 並びは左から 閉じる → 広げる → たたむ（brand.md §7.1）。使わない操作の丸は描かない */
+const LABELS: Readonly<Record<Action, string>> = {
+  close: '閉じる',
+  expand: '広げる',
+  collapse: 'たたむ',
+}
+
+const control = (action: Action): TemplateResult =>
+  html`<button
+    type="button"
+    class="rd-window-control"
+    data-action=${action}
+    aria-label=${LABELS[action]}
+  ></button>`
+
+type BarOptions = {
+  readonly id?: string
+  readonly tone?: Tone
+  readonly actions?: readonly Action[]
+}
+
+/** 帯 ⊃ 見出し（ADR-0014 決定 2）。tone は帯に付ける。操作が無いなら入れ物ごと省く */
+const bar = (text: string, options: BarOptions = {}): TemplateResult =>
+  html`<header class="rd-window-bar" data-tone=${options.tone ?? nothing}>
+    ${
+      options.actions === undefined || options.actions.length === 0
+        ? nothing
+        : html`<div class="rd-window-controls">${options.actions.map(control)}</div>`
+    }
+    <h2 class="rd-window-title" id=${options.id ?? nothing}>${text}</h2>
+  </header>`
+
+/** 見出しの `id` を持たない窓は見本なので、帯の見出しをそのまま名前にする */
+const title = (text: string, tone?: Tone): TemplateResult => bar(text, { tone })
 
 const actions = (): TemplateResult =>
   html`<div class="rd-cluster">
@@ -44,10 +78,10 @@ const actions = (): TemplateResult =>
 
 /** 帯 + 本体 + ボタン列。窓の骨格はこれだけ（brand.md §7.1） */
 const plainWindow = (): TemplateResult =>
-  html`<section class="rd-window">
-    ${title('設定')}
+  html`<section class="rd-window" aria-labelledby="sb-mado-window">
+    ${bar('設定', { id: 'sb-mado-window', actions: ['close'] })}
     <div class="rd-window-body rd-stack">
-      <p>帯は見出しそのもの。丸 3 つは CSS の装飾で、DOM にも読み上げにも存在せず、押せない。</p>
+      <p>帯の中に操作と見出しが並ぶ。左端の丸は装飾ではなく、押せる本物のボタン。</p>
       ${actions()}
     </div>
   </section>`
@@ -63,6 +97,33 @@ export default meta
 type Story = StoryObj
 
 export const Window: Story = {}
+
+/** 操作は使う分だけ描く。押せない丸は置かない（ADR-0014 決定 1） */
+export const WindowControls: Story = {
+  render: () =>
+    html`<h1 class="rd-visually-hidden">帯の操作の見本</h1>
+      <div class="sb-mado rd-stack">
+        <section class="rd-window" aria-labelledby="sb-mado-none">
+          ${bar('操作なし', { id: 'sb-mado-none' })}
+          <div class="rd-window-body">
+            <p>丸が 1 つも無い窓。帯の左は空欄で、タイトルは中央のまま。</p>
+          </div>
+        </section>
+        <section class="rd-window" aria-labelledby="sb-mado-close">
+          ${bar('閉じるだけ', { id: 'sb-mado-close', actions: ['close'] })}
+          <div class="rd-window-body"><p>閉じられる窓。ダイアログの帯もこれと同じ。</p></div>
+        </section>
+        <section class="rd-window" aria-labelledby="sb-mado-all">
+          ${bar('閉じる・広げる・たたむ', {
+            id: 'sb-mado-all',
+            actions: ['close', 'expand', 'collapse'],
+          })}
+          <div class="rd-window-body">
+            <p>3 つ全部。並びは左から 閉じる（×）・広げる（□）・たたむ（−）。</p>
+          </div>
+        </section>
+      </div>`,
+}
 
 /** 帯の色は 4 通り。文字色は必ず対応する `on-*`（brand.md §7.1） */
 export const WindowTones: Story = {
