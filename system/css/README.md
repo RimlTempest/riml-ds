@@ -37,17 +37,17 @@ tokens を `file:` / `workspace:` で取り込む利用側が 404 で止まら�
 
 ## ファイル
 
-| ファイル            | レイヤー        | 中身                                                                              |
-| ------------------- | --------------- | --------------------------------------------------------------------------------- |
-| `layers.css`        | （宣言のみ）    | `@layer rd.reset, rd.tokens, rd.base, rd.components, rd.utilities, rd.overrides;` |
-| `reset.css`         | `rd.reset`      | `box-sizing`、`margin: 0`、メディア要素、フォームの `font: inherit`               |
-| `base.css`          | `rd.base`       | `body`・見出し・行長・`hr`（点線）・リンク・`:focus-visible`・等幅                |
-| `typography.css`    | `rd.components` | 文字のクラス（`.rd-display` … `.rd-prose`）                                       |
-| `atoms.css`         | `rd.components` | JS が要らない小さなパターン（`.rd-badge` … `.rd-scroll-area`）                    |
-| `patterns.css`      | `rd.components` | 窓（`.rd-window` / `.rd-window-title` / `.rd-window-body`）                       |
-| `utilities.css`     | `rd.utilities`  | `.rd-visually-hidden`、`.rd-skip-link`、`.rd-stack`、`.rd-cluster`、`[hidden]`    |
-| `print.css`         | `rd.base`       | `@media print`（リンク先の URL、ナビを消す、システム色）                          |
-| `forced-colors.css` | `rd.base`       | `@media (forced-colors: active)`（リンク・フォーカス・ボタンの境界）              |
+| ファイル            | レイヤー        | 中身                                                                                         |
+| ------------------- | --------------- | -------------------------------------------------------------------------------------------- |
+| `layers.css`        | （宣言のみ）    | `@layer rd.reset, rd.tokens, rd.base, rd.components, rd.utilities, rd.overrides;`            |
+| `reset.css`         | `rd.reset`      | `box-sizing`、`margin: 0`、メディア要素、フォームの `font: inherit`                          |
+| `base.css`          | `rd.base`       | `body`・見出し・行長・`hr`（点線）・リンク・`:focus-visible`・等幅                           |
+| `typography.css`    | `rd.components` | 文字のクラス（`.rd-display` … `.rd-prose`）                                                  |
+| `atoms.css`         | `rd.components` | JS が要らない小さなパターン（`.rd-badge` … `.rd-scroll-area`）                               |
+| `patterns.css`      | `rd.components` | 窓（`.rd-window` / `.rd-window-title` / `.rd-window-body`）                                  |
+| `utilities.css`     | `rd.utilities`  | `.rd-visually-hidden`、`.rd-skip-link`、`.rd-stack`、`.rd-cluster`、`.rd-aspect`、`[hidden]` |
+| `print.css`         | `rd.base`       | `@media print`（リンク先の URL、ナビを消す、システム色）                                     |
+| `forced-colors.css` | `rd.base`       | `@media (forced-colors: active)`（リンク・フォーカス・ボタンの境界）                         |
 
 ダークと高コントラストと密度はここに書かない（トークンが `light-dark()` と
 `prefers-contrast` / `[data-density]` で持つ）。
@@ -155,7 +155,15 @@ JS が要らないので部品にしない（[ADR-0012](../../docs/adr/0012-prog
 `.rd-skip-link` は `<body>` 直下に置く。フォーカスされるまでは隠れる。スキップリンクを部品に
 しないのは、JS 無しで動くのが `<a href="#main">` そのものだから（[ADR-0012](../../docs/adr/0012-progressive-enhancement-tiers.md) §6）。
 
-ユーティリティはこの 5 つで打ち止め。ユーティリティ CSS フレームワークにしない。
+`.rd-aspect` は比を固定した入れ物で、中の `img` / `video` / `iframe` を切り抜いて埋める。
+比は `--rd-aspect`（既定 `16 / 9`）。`data-ratio="1"` と `data-ratio="4-3"` だけ用意してあり、
+それ以外は `style="--rd-aspect: 21 / 9"` のように渡す。
+
+```html
+<div class="rd-aspect" data-ratio="1"><img src="cover.avif" alt="" /></div>
+```
+
+ユーティリティはこの 6 つで打ち止め。ユーティリティ CSS フレームワークにしない。
 
 ## 上書き
 
