@@ -44,6 +44,13 @@ const { variant, loading, type, label, class: className } = Astro.props
     expect(source).toContain('value={defaultValue}')
   })
 
+  it('名前つきの raw は名前つきの <slot> になり、既定 slot に潰れない', () => {
+    const source = find('experimental/menu.astro')
+    expect(source).toContain('<slot name="trigger" />')
+    expect(source).toContain('<slot name="items" />')
+    expect(source).not.toContain('<slot />')
+  })
+
   it('experimental の部品は experimental/ の下に出る', () => {
     expect(files.some((file) => file.path === 'select.astro')).toBe(false)
     expect(find('experimental/select.astro')).toContain('<rd-select')
@@ -54,6 +61,7 @@ const { variant, loading, type, label, class: className } = Astro.props
     expect(files.map((file) => file.path)).toEqual([
       'button.astro',
       'dialog.astro',
+      'experimental/menu.astro',
       'experimental/select.astro',
       'text-field.astro',
     ])

@@ -1,4 +1,4 @@
-/** 5 部品の CEM 断片と契約。生成器のテストが共有する（実物の写し）。`rd-select` だけ `@status experimental` */
+/** 6 部品の CEM 断片と契約。生成器のテストが共有する（実物の写し）。`rd-select` / `rd-menu` が `@status experimental` */
 import type { Package } from 'custom-elements-manifest/schema'
 import type { Contract } from '../../src/wrappers/core/common.js'
 
@@ -86,6 +86,28 @@ export const manifest: Package = {
     },
     {
       kind: 'javascript-module',
+      path: 'src/menu/menu.element.js',
+      declarations: [
+        declaration('rd-menu', {
+          pe: 'B',
+          status: 'experimental',
+          attributes: [
+            { name: 'placement', type: { text: "'start' | 'end'" } },
+            { name: 'label', type: { text: 'string' } },
+          ],
+          events: [
+            {
+              name: 'rd-select',
+              type: { text: 'CustomEvent<{ index: number; href: string }>' },
+              description: '項目を選んだときに発火',
+            },
+          ],
+          slots: [{ name: '' }, { name: 'trigger' }],
+        }),
+      ],
+    },
+    {
+      kind: 'javascript-module',
       path: 'src/live-region/live-region.element.js',
       declarations: [
         declaration('rd-live-region', {
@@ -153,6 +175,19 @@ export const contracts: Readonly<Record<string, Contract>> = {
           attrs: { id: '$id', name: '$name', required: '$required' },
           children: [{ raw: '$children' }],
         },
+      ],
+    },
+  },
+  menu: {
+    pe: 'B',
+    roles: { trigger: ':scope > [slot="trigger"]', list: ':scope > [popover]' },
+    required: ['trigger', 'list'],
+    tree: {
+      tag: 'rd-menu',
+      attrs: { placement: '$placement', label: '$label' },
+      children: [
+        { raw: '$trigger' },
+        { tag: 'div', attrs: { popover: '', id: '$id' }, children: [{ raw: '$items' }] },
       ],
     },
   },

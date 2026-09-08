@@ -73,6 +73,7 @@ export const RdButton = ({
     expect(markupFiles.map((file) => file.path)).toEqual([
       'button.tsx',
       'dialog.tsx',
+      'menu.tsx',
       'select.tsx',
       'text-field.tsx',
     ])
@@ -130,12 +131,14 @@ export const RdButton = ({
     expect(files.map((file) => file.path)).toEqual([
       'button.tsx',
       'dialog.tsx',
+      'menu.tsx',
       'select.tsx',
       'text-field.tsx',
       'client/internal.ts',
       'client/button.tsx',
       'client/dialog.tsx',
       'client/live-region.tsx',
+      'client/menu.tsx',
       'client/select.tsx',
       'client/text-field.tsx',
       'jsx.ts',
