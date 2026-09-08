@@ -11,7 +11,7 @@
  * アイコンはすべて自作の幾何（丸・線・四角）で、絵は持ち込まない。
  */
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { html, type TemplateResult } from 'lit'
+import { html, svg, type SVGTemplateResult, type TemplateResult } from 'lit'
 
 /** 見本用の「写真」。自作の幾何だけで描いた人影の代わり */
 const PHOTO = `data:image/svg+xml;utf8,${encodeURIComponent(
@@ -22,7 +22,11 @@ const PHOTO = `data:image/svg+xml;utf8,${encodeURIComponent(
     + '</svg>',
 )}`
 
-const svg = (body: TemplateResult): TemplateResult =>
+/**
+ * 中身は lit の `svg` タグで作る。`html` タグで書いた `<circle>` は HTML として
+ * 解釈され、SVG 名前空間の要素にならない（＝何も描かれない）。
+ */
+const icon = (body: SVGTemplateResult): TemplateResult =>
   html`<svg
     viewBox="0 0 24 24"
     fill="none"
@@ -34,12 +38,12 @@ const svg = (body: TemplateResult): TemplateResult =>
     ${body}
   </svg>`
 
-const circleIcon = (): TemplateResult => svg(html`<circle cx="12" cy="12" r="7" />`)
+const circleIcon = (): TemplateResult => icon(svg`<circle cx="12" cy="12" r="7" />`)
 const squareIcon = (): TemplateResult =>
-  svg(html`<rect x="5" y="5" width="14" height="14" rx="3" />`)
-const linesIcon = (): TemplateResult => svg(html`<path d="M5 8h14M5 12h14M5 16h14" />`)
-const plusIcon = (): TemplateResult => svg(html`<path d="M12 5v14M5 12h14" />`)
-const crossIcon = (): TemplateResult => svg(html`<path d="M6 6l12 12M18 6L6 18" />`)
+  icon(svg`<rect x="5" y="5" width="14" height="14" rx="3" />`)
+const linesIcon = (): TemplateResult => icon(svg`<path d="M5 8h14M5 12h14M5 16h14" />`)
+const plusIcon = (): TemplateResult => icon(svg`<path d="M12 5v14M5 12h14" />`)
+const crossIcon = (): TemplateResult => icon(svg`<path d="M6 6l12 12M18 6L6 18" />`)
 
 /** 見本の入口。バッジの 6 通り */
 const badges = (): TemplateResult =>
