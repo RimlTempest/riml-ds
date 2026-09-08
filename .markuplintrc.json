@@ -52,6 +52,12 @@
   },
   "nodeRules": [
     {
+      "selector": "button[aria-label]",
+      "rules": {
+        "no-empty-palpable-content": false
+      }
+    },
+    {
       "selector": "input[type=\"checkbox\"][role=\"switch\"]",
       "rules": {
         "wai-aria": false
