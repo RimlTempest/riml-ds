@@ -119,7 +119,7 @@ export class RdTabs extends LitElement {
     syncAttribute(list, 'aria-label', this.label === '' ? undefined : this.label)
     view.tabs.forEach((item, index) => {
       applyAttrs(tabs[index], tabAttributes(item))
-      tabs[index]?.parentElement?.setAttribute('role', 'presentation')
+      tabs[index]?.closest('li')?.setAttribute('role', 'presentation')
       const panel = [...this.children].find((child) => child.id === item.panelId)
       applyAttrs(panel, panelAttributes(item))
       panel?.toggleAttribute('hidden', !item.selected)

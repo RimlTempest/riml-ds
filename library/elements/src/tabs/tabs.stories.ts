@@ -52,7 +52,16 @@ export const Variants: Story = {
   render: (args) =>
     html`<div class="rd-stack">
       ${unsafeHTML(tabsMarkup({ ...args, label: 'line' }))}
-      ${unsafeHTML(tabsMarkup({ ...args, label: 'browser', variant: 'browser' }))}
+      ${unsafeHTML(
+        tabsMarkup({
+          ...args,
+          label: 'browser',
+          variant: 'browser',
+          // 同じページに 2 つ置くので id をずらす（id は文書で一意）
+          tabs: TABS.replaceAll('#', '#b-'),
+          panels: PANELS.replaceAll('id="', 'id="b-'),
+        }),
+      )}
     </div>`,
   play: async ({ canvasElement }) => {
     await expect(canvasElement.querySelectorAll('rd-tabs')).toHaveLength(2)

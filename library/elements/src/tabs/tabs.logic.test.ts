@@ -46,9 +46,9 @@ describe('computeTabsView', () => {
     expect(view.tabs.map((tab) => tab.tabIndex)).toEqual([-1, 0, -1])
   })
 
-  it('id が無いタブには rd-tab-<n> を振り、パネルを aria-controls で指す', () => {
+  it('id が無いタブにはパネルの id から名前を振る（2 つ並べても衝突しない）', () => {
     const view = computeTabsView({ ...base, ids: ['', 'mine', ''] })
-    expect(view.tabs.map((tab) => tab.id)).toEqual(['rd-tab-0', 'mine', 'rd-tab-2'])
+    expect(view.tabs.map((tab) => tab.id)).toEqual(['rd-tab-overview', 'mine', 'rd-tab-faq'])
     expect(view.tabs.map((tab) => tab.panelId)).toEqual(['overview', 'usage', 'faq'])
   })
 
@@ -86,7 +86,7 @@ describe('tabAttributes / panelAttributes', () => {
   it('タブは role=tab と aria-controls / aria-selected / tabindex を持つ', () => {
     expect(tabAttributes(view.tabs[0] ?? never())).toEqual({
       role: 'tab',
-      id: 'rd-tab-0',
+      id: 'rd-tab-overview',
       'aria-controls': 'overview',
       'aria-selected': 'true',
       tabindex: '0',
@@ -98,7 +98,7 @@ describe('tabAttributes / panelAttributes', () => {
   it('パネルは role=tabpanel とタブへの aria-labelledby を持つ', () => {
     expect(panelAttributes(view.tabs[0] ?? never())).toEqual({
       role: 'tabpanel',
-      'aria-labelledby': 'rd-tab-0',
+      'aria-labelledby': 'rd-tab-overview',
       tabindex: '0',
     })
   })

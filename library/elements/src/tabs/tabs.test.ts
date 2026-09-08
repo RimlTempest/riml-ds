@@ -51,10 +51,27 @@ it('列は tablist、リンクは tab、パネルは tabpanel として公開さ
   expect(el.querySelector('#usage')?.hasAttribute('hidden')).toBe(true)
 })
 
-it('リンクを包む <li> は presentation（リストとして読み上げない）', async () => {
-  const el = await fixtureOf(RdTabs, FIXTURE)
+it('利用側が <ul><li> を選んだら <li> を presentation にする（リストとして読み上げない）', async () => {
+  const el = await fixtureOf(
+    RdTabs,
+    '<rd-tabs label="設定"><ul slot="tabs">'
+      + '<li><a href="#a">A</a></li><li><a href="#b">B</a></li></ul>'
+      + '<div id="a"></div><div id="b"></div></rd-tabs>',
+  )
   const items = [...el.querySelectorAll('li')].map((item) => item.getAttribute('role'))
-  expect(items).toEqual(['presentation', 'presentation', 'presentation'])
+  expect(items).toEqual(['presentation', 'presentation'])
+  expect(el.querySelector('[slot=tabs]')?.getAttribute('role')).toBe('tablist')
+})
+
+it('既定の木（<div slot="tabs">）では tablist が tab を直接持つ', async () => {
+  const el = await fixtureOf(RdTabs, FIXTURE)
+  const list = el.querySelector('[slot=tabs]')
+  expect(list?.tagName).toBe('DIV')
+  expect([...(list?.children ?? [])].map((child) => child.getAttribute('role'))).toEqual([
+    'tab',
+    'tab',
+    'tab',
+  ])
 })
 
 it('→ で次のタブへ移り、パネルも切り替わる（自動活性化）', async () => {

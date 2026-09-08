@@ -57,15 +57,17 @@ const clamp = (index: number, count: number): number =>
  */
 export const computeTabsView = (input: TabsViewInput): TabsView => {
   const selectedIndex = clamp(input.index, input.hrefs.length)
-  const tabs = input.hrefs.map((href, index) => ({
-    id:
-      input.ids[index] === undefined || input.ids[index] === ''
-        ? `rd-tab-${index}`
-        : input.ids[index],
-    panelId: href.replace(/^#/u, ''),
-    selected: index === selectedIndex,
-    tabIndex: index === selectedIndex ? 0 : -1,
-  }))
+  const tabs = input.hrefs.map((href, index) => {
+    const panelId = href.replace(/^#/u, '')
+    const own = input.ids[index]
+    return {
+      // 番号ではなくパネルの id から作る。同じページに rd-tabs を 2 つ置いても衝突しない
+      id: own === undefined || own === '' ? `rd-tab-${panelId}` : own,
+      panelId,
+      selected: index === selectedIndex,
+      tabIndex: index === selectedIndex ? 0 : -1,
+    }
+  })
   const states = [
     input.malformed ? 'malformed' : '',
     input.label === '' ? 'unlabeled' : '',
