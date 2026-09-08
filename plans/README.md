@@ -79,7 +79,7 @@
 | 026 | [Hover Card（rd-popover hover）・Context Menu（rd-menu context）・Navigation Menu（.rd-nav-menu + Patterns/Navigation story）](026-hover-card-context-menu-nav-menu.md) | P1 | M | 024 | DONE（`fa1835c`） |
 | 028 | [rd-command（検索欄 + グループ化された項目のコマンドパレット。`_shared/text-filter.ts` へ絞り込みを共通化）](028-command.md) | P1 | M | 025 | DONE（`f3c7bbc`） |
 | 029 | [rd-data-table（`<table class="rd-table">` を包み `th[data-sort]` でクライアント並べ替え）](029-data-table-sort.md) | P1 | M | 022 | DONE（`1bff5b7`） |
-| 030 | [rd-splitter（`role="separator"` のハンドルで 2 面をドラッグ・キーボードで分割するティア B）](030-splitter.md) | P2 | M | 020 | IN PROGRESS |
+| 030 | [rd-splitter（`role="separator"` のハンドルで 2 面をドラッグ・キーボードで分割するティア B）](030-splitter.md) | P2 | M | 020 | DONE（`855b4d2`） |
 | 031 | [rd-toggle-group（`<fieldset>` + `<button aria-pressed>` の列。単一／複数選択と roving focus）](031-toggle-group.md) | P1 | M | 024 | TODO |
 | 032 | [rd-carousel（`<ul><li>` を包み「前へ／次へ」と枚数を足す。scroll-snap + IntersectionObserver）](032-carousel.md) | P2 | M | 020 | TODO |
 | 033 | [rd-calendar（`<label>` + `<input type="date">` を包み、JS で `role="grid"` の月表を描くティア B）](033-calendar.md) | P1 | L | 023 | TODO |
@@ -379,4 +379,13 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - 検証（main マージ後の worktree）: check 0、test 1480 passed / 1 skipped、guard 0、pe 85、e2e:frameworks 150、a11y 35、vrt 1265（新規 42、既存の変更 0）、release:check 0。main 側: build/gen 0、guard 0
 - **union マージの落とし穴（再発）**: `.size-limit.json` で 2 エントリの境目（`"limit": "12 KB"\n  },\n  {`）が両側共通の行として落ち、command のエントリが data-table に**上書きされて消えていた**（JSON としては有効なので `bun run check` は通る。`bunx size-limit --json` で気づいた）。union で解いた JSON / `import {` / `} as const` は**必ず中身を目で確かめる**。`markup.test.tsx` の重複 import（`../src/experimental.js` ×2）も同じ原因
 - 宿題（advisor）: `[part='empty']` が 1024px で左寄りに見える（`base.css` の `p { max-inline-size: 65ch }` の中で中央寄せされる）→ `max-inline-size: none` を足す。`riml-ds-worktree` skill に「union マージ後の点検リスト（JSON の境目・import の開き・`as const` の閉じ）」を追記
+
+### 030 の実行メモ（2026-09-09）
+
+- `feat/splitter` を `855b4d2` で `--no-ff` マージ（executor 7 コミット + `0782972 chore(merge)`）。028・029 と並行。83 ファイル、+1818
+- `rd-splitter`（experimental、ティア B、shadow）: `slot="start"` / `slot="end"` の 2 面と `role="separator"` のつまみ 1 つ（APG「Window Splitter」）。`position` は 0–100 の整数 %（px は持たない）、`min` 20 / `max` 80、`direction` は面の並び（`aria-orientation` は逆になり、反転は `ariaOrientation()` の 1 か所だけ）。ドラッグは `setPointerCapture`（window を購読しない）、キーは ← → / ↑ ↓ 1%、Shift 10%、Home / End。`rd-resize` は利用者の操作のときだけ、間引かない。定義前は `:not(:defined)` で縦積み。`splitter/define` 8.05 kB / 12 kB
+- 計画からの逸脱（すべて受け入れ）: 44px の当たり領域は `::before` ではなく `<span part="grip" aria-hidden="true">`（markuplint の `no-empty-palpable-content` と、`getBoundingClientRect()` で測れる完了条件のため）、遷移は `prefers-reduced-motion: no-preference` の中だけ、`@supports selector(:state(dragging))` で囲む、`splitter.sr.test.ts` を追加、`positionFromKey()` と dragging フラグを `splitter.dom.ts` に置く、ラッパーの props は CEM から数値型で生成
+- main 取り込み（028・029 の後）: 14 ファイルが競合し union で解いた。落ちた共通行 5 か所（`e2e/vue/src/App.ts` の `},\n ),`、`keyboard.spec.ts` の `})\n\n/**`、`build-pages.ts` の `})}\`,\n ),`、`shared.ts` の `})\n })\n}`、`markup.test.tsx` の import 重複）を `bunx oxfmt --check` の位置から直した。JSON 3 本は境界を含めて無事、CEM / registry は `bun run gen`
+- 検証（main マージ後の worktree）: check 0、test 1528 passed / 1 skipped（164 files）、guard 0、vrt 1314（新規 42、既存の変更 0）、pe 88、e2e:frameworks 166、a11y 39、release:check 0。main 側: build/gen 0、guard 0
+- 宿題（advisor）: story の面に余白が無く、文字がつまみに接して見える（利用側の責任だが見本としては `padding` を足したい）。`riml-ds-worktree` skill §7 に reviewer のマージ手順を追記済み（`b9f48ba`）
 
