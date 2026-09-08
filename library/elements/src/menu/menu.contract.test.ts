@@ -4,29 +4,27 @@ import {
   ITEM_SELECTOR,
   markup,
   menuItemMarkup,
-  menuSeparatorMarkup,
   menuTriggerMarkup,
 } from './menu.contract.js'
 
 const ITEMS =
   menuItemMarkup({ label: '複製', href: '/duplicate' })
-  + menuSeparatorMarkup()
-  + menuItemMarkup({ label: '削除' })
+  + menuItemMarkup({ label: '削除', separated: true })
 
 describe('menuItemMarkup', () => {
-  it('href があればリンクの項目（JS 無しでもそのまま辿れる）', () => {
+  it('href があればリンクの項目（JS 無しでもそのまま辿れる）。<li> では包まない', () => {
     expect(menuItemMarkup({ label: '複製', href: '/duplicate' })).toBe(
-      '<li><a href="/duplicate">複製</a></li>',
+      '<a href="/duplicate">複製</a>',
     )
   })
 
   it('href が無ければボタンの項目', () => {
-    expect(menuItemMarkup({ label: '削除' })).toBe('<li><button type="button">削除</button></li>')
+    expect(menuItemMarkup({ label: '削除' })).toBe('<button type="button">削除</button>')
   })
 
-  it('disabled は aria-disabled で示す（フォーカス可能のまま）', () => {
+  it('押せない項目は <span> + aria-disabled（ネイティブの disabled と矛盾させない）', () => {
     expect(menuItemMarkup({ label: '削除', disabled: true })).toBe(
-      '<li><button type="button" aria-disabled="true">削除</button></li>',
+      '<span aria-disabled="true">削除</span>',
     )
   })
 
@@ -35,9 +33,11 @@ describe('menuItemMarkup', () => {
   })
 })
 
-describe('menuSeparatorMarkup', () => {
-  it('<hr> を返す（暗黙の role が separator。role 属性を手で書かない）', () => {
-    expect(menuSeparatorMarkup()).toBe('<li><hr></li>')
+describe('menuItemMarkup（区切り）', () => {
+  it('区切りは項目に付く印。**要素を挟まない**（role="menu" は menuitem 系しか持てない）', () => {
+    expect(menuItemMarkup({ label: '削除', separated: true })).toBe(
+      '<button data-separated="" type="button">削除</button>',
+    )
   })
 })
 
@@ -57,11 +57,11 @@ describe('markup', () => {
     expect(html).toContain('<div popover="" id="row-actions">')
   })
 
-  it('トリガーは slot="trigger"、項目は [popover] の中の <ul>', () => {
+  it('トリガーは slot="trigger"、項目は [popover] の直下', () => {
     expect(markup({ id: 'm', label: '操作', items: menuItemMarkup({ label: '削除' }) })).toBe(
       '<rd-menu label="操作">'
         + '<rd-button slot="trigger"><button type="button" popovertarget="m">操作</button></rd-button>'
-        + '<div popover="" id="m"><ul><li><button type="button">削除</button></li></ul></div>'
+        + '<div popover="" id="m"><button type="button">削除</button></div>'
         + '</rd-menu>',
     )
   })
@@ -83,6 +83,6 @@ describe('contract', () => {
 
   it('項目のセレクタは roles に入れない（複数一致するので checkContract が扱えない）', () => {
     expect(Object.keys(contract.roles)).toEqual(['trigger', 'list'])
-    expect(ITEM_SELECTOR).toContain('[popover]')
+    expect(ITEM_SELECTOR).toContain('[popover] >')
   })
 })

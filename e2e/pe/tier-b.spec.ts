@@ -64,8 +64,8 @@ test('menu: JS 無しでもトリガーが popovertarget で [popover] を指す
   await page.goto('/menu.html')
   const trigger = page.getByRole('button', { name: '操作' })
   await expect(trigger).toHaveAttribute('popovertarget', 'row-actions')
-  // JS が来る前に role を先取りしない（menu は element が足す）
-  await expect(page.locator('rd-menu [popover] > ul')).not.toHaveAttribute('role', 'menu')
+  // JS が来る前に role を先取りしない（menu は element が [popover] 自身に足す）
+  await expect(page.locator('rd-menu [popover]')).not.toHaveAttribute('role', 'menu')
 })
 
 /** `rd-popover` も同じ約束。見出しと本文が JS 無しで読める */

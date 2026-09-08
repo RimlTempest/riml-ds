@@ -3,7 +3,6 @@ export {
   ITEM_SELECTOR as menuItemSelector,
   markup as menuMarkup,
   menuItemMarkup,
-  menuSeparatorMarkup,
   menuTriggerMarkup,
 } from './menu.contract.js'
 export type { MenuItemMarkupProps, MenuMarkupProps } from './menu.contract.js'

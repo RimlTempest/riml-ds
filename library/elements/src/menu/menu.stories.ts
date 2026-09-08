@@ -13,15 +13,14 @@ import '../button/button.define.js'
 import '../button/button.css'
 import './menu.define.js'
 import './menu.css'
-import { type MenuMarkupProps, menuItemMarkup, menuMarkup, menuSeparatorMarkup } from './index.js'
+import { type MenuMarkupProps, menuItemMarkup, menuMarkup } from './index.js'
 
 type Args = MenuMarkupProps
 
 const ITEMS =
-  menuItemMarkup({ label: '複製', href: '#duplicate' })
+  menuItemMarkup({ label: '複製', href: '/items/1/duplicate' })
   + menuItemMarkup({ label: '名前を変える' })
-  + menuSeparatorMarkup()
-  + menuItemMarkup({ label: '削除' })
+  + menuItemMarkup({ label: '削除', separated: true })
 
 const meta: Meta<Args> = {
   title: 'Components/Menu',
@@ -79,7 +78,7 @@ export const Placement: Story = { args: { placement: 'end' }, play: openMenu }
 export const Disabled: Story = {
   args: {
     items:
-      menuItemMarkup({ label: '複製', href: '#duplicate' })
+      menuItemMarkup({ label: '複製', href: '/items/1/duplicate' })
       + menuItemMarkup({ label: '書き出し', disabled: true })
       + menuItemMarkup({ label: '削除' }),
   },
@@ -91,11 +90,14 @@ export const Disabled: Story = {
   },
 }
 
-/** 区切りは `<hr>`。暗黙の role が `separator` なので role 属性を手で書かない */
+/**
+ * 区切りは項目に付く**装飾**（`separated`）。要素を挟まないのは、`role="menu"` が
+ * `menuitem` 系しか持てないため（WAI-ARIA 1.2 の Required Owned Elements）。
+ */
 export const WithSeparator: Story = {
   play: async (context) => {
     await openMenu(context)
-    await expect(context.canvasElement.querySelectorAll('rd-menu hr')).toHaveLength(1)
+    await expect(context.canvasElement.querySelectorAll('rd-menu [data-separated]')).toHaveLength(1)
   },
 }
 

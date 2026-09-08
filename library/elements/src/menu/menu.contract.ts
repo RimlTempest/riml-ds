@@ -14,7 +14,7 @@ import { escapeHtml, renderMarkup } from '../_shared/markup.js'
  * `querySelector` で 1 個目しか見ないので、複数一致する役割は契約で必須にできない。
  * 数と並びが要る element 側が `querySelectorAll` で読む。
  */
-export const ITEM_SELECTOR = ':scope > [popover] :is(a[href], button)'
+export const ITEM_SELECTOR = ':scope > [popover] > :is(a[href], button, [aria-disabled="true"])'
 
 export const contract = {
   pe: 'B',
@@ -31,11 +31,10 @@ export const contract = {
       // トリガーを木のノードにしないのは、ラッパー生成器が `popovertarget` を
       // React の `popoverTarget` に読み替えられないため（生成物が型検査に落ちる）
       { raw: '$trigger' },
-      {
-        tag: 'div',
-        attrs: { popover: '', id: '$id' },
-        children: [{ tag: 'ul', children: [{ raw: '$items' }] }],
-      },
+      // 項目は `[popover]` の**直下**に並べる。`role="menu"` が持てるのは `menuitem` 系
+      // だけで（WAI-ARIA 1.2 の Required Owned Elements）、`<ul><li>` を挟むと
+      // markuplint の `wai-aria` が落ちる（`rd-tabs` の tablist と同じ理由）
+      { tag: 'div', attrs: { popover: '', id: '$id' }, children: [{ raw: '$items' }] },
     ],
   },
 } as const satisfies Contract
@@ -45,7 +44,7 @@ export type MenuMarkupProps = {
   readonly id: string
   /** トリガーの文言。そのままメニューのアクセシブル名になる */
   readonly label: string
-  /** `menuItemMarkup()` / `menuSeparatorMarkup()` を並べた断片。**エスケープされない** */
+  /** `menuItemMarkup()` を並べた断片。**エスケープされない** */
   readonly items: string
   /** インライン方向の揃え。`end` はトリガーの終端に揃える */
   readonly placement?: 'start' | 'end'
@@ -57,24 +56,38 @@ export type MenuItemMarkupProps = {
   readonly href?: string
   /** 押せないことを伝えるだけ。**フォーカスは失わない**（見つけられない項目を作らない） */
   readonly disabled?: boolean
+  /**
+   * この項目の前に区切り線を引く（見た目だけ。`menu.css` が `<li>` に罫線を描く）。
+   *
+   * **`<li role="separator">` や `<hr>` を挟まない。** `role="menu"` が持てるのは
+   * `menuitem` 系だけで（WAI-ARIA 1.2 の Required Owned Elements）、区切りを要素として
+   * 置くと markuplint の `wai-aria` が落ちる。区切りは装飾なので読み上げに出さない。
+   */
+  readonly separated?: boolean
 }
 
-/** 押せない印。`disabled` 属性ではなく `aria-disabled`（ADR-0008 §5） */
-const disabledAttr = (disabled: boolean | undefined): string =>
-  disabled === true ? ' aria-disabled="true"' : ''
+/** 区切りは `<li>` に付く印。要素を挟まないので読み上げの並びは変わらない */
+const separatedAttr = (separated: boolean | undefined): string =>
+  separated === true ? ' data-separated=""' : ''
 
 /**
- * 項目 1 つ。`href` があればリンク、無ければボタン。
- * `<li>` で包むのは `<ul>` の許す子が `<li>` だけだから。JS が来たら `<li>` は
- * `role="presentation"` になり、`role="menu"` が `role="menuitem"` を直接持つ形になる。
+ * 項目 1 つ。`href` があればリンク、無ければボタン、押せないなら `<span>`。
+ *
+ * **`<li>` で包まない。** `role="menu"` は `role="menuitem"` を**直接**持つ必要があり、
+ * `<li role="presentation">` を挟むと markuplint の `wai-aria` が落ちる（`rd-tabs` と同じ）。
+ * 押せない項目を `<span>` にするのは、`<button>` / `<a href>` に `aria-disabled` を付けると
+ * 「ネイティブの `disabled` と矛盾する」と落ちるため。JS が `tabindex="-1"` を足すので
+ * **フォーカスは失わない**（見つけられない項目を作らない）。
  */
 export const menuItemMarkup = (props: MenuItemMarkupProps): string => {
   const label = escapeHtml(props.label)
-  const inner =
-    props.href === undefined
-      ? `<button type="button"${disabledAttr(props.disabled)}>${label}</button>`
-      : `<a href="${escapeHtml(props.href)}"${disabledAttr(props.disabled)}>${label}</a>`
-  return `<li>${inner}</li>`
+  const mark = separatedAttr(props.separated)
+  if (props.disabled === true) {
+    return `<span${mark} aria-disabled="true">${label}</span>`
+  }
+  return props.href === undefined
+    ? `<button${mark} type="button">${label}</button>`
+    : `<a${mark} href="${escapeHtml(props.href)}">${label}</a>`
 }
 
 /**
@@ -84,9 +97,6 @@ export const menuItemMarkup = (props: MenuItemMarkupProps): string => {
 export const menuTriggerMarkup = (props: { readonly id: string; readonly label: string }): string =>
   `<rd-button slot="trigger"><button type="button" popovertarget="${escapeHtml(props.id)}">`
   + `${escapeHtml(props.label)}</button></rd-button>`
-
-/** 区切り。`<hr>` の暗黙の role が `separator` なので role 属性を手で書かない */
-export const menuSeparatorMarkup = (): string => '<li><hr></li>'
 
 export const markup = (props: MenuMarkupProps): string =>
   renderMarkup(contract.tree, { ...props, trigger: menuTriggerMarkup(props) })

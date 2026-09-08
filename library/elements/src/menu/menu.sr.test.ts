@@ -1,7 +1,7 @@
 import { virtual } from '@guidepup/virtual-screen-reader'
 import { afterEach, expect, it } from 'vitest'
 import { cleanupFixtures, fixtureOf } from '../../test/fixture.js'
-import { markup, menuItemMarkup, menuSeparatorMarkup } from './menu.contract.js'
+import { markup, menuItemMarkup } from './menu.contract.js'
 // rd-menu を登録するための副作用 import
 // oxlint-disable-next-line import/no-unassigned-import
 import './menu.define.js'
@@ -12,8 +12,7 @@ const FIXTURE = markup({
   label: '操作',
   items:
     menuItemMarkup({ label: '複製', href: '#duplicate' })
-    + menuSeparatorMarkup()
-    + menuItemMarkup({ label: '削除' }),
+    + menuItemMarkup({ label: '削除', separated: true }),
 })
 
 /** 読み上げに現れた語をぜんぶ集める（仮想 SR の移動は逐次なので再帰で書く） */

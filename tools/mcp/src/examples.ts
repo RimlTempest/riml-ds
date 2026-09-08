@@ -20,7 +20,6 @@ import {
 import {
   markup as menuMarkup,
   menuItemMarkup,
-  menuSeparatorMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/menu/contract'
 import { markup as selectMarkup } from '@rimltempest/riml-ds-elements/experimental/select/contract'
 import { markup as sliderMarkup } from '@rimltempest/riml-ds-elements/experimental/slider/contract'
@@ -107,8 +106,7 @@ const MENU = {
   label: '操作',
   items:
     menuItemMarkup({ label: '複製', href: '/items/1/duplicate' })
-    + menuSeparatorMarkup()
-    + menuItemMarkup({ label: '削除' }),
+    + menuItemMarkup({ label: '削除', separated: true }),
 } as const
 const POPOVER = {
   id: 'filters',

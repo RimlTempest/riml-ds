@@ -16,7 +16,6 @@ import { disclosureMarkup } from '../../library/elements/src/disclosure/index.js
 import {
   markup as menuMarkup,
   menuItemMarkup,
-  menuSeparatorMarkup,
 } from '../../library/elements/src/menu/menu.contract.js'
 import { meterMarkup } from '../../library/elements/src/meter/index.js'
 import { markup as popoverMarkup } from '../../library/elements/src/popover/popover.contract.js'
@@ -199,8 +198,7 @@ const PAGES: Readonly<Record<string, string>> = {
       label: '操作',
       items:
         menuItemMarkup({ label: '複製', href: '/echo.html' })
-        + menuSeparatorMarkup()
-        + menuItemMarkup({ label: '削除' }),
+        + menuItemMarkup({ label: '削除', separated: true }),
     })}`,
   ),
   'popover.html': page(

@@ -4,7 +4,7 @@ import { markup as selectMarkup } from '../select/select.contract.js'
 // rd-menu / rd-select を登録するための副作用 import（package.json の sideEffects に載っている）
 // oxlint-disable-next-line import/no-unassigned-import
 import '../select/select.define.js'
-import { markup, menuItemMarkup, menuSeparatorMarkup } from './menu.contract.js'
+import { markup, menuItemMarkup } from './menu.contract.js'
 // oxlint-disable-next-line import/no-unassigned-import
 import './menu.define.js'
 import { RdMenu } from './menu.element.js'
@@ -13,14 +13,14 @@ const FIXTURE = markup({
   id: 'row-actions',
   label: '操作',
   items:
+    // テストの中ではページ内リンクにする（実パスだとブラウザが本当に遷移してしまう）
     menuItemMarkup({ label: '複製', href: '#duplicate' })
-    + menuSeparatorMarkup()
-    + menuItemMarkup({ label: '削除' })
+    + menuItemMarkup({ label: '削除', separated: true })
     + menuItemMarkup({ label: '書き出し', disabled: true }),
 })
 
 const itemsOf = (el: RdMenu): readonly HTMLElement[] =>
-  [...el.querySelectorAll('[popover] :is(a[href], button)')].filter(
+  [...el.querySelectorAll('[popover] > :is(a[href], button, [aria-disabled])')].filter(
     (node) => node instanceof HTMLElement,
   )
 
@@ -56,9 +56,9 @@ it('契約どおりの子があれば malformed にならない', async () => {
   expect(el.matches(':state(malformed)')).toBe(false)
 })
 
-it('リストは menu、項目は menuitem として公開される（<li> は presentation）', async () => {
+it('[popover] 自身が menu で、項目は menuitem として直接ぶら下がる', async () => {
   const el = await fixtureOf(RdMenu, FIXTURE)
-  const list = el.querySelector('[popover] > ul')
+  const list = listOf(el)
   expect(list?.getAttribute('role')).toBe('menu')
   expect(list?.getAttribute('aria-labelledby')).toBe(triggerOf(el)?.id)
   expect(triggerOf(el)?.id).not.toBe('')
@@ -69,12 +69,8 @@ it('リストは menu、項目は menuitem として公開される（<li> は p
     'menuitem',
   ])
   expect(items.map((item) => item.getAttribute('tabindex'))).toEqual(['-1', '-1', '-1'])
-  expect([...el.querySelectorAll('li')].map((li) => li.getAttribute('role'))).toEqual([
-    'presentation',
-    'presentation',
-    'presentation',
-    'presentation',
-  ])
+  // <li> を挟まない（role="menu" は menuitem を直接持つ必要がある）
+  expect(el.querySelectorAll('li')).toHaveLength(0)
 })
 
 it('トリガーは aria-haspopup="menu" と aria-expanded を持つ', async () => {

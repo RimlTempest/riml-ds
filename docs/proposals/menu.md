@@ -25,7 +25,9 @@
 - Esc はネイティブの popover が閉じる。閉じたらトリガーへフォーカスを戻す
 - 押せない項目は `aria-disabled`。**`disabled` にしない**——フォーカスできない項目は
   スクリーンリーダーの利用者が「無い」と誤解する
-- 区切りは `<li><hr></li>`。`<hr>` の暗黙の role が `separator` なので role 属性を手で書かない。
+- 区切りは項目に付く**装飾**（`menuItemMarkup({ separated: true })` → `<li data-separated>` に罫線）。
+  要素として挟まないのは、`role="menu"` が持てるのが `menuitem` 系だけだから
+  （WAI-ARIA 1.2 の Required Owned Elements。`<li role="separator">` も `<hr>` も落ちる）。
   `<li>` はすべて `role="presentation"` にして、`role="menu"` の直下に `listitem` を残さない
 - 当たっている項目は面の色**と**インライン始端の太い縦罫で示す（色だけに頼らない）
 - 項目の当たり判定は `sizing.target-min`（2.75rem）以上

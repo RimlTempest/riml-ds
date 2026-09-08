@@ -10,6 +10,9 @@ import { styles } from './menu.styles.js'
 
 let sequence = 0
 
+/** click の発生元をたどる先。`ITEM_SELECTOR` は `:scope` を含むので `closest` に渡せない */
+const CLICKABLE = 'a[href], button, [aria-disabled="true"]'
+
 /**
  * 押すと項目が開くメニュー。**HTML だけで開閉する**（`popovertarget` + `[popover]`）ので
  * JS が無くても項目に辿り着ける（ティア B、ADR-0012）。項目の `click` は `preventDefault`
@@ -74,12 +77,10 @@ export class RdMenu extends LitElement {
     syncStates(this.#internals, view.states)
     const trigger = this.#trigger()
     const list = this.#list()
-    const menu = asElement(list?.querySelector('ul'))
+    // role="menu" は `[popover]` 自身に置く。menuitem を**直接**持つ形にする
     applyAttrs(trigger, triggerAttributes(view))
-    applyAttrs(menu, { role: 'menu' })
-    syncAttribute(menu, 'aria-labelledby', trigger?.id)
-    // 区切りの <li> も presentation にする。role="menu" の直下に listitem を残さない
-    list?.querySelectorAll('li').forEach((li) => applyAttrs(li, { role: 'presentation' }))
+    applyAttrs(list, { role: 'menu' })
+    syncAttribute(list, 'aria-labelledby', trigger?.id)
     items.forEach((item, index) => applyAttrs(item, menuItemAttributes(view.items[index])))
     anchorPopover(trigger, list, this.#name, { placement: this.placement })
   }
@@ -132,7 +133,7 @@ export class RdMenu extends LitElement {
   }
 
   #onSelect = (event: Event): void => {
-    const target = event.target instanceof Element ? event.target.closest('a[href], button') : null
+    const target = event.target instanceof Element ? event.target.closest(CLICKABLE) : null
     const items = this.#items()
     const index = items.findIndex((candidate) => candidate === target)
     const item = items[index]
