@@ -11,8 +11,13 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buttonMarkup } from '../../library/elements/src/button/index.js'
 import { checkboxMarkup } from '../../library/elements/src/checkbox/index.js'
+import {
+  checkboxGroupMarkup,
+  checkboxOptionMarkup,
+} from '../../library/elements/src/checkbox-group/index.js'
 import { dialogMarkup } from '../../library/elements/src/dialog/index.js'
 import { disclosureMarkup } from '../../library/elements/src/disclosure/index.js'
+import { inputOtpMarkup, otpCellsMarkup } from '../../library/elements/src/input-otp/index.js'
 import {
   markup as menuMarkup,
   menuItemMarkup,
@@ -47,7 +52,9 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/dialog/dialog.css', 'dialog.css'],
   ['library/elements/src/select/select.css', 'select.css'],
   ['library/elements/src/checkbox/checkbox.css', 'checkbox.css'],
+  ['library/elements/src/checkbox-group/checkbox-group.css', 'checkbox-group.css'],
   ['library/elements/src/disclosure/disclosure.css', 'disclosure.css'],
+  ['library/elements/src/input-otp/input-otp.css', 'input-otp.css'],
   ['library/elements/src/meter/meter.css', 'meter.css'],
   ['library/elements/src/radio-group/radio-group.css', 'radio-group.css'],
   ['library/elements/src/slider/slider.css', 'slider.css'],
@@ -153,6 +160,13 @@ const plans = (name: string, required: boolean): string =>
       ...(required ? { required: true } : {}),
     }),
     radioOptionMarkup({ id: `${name}-pro`, name, value: 'pro', label: '有料' }),
+  ].join('')
+
+/** 同じ `name` を並べると `?tags=a&tags=b` の形で送信される */
+const tags = (name: string): string =>
+  [
+    checkboxOptionMarkup({ id: `${name}-work`, name, value: 'a', label: '仕事' }),
+    checkboxOptionMarkup({ id: `${name}-private`, name, value: 'b', label: '私用' }),
   ].join('')
 
 const PAGES: Readonly<Record<string, string>> = {
@@ -346,6 +360,36 @@ const PAGES: Readonly<Record<string, string>> = {
         })}
         ${submit}
       </form>`,
+  ),
+  'checkbox-group.html': page(
+    '複数選択',
+    `      <form method="get" action="/echo.html">
+        ${checkboxGroupMarkup({ label: 'タグ', children: tags('tags'), min: '1' })}
+        ${checkboxGroupMarkup({
+          label: '表示',
+          children: tags('view'),
+          segmented: true,
+        })}
+        ${submit}
+      </form>`,
+  ),
+  'input-otp.html': page(
+    'ワンタイムコード',
+    `      <form method="get" action="/echo.html">
+        ${inputOtpMarkup({
+          label: '確認コード',
+          children: otpCellsMarkup({ name: 'code', length: 4 }),
+          hint: '4 桁の数字',
+        })}
+        ${submit}
+      </form>`,
+  ),
+  'button-group.html': page(
+    'ボタンの枕',
+    `      <div class="rd-button-group" role="group" aria-label="表示">
+        ${buttonMarkup({ label: '一覧' })}
+        ${buttonMarkup({ label: '格子', variant: 'secondary' })}
+      </div>`,
   ),
   'input-group.html': page(
     '入力の枕',

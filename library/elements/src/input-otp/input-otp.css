@@ -1,0 +1,94 @@
+@layer rd.components {
+  rd-input-otp {
+    display: block;
+  }
+
+  /* <fieldset> の枕と罫線は消す。見出しの役割は <legend> が持つ */
+  rd-input-otp fieldset {
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+  }
+
+  /* ラベルは太字のインク（docs/brand.md §7.3）。--rd-type-label は無いので body + 太字 */
+  rd-input-otp legend {
+    padding: 0;
+    color: var(--rd-color-text-default);
+    font: var(--rd-type-body);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  rd-input-otp [part='cells'] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rd-input-otp-gap, var(--rd-space-2));
+    margin-block-start: var(--rd-space-1);
+  }
+
+  /* 桁は正方形。等幅の数字で桁がずれないようにする */
+  rd-input-otp input {
+    inline-size: var(--rd-sizing-target-min);
+    block-size: var(--rd-sizing-target-min);
+    padding: 0;
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-strong);
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-surface-raised);
+    color: var(--rd-color-text-default);
+    font: var(--rd-type-heading-3);
+    font-variant-numeric: tabular-nums;
+
+    /* stylelint-disable-next-line property-disallowed-list -- center は方向を持たない。RTL でも同じ */
+    text-align: center;
+    caret-color: var(--rd-color-accent-default);
+  }
+
+  rd-input-otp input:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* 入力中には怒らない（`:user-invalid`）。色だけでなく罫線の色でも示す */
+  rd-input-otp input:user-invalid {
+    border-color: var(--rd-color-status-danger-default);
+  }
+
+  @supports selector(:state(invalid)) {
+    rd-input-otp:state(invalid) input {
+      border-color: var(--rd-color-status-danger-default);
+    }
+  }
+
+  rd-input-otp > [part='hint'] {
+    margin-block: var(--rd-space-1) 0;
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+  }
+
+  /* 色だけに頼らない：太字と縦罫で「エラー」を形でも示す（accessibility.md 9） */
+  rd-input-otp > [part='error'] {
+    margin-block: var(--rd-space-1) 0;
+    padding-inline-start: var(--rd-space-2);
+    border-inline-start: var(--rd-focus-ring-width) solid var(--rd-color-status-danger-default);
+    color: var(--rd-color-status-danger-text);
+    font: var(--rd-type-small);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  @media (forced-colors: active) {
+    rd-input-otp input {
+      border-color: CanvasText;
+    }
+
+    rd-input-otp input:focus-visible {
+      outline-color: Highlight;
+    }
+
+    rd-input-otp > [part='error'] {
+      border-inline-start-color: MarkText;
+      color: MarkText;
+    }
+  }
+}

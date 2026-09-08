@@ -2,6 +2,8 @@ import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-vue'
 // experimental は専用サブパスからしか出ない（ADR-0009）
 import {
   RdCheckbox,
+  RdCheckboxGroup,
+  RdInputOtp,
   RdMeter,
   RdRadioGroup,
   RdSelect,
@@ -80,6 +82,41 @@ export const App = defineComponent(
           min: '0',
           max: '10',
         }),
+        h(RdCheckboxGroup, { label: 'タグ' }, () => [
+          h('label', null, [
+            h('input', { type: 'checkbox', id: 'tag-work', name: 'tags', value: 'a' }),
+            '仕事',
+          ]),
+          h('label', null, [
+            h('input', { type: 'checkbox', id: 'tag-private', name: 'tags', value: 'b' }),
+            '私用',
+          ]),
+        ]),
+        h(RdInputOtp, { label: '確認コード' }, () => [
+          h('input', {
+            type: 'text',
+            inputmode: 'numeric',
+            pattern: '[0-9]',
+            maxlength: '1',
+            id: 'code-1',
+            name: 'code-1',
+            'aria-label': '1 桁目',
+            title: '0〜9 の数字 1 文字',
+            required: true,
+            autocomplete: 'one-time-code',
+          }),
+          h('input', {
+            type: 'text',
+            inputmode: 'numeric',
+            pattern: '[0-9]',
+            maxlength: '1',
+            id: 'code-2',
+            name: 'code-2',
+            'aria-label': '2 桁目',
+            title: '0〜9 の数字 1 文字',
+            required: true,
+          }),
+        ]),
         h('rd-live-region'),
       ])
   },
