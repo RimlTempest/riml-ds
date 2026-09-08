@@ -1483,6 +1483,99 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/slider/slider.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-slider",
+          "declaration": {
+            "name": "RdSlider",
+            "module": "/src/slider/slider.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/slider/slider.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "TODO: 部品の役割を 1〜2 文で書く。ネイティブ要素を子として包む（ティア A、ADR-0012）。\nJS が無くても動く。部品が足すのは `:state()` と強化ノードだけ。",
+          "name": "RdSlider",
+          "cssParts": [
+            {
+              "description": "補足文言",
+              "name": "hint"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "hint",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "hint"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "hint",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "hint"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "malformed",
+              "description": "契約の子が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "TODO",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-slider",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdSlider",
+          "declaration": {
+            "name": "RdSlider",
+            "module": "src/slider/slider.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/text-field/text-field.define.ts",
       "declarations": [],
       "exports": [

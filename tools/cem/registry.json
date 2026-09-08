@@ -80,6 +80,15 @@
     "dependsOn": []
   },
   {
+    "name": "slider",
+    "tag": "rd-slider",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "TODO",
+    "files": ["slider/index.js", "slider/slider.define.js", "slider/slider.css"],
+    "dependsOn": []
+  },
+  {
     "name": "text-field",
     "tag": "rd-text-field",
     "pe": "A",
