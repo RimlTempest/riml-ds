@@ -40,6 +40,15 @@
     "dependsOn": []
   },
   {
+    "name": "command",
+    "tag": "rd-command",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "打って絞って選ぶコマンドパレット。項目の <ul> は利用側が書く",
+    "files": ["command/index.js", "command/command.define.js", "command/command.css"],
+    "dependsOn": []
+  },
+  {
     "name": "dialog",
     "tag": "rd-dialog",
     "pe": "B",

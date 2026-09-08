@@ -24,6 +24,7 @@ describe('listElements', () => {
       'rd-checkbox',
       'rd-checkbox-group',
       'rd-combobox',
+      'rd-command',
       'rd-dialog',
       'rd-disclosure',
       'rd-input-otp',
@@ -52,6 +53,7 @@ describe('listElements', () => {
       'rd-checkbox',
       'rd-checkbox-group',
       'rd-combobox',
+      'rd-command',
       'rd-dialog',
       'rd-disclosure',
       'rd-input-otp',
@@ -79,6 +81,22 @@ describe('listElements', () => {
     expect(result.value.status).toBe('experimental')
     expect(result.value.examples.html).toContain('<option value="jp">')
     expect(result.value.examples.html).toContain('<label for="country">')
+  })
+
+  it('rd-command の例は <ul> のグループと項目のリンクを出す（plan 028）', () => {
+    const result = getElement(manifest, elementExamples, 'rd-command')
+    expect(result.ok).toBe(true)
+    if (!result.ok) {
+      return
+    }
+    expect(result.value.pe).toBe('A')
+    expect(result.value.examples.html).toContain('<ul aria-label="ページ">')
+    expect(result.value.examples.html).toContain('<input id="palette" type="search"')
+    expect(result.value.attributes.map((attribute) => attribute.name)).toEqual([
+      'filter',
+      'empty-text',
+    ])
+    expect(result.value.events.map((event) => event.name)).toEqual(['rd-select'])
   })
 
   it('rd-dialog の例は placement を属性として出す（plan 022）', () => {

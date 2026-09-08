@@ -18,6 +18,11 @@ import {
   comboboxOptionMarkup,
   markup as comboboxMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/combobox/contract'
+import {
+  commandGroupMarkup,
+  commandItemMarkup,
+  markup as commandMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/command/contract'
 import { markup as disclosureMarkup } from '@rimltempest/riml-ds-elements/experimental/disclosure/contract'
 import {
   markup as inputOtpMarkup,
@@ -133,6 +138,36 @@ const COMBOBOX = {
     + comboboxOptionMarkup({ value: 'kanji', label: 'かんじ' })
     + comboboxOptionMarkup({ value: 'katakana', label: 'カナ' }),
 } as const
+/**
+ * 項目は**リンクとボタンのまま**（部品は生成しない）。グループは `<ul>` を分けるだけで、
+ * 見出しは `aria-label` から CSS が描く。⌘K で開く窓は利用側が `rd-dialog` で作る。
+ */
+const COMMAND = {
+  id: 'palette',
+  label: 'コマンド',
+  placeholder: '打って絞り込む',
+  groups:
+    commandGroupMarkup({
+      label: 'ページ',
+      items:
+        commandItemMarkup({ label: 'ホーム', href: '/', keywords: 'home top' })
+        + commandItemMarkup({
+          label: '設定',
+          href: '/settings',
+          keywords: 'せってい preferences config',
+          shortcut: '⌘,',
+        }),
+    })
+    + commandGroupMarkup({
+      label: '操作',
+      items: commandItemMarkup({
+        label: '新しいノート',
+        value: 'new-note',
+        keywords: 'あたらしい new note',
+        shortcut: '⌘N',
+      }),
+    }),
+} as const
 /** 値は `code-1..N` の N フィールドで送信される。連結した値は `el.value` で読む */
 const INPUT_OTP = {
   label: '確認コード',
@@ -188,6 +223,7 @@ export const elementExamples = {
   'rd-checkbox': { html: checkboxMarkup(CHECKBOX), props: CHECKBOX },
   'rd-checkbox-group': { html: checkboxGroupMarkup(CHECKBOX_GROUP), props: CHECKBOX_GROUP },
   'rd-combobox': { html: comboboxMarkup(COMBOBOX), props: COMBOBOX },
+  'rd-command': { html: commandMarkup(COMMAND), props: COMMAND },
   'rd-disclosure': { html: disclosureMarkup(DISCLOSURE), props: DISCLOSURE },
   'rd-input-otp': { html: inputOtpMarkup(INPUT_OTP), props: INPUT_OTP },
   'rd-menu': { html: menuMarkup(MENU), props: MENU },

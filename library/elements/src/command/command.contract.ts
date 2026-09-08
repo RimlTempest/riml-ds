@@ -36,6 +36,8 @@ export const contract = {
           // 履歴の吹き出しと項目の一覧が二重に出ないようにする
           autocomplete: 'off',
           placeholder: '$placeholder',
+          // 初期の絞り込み文字（React の uncontrolled な `defaultValue` に写る）
+          value: '$defaultValue',
         },
       },
       // 項目は生 HTML。利用側が `commandGroupMarkup()` / `commandItemMarkup()` で組み立てる
@@ -53,6 +55,8 @@ export type CommandMarkupProps = {
   /** `commandGroupMarkup()` を並べた断片。**エスケープされない**ので信頼済みの断片だけ */
   readonly groups: string
   readonly placeholder?: string
+  /** 最初から入っている絞り込み文字。JS 無しでも `<input value>` として残る */
+  readonly defaultValue?: string
   readonly filter?: CommandFilter
   /** 0 件のときの文言。既定はページの言語で決まる（`command.logic.ts` の `emptyCopy`） */
   readonly emptyText?: string

@@ -11,6 +11,9 @@ export type Item = { readonly text: string; readonly keywords: string }
 /**
  * その項目が残るか。`_shared/text-filter.ts` に 1 件だけ渡して同じ比較規則
  * （NFKC + `toLocaleLowerCase`）を使う——combobox と絞り込みの当たり方をそろえる。
+ *
+ * `keywords` は**空白区切りの 1 つの文字列**のまま比べる。`prefix` では先頭の別名しか
+ * 当たらない（`contains` は全部当たる）——別名を前方一致で引かせたいなら先頭に置く。
  */
 export const matches = (item: Item, query: string, mode: FilterMode): boolean =>
   filterCandidates([{ value: item.keywords, label: item.text }], query, mode).length === 1

@@ -19,7 +19,7 @@ describe('markup', () => {
     )
   })
 
-  it('filter / empty-text / placeholder は指定したときだけ出る', () => {
+  it('filter / empty-text / placeholder / defaultValue は指定したときだけ出る', () => {
     expect(
       markup({
         id: 'cmd',
@@ -28,10 +28,11 @@ describe('markup', () => {
         filter: 'prefix',
         emptyText: '該当なし',
         placeholder: '打って絞る',
+        defaultValue: 'ノート',
       }),
     ).toBe(
       '<rd-command filter="prefix" empty-text="該当なし"><label for="cmd">コマンド</label>'
-        + '<input id="cmd" type="search" autocomplete="off" placeholder="打って絞る">'
+        + '<input id="cmd" type="search" autocomplete="off" placeholder="打って絞る" value="ノート">'
         + `${GROUPS}</rd-command>`,
     )
   })

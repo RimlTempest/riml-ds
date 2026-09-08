@@ -1,21 +1,29 @@
 @layer rd.components {
   rd-command {
-    display: block;
+    display: grid;
+    gap: var(--rd-command-gap, var(--rd-space-1));
   }
 
-  /* TODO: セレクタは `rd-command > <native>` の 1 段に留める（利用側のクラスを仮定しない） */
+  /* ラベルは太字のインク（docs/brand.md §7.3） */
+  rd-command > label {
+    color: var(--rd-color-text-default);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  /* `rd-combobox > input` と同じ枡。共通化はしない（部品ごとに閉じる） */
   rd-command > input {
-    display: block;
+    inline-size: 100%;
     min-block-size: var(--rd-sizing-target-min);
     padding-block: var(--rd-space-2);
     padding-inline: var(--rd-space-3);
     border-width: var(--rd-border-width-default);
     border-style: solid;
-    border-color: var(--rd-color-border-strong);
+    border-color: var(--rd-color-border-default);
     border-radius: var(--rd-radius-md);
-    background: var(--rd-color-surface-default);
+    background: var(--rd-color-surface-raised);
     color: var(--rd-color-text-default);
     font: inherit;
+    line-height: var(--rd-line-height-body);
   }
 
   rd-command > input:focus-visible {
@@ -23,10 +31,78 @@
     outline-offset: var(--rd-focus-ring-offset);
   }
 
-  rd-command > [part='hint'] {
-    margin-block: var(--rd-space-1) 0;
+  rd-command > ul {
+    margin: 0;
+    padding-block: var(--rd-space-1);
+    padding-inline: 0;
+    list-style: none;
+  }
+
+  /* 見出しは `aria-label` から描く——DOM に二重の文字を置かない（読み上げの数が合わなくなる） */
+  rd-command > ul[aria-label]::before {
+    display: block;
+    padding-block: var(--rd-space-1);
+    padding-inline: var(--rd-space-3);
     color: var(--rd-color-text-muted);
     font: var(--rd-type-small);
+    content: attr(aria-label);
+  }
+
+  rd-command > ul > li > :is(a, button) {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rd-space-2);
+    inline-size: 100%;
+    min-block-size: var(--rd-sizing-target-min);
+    padding-block: var(--rd-space-2);
+    padding-inline: var(--rd-space-3);
+    border-width: 0;
+    border-inline-start: calc(var(--rd-border-width-default) * 2) solid transparent;
+    border-radius: var(--rd-radius-md);
+    background: transparent;
+    color: var(--rd-color-text-default);
+    font: inherit;
+    /* stylelint-disable-next-line property-disallowed-list -- start は論理値。RTL で自動的に反転する */
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* 当たっている項目は面の色と**左の縦罫**で示す（色だけに頼らない）。
+     縦罫は border（box-shadow の inset は stylelint の色規則を通せない）。
+     `outline` は書かない——フォーカスリングは `base.css` に任せる */
+  rd-command > ul > li > :is(a, button):focus-visible {
+    border-inline-start-color: var(--rd-color-accent-default);
+    background: var(--rd-color-surface-hover);
+  }
+
+  @media (hover: hover) {
+    rd-command > ul > li > :is(a, button):hover {
+      border-inline-start-color: var(--rd-color-accent-default);
+      background: var(--rd-color-surface-hover);
+    }
+  }
+
+  /* 近道のキーキャップは行の終端へ寄せる（見た目は `@rimltempest/riml-ds-css` の .rd-kbd） */
+  rd-command > ul > li > :is(a, button) > kbd {
+    margin-inline-start: auto;
+  }
+
+  rd-command > [part='empty'] {
+    margin: 0;
+    padding: var(--rd-space-3);
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+    /* stylelint-disable-next-line property-disallowed-list -- center は方向を持たない。RTL でも同じ */
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    rd-command > ul > li > :is(a, button) {
+      transition: background-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+    }
   }
 
   @media (forced-colors: active) {
@@ -36,6 +112,14 @@
 
     rd-command > input:focus-visible {
       outline-color: Highlight;
+    }
+
+    rd-command > ul[aria-label]::before {
+      color: GrayText;
+    }
+
+    rd-command > ul > li > :is(a, button):focus-visible {
+      border-inline-start-color: Highlight;
     }
   }
 }

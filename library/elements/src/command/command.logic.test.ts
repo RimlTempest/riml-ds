@@ -53,6 +53,7 @@ describe('matches', () => {
   it('prefix は先頭一致、none と空の query は全件通す', () => {
     expect(matches(item('新しいノート', 'new'), 'new', 'prefix')).toBe(true)
     expect(matches(item('新しいノート', 'new'), 'ew', 'prefix')).toBe(false)
+    expect(matches(item('新しいノート', 'new note'), 'note', 'prefix')).toBe(false)
     expect(matches(item('新しいノート', 'new'), 'ew', 'none')).toBe(true)
     expect(matches(item('新しいノート', 'new'), '', 'contains')).toBe(true)
   })

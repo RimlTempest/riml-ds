@@ -116,6 +116,19 @@
       "default": "./dist/combobox/combobox.define.js"
     },
     "./experimental/combobox/style.css": "./dist/combobox/combobox.css",
+    "./experimental/command": {
+      "types": "./dist/experimental/command/index.d.ts",
+      "default": "./dist/experimental/command/index.js"
+    },
+    "./experimental/command/contract": {
+      "types": "./dist/command/command.contract.d.ts",
+      "default": "./dist/command/command.contract.js"
+    },
+    "./experimental/command/define": {
+      "types": "./dist/command/command.define.d.ts",
+      "default": "./dist/command/command.define.js"
+    },
+    "./experimental/command/style.css": "./dist/command/command.css",
     "./experimental/meter": {
       "types": "./dist/experimental/meter/index.d.ts",
       "default": "./dist/experimental/meter/index.js"
