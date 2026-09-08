@@ -85,7 +85,9 @@ const nodeSource = (
     return `${pad}${node.prop === childrenText ? `slots['default']?.() ?? props.${node.prop}` : `props.${node.prop}`}`
   }
   if ('raw' in node) {
-    return `${pad}slots['default']?.()`
+    // 既定 slot は `children`。名前つきは `<template #trigger>` で受ける
+    const name = node.raw.startsWith('$') ? node.raw.slice(1) : node.raw
+    return `${pad}slots['${name === 'children' ? 'default' : name}']?.()`
   }
   const custom = node.tag.includes('-')
   const entries = Object.entries(node.attrs ?? {}).flatMap(([attr, value]) =>

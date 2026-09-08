@@ -25,7 +25,8 @@ const dialect: Dialect = {
   },
   text: (prop, isChildren) =>
     isChildren ? `{#if children}{@render children()}{:else}{${prop}}{/if}` : `{${prop}}`,
-  raw: () => '{@render children()}',
+  // 既定 slot は `children`。名前つきは snippet prop で受ける（渡されなければ何も描かない）
+  raw: (name) => (name === 'children' ? '{@render children()}' : `{@render ${name}?.()}`),
 }
 
 const componentFile = (spec: WrapperSpec): GeneratedFile => {
