@@ -52,6 +52,12 @@
   },
   "nodeRules": [
     {
+      "selector": "[aria-hidden=\"true\"], [aria-hidden=\"true\"] *",
+      "rules": {
+        "no-empty-palpable-content": false
+      }
+    },
+    {
       "selector": "button[aria-label]",
       "rules": {
         "no-empty-palpable-content": false
