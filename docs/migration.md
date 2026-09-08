@@ -102,6 +102,8 @@ after:
 
 - 帯の左端に ×（閉じる）が出る。`persistent` のときは出ない
 - `rd-dismiss` の `detail.reason` に `'button'` が増えた。`reason` で分岐しているコードは網羅を見直す
+- 開いたときの初期フォーカスが × に乗る（`showModal()` が最初のフォーカス可能要素を選ぶ）。
+  主ボタンから始めたいなら `slot="actions"` のボタンに `autofocus` を付ける
 - 新しい part: `bar` / `controls` / `close`。`::part(control)` は `<dialog>` と × の**両方**に当たる
   （× は `part="control close"`）。`<dialog>` だけを狙うなら `::part(control):not(::part(close))` ではなく
   `::part(bar)` の外側で当てるか、`::part(close)` を先に上書きする

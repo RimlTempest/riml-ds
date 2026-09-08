@@ -18,6 +18,8 @@ const SHADOW_OPTIONS = { ...LitElement.shadowRootOptions, delegatesFocus: true, 
 /**
  * モーダル。ネイティブ `<dialog>` を枠にし内容はすべて slot（ティア B、ADR-0012）。
  * JS が無いときは `:not(:defined)` の CSS が受け、内容が inline のセクションとして読める。
+ * 開くと `showModal()` が最初のフォーカス可能要素（＝帯の ×）にフォーカスを置く。主ボタンから
+ * 始めるなら、利用側が `slot="actions"` のボタンに `autofocus` を付ける。
  *
  * @summary モーダル。見出しは slot="label" に必ず置く
  * @status stable

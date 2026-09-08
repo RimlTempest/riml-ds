@@ -150,6 +150,21 @@ it('丸は chrome.text の塗り、記号は mask の data URI（brand.md §7.1�
   expect(hit?.blockSize).toBe('44px')
 })
 
+it('Tab で当たる輪は丸のすぐ外に 1 本だけ（UA 既定の二重輪を出さない）', async () => {
+  const el = await fixtureOf(RdWindow, WINDOW())
+  await userEvent.tab()
+  const close = controlFor(el, 'close')
+  expect(el.shadowRoot?.activeElement).toBe(close)
+  const ring = close === undefined ? undefined : getComputedStyle(close)
+  // solid = 作者スタイルが当たっている（auto なら UA の輪が別に描かれる）
+  expect(ring?.outlineStyle).toBe('solid')
+  expect(ring?.outlineWidth).toBe('2px')
+  // (2.75rem - 1.25rem) / 2 = 12px の内側から 2px 外
+  expect(ring?.outlineOffset).toBe('-10px')
+  // 丸（::before）には輪を描かない
+  expect(getComputedStyle(close ?? document.body, '::before').outlineStyle).toBe('none')
+})
+
 it('見出しは slot のまま。帯の色は chrome.default（brand.md §7.1）', async () => {
   const el = await fixtureOf(RdWindow, WINDOW())
   const bar = el.shadowRoot?.querySelector('[part=bar]')

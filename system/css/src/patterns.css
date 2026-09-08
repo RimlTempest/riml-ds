@@ -109,15 +109,17 @@
     --rd-window-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 8 12 8'/%3E%3C/svg%3E");
   }
 
-  /* 既定のリングは丸より大きいので消し、丸のすぐ外に描き直す（brand.md §7.1） */
+  /* 既定のリングは当たり判定（2.75rem）の外に出て丸から離れるので、負の offset で
+     丸のすぐ外に置き換える。既定のリングを幅ゼロや none で消しにいかない——
+     UA 既定の輪は style が auto で、Chromium は auto のとき幅を無視して自前の輪を描く。
+     消したつもりが二重の輪になる（brand.md §7.1） */
+  .rd-window-control:hover,
   .rd-window-control:focus-visible {
-    outline-width: 0;
-  }
-
-  .rd-window-control:hover::before,
-  .rd-window-control:focus-visible::before {
+    /* 当たり判定と丸の差の半分だけ内側に寄せ、そこから 2px 外に輪を置く */
     outline: 2px solid var(--rd-color-chrome-text);
-    outline-offset: 2px;
+    outline-offset: calc(
+      -1 * (var(--rd-sizing-target-min) - var(--rd-window-control-size)) / 2 + 2px
+    );
   }
 
   /* 帯の色を変える。文字色は必ず対応する on-* を使う（brand.md §9） */
@@ -172,6 +174,11 @@
 
     .rd-window-control::after {
       background: ButtonText;
+    }
+
+    .rd-window-control:hover,
+    .rd-window-control:focus-visible {
+      outline-color: Highlight;
     }
   }
 }

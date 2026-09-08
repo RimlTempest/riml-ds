@@ -423,7 +423,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "モーダル。ネイティブ `<dialog>` を枠にし内容はすべて slot（ティア B、ADR-0012）。\nJS が無いときは `:not(:defined)` の CSS が受け、内容が inline のセクションとして読める。",
+          "description": "モーダル。ネイティブ `<dialog>` を枠にし内容はすべて slot（ティア B、ADR-0012）。\nJS が無いときは `:not(:defined)` の CSS が受け、内容が inline のセクションとして読める。\n開くと `showModal()` が最初のフォーカス可能要素（＝帯の ×）にフォーカスを置く。主ボタンから\n始めるなら、利用側が `slot=\"actions\"` のボタンに `autofocus` を付ける。",
           "name": "RdDialog",
           "cssParts": [
             {

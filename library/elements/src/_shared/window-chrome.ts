@@ -210,15 +210,17 @@ export const windowChrome: CSSResult = css`
   }
   /* stylelint-enable value-keyword-case */
 
-  /* 既定のリングは丸より大きいので消し、丸のすぐ外に描き直す（brand.md §7.1） */
+  /* 既定のリングは当たり判定（2.75rem）の外に出て丸から離れるので、負の offset で
+     丸のすぐ外に置き換える。既定のリングを幅ゼロや none で消しにいかない——
+     UA 既定の輪は style が auto で、Chromium は auto のとき幅を無視して自前の輪を描く。
+     消したつもりが二重の輪になる（brand.md §7.1） */
+  [data-action]:hover,
   [data-action]:focus-visible {
-    outline-width: 0;
-  }
-
-  [data-action]:hover::before,
-  [data-action]:focus-visible::before {
+    /* 当たり判定と丸の差の半分だけ内側に寄せ、そこから 2px 外に輪を置く */
     outline: 2px solid var(--rd-color-chrome-text);
-    outline-offset: 2px;
+    outline-offset: calc(
+      -1 * (var(--rd-sizing-target-min) - var(--rd-window-control-size)) / 2 + 2px
+    );
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -244,6 +246,11 @@ export const windowChrome: CSSResult = css`
 
     [data-action]::after {
       background: ButtonText;
+    }
+
+    [data-action]:hover,
+    [data-action]:focus-visible {
+      outline-color: Highlight;
     }
   }
 `

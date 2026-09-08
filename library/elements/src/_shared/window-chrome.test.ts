@@ -61,6 +61,17 @@ describe('WINDOW_GLYPHS', () => {
     expect(patternsCss()).not.toContain(DECORATION)
   })
 
+  it('フォーカスリングはボタン自身の outline 1 本（UA 既定を消しにいかない）', () => {
+    // outline-style: auto を width 0 で消そうとしても Chromium は自前の輪を描く＝二重になる。
+    // 丸の ::before に輪を描くのもやめ、負の offset でボタンの outline を丸のすぐ外へ置く
+    for (const css of [windowChrome.cssText, patternsCss()]) {
+      expect(css).not.toContain('outline-width: 0')
+      expect(css).not.toContain('outline: none')
+      expect(css).not.toContain('focus-visible::before')
+      expect(css).toContain('outline-offset: calc(')
+    }
+  })
+
   it('部品側にも 1 つも残っていない（dialog / toast 含む。ADR-0014 §影響）', () => {
     const offenders = sourceFiles().filter((file) =>
       readFileSync(file, 'utf8').includes(DECORATION),
