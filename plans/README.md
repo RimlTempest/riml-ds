@@ -4,7 +4,7 @@
 （executor は会話の文脈を持たない前提）。テンプレートは qrcc の
 `.claude/skills/improve/references/plan-template.md`。
 
-**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）、017〜018 は `b501378`（2026-09-08。窓の丸はボタン = ADR-0014）、019〜020 は `da4200a`（2026-09-08。017・018 マージ後）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
+**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）、017〜018 は `b501378`（2026-09-08。窓の丸はボタン = ADR-0014）、019〜020 は `da4200a`（2026-09-08。017・018 マージ後）、021〜022 は `9cfed6d`（2026-09-08。019 マージ後。020 と並行）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
 `system/guidelines/**`, `.claude/skills/riml-ds-*`）が仕様の正で、計画はそれを手順に落としたもの。
 矛盾を見つけたら計画側を直すのではなく STOP して advisor に返す。
 
@@ -39,6 +39,10 @@
   `e2e/__screenshots__` は別ファイル）。qrcc2 への適用（qrcc2 plan 013）は両方のマージ後
 - 019 と 020 は 017・018 の**両方のマージ後**に並行できる（019 = `radio-group` / `slider` / `patterns.css`、020 = `tabs` / `menu` / `popover` / `tooltip` / `navigation.css`。
   `e2e/pe/build-pages.ts`・`e2e/frameworks/shared.ts`・`.size-limit.json`・`library/elements/package.json` は両方が追記する → 後にマージする側で advisor が解決）
+- 021（`feat/form-wave4`）と 022（`feat/surfaces`）は 019 マージ後に **020 と 3 本並行**できる（021 = `toggle` / `checkbox-group` / `input-otp` / `patterns.css`、
+  022 = `atoms.css` / `utilities.css` / `dialog`）。共有ファイル（生成物・`examples.ts`・`build-pages.ts`・`markup.test.tsx`・`.size-limit.json`）の
+  union 型の衝突は advisor が解決する。トークンの追随（`neutral.950` と dark の `surface.sunken`、astro の experimental export、
+  vue/svelte の boolean 属性）は 017〜019 のメモで「021」と書いたが **023 以降**に繰り下げた
 
 レーンとの対応は `docs/parallel-lanes.md` / `scripts/lanes.tsv`。
 
@@ -65,7 +69,9 @@
 | 017 | [窓の左端の丸を本物のボタンにする（rd-window・.rd-window-bar・dialog の ×）](017-window-controls.md) | P1 | L | 016 | DONE（`da4200a`） |
 | 018 | [Typography（typography.css）と静的パターン集 atoms.css](018-typography-and-atoms.md) | P1 | M | 016 | DONE（`6275931`） |
 | 019 | [フォーム第 3 波（rd-radio-group・rd-slider・.rd-input-group）](019-form-wave3.md) | P1 | L | 017, 018 | DONE（`d1cf0c2`） |
-| 020 | [ナビゲーションと重ね窓（rd-tabs・rd-menu・rd-popover・rd-tooltip・navigation.css）](020-navigation-and-overlays.md) | P1 | XL | 017, 018 | TODO |
+| 020 | [ナビゲーションと重ね窓（rd-tabs・rd-menu・rd-popover・rd-tooltip・navigation.css）](020-navigation-and-overlays.md) | P1 | XL | 017, 018 | IN PROGRESS |
+| 021 | [フォーム第 4 波（rd-toggle・rd-checkbox-group・rd-input-otp・.rd-button-group）](021-form-wave4.md) | P1 | L | 019 | TODO |
+| 022 | [面と待ち（.rd-card / .rd-empty / .rd-spinner / .rd-accordion / .rd-carousel / .rd-scroll-area / .rd-aspect、rd-dialog の alert / placement）](022-surfaces-and-feedback.md) | P1 | L | 017, 018 | TODO |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
