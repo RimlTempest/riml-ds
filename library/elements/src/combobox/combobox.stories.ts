@@ -83,7 +83,17 @@ export const Variants: Story = {
   },
 }
 
-/** `disabled` は部品の属性にしない。ネイティブ `<input disabled>` をそのまま使う（契約外なので手書き） */
+/**
+ * `disabled` は部品の属性にしない。ネイティブ `<input disabled>` をそのまま使う（契約外なので手書き）。
+ * 生 HTML を 1 つの文字列として渡す（lit のテンプレートに `<option>` を混ぜると、
+ * ハイドレーション用のコメントが `<datalist>` の中に入って markuplint が落ちる）
+ */
+const DISABLED =
+  '<rd-combobox><label for="sb-disabled">読み</label>'
+  + '<input id="sb-disabled" name="reading" list="sb-disabled-list" type="text"'
+  + ' autocomplete="off" disabled>'
+  + `<datalist id="sb-disabled-list">${OPTIONS}</datalist></rd-combobox>`
+
 export const Disabled: Story = {
   render: () =>
     html`<form
@@ -91,18 +101,7 @@ export const Disabled: Story = {
         event.preventDefault()
       }}
     >
-      <rd-combobox>
-        <label for="sb-disabled">読み</label>
-        <input
-          id="sb-disabled"
-          name="reading"
-          list="sb-disabled-list"
-          type="text"
-          autocomplete="off"
-          disabled
-        />
-        <datalist id="sb-disabled-list">${unsafeHTML(OPTIONS)}</datalist>
-      </rd-combobox>
+      ${unsafeHTML(DISABLED)}
     </form>`,
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).getByRole('combobox', { name: '読み' })).toBeDisabled()

@@ -66,10 +66,14 @@ export const wire = (host: HTMLElement, name: string): Wiring => {
   const found: Readonly<Record<string, Element>> = result.kind === 'ok' ? result.found : {}
   const control = asInput(found['control'])
   control?.removeAttribute('list')
+  const datalist = asDatalist(found['options'])
+  // 候補は `[part='list']` に写したので、`<datalist>` は**データの置き場**として残すだけにする
+  // （読み上げに二重で出さない。ブラウザは元から描かないが、木からも外しておく）
+  datalist?.setAttribute('aria-hidden', 'true')
   return {
     ok: result.kind === 'ok',
     control,
-    datalist: asDatalist(found['options']),
+    datalist,
     labelId: ensureId(found['label'], `${name}-label`),
   }
 }
@@ -239,19 +243,26 @@ const optionNode = (snap: Snapshot, item: Candidate, index: number): TemplateRes
   return html`<div role="option" id=${id} aria-selected=${on}>${item.label}</div>`
 }
 
-/** 候補リスト。`popover="manual"` なので開け閉めは部品が行う（light dismiss にしない） */
-const listNode = (snap: Snapshot): TemplateResult =>
-  html`<div
+/**
+ * 候補リスト。`popover="manual"` なので開け閉めは部品が行う（light dismiss にしない）。
+ * 0 件のときは `role="listbox"` を出さない——空の listbox は WAI-ARIA の Required Owned Elements を
+ * 満たさない。0 件なら必ず閉じている（`empty`）ので読み上げにも出ない。
+ */
+const listNode = (snap: Snapshot): TemplateResult => {
+  // 0 件なら listbox として出さない（role も名前も付けない。generic に aria-labelledby は書けない）
+  const listbox = snap.candidates.length > 0
+  return html`<div
     part="list"
     id=${snap.name}
-    role="listbox"
+    role=${listbox ? 'listbox' : nothing}
     popover="manual"
-    aria-labelledby=${snap.wiring.labelId === '' ? nothing : snap.wiring.labelId}
+    aria-labelledby=${listbox && snap.wiring.labelId !== '' ? snap.wiring.labelId : nothing}
     @pointerdown=${preventOnOption}
     @click=${snap.onClick}
   >
     ${snap.candidates.map((item, index) => optionNode(snap, item, index))}
   </div>`
+}
 
 /**
  * 強化ノード（hint / error / 候補リスト）。既存の子は消さず末尾に足す。
