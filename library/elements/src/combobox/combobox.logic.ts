@@ -107,3 +107,65 @@ export const computeComboboxView = (input: ComboboxViewInput): ComboboxView => (
   },
   activeId: activeIdOf(input),
 })
+
+/** キー 1 打の意味。`prevent` はそのキーの既定動作を止めるかどうか */
+export type KeyAction =
+  | { readonly kind: 'move'; readonly active: number; readonly prevent: true }
+  | { readonly kind: 'open'; readonly prevent: true }
+  | { readonly kind: 'close'; readonly prevent: true }
+  /** Tab: 閉じるが横取りしない（次の項目へ進ませる） */
+  | { readonly kind: 'dismiss'; readonly prevent: false }
+  | { readonly kind: 'commit'; readonly active: number; readonly prevent: true }
+  | { readonly kind: 'none'; readonly prevent: false }
+
+export type KeyInput = {
+  readonly key: string
+  readonly altKey: boolean
+  readonly open: boolean
+  readonly active: number
+  readonly count: number
+}
+
+const NONE: KeyAction = { kind: 'none', prevent: false }
+
+/**
+ * APG「Combobox with List Autocomplete」のキー操作。**Home / End は横取りしない**
+ * （入力欄のカーソル移動）。Enter は候補が選ばれているときだけ確定し、
+ * それ以外はフォーム送信を妨げない。
+ */
+export const decideKey = (input: KeyInput): KeyAction => {
+  if (input.key === 'Escape') {
+    return input.open ? { kind: 'close', prevent: true } : NONE
+  }
+  if (input.key === 'Tab') {
+    return input.open ? { kind: 'dismiss', prevent: false } : NONE
+  }
+  if (input.key === 'Enter') {
+    const chosen = input.open && input.active >= 0 && input.active < input.count
+    return chosen ? { kind: 'commit', active: input.active, prevent: true } : NONE
+  }
+  if (input.altKey) {
+    return input.key === 'ArrowDown' && input.count > 0 ? { kind: 'open', prevent: true } : NONE
+  }
+  const moved = nextActive(input.active, input.count, input.key)
+  return moved === undefined ? NONE : { kind: 'move', active: moved, prevent: true }
+}
+
+/** 部品が持つ唯一の可変状態（開閉と、当たっている候補の番号） */
+export type ComboboxState = { readonly open: boolean; readonly active: number }
+
+/** キー 1 打のあとの状態。確定（`commit`）は値を書くのとは別に「閉じる」だけを意味する */
+export const reduceKey = (action: KeyAction, state: ComboboxState): ComboboxState => {
+  switch (action.kind) {
+    case 'move':
+      return { open: true, active: action.active }
+    case 'open':
+      return { open: true, active: state.active }
+    case 'close':
+    case 'dismiss':
+    case 'commit':
+      return { open: false, active: -1 }
+    case 'none':
+      return state
+  }
+}

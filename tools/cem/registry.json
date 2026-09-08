@@ -31,6 +31,15 @@
     "dependsOn": []
   },
   {
+    "name": "combobox",
+    "tag": "rd-combobox",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "候補から選びながら打てる入力欄。<input list> と <datalist> は利用側が書く",
+    "files": ["combobox/index.js", "combobox/combobox.define.js", "combobox/combobox.css"],
+    "dependsOn": []
+  },
+  {
     "name": "dialog",
     "tag": "rd-dialog",
     "pe": "B",
