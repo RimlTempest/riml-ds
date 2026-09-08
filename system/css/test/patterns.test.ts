@@ -66,3 +66,30 @@ describe('patterns.css の窓の帯（ADR-0014）', () => {
     expect(forced).not.toContain('display: none')
   })
 })
+
+describe('patterns.css の入力とボタンの枕（.rd-input-group）', () => {
+  it('枕・中の入力・末尾のボタンの規則がある', () => {
+    const all = selectors().join('\n')
+    expect(all).toContain('.rd-input-group')
+    expect(all).toContain('.rd-input-group > input')
+  })
+
+  it('フォーカスの輪は枕ごと出す（`:has(:focus-visible)`）', () => {
+    expect(selectors().join('\n')).toContain('.rd-input-group:has(:focus-visible)')
+  })
+
+  it('入力エラーは `:has(:user-invalid)` で枕に出す', () => {
+    expect(selectors().join('\n')).toContain('.rd-input-group:has(:user-invalid)')
+  })
+
+  it('枕はピル（radius.full）で、塗りはグラデーションを使わない', () => {
+    expect(declsOf(/^\.rd-input-group$/)).toContain('border-radius:var(--rd-radius-full)')
+    expect(css()).not.toContain('linear-gradient')
+  })
+
+  it('強制配色では枕と入力に CanvasText の罫線を引く', () => {
+    const forced = css().slice(css().indexOf('@media (forced-colors: active)'))
+    expect(forced).toContain('.rd-input-group')
+    expect(forced).toContain('CanvasText')
+  })
+})

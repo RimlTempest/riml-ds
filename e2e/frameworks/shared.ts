@@ -9,7 +9,12 @@ import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
 import { dialogMarkup } from '@rimltempest/riml-ds-elements/dialog'
 import { checkboxMarkup } from '@rimltempest/riml-ds-elements/experimental/checkbox'
 import { meterMarkup } from '@rimltempest/riml-ds-elements/experimental/meter'
+import {
+  radioGroupMarkup,
+  radioOptionMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/radio-group'
 import { selectMarkup } from '@rimltempest/riml-ds-elements/experimental/select'
+import { sliderMarkup } from '@rimltempest/riml-ds-elements/experimental/slider'
 import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 
 const AAA_TAGS = ['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag22aa'] as const
@@ -195,6 +200,76 @@ export const meterAndWindowSuite = (framework: string): void => {
       await expect(body).toBeVisible()
       await page.locator('rd-window button[data-action=collapse]').click()
       await expect(body).toBeHidden()
+    })
+  })
+}
+
+/** 4 フレームワークで同じ選択肢を出す（`radioOptionMarkup` が唯一の正） */
+const PLAN_OPTIONS = [
+  radioOptionMarkup({ id: 'plan-free', name: 'plan', value: 'free', label: '無料' }),
+  radioOptionMarkup({ id: 'plan-pro', name: 'plan', value: 'pro', label: '有料' }),
+].join('')
+
+/**
+ * `rd-radio-group` と `rd-slider`（plan 019）。`@rimltempest/riml-ds-astro` の `package.json` が
+ * この 2 つの `.astro` をまだ export していないので、astro 以外の 3 つで回す
+ * （`meterAndWindowSuite` と同じ理由。`library/astro/package.json` は別レーンの持ち物）。
+ */
+export const radioGroupAndSliderSuite = (framework: string): void => {
+  test.describe(`${framework}: radio-group と slider`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-radio-group',
+          radioGroupMarkup({ label: 'プラン', children: PLAN_OPTIONS }),
+        )
+        await compareMarkup(
+          page,
+          'rd-slider',
+          sliderMarkup({
+            id: 'volume',
+            label: '音量',
+            name: 'volume',
+            defaultValue: '3',
+            min: '0',
+            max: '10',
+          }),
+        )
+      })
+
+      test('radio group は JS 無しでも選べる（ネイティブの radio そのもの）', async ({ page }) => {
+        await page.goto('/')
+        const pro = page.getByRole('group', { name: 'プラン' }).getByLabel('有料')
+        await pro.check()
+        await expect(pro).toBeChecked()
+      })
+    })
+
+    test('slider は値を読んで塗りの割合を CSS 変数に書く', async ({ page }) => {
+      await page.goto('/')
+      const slider = page.locator('rd-slider')
+      await expect
+        .poll(async () =>
+          slider.evaluate((element) =>
+            element instanceof HTMLElement
+              ? element.style.getPropertyValue('--rd-slider-fill')
+              : '',
+          ),
+        )
+        .toBe('0.3')
+    })
+
+    test('radio group を選ぶと :state(filled) が付く', async ({ page }) => {
+      await page.goto('/')
+      await page.getByRole('group', { name: 'プラン' }).getByLabel('有料').check()
+      const group = page.locator('rd-radio-group')
+      await expect
+        .poll(async () => group.evaluate((element) => element.matches(':state(filled)')))
+        .toBe(true)
     })
   })
 }

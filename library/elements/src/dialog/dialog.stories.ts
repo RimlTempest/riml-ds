@@ -92,6 +92,8 @@ export const Default: Story = {
       await expect(dialog?.open).toBe(false)
     })
     await expect(opener).toHaveFocus()
+    // 閉じる遷移の途中を axe が掴むと、消えかけの枠が背面と混ざってコントラスト違反に見える
+    await settled()
   },
 }
 

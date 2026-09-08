@@ -181,4 +181,73 @@
       outline-color: Highlight;
     }
   }
+
+  /* 入力とボタンを 1 つの枕にまとめる（docs/brand.md §7.2）。JS が要らないので部品にしない
+     （ADR-0012 §6。`.rd-skip-link` と同じ線引き）。ラベルは必ず置く（見せないなら
+     `.rd-visually-hidden`）。中の <input> は `rd-text-field` ではなく素のまま——
+     hint / error を持つ部品を入れ子にするのは別の判断（plan 019 スコープ外）。
+
+     <div class="rd-input-group">
+       <label class="rd-visually-hidden" for="q">検索</label>
+       <input id="q" name="q" type="search" />
+       <rd-button><button type="submit">検索</button></rd-button>
+     </div> */
+  .rd-input-group {
+    display: flex;
+    gap: var(--rd-space-1);
+    align-items: stretch;
+    padding: var(--rd-space-1);
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-surface-sunken);
+  }
+
+  .rd-input-group > input,
+  .rd-input-group > select {
+    flex: 1;
+    min-inline-size: 0;
+    padding-inline: var(--rd-space-3);
+    border-width: 0;
+    border-radius: var(--rd-radius-full);
+    background: transparent;
+    color: var(--rd-color-text-default);
+    font: inherit;
+  }
+
+  /* 輪は入力自身が描く（UA の既定を消して差し替えない。消すと二重の輪や無表示になる）。
+     枕は面の色でも反応させ、どこに焦点があるかを形と色の両方で示す */
+  .rd-input-group > input:focus-visible,
+  .rd-input-group > select:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  .rd-input-group:has(:focus-visible) {
+    background: var(--rd-color-surface-hover);
+  }
+
+  /* 入力中には怒らない（`:user-invalid`）。枕ごと危険色の輪で囲む */
+  .rd-input-group:has(:user-invalid) {
+    outline: var(--rd-focus-ring-width) solid var(--rd-color-status-danger-default);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* 強制配色では面の色が消えるので、枕と入力の境界を罫線で描く */
+  @media (forced-colors: active) {
+    .rd-input-group {
+      border-width: var(--rd-border-width-default);
+      border-style: solid;
+      border-color: CanvasText;
+    }
+
+    .rd-input-group > input,
+    .rd-input-group > select {
+      border-width: var(--rd-border-width-default);
+      border-style: solid;
+      border-color: CanvasText;
+    }
+
+    .rd-input-group:has(:user-invalid) {
+      outline-color: CanvasText;
+    }
+  }
 }

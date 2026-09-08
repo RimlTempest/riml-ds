@@ -1,6 +1,13 @@
 import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-vue'
 // experimental は専用サブパスからしか出ない（ADR-0009）
-import { RdCheckbox, RdMeter, RdSelect, RdWindow } from '@rimltempest/riml-ds-vue/experimental'
+import {
+  RdCheckbox,
+  RdMeter,
+  RdRadioGroup,
+  RdSelect,
+  RdSlider,
+  RdWindow,
+} from '@rimltempest/riml-ds-vue/experimental'
 import { defineComponent, h, ref } from 'vue'
 
 /** 4 フレームワークで同じ選択肢を出す */
@@ -53,6 +60,24 @@ export const App = defineComponent(
         ),
         // <select> の v-model が効いているかを e2e が読む
         h('p', { id: 'country-echo' }, country.value),
+        h(RdRadioGroup, { label: 'プラン' }, () => [
+          h('label', null, [
+            h('input', { type: 'radio', id: 'plan-free', name: 'plan', value: 'free' }),
+            '無料',
+          ]),
+          h('label', null, [
+            h('input', { type: 'radio', id: 'plan-pro', name: 'plan', value: 'pro' }),
+            '有料',
+          ]),
+        ]),
+        h(RdSlider, {
+          id: 'volume',
+          label: '音量',
+          name: 'volume',
+          defaultValue: '3',
+          min: '0',
+          max: '10',
+        }),
         h('rd-live-region'),
       ])
   },
