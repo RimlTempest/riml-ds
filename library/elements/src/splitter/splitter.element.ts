@@ -30,6 +30,7 @@ import { styles } from './splitter.styles.js'
  * @attr max - `position` の上限（%）。既定 80
  * @csspart start - 始端側の面の入れ物
  * @csspart handle - つまみ（`role="separator"`）
+ * @csspart grip - つまみに重なる透明な当たり領域（44px。読み上げには出ない）
  * @csspart end - 終端側の面の入れ物
  * @cssprop --rd-splitter-size - つまみの見える太さ。既定 var(--rd-space-2)
  * @event {CustomEvent<{ position: number }>} rd-resize - 利用者の操作で割合が変わったとき。`pointermove` ごとに出る
@@ -119,7 +120,9 @@ export class RdSplitter extends LitElement {
         aria-valuemin=${this.min}
         aria-valuemax=${this.max}
         aria-label=${this.label === '' ? nothing : this.label}
-      ></div>
+      >
+        <span part="grip" aria-hidden="true"></span>
+      </div>
       <div part="end"><slot name="end"></slot></div>`
   }
 

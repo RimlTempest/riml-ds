@@ -179,9 +179,13 @@ it('RTL の横並びでは → で position が減る', async () => {
 
 it('つまみの当たり領域は 44px 以上ある（WCAG 2.5.5 AAA）', async () => {
   const el = await sized(FIXTURE)
-  const target = globalThis.getComputedStyle(handleOf(el), '::before')
-  expect(Number.parseFloat(target.width)).toBeGreaterThanOrEqual(44)
-  expect(Number.parseFloat(target.height)).toBeGreaterThanOrEqual(44)
+  const grip = handleOf(el).querySelector('[part=grip]')
+  expect(grip).toBeInstanceOf(HTMLElement)
+  const box = grip?.getBoundingClientRect()
+  expect(box?.width ?? 0).toBeGreaterThanOrEqual(44)
+  expect(box?.height ?? 0).toBeGreaterThanOrEqual(44)
+  // 当たり領域は読み上げに出ない（名前と値を持つのはつまみ本体）
+  expect(grip?.getAttribute('aria-hidden')).toBe('true')
 })
 
 it('既定ではアニメーションが動いていない（prefers-reduced-motion 既定オフ）', async () => {

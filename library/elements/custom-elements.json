@@ -3000,6 +3000,10 @@
               "name": "handle"
             },
             {
+              "description": "つまみに重なる透明な当たり領域（44px。読み上げには出ない）",
+              "name": "grip"
+            },
+            {
               "description": "終端側の面の入れ物",
               "name": "end"
             }

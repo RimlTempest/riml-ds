@@ -50,18 +50,21 @@ export const styles: CSSResult = css`
       cursor: row-resize;
     }
 
-    /* 標的は 44px（WCAG 2.5.5 AAA）。見た目を太らせずに当たり領域だけ横へ広げる */
-    [part='handle']::before {
-      content: '';
+    /*
+     * 標的は 44px（WCAG 2.5.5 AAA）。**見た目を太らせずに当たり領域だけ広げる**ので、
+     * つまみに重ねた透明な板（part=grip）が受け持つ。読み上げには出さない
+     * （名前と値を持つのはつまみ本体。rd-slider の part=track と同じ形）。
+     */
+    [part='grip'] {
       position: absolute;
       inset-block: 0;
       inset-inline: calc(
         (var(--rd-sizing-target-min) - var(--rd-splitter-size, var(--rd-space-2))) / -2
       );
+      touch-action: none;
     }
 
-    /* ::before の分だけ詳細度が上がるので :where() で属性を 0 にする（stylelint 0,3,0） */
-    :host(:where([direction='vertical'])) [part='handle']::before {
+    :host([direction='vertical']) [part='grip'] {
       inset-inline: 0;
       inset-block: calc(
         (var(--rd-sizing-target-min) - var(--rd-splitter-size, var(--rd-space-2))) / -2
