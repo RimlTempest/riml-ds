@@ -2963,6 +2963,249 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/splitter/splitter.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-splitter",
+          "declaration": {
+            "name": "RdSplitter",
+            "module": "/src/splitter/splitter.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/splitter/splitter.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "2 つの面のあいだにつまみを 1 つ置き、割合を変えられるようにする（APG「Window Splitter」）。\n面の中身は light DOM の `slot=\"start\"` / `slot=\"end\"` なので、**JS が無いときは\n2 つの面が縦に積まれてそのまま読める**（ティア B、ADR-0012）。",
+          "name": "RdSplitter",
+          "cssProperties": [
+            {
+              "description": "つまみの見える太さ。既定 var(--rd-space-2)",
+              "name": "--rd-splitter-size"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "始端側の面の入れ物",
+              "name": "start"
+            },
+            {
+              "description": "つまみ（`role=\"separator\"`）",
+              "name": "handle"
+            },
+            {
+              "description": "終端側の面の入れ物",
+              "name": "end"
+            }
+          ],
+          "slots": [
+            {
+              "description": "始端側の面（横並びなら左、縦並びなら上）。省略不可",
+              "name": "start"
+            },
+            {
+              "description": "終端側の面。省略不可",
+              "name": "end"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, serializable: true }"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "description": "つまみのアクセシブル名（「サイドバーの幅」）。空なら `:state(malformed)`",
+              "default": "''",
+              "attribute": "label",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "direction",
+              "privacy": "public",
+              "type": {
+                "text": "SplitterDirection"
+              },
+              "description": "面の並び。`aria-orientation` は**逆**になる（`ariaOrientation()`）",
+              "default": "'horizontal'",
+              "attribute": "direction",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "position",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "description": "始端側の面が取る割合（%）。`min`..`max` に丸められる",
+              "default": "50",
+              "attribute": "position",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "min",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "20",
+              "attribute": "min"
+            },
+            {
+              "kind": "field",
+              "name": "max",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "80",
+              "attribute": "max"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#drag",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#setPosition",
+              "privacy": "private",
+              "description": "変わったときだけ書き、**利用者の操作のときだけ** `rd-resize` を出す"
+            },
+            {
+              "kind": "field",
+              "name": "#onKeydown",
+              "privacy": "private",
+              "description": "APG のキー操作。扱わないキーは `decideKey` が `undefined` を返し、既定を止めない"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ position: number }>"
+              },
+              "description": "利用者の操作で割合が変わったとき。`pointermove` ごとに出る",
+              "name": "rd-resize"
+            }
+          ],
+          "attributes": [
+            {
+              "description": "つまみのアクセシブル名（「サイドバーの幅」）。空なら `:state(malformed)`",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "label"
+            },
+            {
+              "description": "面の並び。`aria-orientation` は**逆**になる（`ariaOrientation()`）",
+              "name": "direction",
+              "type": {
+                "text": "SplitterDirection"
+              },
+              "default": "'horizontal'",
+              "fieldName": "direction"
+            },
+            {
+              "description": "始端側の面が取る割合（%）。`min`..`max` に丸められる",
+              "name": "position",
+              "type": {
+                "text": "number"
+              },
+              "default": "50",
+              "fieldName": "position"
+            },
+            {
+              "description": "`position` の下限（%）。既定 20",
+              "name": "min",
+              "type": {
+                "text": "number"
+              },
+              "default": "20",
+              "fieldName": "min"
+            },
+            {
+              "description": "`position` の上限（%）。既定 80",
+              "name": "max",
+              "type": {
+                "text": "number"
+              },
+              "default": "80",
+              "fieldName": "max"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "dragging",
+              "description": "つまみをつかんでいる"
+            },
+            {
+              "name": "vertical",
+              "description": "direction=\"vertical\""
+            },
+            {
+              "name": "malformed",
+              "description": "slot=\"start\" / slot=\"end\" / label のどれかが無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "つまみを動かして 2 つの面の割合を変える",
+          "status": "experimental",
+          "pe": "B",
+          "tagName": "rd-splitter",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdSplitter",
+          "declaration": {
+            "name": "RdSplitter",
+            "module": "src/splitter/splitter.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/tabs/tabs.define.ts",
       "declarations": [],
       "exports": [

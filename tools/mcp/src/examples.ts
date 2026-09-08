@@ -35,6 +35,7 @@ import {
 } from '@rimltempest/riml-ds-elements/experimental/menu/contract'
 import { markup as selectMarkup } from '@rimltempest/riml-ds-elements/experimental/select/contract'
 import { markup as sliderMarkup } from '@rimltempest/riml-ds-elements/experimental/slider/contract'
+import { markup as splitterMarkup } from '@rimltempest/riml-ds-elements/experimental/splitter/contract'
 import {
   markup as tabsMarkup,
   panelMarkup,
@@ -175,6 +176,27 @@ const TOGGLE = { label: '太字', pressed: 'false' } as const
 const TOAST = {} as const
 
 /**
+ * 2 面の割合を変えるつまみ（plan 030）。`position` / `min` / `max` は整数の %。
+ * `start` / `end` は**エスケープされない**生 HTML なので、信頼済みの断片だけを渡す。
+ */
+const SPLITTER = {
+  label: 'サイドバーの幅',
+  start: '<h2>一覧</h2><p>条件で絞った結果がここに出る。</p>',
+  end: '<h2>本文</h2><p>選んだものの中身がここに出る。</p>',
+  position: 40,
+  min: 30,
+  max: 70,
+} as const
+
+/** `props` は属性の見本なので文字列で持つ（`ElementExample` の型。数値は `markup()` が文字列にする） */
+const SPLITTER_PROPS = {
+  ...SPLITTER,
+  position: String(SPLITTER.position),
+  min: String(SPLITTER.min),
+  max: String(SPLITTER.max),
+} as const
+
+/**
  * `rd-tooltip` もティア C（契約を持たない）。対象の id と説明文だけを載せる。
  * 対象側に `title` を書くのが JS 無しのときの代替（ADR-0012 ティア C）。
  */
@@ -195,6 +217,7 @@ export const elementExamples = {
   'rd-popover': { html: popoverMarkup(POPOVER), props: POPOVER },
   'rd-radio-group': { html: radioGroupMarkup(RADIO_GROUP), props: RADIO_GROUP },
   'rd-slider': { html: sliderMarkup(SLIDER), props: SLIDER },
+  'rd-splitter': { html: splitterMarkup(SPLITTER), props: SPLITTER_PROPS },
   'rd-window': { html: windowMarkup(WINDOW), props: WINDOW },
   'rd-tabs': { html: tabsMarkup(TABS), props: TABS },
   'rd-toast': { html: '<rd-toast></rd-toast>', props: TOAST },

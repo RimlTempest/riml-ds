@@ -52,6 +52,11 @@
     "limit": "12 KB"
   },
   {
+    "name": "@rimltempest/riml-ds-elements/experimental/splitter/define (lit 込み)",
+    "path": "library/elements/dist/splitter/splitter.define.js",
+    "limit": "12 KB"
+  },
+  {
     "name": "@rimltempest/riml-ds-elements/experimental/window/define (lit 込み)",
     "path": "library/elements/dist/window/window.define.js",
     "limit": "10 KB"
