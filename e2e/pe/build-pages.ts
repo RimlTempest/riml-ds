@@ -16,6 +16,17 @@ import {
   checkboxOptionMarkup,
 } from '../../library/elements/src/checkbox-group/index.js'
 import { comboboxMarkup, comboboxOptionMarkup } from '../../library/elements/src/combobox/index.js'
+import {
+  commandGroupMarkup,
+  commandItemMarkup,
+  commandMarkup,
+} from '../../library/elements/src/command/index.js'
+import {
+  dataTableBodyMarkup,
+  dataTableHeadMarkup,
+  dataTableMarkup,
+  dataTableRowMarkup,
+} from '../../library/elements/src/data-table/index.js'
 import { dialogMarkup } from '../../library/elements/src/dialog/index.js'
 import { disclosureMarkup } from '../../library/elements/src/disclosure/index.js'
 import { inputOtpMarkup, otpCellsMarkup } from '../../library/elements/src/input-otp/index.js'
@@ -57,6 +68,8 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/checkbox/checkbox.css', 'checkbox.css'],
   ['library/elements/src/checkbox-group/checkbox-group.css', 'checkbox-group.css'],
   ['library/elements/src/combobox/combobox.css', 'combobox.css'],
+  ['library/elements/src/command/command.css', 'command.css'],
+  ['library/elements/src/data-table/data-table.css', 'data-table.css'],
   ['library/elements/src/disclosure/disclosure.css', 'disclosure.css'],
   ['library/elements/src/input-otp/input-otp.css', 'input-otp.css'],
   ['library/elements/src/meter/meter.css', 'meter.css'],
@@ -186,6 +199,22 @@ const tags = (name: string): string =>
     checkboxOptionMarkup({ id: `${name}-private`, name, value: 'b', label: '私用' }),
   ].join('')
 
+/** 3 列 × 4 行。表示（「1,234」「2026/01/02」）と比較キー（`data-value`）を分ける */
+const CODES = dataTableBodyMarkup(
+  [
+    { name: 'レジ横の QR', size: '1,234', bytes: '1234', updated: '2026-01-02' },
+    { name: '会員証バーコード', size: '820', bytes: '820', updated: '2025-12-31' },
+    { name: '展示のカタログ', size: '12,000', bytes: '12000', updated: '2026-02-14' },
+    { name: '社内 Wi-Fi', size: '96', bytes: '96', updated: '2025-08-09' },
+  ].map((code) =>
+    dataTableRowMarkup([
+      { text: code.name },
+      { text: code.size, value: code.bytes, numeric: true },
+      { text: code.updated.replaceAll('-', '/'), value: code.updated },
+    ]),
+  ),
+)
+
 const PAGES: Readonly<Record<string, string>> = {
   'button.html': page(
     'ボタン',
@@ -232,6 +261,41 @@ const PAGES: Readonly<Record<string, string>> = {
         })}
         ${submit}
       </form>`,
+  ),
+  /**
+   * ティア A。JS が無ければ入力欄は飾りになるが、**一覧はそのまま辿れる**
+   * （項目は本物のリンクとボタン。部品が `role` を書き換えない理由がここにある）。
+   */
+  'command.html': page(
+    'コマンドパレット',
+    `      ${commandMarkup({
+      id: 'palette',
+      label: 'コマンド',
+      placeholder: '打って絞り込む',
+      groups:
+        commandGroupMarkup({
+          label: 'ページ',
+          items:
+            commandItemMarkup({
+              label: 'ホーム',
+              href: '/echo.html?item=home',
+              keywords: 'home top',
+              shortcut: '⌘1',
+            })
+            + commandItemMarkup({
+              label: '設定',
+              href: '/echo.html?item=settings',
+              keywords: 'せってい preferences',
+            })
+            + commandItemMarkup({ label: '下書き', href: '/echo.html?item=drafts' }),
+        })
+        + commandGroupMarkup({
+          label: '操作',
+          items:
+            commandItemMarkup({ label: '新しいノート', value: 'new', shortcut: '⌘N' })
+            + commandItemMarkup({ label: '共有', value: 'share' }),
+        }),
+    })}`,
   ),
   'checkbox.html': page(
     'チェックボックス',
@@ -499,6 +563,18 @@ const PAGES: Readonly<Record<string, string>> = {
       end: '<h2>本文</h2><p>選んだものの中身がここに出る。</p>',
       min: 30,
       max: 70,
+    })}`,
+  ),
+  'data-table.html': page(
+    '並べ替えられる表',
+    `      ${dataTableMarkup({
+      caption: '保存したコード',
+      head: dataTableHeadMarkup([
+        { label: '名前', sort: 'text', key: 'name' },
+        { label: 'サイズ', sort: 'number', key: 'size', numeric: true },
+        { label: '更新', sort: 'date', key: 'updated' },
+      ]),
+      body: CODES,
     })}`,
   ),
   'echo.html': page('送信済み', '      <p>フォームはネイティブに送信された。</p>'),

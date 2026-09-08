@@ -2,55 +2,28 @@
  * `rd-combobox` の純関数。DOM を触らない（`*.element.ts` はここを呼ぶだけ。ADR-0005）。
  * 候補の読み書きは `combobox.dom.ts`、ヒント・エラー文言・共通の `:state()` は `_shared/field.ts`。
  *
- * `filterCandidates` は `rd-command`（コマンドパレット。plan 028）が再利用する前提だが、
- * **2 つ目の利用者が出るまで `_shared/` には移さない**（保守メモ）。
+ * 絞り込み（`normalize` / `filterCandidates`）は `rd-command`（plan 028）と共有するので
+ * `_shared/text-filter.ts` に移した。ここは**再エクスポートするだけ**で挙動は変えない。
  */
 import type { FieldView } from '../_shared/field.js'
 import { nextIndex } from '../_shared/roving-focus.js'
+import {
+  filterCandidates,
+  normalize,
+  parseFilterMode,
+  type Candidate,
+} from '../_shared/text-filter.js'
 import type { ComboboxFilter } from './combobox.contract.js'
 
+export { filterCandidates, normalize }
 /** `<option>` 1 つ。`label` は表示名（`<option>` のテキスト。無ければ `value`） */
-export type Candidate = { readonly value: string; readonly label: string }
+export type { Candidate }
 
 /** 契約の `filter` 属性と同じ 3 つ（契約が正） */
 export type FilterMode = ComboboxFilter
 
-const MODES: ReadonlySet<string> = new Set<FilterMode>(['contains', 'prefix', 'none'])
-
-const isFilterMode = (value: string): value is FilterMode => MODES.has(value)
-
-/**
- * 比較用にそろえる。`NFKC` で全角・半角（`ｶﾅ` と `カナ`、`ＡＢ` と `AB`）を同じにし、
- * 大文字小文字と前後の空白を無視する。
- */
-export const normalize = (text: string): string => text.normalize('NFKC').toLocaleLowerCase().trim()
-
 /** 知らない値・未指定は `contains`（既定） */
-export const parseFilter = (raw: string | null | undefined): FilterMode => {
-  const value = raw ?? ''
-  return isFilterMode(value) ? value : 'contains'
-}
-
-/** 表示名と値のどちらかが当たれば候補（`<option value="jp">日本</option>` は両方で引ける） */
-const hit = (candidate: Candidate, needle: string, mode: FilterMode): boolean =>
-  [candidate.label, candidate.value]
-    .map(normalize)
-    .some((text) => (mode === 'prefix' ? text.startsWith(needle) : text.includes(needle)))
-
-/**
- * 絞り込み。`query` が空なら**全件**（Alt+↓ で全候補を見られる）、`none` も全件
- * （サーバー側で絞る利用側は `<option>` を書き換える）。
- */
-export const filterCandidates = (
-  all: readonly Candidate[],
-  query: string,
-  mode: FilterMode,
-): readonly Candidate[] => {
-  const needle = normalize(query)
-  return mode === 'none' || needle === ''
-    ? all
-    : all.filter((candidate) => hit(candidate, needle, mode))
-}
+export const parseFilter = (raw: string | null | undefined): FilterMode => parseFilterMode(raw)
 
 /**
  * 候補の移動先。**↓ と ↑ だけ**を `nextIndex` に委ねる——Home / End は

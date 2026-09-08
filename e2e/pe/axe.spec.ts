@@ -15,6 +15,7 @@ const PAGES = [
   '/checkbox.html',
   '/checkbox-group.html',
   '/combobox.html',
+  '/command.html',
   '/disclosure.html',
   '/input-otp.html',
   '/meter.html',
@@ -37,6 +38,7 @@ const PAGES = [
   '/radio-group.html',
   '/slider.html',
   '/splitter.html',
+  '/data-table.html',
 ] as const
 
 for (const path of PAGES) {

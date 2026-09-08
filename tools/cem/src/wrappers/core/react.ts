@@ -10,7 +10,7 @@
  *   部品が出たらそこだけ `createComponent` を足す（ADR-0002 / ADR-0012 §5）。
  */
 import type { MarkupNode, MarkupProp, WrapperSpec } from './common.js'
-import { childrenTextOf, typeText } from './common.js'
+import { childrenTextOf, objectKey, typeText } from './common.js'
 
 export type GeneratedFile = { readonly path: string; readonly content: string }
 
@@ -119,7 +119,7 @@ const customAttrSpread = (context: Context, attr: string, value: string | boolea
   const name = value.slice(1)
   const reference = propRef(context.spec, name)
   const declared = context.spec.markupProps.find((item) => item.name === name)
-  const entry = attr === reference ? `{ ${attr} }` : `{ ${attr}: ${reference} }`
+  const entry = attr === reference ? `{ ${attr} }` : `{ ${objectKey(attr)}: ${reference} }`
   return declared?.type === 'boolean'
     ? `{...(${reference} === true ? ${entry} : {})}`
     : `{...(${reference} === undefined ? {} : ${entry})}`
@@ -447,7 +447,7 @@ const jsxFile = (specs: readonly WrapperSpec[]): GeneratedFile => {
     const own =
       spec.attrs.length === 0
         ? 'unknown'
-        : `{ ${spec.attrs.map((attr) => `${attr.name}?: ${optional(typeText(attr.type))}`).join('; ')} }`
+        : `{ ${spec.attrs.map((attr) => `${objectKey(attr.name)}?: ${optional(typeText(attr.type))}`).join('; ')} }`
     return `      '${spec.tag}': RdElementAttrs<${own}>`
   })
   return {

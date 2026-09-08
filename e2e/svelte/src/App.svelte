@@ -5,6 +5,8 @@
     RdCheckbox,
     RdCheckboxGroup,
     RdCombobox,
+    RdCommand,
+    RdDataTable,
     RdInputOtp,
     RdMenu,
     RdMeter,
@@ -95,6 +97,36 @@
     {#snippet start()}<p>一覧の面。</p>{/snippet}
     {#snippet end()}<p>本文の面。</p>{/snippet}
   </RdSplitter>
+  <RdCommand id="palette" label="コマンド">
+    {#snippet groups()}
+      <ul aria-label="ページ">
+        <li><a href="#home" data-keywords="home top">ホーム</a></li>
+        <li><a href="#settings" data-keywords="せってい preferences">設定</a></li>
+      </ul>
+      <ul aria-label="操作">
+        <li><button type="button" value="new">新しいノート<kbd class="rd-kbd">⌘N</kbd></button></li>
+      </ul>
+    {/snippet}
+  </RdCommand>
+  <RdDataTable caption="保存したコード">
+    {#snippet head()}<thead
+        ><tr
+          ><th scope="col" data-sort="text" data-key="name">名前</th><th
+            scope="col"
+            data-sort="number"
+            data-key="size"
+            data-numeric=""
+          >
+            サイズ
+          </th></tr
+        ></thead
+      >{/snippet}
+    {#snippet body()}<tbody
+        ><tr
+          ><td>b.png</td><td data-value="1234" data-numeric="">1,234</td></tr
+        ><tr><td>a.png</td><td data-value="820" data-numeric="">820</td></tr></tbody
+      >{/snippet}
+  </RdDataTable>
   <RdToggle label="太字" pressed="false" />
   <rd-live-region></rd-live-region>
 </main>

@@ -92,6 +92,69 @@ test('combobox: ↓ で候補が開き、打つと絞られ、Enter で確定す
   await expect(control).toBeFocused()
 })
 
+const COMMAND = 'components-command--default'
+
+const openCommand = async (page: Page) => {
+  await page.goto(storyUrl(COMMAND))
+  await waitForStoryFinished(page, COMMAND)
+  const control = page.getByRole('searchbox', { name: 'コマンド' })
+  await control.click()
+  return control
+}
+
+test('command: 打つと項目が隠れ、0 件なら status で知らせる', async ({ page }) => {
+  const control = await openCommand(page)
+  const visible = page.locator('rd-command > ul > li:not([hidden])')
+  await expect(visible).toHaveCount(5)
+  await control.pressSequentially('せ')
+  await expect(visible).toHaveCount(1)
+  // 項目が全部隠れたグループは <ul> ごと隠れる（見出しだけ残さない）
+  await expect(page.locator('rd-command > ul:not([hidden])')).toHaveCount(1)
+  await expect(page.locator("rd-command [part='empty']")).toBeHidden()
+  await control.pressSequentially('zzz')
+  await expect(visible).toHaveCount(0)
+  const empty = page.locator("rd-command [part='empty']")
+  await expect(empty).toBeVisible()
+  await expect(empty).toHaveAttribute('role', 'status')
+  await expect(empty).toHaveText('見つかりません')
+})
+
+test('command: 入力欄の ↓ で項目へ移り、印字キーで入力欄に戻る', async ({ page }) => {
+  const control = await openCommand(page)
+  await page.keyboard.press('ArrowDown')
+  await expect(page.getByRole('link', { name: /ホーム/u })).toBeFocused()
+  await page.keyboard.press('ArrowDown')
+  await expect(page.getByRole('link', { name: /設定/u })).toBeFocused()
+  // 項目に居ても打ち続けられる（1 文字が入力欄の末尾に足される）
+  await page.keyboard.press('a')
+  await expect(control).toBeFocused()
+  await expect(control).toHaveValue('a')
+  await page.keyboard.press('Backspace')
+  await expect(control).toHaveValue('')
+})
+
+test('command: 入力欄の Enter が見えている 1 件目を押す', async ({ page }) => {
+  const control = await openCommand(page)
+  // 項目は本物のリンクなので既定動作は「飛ぶ」。story のページを離れないように止めて記録する
+  await page.evaluate(() => {
+    document.addEventListener(
+      'click',
+      (event) => {
+        event.preventDefault()
+        const target = event.target
+        if (target instanceof HTMLElement) {
+          document.documentElement.dataset['pressed'] = target.textContent ?? ''
+        }
+      },
+      true,
+    )
+  })
+  await control.pressSequentially('したがき')
+  await expect(page.locator('rd-command > ul > li:not([hidden])')).toHaveCount(1)
+  await page.keyboard.press('Enter')
+  await expect(page.locator('html')).toHaveAttribute('data-pressed', '下書き')
+})
+
 test('skip link: Tab で現れ、Enter で本文へ飛ぶ', async ({ page }) => {
   await page.goto(storyUrl('foundations-skiplink--default'))
   await waitForStoryFinished(page, 'foundations-skiplink--default')
@@ -195,4 +258,57 @@ test('splitter: End で max、Home で min まで行く', async ({ page }) => {
       }),
     )
     .toBe('20%')
+})
+
+/**
+ * `rd-data-table`（plan 029）。**JS があるときだけ**見出しがボタンになるので、ここ（Storybook）で見る。
+ * 読み上げは `aria-sort` に任せる（`rd-live-region` を使わない。ADR-0008 §6）。
+ */
+const DATA_TABLE_STORY = 'components-datatable--default'
+
+test('data table: 見出しを押すと aria-sort が付き、その列で昇順に並ぶ', async ({ page }) => {
+  await page.goto(storyUrl(DATA_TABLE_STORY))
+  await waitForStoryFinished(page, DATA_TABLE_STORY)
+  const names = page.locator('rd-data-table tbody > tr > td:first-child')
+  await expect(names.first()).toHaveText('レジ横の QR')
+  await page.getByRole('button', { name: 'サイズ' }).click()
+  await expect(page.getByRole('columnheader', { name: 'サイズ' })).toHaveAttribute(
+    'aria-sort',
+    'ascending',
+  )
+  // 比べるのは表示（「1,234」）ではなく `td[data-value]`（1234）
+  await expect(names.first()).toHaveText('社内 Wi-Fi')
+  await expect(names.last()).toHaveText('展示のカタログ')
+})
+
+test('data table: もう一度押すと降順になる（「無し」には戻さない）', async ({ page }) => {
+  await page.goto(storyUrl(DATA_TABLE_STORY))
+  await waitForStoryFinished(page, DATA_TABLE_STORY)
+  const header = page.getByRole('columnheader', { name: 'サイズ' })
+  const button = page.getByRole('button', { name: 'サイズ' })
+  await button.click()
+  await expect(header).toHaveAttribute('aria-sort', 'ascending')
+  await button.click()
+  await expect(header).toHaveAttribute('aria-sort', 'descending')
+  // 降順の先頭は最大の 12,000（表示の「12,000」ではなく data-value の 12000 で比べる）
+  await expect(page.locator('rd-data-table tbody > tr > td:first-child').first()).toHaveText(
+    '展示のカタログ',
+  )
+  // 並べ替え中の列は 1 つだけ（APG）
+  await expect(page.locator('rd-data-table [aria-sort]')).toHaveCount(1)
+})
+
+test('data table: Tab で見出しのボタンに届き、Enter で並ぶ', async ({ page }) => {
+  await page.goto(storyUrl(DATA_TABLE_STORY))
+  await waitForStoryFinished(page, DATA_TABLE_STORY)
+  const button = page.getByRole('button', { name: '名前' })
+  await page.keyboard.press('Tab')
+  await expect(button).toBeFocused()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('columnheader', { name: '名前' })).toHaveAttribute(
+    'aria-sort',
+    'ascending',
+  )
+  // 行を動かすだけなのでフォーカスは見出しに残る
+  await expect(button).toBeFocused()
 })

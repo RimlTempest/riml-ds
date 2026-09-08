@@ -15,10 +15,23 @@ const write = (dir: string, relative: string, content: string): void => {
   writeFileSync(file, content)
 }
 
+/**
+ * git フック（lefthook の pre-push など）の中で走ると `GIT_DIR` / `GIT_WORK_TREE` /
+ * `GIT_INDEX_FILE` が継承され、偽リポジトリの `git init` / `commit` が**本物のリポジトリ**に
+ * 当たる（core.bare が true になり、ブランチが `base` / `head` で上書きされた事故がある）。
+ * 子プロセスには `GIT_*` を渡さない。
+ */
+const withoutGitEnv = (): NodeJS.ProcessEnv =>
+  Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')))
+
 const runGuard = (setup: (dir: string) => void): number => {
   const dir = mkdtempSync(join(tmpdir(), 'riml-ds-guard-'))
   setup(dir)
-  const result = spawnSync('bash', [guardPath], { cwd: dir, encoding: 'utf8' })
+  const result = spawnSync('bash', [guardPath], {
+    cwd: dir,
+    encoding: 'utf8',
+    env: withoutGitEnv(),
+  })
   return result.status ?? 1
 }
 
@@ -151,8 +164,9 @@ const runGuardOnBranch = (
   head: (dir: string) => void,
 ): number => {
   const dir = mkdtempSync(join(tmpdir(), 'riml-ds-guard-'))
+  const env = withoutGitEnv()
   const git = (...args: readonly string[]): void => {
-    const result = spawnSync('git', [...args], { cwd: dir, encoding: 'utf8' })
+    const result = spawnSync('git', [...args], { cwd: dir, encoding: 'utf8', env })
     if ((result.status ?? 1) !== 0) {
       throw new Error(`git ${args.join(' ')}: ${result.stderr}`)
     }
@@ -171,7 +185,7 @@ const runGuardOnBranch = (
     cwd: dir,
     encoding: 'utf8',
     // CI（GitHub Actions）で走らせたときに実際の PR ブランチ名を拾わないようにする
-    env: { ...process.env, GITHUB_HEAD_REF: '' },
+    env: { ...env, GITHUB_HEAD_REF: '' },
   })
   return result.status ?? 1
 }

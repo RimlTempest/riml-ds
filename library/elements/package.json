@@ -129,6 +129,32 @@
       "default": "./dist/splitter/splitter.define.js"
     },
     "./experimental/splitter/style.css": "./dist/splitter/splitter.css",
+    "./experimental/command": {
+      "types": "./dist/experimental/command/index.d.ts",
+      "default": "./dist/experimental/command/index.js"
+    },
+    "./experimental/command/contract": {
+      "types": "./dist/command/command.contract.d.ts",
+      "default": "./dist/command/command.contract.js"
+    },
+    "./experimental/command/define": {
+      "types": "./dist/command/command.define.d.ts",
+      "default": "./dist/command/command.define.js"
+    },
+    "./experimental/command/style.css": "./dist/command/command.css",
+    "./experimental/data-table": {
+      "types": "./dist/experimental/data-table/index.d.ts",
+      "default": "./dist/experimental/data-table/index.js"
+    },
+    "./experimental/data-table/contract": {
+      "types": "./dist/data-table/data-table.contract.d.ts",
+      "default": "./dist/data-table/data-table.contract.js"
+    },
+    "./experimental/data-table/define": {
+      "types": "./dist/data-table/data-table.define.d.ts",
+      "default": "./dist/data-table/data-table.define.js"
+    },
+    "./experimental/data-table/style.css": "./dist/data-table/data-table.css",
     "./experimental/meter": {
       "types": "./dist/experimental/meter/index.d.ts",
       "default": "./dist/experimental/meter/index.js"

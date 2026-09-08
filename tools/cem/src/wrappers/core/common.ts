@@ -158,6 +158,15 @@ const readStatus = (declaration: unknown): WrapperStatus => {
 const subpathOf = (name: string, status: WrapperStatus): string =>
   status === 'experimental' ? `experimental/${name}` : name
 
+const IDENTIFIER = /^[A-Za-z_$][\w$]*$/
+
+/**
+ * オブジェクトリテラルや型リテラルのキー。`aria-pressed` / `empty-text` のようにハイフンを
+ * 含む属性は識別子として書けないので引用する（引用しないと TS1005 / TS1131 になる）。
+ * react / svelte / vue の生成器が共有する。
+ */
+export const objectKey = (attr: string): string => (IDENTIFIER.test(attr) ? attr : `'${attr}'`)
+
 /** `rd-text-field` → `RdTextField` */
 export const toPascal = (tag: string): string =>
   tag

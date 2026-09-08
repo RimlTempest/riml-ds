@@ -4,6 +4,8 @@ import {
   RdCheckbox,
   RdCheckboxGroup,
   RdCombobox,
+  RdCommand,
+  RdDataTable,
   RdInputOtp,
   RdMenu,
   RdMeter,
@@ -23,6 +25,22 @@ const countries = () => [
   h('option', { value: '' }, '選択してください'),
   h('option', { value: 'jp' }, '日本'),
   h('option', { value: 'us' }, 'アメリカ'),
+]
+
+/** 4 フレームワークで同じ項目。リンクとボタンのままなので JS 無しでも辿れる */
+const commandGroups = () => [
+  h('ul', { 'aria-label': 'ページ' }, [
+    h('li', [h('a', { href: '#home', 'data-keywords': 'home top' }, 'ホーム')]),
+    h('li', [h('a', { href: '#settings', 'data-keywords': 'せってい preferences' }, '設定')]),
+  ]),
+  h('ul', { 'aria-label': '操作' }, [
+    h('li', [
+      h('button', { type: 'button', value: 'new' }, [
+        '新しいノート',
+        h('kbd', { class: 'rd-kbd' }, '⌘N'),
+      ]),
+    ]),
+  ]),
 ]
 
 /** 4 フレームワークで同じ候補を出す。候補の唯一の出どころは `<datalist>` */
@@ -184,6 +202,40 @@ export const App = defineComponent(
           {
             start: () => h('p', null, '一覧の面。'),
             end: () => h('p', null, '本文の面。'),
+          },
+        ),
+        h(RdCommand, { id: 'palette', label: 'コマンド' }, { groups: commandGroups }),
+        h(
+          RdDataTable,
+          { caption: '保存したコード' },
+          {
+            head: () =>
+              h('thead', null, [
+                h('tr', null, [
+                  h('th', { scope: 'col', 'data-sort': 'text', 'data-key': 'name' }, '名前'),
+                  h(
+                    'th',
+                    {
+                      scope: 'col',
+                      'data-sort': 'number',
+                      'data-key': 'size',
+                      'data-numeric': '',
+                    },
+                    'サイズ',
+                  ),
+                ]),
+              ]),
+            body: () =>
+              h('tbody', null, [
+                h('tr', null, [
+                  h('td', null, 'b.png'),
+                  h('td', { 'data-value': '1234', 'data-numeric': '' }, '1,234'),
+                ]),
+                h('tr', null, [
+                  h('td', null, 'a.png'),
+                  h('td', { 'data-value': '820', 'data-numeric': '' }, '820'),
+                ]),
+              ]),
           },
         ),
         h(RdToggle, { label: '太字', pressed: 'false' }),

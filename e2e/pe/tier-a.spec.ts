@@ -82,6 +82,23 @@ test('combobox: JS 無しでも <name>.css が当たる（タップ標的 44px�
   await expect(page.locator('rd-combobox > input')).toHaveCSS('min-block-size', '44px')
 })
 
+test('command: JS 無しでも一覧のリンクをそのまま辿れる', async ({ page }) => {
+  await page.goto('/command.html')
+  // 項目は本物のリンク。役割を書き換えないので JS 無しでも押せる
+  await page.getByRole('link', { name: /ホーム/u }).click()
+  await expect(page).toHaveURL(/\/echo\.html\?item=home$/u)
+})
+
+test('command: JS 無しでは入力欄も全項目も見えている（隠す JS が来ないだけ）', async ({ page }) => {
+  await page.goto('/command.html')
+  await expect(page.getByLabel('コマンド')).toBeVisible()
+  await expect(page.locator('rd-command > ul > li')).toHaveCount(5)
+  await expect(page.locator('rd-command > ul > li').first()).toBeVisible()
+  // 0 件の知らせは部品が描くので、JS が無ければ存在しない
+  await expect(page.locator("rd-command [part='empty']")).toHaveCount(0)
+  await expect(page.locator('rd-command > input')).toHaveCSS('min-block-size', '44px')
+})
+
 test('checkbox: JS 無しでもチェックが送信される', async ({ page }) => {
   await page.goto('/checkbox.html')
   await page.getByLabel('規約に同意する').check()
@@ -241,4 +258,21 @@ test('button group: 枕の中身は押下状態を持つボタン（JS 無しで
   const group = page.getByRole('group', { name: '表示' })
   await expect(group.getByRole('button', { name: '一覧' })).toHaveAttribute('aria-pressed', 'true')
   await expect(group.getByRole('button', { name: '格子' })).toHaveAttribute('aria-pressed', 'false')
+})
+
+test('data table: JS 無しでも書かれた順の表がそのまま読める', async ({ page }) => {
+  await page.goto('/data-table.html')
+  await expect(page.getByRole('table', { name: '保存したコード' })).toBeVisible()
+  await expect(page.getByRole('columnheader', { name: '名前' })).toBeVisible()
+  await expect(page.locator('rd-data-table tbody > tr')).toHaveCount(4)
+  // 書かれた順のまま（並べ替えは JS が来てから）
+  await expect(page.locator('rd-data-table tbody > tr > td').first()).toHaveText('レジ横の QR')
+})
+
+test('data table: JS 無しの見出しは文字のまま（押せないボタンを置かない）', async ({ page }) => {
+  await page.goto('/data-table.html')
+  await expect(page.locator('rd-data-table thead button')).toHaveCount(0)
+  await expect(page.locator('rd-data-table [aria-sort]')).toHaveCount(0)
+  // 横に溢れる表は部品自身が転がす（WCAG 1.4.10）
+  await expect(page.locator('rd-data-table')).toHaveCSS('overflow-x', 'auto')
 })

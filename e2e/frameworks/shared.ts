@@ -17,6 +17,17 @@ import {
   comboboxOptionMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/combobox'
 import {
+  commandGroupMarkup,
+  commandItemMarkup,
+  commandMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/command'
+import {
+  dataTableBodyMarkup,
+  dataTableHeadMarkup,
+  dataTableMarkup,
+  dataTableRowMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/data-table'
+import {
   inputOtpMarkup,
   otpCellsMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/input-otp'
@@ -520,6 +531,60 @@ const READING_OPTIONS = [
   comboboxOptionMarkup({ value: 'romaji', label: 'ローマ字' }),
 ].join('')
 
+/** 4 フレームワークで同じ項目。**リンクとボタンのまま**なので JS 無しでも辿れる */
+const COMMAND_GROUPS =
+  commandGroupMarkup({
+    label: 'ページ',
+    items:
+      commandItemMarkup({ label: 'ホーム', href: '#home', keywords: 'home top' })
+      + commandItemMarkup({ label: '設定', href: '#settings', keywords: 'せってい preferences' }),
+  })
+  + commandGroupMarkup({
+    label: '操作',
+    items: commandItemMarkup({ label: '新しいノート', value: 'new', shortcut: '⌘N' }),
+  })
+
+/**
+ * `rd-command`（plan 028）。項目は利用側が書いたリンクとボタンのままで、部品は
+ * `<li hidden>` を書くだけ。JS が無ければ全部見えていて、そのまま辿れる。
+ */
+export const commandSuite = (framework: string): void => {
+  test.describe(`${framework}: command`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-command',
+          commandMarkup({ id: 'palette', label: 'コマンド', groups: COMMAND_GROUPS }),
+        )
+      })
+
+      test('JS 無しでも項目がすべて見えていて、リンクは本物のまま', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.locator('rd-command > ul > li')).toHaveCount(3)
+        await expect(page.locator('rd-command > ul > li[hidden]')).toHaveCount(0)
+        await expect(
+          page.locator('rd-command').getByRole('link', { name: /ホーム/u }),
+        ).toHaveAttribute('href', '#home')
+      })
+    })
+
+    test('打つと項目が隠れ、↓ で見えている項目へ移る', async ({ page }) => {
+      await page.goto('/')
+      const control = page.getByRole('searchbox', { name: 'コマンド' })
+      const visible = page.locator('rd-command > ul > li:not([hidden])')
+      await control.click()
+      await control.pressSequentially('せ')
+      await expect(visible).toHaveCount(1)
+      await page.keyboard.press('ArrowDown')
+      await expect(page.locator('rd-command').getByRole('link', { name: /設定/u })).toBeFocused()
+    })
+  })
+}
+
 /**
  * `rd-combobox`（plan 025）。候補は `<datalist>` に書くので、JS が無ければネイティブの
  * 吹き出しがそのまま候補を出す。JS が来たら APG の combobox パターンに置き換わる。
@@ -622,6 +687,76 @@ export const splitterSuite = (framework: string): void => {
           }),
         )
         .toBe('51%')
+    })
+  })
+}
+
+/** 4 フレームワークで同じ表を出す（`dataTableHeadMarkup` / `dataTableRowMarkup` が唯一の正） */
+const CODE_HEAD = dataTableHeadMarkup([
+  { label: '名前', sort: 'text', key: 'name' },
+  { label: 'サイズ', sort: 'number', key: 'size', numeric: true },
+])
+
+const CODE_BODY = dataTableBodyMarkup([
+  dataTableRowMarkup([{ text: 'b.png' }, { text: '1,234', value: '1234', numeric: true }]),
+  dataTableRowMarkup([{ text: 'a.png' }, { text: '820', value: '820', numeric: true }]),
+])
+
+/**
+ * `rd-data-table`（plan 029）。表そのものは利用側（＝ここでは各フレームワークのアプリ）が書き、
+ * 部品は並べ替えだけを足す。JS が無ければ書かれた順の表がそのまま読め、見出しは文字のまま。
+ */
+export const dataTableSuite = (framework: string): void => {
+  test.describe(`${framework}: data-table`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-data-table',
+          dataTableMarkup({ caption: '保存したコード', head: CODE_HEAD, body: CODE_BODY }),
+        )
+      })
+
+      test('JS 無しでは見出しが文字のまま（押せないボタンを置かない）', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.getByRole('table', { name: '保存したコード' })).toBeVisible()
+        await expect(page.locator('rd-data-table thead button')).toHaveCount(0)
+        await expect(page.locator('rd-data-table tbody > tr > td').first()).toHaveText('b.png')
+      })
+    })
+
+    test('見出しを押すと aria-sort が付き、行が並び替わる', async ({ page }) => {
+      await page.goto('/')
+      const names = page.locator('rd-data-table tbody > tr > td:first-child')
+      await expect(names.first()).toHaveText('b.png')
+      await page.getByRole('button', { name: '名前' }).click()
+      await expect(page.getByRole('columnheader', { name: '名前' })).toHaveAttribute(
+        'aria-sort',
+        'ascending',
+      )
+      await expect(names.first()).toHaveText('a.png')
+    })
+
+    test('もう一度押すと降順になり :state(sorted) が付く', async ({ page }) => {
+      await page.goto('/')
+      const button = page.getByRole('button', { name: '名前' })
+      await button.click()
+      await button.click()
+      await expect(page.getByRole('columnheader', { name: '名前' })).toHaveAttribute(
+        'aria-sort',
+        'descending',
+      )
+      await expect(page.locator('rd-data-table tbody > tr > td:first-child').first()).toHaveText(
+        'b.png',
+      )
+      await expect
+        .poll(async () =>
+          page.locator('rd-data-table').evaluate((element) => element.matches(':state(sorted)')),
+        )
+        .toBe(true)
     })
   })
 }

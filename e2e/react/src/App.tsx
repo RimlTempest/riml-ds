@@ -4,6 +4,8 @@ import {
   RdCheckbox,
   RdCheckboxGroup,
   RdCombobox,
+  RdCommand,
+  RdDataTable,
   RdInputOtp,
   RdMenu,
   RdMeter,
@@ -33,6 +35,31 @@ const readings = (
     <option value="kana">かな</option>
     <option value="kanji">かんじ</option>
     <option value="romaji">ローマ字</option>
+  </>
+)
+
+/** 4 フレームワークで同じ項目。リンクとボタンのままなので JS 無しでも辿れる */
+const commandGroups = (
+  <>
+    <ul aria-label="ページ">
+      <li>
+        <a href="#home" data-keywords="home top">
+          ホーム
+        </a>
+      </li>
+      <li>
+        <a href="#settings" data-keywords="せってい preferences">
+          設定
+        </a>
+      </li>
+    </ul>
+    <ul aria-label="操作">
+      <li>
+        <button type="button" value="new">
+          新しいノート<kbd className="rd-kbd">⌘N</kbd>
+        </button>
+      </li>
+    </ul>
   </>
 )
 
@@ -154,6 +181,38 @@ export const App = (): ReactNode => (
       {readings}
     </RdCombobox>
     <RdSplitter label="面の割合" start={<p>一覧の面。</p>} end={<p>本文の面。</p>} />
+    <RdCommand id="palette" label="コマンド" groups={commandGroups} />
+    <RdDataTable
+      caption="保存したコード"
+      head={
+        <thead>
+          <tr>
+            <th scope="col" data-sort="text" data-key="name">
+              名前
+            </th>
+            <th scope="col" data-sort="number" data-key="size" data-numeric="">
+              サイズ
+            </th>
+          </tr>
+        </thead>
+      }
+      body={
+        <tbody>
+          <tr>
+            <td>b.png</td>
+            <td data-value="1234" data-numeric="">
+              1,234
+            </td>
+          </tr>
+          <tr>
+            <td>a.png</td>
+            <td data-value="820" data-numeric="">
+              820
+            </td>
+          </tr>
+        </tbody>
+      }
+    />
     <RdToggle label="太字" pressed="false" />
     <rd-live-region />
   </main>
