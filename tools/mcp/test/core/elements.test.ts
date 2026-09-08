@@ -25,12 +25,16 @@ describe('listElements', () => {
       'rd-dialog',
       'rd-disclosure',
       'rd-live-region',
+      'rd-menu',
       'rd-meter',
+      'rd-popover',
       'rd-radio-group',
       'rd-select',
       'rd-slider',
+      'rd-tabs',
       'rd-text-field',
       'rd-toast',
+      'rd-tooltip',
       'rd-window',
     ])
     expect(result.value[0]).toMatchObject({ pe: 'A', status: 'stable' })
@@ -44,12 +48,16 @@ describe('listElements', () => {
       'rd-checkbox',
       'rd-dialog',
       'rd-disclosure',
+      'rd-menu',
       'rd-meter',
+      'rd-popover',
       'rd-radio-group',
       'rd-select',
       'rd-slider',
+      'rd-tabs',
       'rd-text-field',
       'rd-toast',
+      'rd-tooltip',
       'rd-window',
     ])
   })

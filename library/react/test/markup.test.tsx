@@ -46,10 +46,13 @@ describe('既定 export の部品', () => {
     expect(Object.keys(experimental)).toEqual([
       'RdCheckbox',
       'RdDisclosure',
+      'RdMenu',
       'RdMeter',
+      'RdPopover',
       'RdRadioGroup',
       'RdSelect',
       'RdSlider',
+      'RdTabs',
       'RdWindow',
     ])
   })

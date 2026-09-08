@@ -1,0 +1,125 @@
+@layer rd.components {
+  /* タブの列もパネルも light DOM。**JS が無くてもここが当たる**（ADR-0012 ティア B）。
+     JS 無しのときはページ内リンクの列 + すべて見えているパネル、というのが正しい姿。
+     variant / orientation は `:state()` ではなく属性で当てる（読み上げに出ない見た目だから）。
+     `:where()` で修飾するのは詳細度を 0,3,0 に収めるため（stylelint）。 */
+  rd-tabs {
+    display: block;
+  }
+
+  rd-tabs > [slot='tabs'] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rd-space-1);
+    margin: 0;
+    padding: 0;
+    border-block-end: var(--rd-border-width-default) solid var(--rd-color-border-default);
+    list-style: none;
+  }
+
+  rd-tabs > [slot='tabs'] a {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    min-block-size: var(--rd-sizing-target-min);
+    min-inline-size: var(--rd-sizing-target-min);
+    padding-inline: var(--rd-space-4);
+
+    /* --rd-border-width-thick は無いので既定の 2 倍（plan 020 STOP 条件の代用） */
+    border-block-end: calc(var(--rd-border-width-default) * 2) solid transparent;
+    color: var(--rd-color-text-default);
+    font: inherit;
+    text-decoration: none;
+  }
+
+  /* 選択は「太字 + 下線」。色だけに頼らない（accessibility.md 9） */
+  rd-tabs > [slot='tabs'] a[aria-selected='true'] {
+    border-block-end-color: var(--rd-color-accent-default);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  rd-tabs > [slot='tabs'] a:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  rd-tabs:where([orientation='vertical']) > [slot='tabs'] {
+    flex-flow: column nowrap;
+    border-block-end-width: 0;
+    border-inline-end: var(--rd-border-width-default) solid var(--rd-color-border-default);
+  }
+
+  /* 縦並びの選択は左（インライン始端）の太い縦罫。下線は使わない */
+  rd-tabs:where([orientation='vertical']) > [slot='tabs'] a {
+    justify-content: start;
+    border-block-end-width: 0;
+    border-inline-start: calc(var(--rd-border-width-default) * 2) solid transparent;
+  }
+
+  rd-tabs:where([orientation='vertical']) > [slot='tabs'] a[aria-selected='true'] {
+    border-inline-start-color: var(--rd-color-accent-default);
+  }
+
+  /* browser: 帯（chrome）の上に非選択、選択タブだけが本体と同じ面になって「生える」 */
+  rd-tabs:where([variant='browser']) > [slot='tabs'] {
+    gap: 0;
+    padding-inline: var(--rd-space-2);
+    border-block-end-width: 0;
+    border-start-start-radius: var(--rd-radius-lg);
+    border-start-end-radius: var(--rd-radius-lg);
+    background: var(--rd-color-chrome-default);
+  }
+
+  rd-tabs:where([variant='browser']) > [slot='tabs'] a {
+    border-block-end-width: 0;
+    border-start-start-radius: var(--rd-radius-md);
+    border-start-end-radius: var(--rd-radius-md);
+    color: var(--rd-color-chrome-text);
+  }
+
+  rd-tabs:where([variant='browser']) > [slot='tabs'] a[aria-selected='true'] {
+    background: var(--rd-color-surface-raised);
+    color: var(--rd-color-text-default);
+  }
+
+  @media (hover: hover) {
+    rd-tabs > [slot='tabs'] a:hover {
+      background: var(--rd-color-surface-hover);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    rd-tabs > [slot='tabs'] a {
+      transition: border-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+    }
+  }
+
+  /* 定義前（JS が無い / 遅い）: ただのページ内リンクの列。パネルは全部見える */
+  rd-tabs:not(:defined) {
+    display: block;
+  }
+
+  rd-tabs:not(:defined) > [slot='tabs'] {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  /* 選択を面の色だけで示さない。強制配色では輪郭で出す
+     （Highlight を地に敷くと Chromium のバックプレートで文字が読めなくなる） */
+  @media (forced-colors: active) {
+    rd-tabs > [slot='tabs'] a[aria-selected='true'] {
+      outline: var(--rd-border-width-default) solid Highlight;
+      outline-offset: calc(var(--rd-space-1) * -1);
+    }
+
+    rd-tabs:where([variant='browser']) > [slot='tabs'] {
+      border-block-end: var(--rd-border-width-default) solid CanvasText;
+      background: Canvas;
+    }
+
+    rd-tabs:where([variant='browser']) > [slot='tabs'] a {
+      color: CanvasText;
+    }
+  }
+}

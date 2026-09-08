@@ -1,0 +1,118 @@
+@layer rd.components {
+  /* トリガーもリストも light DOM。**JS が無くてもここが当たる**（ADR-0012 ティア B）。
+     開閉は `popovertarget` + `[popover]` がブラウザだけで行う。
+     `:where()` で修飾するのは詳細度を 0,3,0 に収めるため（stylelint）。 */
+  rd-menu {
+    display: inline-block;
+  }
+
+  /* 窓の面（brand.md §7.3）。top layer に出るので位置は fixed で、
+     inset / margin を戻さないと UA の中央寄せが効いたままになる */
+  rd-menu [popover] {
+    position: fixed;
+    box-sizing: border-box;
+    inset: auto;
+    z-index: var(--rd-layer-overlay);
+    display: grid;
+    min-inline-size: var(--rd-space-12);
+    max-inline-size: min(90vi, var(--rd-sizing-measure-max));
+    margin: 0;
+    padding: var(--rd-space-1);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-radius: var(--rd-radius-lg);
+    background: var(--rd-color-surface-raised);
+    box-shadow: var(--rd-shadow-overlay);
+    color: var(--rd-color-text-default);
+  }
+
+  /* 項目は `[popover]` の直下に並ぶ（`<ul><li>` を挟まない。contract の comment を参照） */
+  rd-menu [popover] > :is(a, button, span) {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    gap: var(--rd-space-2);
+    inline-size: 100%;
+    min-block-size: var(--rd-sizing-target-min);
+    padding-inline: var(--rd-space-3);
+
+    /* 当たっている項目を「左の太い縦罫」でも示す（色だけに頼らない） */
+    border-width: 0;
+    border-inline-start: calc(var(--rd-border-width-default) * 2) solid transparent;
+    border-radius: var(--rd-radius-md);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* 押せない項目。`disabled` ではなく `aria-disabled` なのでフォーカスは残る */
+  rd-menu [popover] > [aria-disabled='true'] {
+    color: var(--rd-color-text-muted);
+    cursor: default;
+  }
+
+  /* 区切りは点線（brand.md §7.6）。**要素を挟まない**——role="menu" が持てるのは
+     menuitem 系だけなので、区切りは項目の <li> に描く装飾にする */
+  rd-menu [popover] > [data-separated] {
+    margin-block-start: var(--rd-space-1);
+    padding-block-start: var(--rd-space-1);
+    border-block-start: calc(var(--rd-border-width-default) * 2) dotted
+      var(--rd-color-border-default);
+  }
+
+  rd-menu [popover] > :is(a, button, span):focus-visible {
+    border-inline-start-color: var(--rd-color-accent-default);
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: calc(var(--rd-focus-ring-offset) * -1);
+    background: var(--rd-color-surface-hover);
+  }
+
+  @media (hover: hover) {
+    rd-menu [popover] > :is(a, button):hover {
+      border-inline-start-color: var(--rd-color-accent-default);
+      background: var(--rd-color-surface-hover);
+    }
+  }
+
+  /* anchor positioning は Baseline Newly（docs/baseline.md）。
+     使えるときだけ CSS に任せ、無ければ element が top / left を書く */
+  @supports (position-area: block-end) {
+    rd-menu [popover] {
+      position-area: block-end span-inline-end;
+      position-try-fallbacks: flip-block;
+    }
+
+    rd-menu:where([placement='end']) [popover] {
+      position-area: block-end span-inline-start;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    rd-menu [popover] > :is(a, button, span) {
+      transition: background-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+    }
+  }
+
+  /* 定義前（JS が無い / 遅い）: リストをその場に開いたまま見せる。
+     ティア B の約束は「内容が見える」なので、ここでは**隠さない**
+     （Popover API が無いブラウザでも同じ姿になる） */
+  rd-menu:not(:defined) [popover] {
+    position: static;
+    display: block;
+  }
+
+  @media (forced-colors: active) {
+    rd-menu [popover] {
+      border-color: CanvasText;
+    }
+
+    rd-menu [popover] :is(a, button):focus-visible,
+    rd-menu [popover] > :is(a, button):hover {
+      outline: var(--rd-border-width-default) solid Highlight;
+      background: Canvas;
+    }
+  }
+}
