@@ -70,7 +70,7 @@
 | 018 | [Typography（typography.css）と静的パターン集 atoms.css](018-typography-and-atoms.md) | P1 | M | 016 | DONE（`6275931`） |
 | 019 | [フォーム第 3 波（rd-radio-group・rd-slider・.rd-input-group）](019-form-wave3.md) | P1 | L | 017, 018 | DONE（`d1cf0c2`） |
 | 020 | [ナビゲーションと重ね窓（rd-tabs・rd-menu・rd-popover・rd-tooltip・navigation.css）](020-navigation-and-overlays.md) | P1 | XL | 017, 018 | DONE（`4ebf45e`） |
-| 021 | [フォーム第 4 波（rd-toggle・rd-checkbox-group・rd-input-otp・.rd-button-group）](021-form-wave4.md) | P1 | L | 019 | TODO |
+| 021 | [フォーム第 4 波（rd-toggle・rd-checkbox-group・rd-input-otp・.rd-button-group）](021-form-wave4.md) | P1 | L | 019 | DONE（`5588b47`。rd-toggle は STOP → 024） |
 | 022 | [面と待ち（.rd-card / .rd-empty / .rd-spinner / .rd-accordion / .rd-carousel / .rd-scroll-area / .rd-aspect、rd-dialog の alert / placement）](022-surfaces-and-feedback.md) | P1 | L | 017, 018 | DONE（`4f9b19e`） |
 | 023 | [ラッパー生成器の追随（名前つき raw → 名前つき slot、astro exports 生成、frameworks e2e に tabs / menu / popover）](023-wrappers-named-slots.md) | P1 | M | 020 | IN PROGRESS |
 
@@ -268,4 +268,22 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - 残件: `system/css/README.md` の `.rd-window` 節が古い（丸 3 つは `radial-gradient` ではなく本物の `<button>`。ADR-0014）→ advisor が直す。
   `.rd-card` のリンクカードは中に別の操作要素を置くと `::after` の下に隠れる（`position: relative` を付ける、と `atoms.css` に明記）。
   `dialog.element.ts` は 148 / 150 行でほぼ満杯 — 次に属性を足すなら判断を `dialog.logic.ts` に寄せる
+
+### 021 の実行メモ（2026-09-08）
+
+- マージ `5588b47`（020・022 の後。`build-pages.ts` / `markup.test.tsx` / `examples.ts` / `elements.test.ts` の union 衝突は advisor が両取り。
+  `examples.ts` は衝突ブロックの外にあった `} as const` が片側に落ちて構文エラーになった → 手で補った）。
+  `rd-checkbox-group`（A、`min` は部品が見る）と `rd-input-otp`（A、`<fieldset>` + N 個の `<input maxlength=1>`、`input-otp.cells.ts` に DOM 操作）を experimental に、
+  `.rd-button-group` を `patterns.css` に。検査: check 0、test 1167、pe 62、e2e:frameworks 62、a11y 18、VRT 824、release:check 0（checkbox-group 7.06 / input-otp 7.24 KB）
+- **`rd-toggle` は STOP**: 契約の木に `aria-pressed: '$pressed'` を置くと、ラッパー生成器が (1) Vue でハイフン付きキーをクォートせず構文エラー、
+  (2) `attrTypeFor` が `aria-pressed` を `string` にして React の型に合わない。どちらも `tools/cem/src/wrappers` の修正が要る → **023 の Step 3b に足した**
+  （キーのクォート + `HTML_ENUM_ATTRS` に `button.aria-pressed`）。書き上げた toggle 一式は scratchpad に退避 → **024 で入れ直す**
+- 計画から変えた点: `.rd-button-group` に `ghost` は載せない（沈んだ枕の上で `accent-text` が 6.65:1 で AAA を割る。選択中 = primary / 非選択 = secondary）。
+  `otpCellsMarkup` は `pattern` 付き `<input>` に必須の `title` と、`aria-describedby` 用の `id` も書く。
+  `library/elements/package.json` の exports はアルファベット順ではない（checkbox の直後 / disclosure の直後に入れた）
+- 見つけた問題: 自動前進のたびに桁間の `blur` で `touched` になり全桁が危険色になっていた → `insideBlur()` で部品内の移動を除外（`447f92c`）。
+  **同型の疑いが `rd-radio-group` / `rd-checkbox-group` にもある**（選択肢間の移動で `touched`。実害は小さい）。
+  VRT の `maxDiffPixelRatio: 0.001` は 1024 幅だと細い罫線の色変化を拾えない（360 幅では拾った）。
+  `bun install --frozen-lockfile` が `bun.lock` に `optionalPeers` 3 行を足す（bun 1.4.0 と lock の生成バージョン差。都度 `git checkout bun.lock`）
+- 残件: `.rd-button-group` / `.rd-input-group` / `Patterns/*` の Storybook story（advisor）、`segmented` CSS の重複（3 つ目が出たら `.rd-segmented` へ）
 
