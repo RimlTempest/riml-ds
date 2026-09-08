@@ -14,6 +14,10 @@ import {
   checkboxOptionMarkup,
   markup as checkboxGroupMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/checkbox-group/contract'
+import {
+  comboboxOptionMarkup,
+  markup as comboboxMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/combobox/contract'
 import { markup as disclosureMarkup } from '@rimltempest/riml-ds-elements/experimental/disclosure/contract'
 import {
   markup as inputOtpMarkup,
@@ -114,6 +118,21 @@ const CHECKBOX_GROUP = {
     checkboxOptionMarkup({ id: 'tag-work', name: 'tags', value: 'work', label: '仕事' })
     + checkboxOptionMarkup({ id: 'tag-private', name: 'tags', value: 'private', label: '私用' }),
 } as const
+/**
+ * 候補は `<datalist>` に書く（部品は生成しない）。**自由入力を許す**ので、候補に無い値も送れる。
+ * 候補限定にしたいときは `pattern` / `required` を足す（ネイティブ検証）。
+ */
+const COMBOBOX = {
+  id: 'reading',
+  listId: 'reading-list',
+  label: '読み',
+  name: 'reading',
+  hint: '候補から選ぶか、そのまま入力できます',
+  children:
+    comboboxOptionMarkup({ value: 'kana', label: 'かな' })
+    + comboboxOptionMarkup({ value: 'kanji', label: 'かんじ' })
+    + comboboxOptionMarkup({ value: 'katakana', label: 'カナ' }),
+} as const
 /** 値は `code-1..N` の N フィールドで送信される。連結した値は `el.value` で読む */
 const INPUT_OTP = {
   label: '確認コード',
@@ -168,6 +187,7 @@ export const elementExamples = {
   'rd-select': { html: selectMarkup(SELECT), props: SELECT },
   'rd-checkbox': { html: checkboxMarkup(CHECKBOX), props: CHECKBOX },
   'rd-checkbox-group': { html: checkboxGroupMarkup(CHECKBOX_GROUP), props: CHECKBOX_GROUP },
+  'rd-combobox': { html: comboboxMarkup(COMBOBOX), props: COMBOBOX },
   'rd-disclosure': { html: disclosureMarkup(DISCLOSURE), props: DISCLOSURE },
   'rd-input-otp': { html: inputOtpMarkup(INPUT_OTP), props: INPUT_OTP },
   'rd-menu': { html: menuMarkup(MENU), props: MENU },

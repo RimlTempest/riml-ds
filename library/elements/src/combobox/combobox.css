@@ -1,0 +1,153 @@
+@layer rd.components {
+  rd-combobox {
+    display: grid;
+    gap: var(--rd-combobox-gap, var(--rd-space-1));
+  }
+
+  /* ラベルは太字のインク（docs/brand.md §7.3） */
+  rd-combobox > label {
+    color: var(--rd-color-text-default);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  /* `rd-text-field > input` と同じ宣言。共通化はしない（部品ごとに閉じる） */
+  rd-combobox > input {
+    inline-size: 100%;
+    min-block-size: var(--rd-sizing-target-min);
+    padding-block: var(--rd-space-2);
+    padding-inline: var(--rd-space-3);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-surface-raised);
+    color: var(--rd-color-text-default);
+    font: inherit;
+    line-height: var(--rd-line-height-body);
+  }
+
+  rd-combobox > input:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* JS が無くても検証表示が出る。入力中には怒らない（:user-invalid） */
+  rd-combobox > input:user-invalid {
+    border-color: var(--rd-color-status-danger-default);
+  }
+
+  @supports selector(:state(invalid)) {
+    rd-combobox:state(invalid) > input {
+      border-color: var(--rd-color-status-danger-default);
+    }
+  }
+
+  /* 候補の窓（brand.md §7.3）。top layer に出るので位置は fixed で、
+     inset / margin を戻さないと UA の中央寄せが効いたままになる。
+     **通常状態に display を書かない** — author の @layer が UA の
+     `[popover]:not(:popover-open) { display: none }` に勝ち、閉じても見えてしまう（024） */
+  rd-combobox [part='list'] {
+    position: fixed;
+    box-sizing: border-box;
+    inset: auto;
+    z-index: var(--rd-layer-overlay);
+    max-block-size: 40vb;
+    margin: 0;
+    padding: var(--rd-space-1);
+    overflow-y: auto;
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-surface-raised);
+    box-shadow: var(--rd-shadow-raised);
+    color: var(--rd-color-text-default);
+  }
+
+  rd-combobox [part='list']:popover-open {
+    display: grid;
+  }
+
+  /* 候補 1 行の寸法と当たりの見せ方は `menu.css` の項目とそろえる */
+  rd-combobox [role='option'] {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    min-block-size: var(--rd-sizing-target-min);
+    padding-inline: var(--rd-space-3);
+    border-width: 0;
+    border-inline-start: calc(var(--rd-border-width-default) * 2) solid transparent;
+    border-radius: var(--rd-radius-md);
+    cursor: pointer;
+  }
+
+  /* 当たっている候補は面の色と**左の縦罫**で示す（色だけに頼らない）。
+     縦罫は border（box-shadow の inset は stylelint の色規則を通せない） */
+  rd-combobox [role='option'][aria-selected='true'] {
+    border-inline-start-color: var(--rd-color-accent-default);
+    background: var(--rd-color-surface-hover);
+  }
+
+  @media (hover: hover) {
+    rd-combobox [role='option']:hover {
+      background: var(--rd-color-surface-hover);
+    }
+  }
+
+  rd-combobox > [part='hint'] {
+    margin: 0;
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+  }
+
+  /* 色だけに頼らない：太字と縦罫で「エラー」を形でも示す（accessibility.md 9） */
+  rd-combobox > [part='error'] {
+    margin: 0;
+    padding-inline-start: var(--rd-space-2);
+    border-inline-start: var(--rd-focus-ring-width) solid var(--rd-color-status-danger-default);
+    color: var(--rd-color-status-danger-text);
+    font: var(--rd-type-small);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  /* anchor positioning は Baseline Newly（docs/baseline.md）。
+     使えるときだけ CSS に任せ、無ければ element が top / left を書く */
+  @supports (position-area: block-end) {
+    rd-combobox [part='list'] {
+      position-area: block-end span-inline-end;
+      position-try-fallbacks: flip-block;
+      inline-size: anchor-size(width);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    rd-combobox > input {
+      transition: border-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+    }
+  }
+
+  @media (forced-colors: active) {
+    rd-combobox > input {
+      border-color: FieldText;
+    }
+
+    rd-combobox > input:focus-visible {
+      outline-color: Highlight;
+    }
+
+    rd-combobox [part='list'] {
+      border-color: CanvasText;
+    }
+
+    /* 当たっている候補は内側の枠で示す（フォーカスは <input> にあるのでリングと競合しない） */
+    rd-combobox [role='option'][aria-selected='true'] {
+      outline: var(--rd-border-width-default) solid Highlight;
+      outline-offset: calc(-1 * var(--rd-border-width-default));
+    }
+
+    rd-combobox > [part='error'] {
+      border-inline-start-color: MarkText;
+      color: MarkText;
+    }
+  }
+}

@@ -647,6 +647,291 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/combobox/combobox.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-combobox",
+          "declaration": {
+            "name": "RdCombobox",
+            "module": "/src/combobox/combobox.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/combobox/combobox.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "候補から選びながら打てる入力欄。子の `<label for>`・`<input list>`・`<datalist>` を包む\n（ティア A、ADR-0012）。JS が無ければネイティブの `<datalist>` が候補を出し、定義後は\nAPG「Combobox with List Autocomplete」の形に置き換える。値・送信・検証はネイティブが持つ。",
+          "name": "RdCombobox",
+          "cssProperties": [
+            {
+              "description": "ラベル・入力欄・文言の間隔。既定 var(--rd-space-1)",
+              "name": "--rd-combobox-gap"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "補足文言",
+              "name": "hint"
+            },
+            {
+              "description": "エラー文言",
+              "name": "error"
+            },
+            {
+              "description": "候補の listbox（`popover=\"manual\"`）",
+              "name": "list"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "hint",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "hint"
+            },
+            {
+              "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "error"
+            },
+            {
+              "kind": "field",
+              "name": "filter",
+              "privacy": "public",
+              "type": {
+                "text": "ComboboxFilter"
+              },
+              "description": "絞り込みの仕方。`none` は候補をサーバー側で絞る利用側向け",
+              "default": "'contains'",
+              "attribute": "filter"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#wiring",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#touched",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#state",
+              "privacy": "private",
+              "type": {
+                "text": "ComboboxState"
+              },
+              "default": "{ open: false, active: -1 }"
+            },
+            {
+              "kind": "field",
+              "name": "#name",
+              "privacy": "private",
+              "default": "`rd-combobox-${(sequence += 1)}`"
+            },
+            {
+              "kind": "field",
+              "name": "#binding",
+              "privacy": "private",
+              "type": {
+                "text": "Binding | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#observer",
+              "privacy": "private",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "checkValidity",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "reportValidity",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#snapshot",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#list",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#matches",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#listeners",
+              "privacy": "private",
+              "type": {
+                "text": "Listeners"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#set",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#onKeydown",
+              "privacy": "private",
+              "description": "確定が先。値を書くと `input` が飛んで開き直すので、そのあとに閉じた状態を書く"
+            },
+            {
+              "kind": "field",
+              "name": "#onClick",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#commit",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ value: string; index: number }>"
+              },
+              "description": "候補で確定したとき",
+              "name": "rd-select"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "hint",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "hint"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "error"
+            },
+            {
+              "name": "filter",
+              "type": {
+                "text": "ComboboxFilter"
+              },
+              "description": "絞り込みの仕方。`none` は候補をサーバー側で絞る利用側向け",
+              "default": "'contains'",
+              "fieldName": "filter"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "invalid",
+              "description": "検証に通っていない（操作後、または error 属性がある）"
+            },
+            {
+              "name": "errored",
+              "description": "error 属性で文言を強制表示している"
+            },
+            {
+              "name": "hinted",
+              "description": "hint がある"
+            },
+            {
+              "name": "filled",
+              "description": "値が入っている"
+            },
+            {
+              "name": "open",
+              "description": "候補が出ている"
+            },
+            {
+              "name": "empty",
+              "description": "絞った結果が 0 件"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子（<label for> と <input list> と <datalist>）が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "候補から選びながら打てる入力欄。<input list> と <datalist> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-combobox",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdCombobox",
+          "declaration": {
+            "name": "RdCombobox",
+            "module": "src/combobox/combobox.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/dialog/dialog.define.ts",
       "declarations": [],
       "exports": [
