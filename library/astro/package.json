@@ -20,7 +20,14 @@
     "./text-field.astro": "./src/generated/text-field.astro",
     "./experimental/checkbox.astro": "./src/generated/experimental/checkbox.astro",
     "./experimental/disclosure.astro": "./src/generated/experimental/disclosure.astro",
+    "./experimental/menu.astro": "./src/generated/experimental/menu.astro",
+    "./experimental/meter.astro": "./src/generated/experimental/meter.astro",
+    "./experimental/popover.astro": "./src/generated/experimental/popover.astro",
+    "./experimental/radio-group.astro": "./src/generated/experimental/radio-group.astro",
     "./experimental/select.astro": "./src/generated/experimental/select.astro",
+    "./experimental/slider.astro": "./src/generated/experimental/slider.astro",
+    "./experimental/tabs.astro": "./src/generated/experimental/tabs.astro",
+    "./experimental/window.astro": "./src/generated/experimental/window.astro",
     "./package.json": "./package.json"
   },
   "publishConfig": {
