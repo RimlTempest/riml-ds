@@ -35,7 +35,7 @@ export const styles: CSSResult = css`
       overflow: auto;
     }
 
-    /* 見える太さは --rd-splitter-size。当たり領域は ::before が別に持つ */
+    /* 見える太さは --rd-splitter-size。当たり領域は part=grip が別に持つ */
     [part='handle'] {
       position: relative;
       inline-size: var(--rd-splitter-size, var(--rd-space-2));
