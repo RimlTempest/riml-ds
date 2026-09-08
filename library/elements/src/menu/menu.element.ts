@@ -1,17 +1,21 @@
 import { html, LitElement, type PropertyDeclarations, type TemplateResult } from 'lit'
 import { checkContract } from '../_shared/contract.js'
-import { syncAttribute, syncStates } from '../_shared/internals.js'
+import { syncStates } from '../_shared/internals.js'
 import { anchorPopover } from '../_shared/popover-anchor.js'
-import { nextIndex } from '../_shared/roving-focus.js'
 import { contract, ITEM_SELECTOR } from './menu.contract.js'
-import { applyAttrs, asElement, opened } from './menu.dom.js'
-import { computeMenuView, menuItemAttributes, triggerAttributes } from './menu.logic.js'
+import {
+  applyMenuAttrs,
+  asElement,
+  focusNextItem,
+  opened,
+  reportMissing,
+  resolveItem,
+  wireIds,
+} from './menu.dom.js'
+import { computeMenuView } from './menu.logic.js'
 import { styles } from './menu.styles.js'
 
 let sequence = 0
-
-/** click の発生元をたどる先。`ITEM_SELECTOR` は `:scope` を含むので `closest` に渡せない */
-const CLICKABLE = 'a[href], button, [aria-disabled="true"]'
 
 /**
  * 押すと項目が開くメニュー。**HTML だけで開閉する**（`popovertarget` + `[popover]`）ので
@@ -56,13 +60,7 @@ export class RdMenu extends LitElement {
   override firstUpdated(): void {
     const result = checkContract(this, contract)
     this.#contractOk = result.kind === 'ok'
-    const missing = [
-      result.kind === 'missing' ? `slot="trigger" と [popover]（${result.roles.join(', ')}）` : '',
-      this.label === '' ? 'label（メニューの名前）' : '',
-    ].filter((problem) => problem !== '')
-    if (missing.length > 0) {
-      console.error(`[rd-menu] 必要: ${missing.join(' / ')}`)
-    }
+    reportMissing(result, this.label)
     this.#wire()
   }
 
@@ -77,11 +75,7 @@ export class RdMenu extends LitElement {
     syncStates(this.#internals, view.states)
     const trigger = this.#trigger()
     const list = this.#list()
-    // role="menu" は `[popover]` 自身に置く。menuitem を**直接**持つ形にする
-    applyAttrs(trigger, triggerAttributes(view))
-    applyAttrs(list, { role: 'menu' })
-    syncAttribute(list, 'aria-labelledby', trigger?.id)
-    items.forEach((item, index) => applyAttrs(item, menuItemAttributes(view.items[index])))
+    applyMenuAttrs({ trigger, list, items }, view)
     anchorPopover(trigger, list, this.#name, { placement: this.placement })
   }
 
@@ -96,9 +90,7 @@ export class RdMenu extends LitElement {
     if (list === undefined || trigger === undefined) {
       return
     }
-    list.id = list.id === '' ? this.#name : list.id
-    trigger.id = trigger.id === '' ? `${list.id}-trigger` : trigger.id
-    syncAttribute(trigger, 'popovertarget', trigger.getAttribute('popovertarget') ?? list.id)
+    wireIds(list, trigger, this.#name)
     list.addEventListener('toggle', this.#onToggle)
     list.addEventListener('keydown', this.#onKeydown)
     list.addEventListener('click', this.#onSelect)
@@ -122,20 +114,11 @@ export class RdMenu extends LitElement {
     ;(this.#open ? this.#items()[0] : this.#trigger())?.focus()
   }
 
-  #onKeydown = (event: KeyboardEvent): void => {
-    const items = this.#items()
-    const index = items.findIndex((item) => item === event.target)
-    const next = nextIndex(index, items.length, event.key, 'vertical')
-    if (next !== undefined) {
-      event.preventDefault()
-      items[next]?.focus()
-    }
-  }
+  #onKeydown = (event: KeyboardEvent): void => focusNextItem(event, this.#items())
 
   #onSelect = (event: Event): void => {
-    const target = event.target instanceof Element ? event.target.closest(CLICKABLE) : null
     const items = this.#items()
-    const index = items.findIndex((candidate) => candidate === target)
+    const index = resolveItem(event, items)
     const item = items[index]
     if (item === undefined || item.getAttribute('aria-disabled') === 'true') {
       event.preventDefault()
