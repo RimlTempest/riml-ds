@@ -1,0 +1,246 @@
+@layer rd.components {
+  /* 移動のための形（plan 020）。JS が要らないので部品にしない（ADR-0012 §6）。
+     各クラスの先頭に想定マークアップを書いてある — これが CSS 版の「契約」で、
+     読み上げに要る属性（aria-label / aria-current / aria-hidden）はそこに書いてある。
+     **ARIA は利用側の HTML が持つ**。ここは見た目だけで、role を作らない。
+     色だけで現在地を伝えるものは 1 つも無い（必ず太さ・面・位置が付く）。 */
+
+  /* 現在地までの道すじ。区切りは生成コンテンツで、代替テキストを空にして読み上げから外す。
+     <nav class="rd-breadcrumb" aria-label="現在地">
+       <ol><li><a href="/">ホーム</a></li><li><a href="/docs" aria-current="page">ドキュメント</a></li></ol>
+     </nav> */
+  .rd-breadcrumb > ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rd-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font: var(--rd-type-small);
+  }
+
+  .rd-breadcrumb li {
+    display: flex;
+    align-items: center;
+    gap: var(--rd-space-1);
+  }
+
+  .rd-breadcrumb li + li::before {
+    color: var(--rd-color-text-muted);
+
+    /* 代替テキストを空にする（読み上げに「スラッシュ」を混ぜない） */
+    content: '/' / '';
+  }
+
+  .rd-breadcrumb a {
+    padding-block: var(--rd-space-1);
+    color: var(--rd-color-accent-text);
+  }
+
+  /* 現在地は太字。下線を外すのは「押せない」ことを形で示すため（色だけに頼らない） */
+  .rd-breadcrumb [aria-current='page'] {
+    color: var(--rd-color-text-default);
+    font-weight: var(--rd-font-weight-bold);
+    text-decoration: none;
+  }
+
+  /* ページ送り。ピルの並びで、現在のページだけ面が上がる（radio-group の segmented と同じ見せ方）。
+     <nav class="rd-pagination" aria-label="ページ">
+       <ul><li><a href="?p=1" aria-label="前へ">‹</a></li>
+           <li><a href="?p=2" aria-current="page">2</a></li></ul>
+     </nav> */
+  .rd-pagination > ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rd-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .rd-pagination a {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: var(--rd-sizing-target-min);
+    min-block-size: var(--rd-sizing-target-min);
+    padding-inline: var(--rd-space-2);
+    border-radius: var(--rd-radius-full);
+    color: var(--rd-color-text-default);
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+  }
+
+  .rd-pagination [aria-current='page'] {
+    background: var(--rd-color-surface-raised);
+    box-shadow: var(--rd-shadow-raised);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  /* 縦 1 列のレール。文言は隠すが**消さない**（読み上げには残る）。
+     現在地はインライン始端の太い縦罫と面で示す。
+     <nav class="rd-nav-rail" aria-label="主要">
+       <ul><li><a href="/" aria-current="page"><svg aria-hidden="true"></svg><span>ホーム</span></a></li></ul>
+     </nav> */
+  .rd-nav-rail {
+    box-sizing: border-box;
+    inline-size: var(--rd-space-16);
+  }
+
+  .rd-nav-rail > ul {
+    display: grid;
+    gap: var(--rd-space-1);
+    margin: 0;
+    padding: 0;
+    justify-items: center;
+    list-style: none;
+  }
+
+  .rd-nav-rail li {
+    display: grid;
+    grid-template-columns: var(--rd-space-2) auto;
+    align-items: center;
+    inline-size: 100%;
+  }
+
+  /* 参考画面の「点」。位置（1 列目）で意味が決まるので、色だけの目印ではない */
+  .rd-nav-rail li::before {
+    inline-size: var(--rd-space-1);
+    aspect-ratio: 1;
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-border-default);
+    content: '';
+  }
+
+  .rd-nav-rail a {
+    display: grid;
+    box-sizing: border-box;
+    place-items: center;
+    inline-size: var(--rd-sizing-target-min);
+    min-block-size: var(--rd-sizing-target-min);
+
+    /* 現在地のときだけ色が付く「左の太い縦罫」。--rd-border-width-thick は無いので既定の 2 倍 */
+    border-inline-start: calc(var(--rd-border-width-default) * 2) solid transparent;
+    border-radius: var(--rd-radius-md);
+    color: var(--rd-color-text-default);
+    text-decoration: none;
+  }
+
+  .rd-nav-rail a > svg {
+    inline-size: var(--rd-space-6);
+    block-size: var(--rd-space-6);
+  }
+
+  /* 文言は視覚的にだけ隠す（utilities.css の .rd-visually-hidden と同じ 5 宣言） */
+  .rd-nav-rail a > span {
+    position: absolute;
+    overflow: hidden;
+    inline-size: 0.0625rem;
+    block-size: 0.0625rem;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* 現在地は「点の色 + 左の縦罫 + 面」の 3 つで示す。色だけに頼らない */
+  .rd-nav-rail [aria-current] {
+    border-inline-start-color: var(--rd-color-accent-default);
+    background: var(--rd-color-surface-hover);
+  }
+
+  .rd-nav-rail li:has([aria-current])::before {
+    background: var(--rd-color-accent-default);
+  }
+
+  /* 帯のメニュー。`.rd-window-bar` の下に敷くことを想定する。role="menubar" は付けない
+     （リンクの列で足りる。APG のメニューバーはキーボード操作の実装まで要る）。
+     <nav class="rd-menubar" aria-label="メニュー">
+       <ul><li><a href="/file">ファイル</a></li><li><a href="/edit">編集</a></li></ul>
+     </nav> */
+  .rd-menubar {
+    background: var(--rd-color-chrome-default);
+    color: var(--rd-color-chrome-text);
+  }
+
+  .rd-menubar > ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0;
+    padding-inline: var(--rd-space-2);
+    list-style: none;
+    font: var(--rd-type-small);
+  }
+
+  .rd-menubar a {
+    display: flex;
+    align-items: center;
+    min-block-size: var(--rd-sizing-target-min);
+    padding-inline: var(--rd-space-3);
+    border-radius: var(--rd-radius-md);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* 窓の中に敷いたら上の角丸は窓が持つ（帯が二重に丸くならない） */
+  .rd-window > .rd-menubar {
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+  }
+
+  /* レイアウトの器。開閉の JS は持たない（要るなら利用側が hidden を切り替える）。
+     幅が足りない親の中では文言を隠したレールまで縮む。
+     **親が `container-type: inline-size` を宣言していること**が条件。
+     <aside class="rd-sidebar"><nav class="rd-nav-rail" aria-label="主要">…</nav></aside> */
+  .rd-sidebar {
+    box-sizing: border-box;
+    inline-size: var(--rd-sidebar-inline-size, 16rem);
+    padding: var(--rd-space-2);
+    background: var(--rd-color-surface-sunken);
+    color: var(--rd-color-text-default);
+  }
+
+  @container (inline-size < 40rem) {
+    .rd-sidebar {
+      inline-size: var(--rd-space-16);
+    }
+  }
+
+  @media (hover: hover) {
+    .rd-pagination a:hover,
+    .rd-nav-rail a:hover,
+    .rd-menubar a:hover {
+      background: var(--rd-color-surface-hover);
+      color: var(--rd-color-text-default);
+    }
+  }
+
+  .rd-breadcrumb a:focus-visible,
+  .rd-pagination a:focus-visible,
+  .rd-nav-rail a:focus-visible,
+  .rd-menubar a:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* 現在地は輪郭で示す。地に Highlight を敷くと Chromium のバックプレートで文字が読めなくなる */
+  @media (forced-colors: active) {
+    .rd-menubar {
+      border-block-end: var(--rd-border-width-default) solid CanvasText;
+      background: Canvas;
+      color: CanvasText;
+    }
+
+    .rd-pagination [aria-current='page'],
+    .rd-nav-rail [aria-current] {
+      outline: var(--rd-border-width-default) solid Highlight;
+      outline-offset: calc(var(--rd-space-1) * -1);
+      background: Canvas;
+    }
+
+    .rd-nav-rail li:has([aria-current])::before {
+      background: Highlight;
+    }
+  }
+}

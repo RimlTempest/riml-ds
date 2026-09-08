@@ -1,0 +1,66 @@
+@layer rd.components {
+  /* トリガーも中身も light DOM。**JS が無くてもここが当たる**（ADR-0012 ティア B）。
+     開閉は `popovertarget` + `[popover]` がブラウザだけで行う。
+     帯（`.rd-window-bar`）は付けない——軽い重ね物で、窓の骨格が要るなら rd-dialog / rd-window。
+     `:where()` で修飾するのは詳細度を 0,3,0 に収めるため（stylelint）。 */
+  rd-popover {
+    display: inline-block;
+  }
+
+  /* top layer に出るので位置は fixed。inset / margin を戻さないと UA の中央寄せが残る */
+  rd-popover [popover] {
+    position: fixed;
+    box-sizing: border-box;
+    inset: auto;
+    z-index: var(--rd-layer-overlay);
+    inline-size: max-content;
+    max-inline-size: min(90vi, var(--rd-sizing-measure-max));
+    margin: 0;
+    padding: var(--rd-space-4);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-radius: var(--rd-radius-lg);
+    background: var(--rd-color-surface-raised);
+    box-shadow: var(--rd-shadow-overlay);
+    color: var(--rd-color-text-default);
+  }
+
+  /* 見出しは面の先頭。名前の出どころなので、消さず・縮めすぎない */
+  rd-popover [slot='label'] {
+    margin-block: 0 var(--rd-space-2);
+    font: var(--rd-type-heading-4);
+  }
+
+  /* 開いた先が空でも入れるように tabindex="-1" を持つ。その輪は要素自身が描く */
+  rd-popover [popover]:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* anchor positioning は Baseline Newly（docs/baseline.md）。
+     使えるときだけ CSS に任せ、無ければ element が top / left を書く */
+  @supports (position-area: block-end) {
+    rd-popover [popover] {
+      position-area: block-end span-inline-end;
+      position-try-fallbacks: flip-block;
+    }
+
+    rd-popover:where([placement='end']) [popover] {
+      position-area: block-end span-inline-start;
+    }
+  }
+
+  /* 定義前（JS が無い / 遅い）: 中身をその場に開いたまま見せる。
+     ティア B の約束は「内容が見える」なので、ここでは**隠さない** */
+  rd-popover:not(:defined) [popover] {
+    position: static;
+    display: block;
+  }
+
+  @media (forced-colors: active) {
+    rd-popover [popover] {
+      border-color: CanvasText;
+    }
+  }
+}

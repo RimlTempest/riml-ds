@@ -49,12 +49,30 @@
     "dependsOn": []
   },
   {
+    "name": "menu",
+    "tag": "rd-menu",
+    "pe": "B",
+    "status": "experimental",
+    "summary": "メニュー。JS 無しでも popovertarget で開く",
+    "files": ["menu/index.js", "menu/menu.define.js", "menu/menu.css"],
+    "dependsOn": []
+  },
+  {
     "name": "meter",
     "tag": "rd-meter",
     "pe": "A",
     "status": "experimental",
     "summary": "割合の表示。<label for> と <meter> / <progress> は利用側が書く",
     "files": ["meter/index.js", "meter/meter.define.js", "meter/meter.css"],
+    "dependsOn": []
+  },
+  {
+    "name": "popover",
+    "tag": "rd-popover",
+    "pe": "B",
+    "status": "experimental",
+    "summary": "非モーダルの重ね物。JS 無しでも popovertarget で開く",
+    "files": ["popover/index.js", "popover/popover.define.js", "popover/popover.css"],
     "dependsOn": []
   },
   {
@@ -89,6 +107,15 @@
     "dependsOn": []
   },
   {
+    "name": "tabs",
+    "tag": "rd-tabs",
+    "pe": "B",
+    "status": "experimental",
+    "summary": "タブ。JS 無しではページ内リンクの列",
+    "files": ["tabs/index.js", "tabs/tabs.define.js", "tabs/tabs.css"],
+    "dependsOn": []
+  },
+  {
     "name": "text-field",
     "tag": "rd-text-field",
     "pe": "A",
@@ -109,6 +136,15 @@
     "summary": "一時的な通知。読み上げは rd-live-region に委譲する",
     "files": ["toast/index.js", "toast/toast.define.js"],
     "dependsOn": ["rd-live-region"]
+  },
+  {
+    "name": "tooltip",
+    "tag": "rd-tooltip",
+    "pe": "C",
+    "status": "experimental",
+    "summary": "対象を説明する吹き出し。フォーカスでも出て Esc で閉じる",
+    "files": ["tooltip/index.js", "tooltip/tooltip.define.js"],
+    "dependsOn": []
   },
   {
     "name": "window",

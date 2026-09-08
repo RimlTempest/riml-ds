@@ -28,7 +28,7 @@ bun add @rimltempest/riml-ds-css @rimltempest/riml-ds-tokens
 （トークンより先に読む場合に限る）。
 
 個別に読むなら `layers.css` → `tokens.css` → `reset.css` → `base.css` → `typography.css` →
-`atoms.css` → `patterns.css` → `print.css` → `forced-colors.css` の順。バンドラを持つ利用側はこちらでよい（`index.css` を
+`atoms.css` → `navigation.css` → `patterns.css` → `print.css` → `forced-colors.css` の順。バンドラを持つ利用側はこちらでよい（`index.css` を
 結合で作っているのは HTTP リクエスト数のため）。
 
 `@rimltempest/riml-ds-tokens` は `peerDependenciesMeta` で optional にしてある。npm に出ていない
@@ -44,6 +44,7 @@ tokens を `file:` / `workspace:` で取り込む利用側が 404 で止まら�
 | `base.css`          | `rd.base`       | `body`・見出し・行長・`hr`（点線）・リンク・`:focus-visible`・等幅                           |
 | `typography.css`    | `rd.components` | 文字のクラス（`.rd-display` … `.rd-prose`）                                                  |
 | `atoms.css`         | `rd.components` | JS が要らない小さなパターン（`.rd-badge` … `.rd-scroll-area`）                               |
+| `navigation.css`    | `rd.components` | 移動のための形（`.rd-breadcrumb` … `.rd-sidebar`）                                           |
 | `patterns.css`      | `rd.components` | 窓（`.rd-window` / `.rd-window-title` / `.rd-window-body`）                                  |
 | `utilities.css`     | `rd.utilities`  | `.rd-visually-hidden`、`.rd-skip-link`、`.rd-stack`、`.rd-cluster`、`.rd-aspect`、`[hidden]` |
 | `print.css`         | `rd.base`       | `@media print`（リンク先の URL、ナビを消す、システム色）                                     |

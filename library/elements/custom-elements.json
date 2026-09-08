@@ -952,6 +952,213 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/menu/menu.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-menu",
+          "declaration": {
+            "name": "RdMenu",
+            "module": "/src/menu/menu.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/menu/menu.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "押すと項目が開くメニュー。**HTML だけで開閉する**（`popovertarget` + `[popover]`）ので\nJS が無くても項目に辿り着ける（ティア B、ADR-0012）。項目の `click` は `preventDefault`\nしない——ルーターに横取りさせる（plan 020 保守メモ）。",
+          "name": "RdMenu",
+          "cssParts": [
+            {
+              "description": "shadow の枠",
+              "name": "control"
+            }
+          ],
+          "slots": [
+            {
+              "description": "`[popover]` のリスト。省略不可",
+              "name": ""
+            },
+            {
+              "description": "開くボタン（`popovertarget` を持つ）。省略不可",
+              "name": "trigger"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, serializable: true }"
+            },
+            {
+              "kind": "field",
+              "name": "placement",
+              "privacy": "public",
+              "type": {
+                "text": "'start' | 'end'"
+              },
+              "description": "インライン方向の揃え。`end` はトリガーの終端に揃える",
+              "default": "'start'",
+              "attribute": "placement",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#open",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#name",
+              "privacy": "private",
+              "default": "`rd-menu-${(sequence += 1)}`"
+            },
+            {
+              "kind": "field",
+              "name": "#wire",
+              "privacy": "private",
+              "description": "id と `popovertarget` を結ぶ。利用側が書いていればそのまま尊重する"
+            },
+            {
+              "kind": "field",
+              "name": "#list",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#trigger",
+              "privacy": "private",
+              "description": "押せるのはトリガーの中のネイティブ要素（`rd-button` に包まれていることが多い）"
+            },
+            {
+              "kind": "field",
+              "name": "#items",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#onToggle",
+              "privacy": "private",
+              "description": "開いたら最初の項目へ、閉じたらトリガーへ（Esc はネイティブが閉じる）"
+            },
+            {
+              "kind": "field",
+              "name": "#onKeydown",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#onSelect",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ index: number; href: string }>"
+              },
+              "description": "項目を押したとき（リンクでなければ href は空）",
+              "name": "rd-select"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "placement",
+              "type": {
+                "text": "'start' | 'end'"
+              },
+              "description": "インライン方向の揃え。`end` はトリガーの終端に揃える",
+              "default": "'start'",
+              "fieldName": "placement"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "label"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "open",
+              "description": "開いている"
+            },
+            {
+              "name": "unlabeled",
+              "description": "label が無い"
+            },
+            {
+              "name": "malformed",
+              "description": "slot=\"trigger\" か [popover] が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "メニュー。JS 無しでも popovertarget で開く",
+          "status": "experimental",
+          "pe": "B",
+          "tagName": "rd-menu",
+          "customElement": true
+        },
+        {
+          "kind": "variable",
+          "name": "index"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdMenu",
+          "declaration": {
+            "name": "RdMenu",
+            "module": "src/menu/menu.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/meter/meter.define.ts",
       "declarations": [],
       "exports": [
@@ -1052,6 +1259,181 @@
           "declaration": {
             "name": "RdMeter",
             "module": "src/meter/meter.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/popover/popover.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-popover",
+          "declaration": {
+            "name": "RdPopover",
+            "module": "/src/popover/popover.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/popover/popover.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "トリガーの脇に開く軽い重ね物。中身は自由（見出し・本文・フォーム）で、**モーダルにしない**\n——画面を止めて確定を迫るものは `rd-dialog`（ティア B、ADR-0012）。\n`popovertarget` + `[popover]` が開閉するので JS が無くても中身に辿り着ける。",
+          "name": "RdPopover",
+          "cssParts": [
+            {
+              "description": "shadow の枠",
+              "name": "control"
+            }
+          ],
+          "slots": [
+            {
+              "description": "`[popover]` の中身（先頭に `[slot=\"label\"]` の見出しを置く）。省略不可",
+              "name": ""
+            },
+            {
+              "description": "開くボタン（`popovertarget` を持つ）。省略不可",
+              "name": "trigger"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, serializable: true }"
+            },
+            {
+              "kind": "field",
+              "name": "placement",
+              "privacy": "public",
+              "type": {
+                "text": "'start' | 'end'"
+              },
+              "description": "インライン方向の揃え。`end` はトリガーの終端に揃える",
+              "default": "'start'",
+              "attribute": "placement",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#open",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#name",
+              "privacy": "private",
+              "default": "`rd-popover-${(sequence += 1)}`"
+            },
+            {
+              "kind": "field",
+              "name": "#wire",
+              "privacy": "private",
+              "description": "id と `popovertarget` を結ぶ。利用側が書いていればそのまま尊重する"
+            },
+            {
+              "kind": "field",
+              "name": "#panel",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#label",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#trigger",
+              "privacy": "private",
+              "description": "押せるのはトリガーの中のネイティブ要素（`rd-button` に包まれていることが多い）"
+            },
+            {
+              "kind": "field",
+              "name": "#onToggle",
+              "privacy": "private",
+              "description": "開いたら中の最初の行き先へ、閉じたらトリガーへ（Esc はネイティブが閉じる）"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ open: boolean }>"
+              },
+              "description": "開閉したとき（popover の toggle を写す）",
+              "name": "rd-toggle"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "placement",
+              "type": {
+                "text": "'start' | 'end'"
+              },
+              "description": "インライン方向の揃え。`end` はトリガーの終端に揃える",
+              "default": "'start'",
+              "fieldName": "placement"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "open",
+              "description": "開いている"
+            },
+            {
+              "name": "unlabeled",
+              "description": "[slot=\"label\"] の見出しが無い"
+            },
+            {
+              "name": "malformed",
+              "description": "slot=\"trigger\" か [popover] が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "非モーダルの重ね物。JS 無しでも popovertarget で開く",
+          "status": "experimental",
+          "pe": "B",
+          "tagName": "rd-popover",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdPopover",
+          "declaration": {
+            "name": "RdPopover",
+            "module": "src/popover/popover.element.ts"
           }
         }
       ]
@@ -1785,6 +2167,247 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/tabs/tabs.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-tabs",
+          "declaration": {
+            "name": "RdTabs",
+            "module": "/src/tabs/tabs.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/tabs/tabs.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "タブ。JS が無ければ**ページ内リンクの列**として動き、パネルはすべて見える（ティア B、ADR-0012）。\nJS が来たら tablist / tab / tabpanel と roving tabindex・自動活性化（APG）を足す。\n`location.hash` は読むだけ（履歴を汚さない）。深いリンクは利用側が `selected` に書く。",
+          "name": "RdTabs",
+          "cssParts": [
+            {
+              "description": "shadow の枠",
+              "name": "control"
+            },
+            {
+              "description": "パネルの入れ物",
+              "name": "panels"
+            }
+          ],
+          "slots": [
+            {
+              "description": "パネル。`id` が tab の href の飛び先",
+              "name": ""
+            },
+            {
+              "description": "タブの列（`<ul>`）。省略不可",
+              "name": "tabs"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, serializable: true }",
+              "description": "`delegatesFocus` は付けない——タブ自身が light DOM のリンクで、フォーカスはそこに行く"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "privacy": "public",
+              "type": {
+                "text": "'line' | 'browser'"
+              },
+              "description": "`line`（下線）か `browser`（帯から生える窓のタブ）。見た目は `[variant]` で当てる",
+              "default": "'line'",
+              "attribute": "variant",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "orientation",
+              "privacy": "public",
+              "type": {
+                "text": "'horizontal' | 'vertical'"
+              },
+              "default": "'horizontal'",
+              "attribute": "orientation",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "selected"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#index",
+              "privacy": "private",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "method",
+              "name": "select",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "index",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ],
+              "description": "タブを選ぶ。範囲外は無視。`rd-change` を出し、そのタブへフォーカスを移す"
+            },
+            {
+              "kind": "field",
+              "name": "#tabs",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#apply",
+              "privacy": "private",
+              "description": "ARIA と roving tabindex を light DOM に書き戻す。描画のたびに冪等に走る"
+            },
+            {
+              "kind": "field",
+              "name": "#onInteract",
+              "privacy": "private",
+              "description": "click は押したタブへ、矢印 / Home / End は次のタブへ（自動活性化）"
+            },
+            {
+              "kind": "field",
+              "name": "#indexOf",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "name": "rd-change",
+              "type": {
+                "text": "CustomEvent<{ id: string }>"
+              },
+              "description": "選ぶタブが変わるたび（id は開いたパネルの id）"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "variant",
+              "type": {
+                "text": "'line' | 'browser'"
+              },
+              "description": "`line`（下線）か `browser`（帯から生える窓のタブ）。見た目は `[variant]` で当てる",
+              "default": "'line'",
+              "fieldName": "variant"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "label"
+            },
+            {
+              "name": "orientation",
+              "type": {
+                "text": "'horizontal' | 'vertical'"
+              },
+              "default": "'horizontal'",
+              "fieldName": "orientation"
+            },
+            {
+              "name": "selected",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "selected"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "vertical",
+              "description": "orientation=\"vertical\""
+            },
+            {
+              "name": "unlabeled",
+              "description": "label が無い"
+            },
+            {
+              "name": "malformed",
+              "description": "slot=\"tabs\" の列かページ内リンクが無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "タブ。JS 無しではページ内リンクの列",
+          "status": "experimental",
+          "pe": "B",
+          "tagName": "rd-tabs",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdTabs",
+          "declaration": {
+            "name": "RdTabs",
+            "module": "src/tabs/tabs.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/text-field/text-field.define.ts",
       "declarations": [],
       "exports": [
@@ -2226,6 +2849,186 @@
           "declaration": {
             "name": "RdToast",
             "module": "src/toast/toast.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/tooltip/tooltip.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-tooltip",
+          "declaration": {
+            "name": "RdTooltip",
+            "module": "/src/tooltip/tooltip.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/tooltip/tooltip.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "対象を説明する小さな吹き出し。**無くても害が無い**（ティア C、ADR-0012）——\nJS が無ければ何も出ず、代わりは利用側が対象に書く `title`。\nホバーだけに頼らずフォーカスでも出し、Esc で閉じ、吹き出しに乗っても消えない（WCAG 1.4.13）。",
+          "name": "RdTooltip",
+          "cssProperties": [
+            {
+              "description": "ポインタで開くまでの待ち時間。既定 400ms",
+              "name": "--rd-tooltip-delay"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "吹き出しの箱",
+              "name": "control"
+            }
+          ],
+          "slots": [
+            {
+              "description": "説明の文言",
+              "name": ""
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, serializable: true }"
+            },
+            {
+              "kind": "field",
+              "name": "for",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "description": "説明する相手の id（同じ木の中）",
+              "default": "''",
+              "attribute": "for"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#open",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#timer",
+              "privacy": "private",
+              "type": {
+                "text": "ReturnType<typeof setTimeout> | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#target",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#box",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#applyPopover",
+              "privacy": "private",
+              "description": "二重に呼ぶと InvalidStateError になるので、実際の表示状態と食い違うときだけ切り替える"
+            },
+            {
+              "kind": "field",
+              "name": "#setOpen",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#show",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#hide",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#hold",
+              "privacy": "private",
+              "description": "吹き出し自身に乗っている間は消さない（WCAG 1.4.13 Hoverable）"
+            },
+            {
+              "kind": "field",
+              "name": "#delayedShow",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#onKeydown",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "id"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "for",
+              "type": {
+                "text": "string"
+              },
+              "description": "説明する相手の id（同じ木の中）",
+              "default": "''",
+              "fieldName": "for"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "open",
+              "description": "表示中"
+            },
+            {
+              "name": "orphan",
+              "description": "for の先が見つからない"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "対象を説明する吹き出し。フォーカスでも出て Esc で閉じる",
+          "status": "experimental",
+          "pe": "C",
+          "tagName": "rd-tooltip",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdTooltip",
+          "declaration": {
+            "name": "RdTooltip",
+            "module": "src/tooltip/tooltip.element.ts"
           }
         }
       ]

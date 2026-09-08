@@ -69,7 +69,7 @@
 | 017 | [窓の左端の丸を本物のボタンにする（rd-window・.rd-window-bar・dialog の ×）](017-window-controls.md) | P1 | L | 016 | DONE（`da4200a`） |
 | 018 | [Typography（typography.css）と静的パターン集 atoms.css](018-typography-and-atoms.md) | P1 | M | 016 | DONE（`6275931`） |
 | 019 | [フォーム第 3 波（rd-radio-group・rd-slider・.rd-input-group）](019-form-wave3.md) | P1 | L | 017, 018 | DONE（`d1cf0c2`） |
-| 020 | [ナビゲーションと重ね窓（rd-tabs・rd-menu・rd-popover・rd-tooltip・navigation.css）](020-navigation-and-overlays.md) | P1 | XL | 017, 018 | IN PROGRESS |
+| 020 | [ナビゲーションと重ね窓（rd-tabs・rd-menu・rd-popover・rd-tooltip・navigation.css）](020-navigation-and-overlays.md) | P1 | XL | 017, 018 | DONE（`4ebf45e`） |
 | 021 | [フォーム第 4 波（rd-toggle・rd-checkbox-group・rd-input-otp・.rd-button-group）](021-form-wave4.md) | P1 | L | 019 | TODO |
 | 022 | [面と待ち（.rd-card / .rd-empty / .rd-spinner / .rd-accordion / .rd-carousel / .rd-scroll-area / .rd-aspect、rd-dialog の alert / placement）](022-surfaces-and-feedback.md) | P1 | L | 017, 018 | TODO |
 
@@ -234,4 +234,20 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
   `.markuplintrc.json` に `[aria-hidden="true"]` 系の `no-empty-palpable-content` 除外（slider の track / fill）。`docs/baseline.md` に縦向き range の行
 - 既知のまま: ダークで `surface.sunken` = `surface.default` なので segmented のピル・slider の未塗り・input-group の枕が見えない（018 メモと同じ → tokens plan）
 - check 0 / test 865 / pe 36 / e2e:frameworks 46 / a11y 16 / VRT 704 / lint:html 0 / release:check 0
+
+### 020 の実行メモ（2026-09-08）
+
+- マージ `4ebf45e`。`rd-tabs`（B）/ `rd-menu`（B）/ `rd-popover`（B）/ `rd-tooltip`（C）を experimental に、`navigation.css`（`.rd-breadcrumb` / `.rd-pagination` / `.rd-nav-rail` / `.rd-menubar` / `.rd-sidebar`）を css に。
+  `_shared/roving-focus.ts` / `popover-anchor.ts` を新設。テスト 1036、pe 47、e2e:frameworks 46、a11y 20、VRT 887、lint:html 196 story。size: menu 7.23 / popover 6.92 KB
+- 計画から変えた点: `rd-menu` の `items` は `contract.roles` に置かず `ITEM_SELECTOR` として別 export（`checkContract` は 1 個目しか見ない。guard 検査 9 が `roles:` 周辺の `button` / `a[href]` を見てティア A を要求する）。
+  トリガーは木ではなく `menuTriggerMarkup()` / `popoverTriggerMarkup()` の生 HTML（React ラッパー生成器が `popovertarget` を扱えない）。
+  `rd-menu` は `<ul><li>` を使わず `role="menu"` を `[popover]` 自身に付けて項目を直下に置く（markuplint `wai-aria` の Required Owned Elements）。
+  区切りは要素にせず `menuItemMarkup({ separated: true })` → `data-separated` の点線。押せない項目は `<span aria-disabled="true">`
+- 要素の 150 行制限のため `menu.dom.ts` / `popover.dom.ts`（DOM 読み書きだけの薄い層）を新設。`*.logic.ts` は純関数のまま
+- `e2e/frameworks/shared.ts` には tabs / menu / popover を載せていない: **ラッパー生成器が `{ raw }` ノードを Vue / Svelte / Astro で既定 slot として 2 回描く**（`Menu.svelte` が `{@render children()}` を 2 回出す）→ 023 以降（`tools/cem/src/wrappers` のレーン）
+- 規約の食い違い: `riml-ds-element` skill §4 の「無効は `aria-disabled`」と markuplint `wai-aria`（`<button>` / `<a href>` の `aria-disabled` を落とす）が矛盾。どちらかを合わせる判断が要る（advisor）
+- `rd-menu` / `rd-popover` の `:not(:defined)` は `[popover]` を開いた状態で見せる（ティア B）。定義直前に一瞬開いて見える。実アプリで気になれば `dialog` と一緒に判断
+- 存在しないトークンは代用で通した: 太罫 `calc(var(--rd-border-width-default) * 2)`、影 `--rd-shadow-overlay`、反転文字は `chrome.default` / `chrome.text`
+- guard 検査 14 は lanes.tsv の `_shared/popover-anchor.ts` が `.test.ts` にプレフィックス一致しなかった → `aed76cd` で拡張子を落とした
+- 見直し候補: `.rd-nav-rail` の選択印（pe ページでは括弧状の線に見える）と Storybook `Patterns/Navigation` story（advisor）
 
