@@ -36,6 +36,7 @@ import {
   tabMarkup,
 } from '../../library/elements/src/tabs/tabs.contract.js'
 import { textFieldMarkup } from '../../library/elements/src/text-field/index.js'
+import { toggleMarkup } from '../../library/elements/src/toggle/index.js'
 import { windowMarkup } from '../../library/elements/src/window/index.js'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
@@ -62,6 +63,7 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/tabs/tabs.css', 'tabs.css'],
   ['library/elements/src/menu/menu.css', 'menu.css'],
   ['library/elements/src/popover/popover.css', 'popover.css'],
+  ['library/elements/src/toggle/toggle.css', 'toggle.css'],
 ]
 
 const STYLESHEETS = CSS_SOURCES.map(
@@ -387,9 +389,16 @@ const PAGES: Readonly<Record<string, string>> = {
   'button-group.html': page(
     'ボタンの枕',
     `      <div class="rd-button-group" role="group" aria-label="表示">
-        ${buttonMarkup({ label: '一覧' })}
-        ${buttonMarkup({ label: '格子', variant: 'secondary' })}
+        ${toggleMarkup({ label: '一覧', pressed: 'true' })}
+        ${toggleMarkup({ label: '格子' })}
       </div>`,
+  ),
+  'toggle.html': page(
+    '押下状態を持つボタン',
+    `      ${toggleMarkup({ label: '太字' })}
+      ${toggleMarkup({ label: '斜体', variant: 'ghost' })}
+      ${toggleMarkup({ label: '下線', pressed: 'true' })}
+      <rd-toggle><button type="button" aria-pressed="false" disabled>取り消し線</button></rd-toggle>`,
   ),
   'input-group.html': page(
     '入力の枕',

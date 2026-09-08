@@ -62,6 +62,7 @@ describe('listElements', () => {
       'rd-tabs',
       'rd-text-field',
       'rd-toast',
+      'rd-toggle',
       'rd-tooltip',
       'rd-window',
     ])

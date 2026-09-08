@@ -256,11 +256,12 @@
      中の `rd-button` / `.rd-icon-button` はピルのまま（docs/brand.md §7.2。角は削らない）。
      `role="group"` と `aria-label` は**利用側が付ける**（`.rd-alert` の role と同じ判断）。
      **`ghost` は入れない**：枕が沈んだ面なので accent-text だと 6.65:1 で AAA（7:1）に届かない。
-     選んでいる方を `primary`、選んでいない方を `secondary` にする:
+     中身は **`rd-toggle`**（押下状態を持つボタン）にする。「一覧 / 格子」の切り替えは
+     `aria-pressed` が持つ意味で、`rd-button` の variant で見せ分けるのは意味論が無い:
 
      <div class="rd-button-group" role="group" aria-label="表示">
-       <rd-button><button type="button">一覧</button></rd-button>
-       <rd-button variant="secondary"><button type="button">格子</button></rd-button>
+       <rd-toggle><button type="button" aria-pressed="true">一覧</button></rd-toggle>
+       <rd-toggle><button type="button" aria-pressed="false">格子</button></rd-toggle>
      </div> */
   .rd-button-group {
     display: inline-flex;

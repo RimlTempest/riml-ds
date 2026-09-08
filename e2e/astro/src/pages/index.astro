@@ -1,6 +1,8 @@
 ---
 import RdButton from '@rimltempest/riml-ds-astro/button.astro'
 import RdCheckbox from '@rimltempest/riml-ds-astro/experimental/checkbox.astro'
+import RdCheckboxGroup from '@rimltempest/riml-ds-astro/experimental/checkbox-group.astro'
+import RdInputOtp from '@rimltempest/riml-ds-astro/experimental/input-otp.astro'
 import RdSelect from '@rimltempest/riml-ds-astro/experimental/select.astro'
 import RdDialog from '@rimltempest/riml-ds-astro/dialog.astro'
 import RdTextField from '@rimltempest/riml-ds-astro/text-field.astro'
@@ -10,6 +12,7 @@ import RdPopover from '@rimltempest/riml-ds-astro/experimental/popover.astro'
 import RdRadioGroup from '@rimltempest/riml-ds-astro/experimental/radio-group.astro'
 import RdSlider from '@rimltempest/riml-ds-astro/experimental/slider.astro'
 import RdTabs from '@rimltempest/riml-ds-astro/experimental/tabs.astro'
+import RdToggle from '@rimltempest/riml-ds-astro/experimental/toggle.astro'
 import RdWindow from '@rimltempest/riml-ds-astro/experimental/window.astro'
 ---
 
@@ -65,6 +68,36 @@ import RdWindow from '@rimltempest/riml-ds-astro/experimental/window.astro'
           >
           <p>条件を選ぶと一覧がその場で変わる。</p>
         </RdPopover>
+        <RdCheckboxGroup label="タグ">
+          <label><input type="checkbox" id="tag-work" name="tags" value="a" />仕事</label>
+          <label><input type="checkbox" id="tag-private" name="tags" value="b" />私用</label>
+        </RdCheckboxGroup>
+        <RdInputOtp label="確認コード">
+          <input
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]"
+            maxlength="1"
+            id="code-1"
+            name="code-1"
+            aria-label="1 桁目"
+            title="0〜9 の数字 1 文字"
+            required
+            autocomplete="one-time-code"
+          />
+          <input
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]"
+            maxlength="1"
+            id="code-2"
+            name="code-2"
+            aria-label="2 桁目"
+            title="0〜9 の数字 1 文字"
+            required
+          />
+        </RdInputOtp>
+        <RdToggle label="太字" pressed="false" />
         <rd-live-region></rd-live-region>
       </main>
     </div>

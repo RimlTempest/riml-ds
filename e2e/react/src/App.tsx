@@ -11,6 +11,7 @@ import {
   RdSelect,
   RdSlider,
   RdTabs,
+  RdToggle,
   RdWindow,
 } from '@rimltempest/riml-ds-react/experimental'
 import type { ReactNode } from 'react'
@@ -138,6 +139,7 @@ export const App = (): ReactNode => (
         required
       />
     </RdInputOtp>
+    <RdToggle label="太字" pressed="false" />
     <rd-live-region />
   </main>
 )

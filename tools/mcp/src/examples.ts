@@ -36,6 +36,7 @@ import {
   panelMarkup,
   tabMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/tabs/contract'
+import { markup as toggleMarkup } from '@rimltempest/riml-ds-elements/experimental/toggle/contract'
 import { markup as windowMarkup } from '@rimltempest/riml-ds-elements/experimental/window/contract'
 import { markup as textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field/contract'
 import type { ElementExampleMap } from './core/elements.js'
@@ -149,6 +150,9 @@ const DISCLOSURE = {
  * ティア C は契約を持たない。`rd-toast` は空タグ（読み上げと表示は `show()` が出す）を載せ、
  * `rd-live-region` は載せない（core が同じ空タグに落とす）。
  */
+/** 押下の真実は `aria-pressed`。既定は `'false'`（属性ごと消えると toggle でなくなる） */
+const TOGGLE = { label: '太字', pressed: 'false' } as const
+
 const TOAST = {} as const
 
 /**
@@ -174,6 +178,7 @@ export const elementExamples = {
   'rd-window': { html: windowMarkup(WINDOW), props: WINDOW },
   'rd-tabs': { html: tabsMarkup(TABS), props: TABS },
   'rd-toast': { html: '<rd-toast></rd-toast>', props: TOAST },
+  'rd-toggle': { html: toggleMarkup(TOGGLE), props: TOGGLE },
   'rd-tooltip': {
     html:
       '<button id="save" type="button" title="⌘S で保存します">保存</button>'
