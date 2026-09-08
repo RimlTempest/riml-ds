@@ -88,8 +88,11 @@
       outline-offset: calc(-1 * var(--rd-space-1));
     }
 
+    /* フォーカスは押下の輪（内側の細い Highlight）に**置き換わる**外側の太いリング。
+       outline-color だけを書くと押下中に同じ形になってフォーカスが見分けられない */
     rd-toggle > button:focus-visible {
-      outline-color: Highlight;
+      outline: var(--rd-focus-ring-width) solid Highlight;
+      outline-offset: var(--rd-focus-ring-offset);
     }
 
     rd-toggle > button:disabled {

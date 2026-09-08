@@ -16,6 +16,43 @@ const control = (el: RdToggle): HTMLButtonElement => {
   return button
 }
 
+/** `@layer` / `@media` を潜って、実際に当たる CSS 規則を集める（CSSOM をそのまま見る） */
+const flattenRules = (rules: CSSRuleList): readonly CSSRule[] => {
+  const flat: CSSRule[] = []
+  for (const rule of rules) {
+    flat.push(rule)
+    if ('cssRules' in rule && rule.cssRules instanceof CSSRuleList) {
+      flat.push(...flattenRules(rule.cssRules))
+    }
+  }
+  return flat
+}
+
+/** CSSOM は属性値の引用符を `"` に揃えるので、比べる前に合わせる */
+const normalizeQuotes = (text: string): string => text.replaceAll("'", '"')
+
+/** forced-colors のブロックの中の 1 セレクタの宣言。無ければ undefined */
+const forcedColorsStyle = (selector: string): CSSStyleDeclaration | undefined => {
+  const sheet = [...document.styleSheets].find((candidate) =>
+    (candidate.href ?? '').includes('/toggle/toggle.css'),
+  )
+  if (sheet === undefined) {
+    throw new Error('toggle.css が読み込まれていない')
+  }
+  const forced = flattenRules(sheet.cssRules).find(
+    (rule) => rule instanceof CSSMediaRule && rule.conditionText.includes('forced-colors'),
+  )
+  if (!(forced instanceof CSSMediaRule)) {
+    throw new Error('forced-colors のブロックが無い')
+  }
+  const matched = flattenRules(forced.cssRules).find(
+    (rule) =>
+      rule instanceof CSSStyleRule
+      && normalizeQuotes(rule.selectorText) === normalizeQuotes(selector),
+  )
+  return matched instanceof CSSStyleRule ? matched.style : undefined
+}
+
 beforeAll(async () => {
   document.documentElement.lang = 'ja'
   await loadStyle('/system/tokens/dist/tokens.css')
@@ -97,4 +134,15 @@ it('variant は :state() になる', async () => {
 it('ピルは 44px のタップ標的になる', async () => {
   const el = await fixtureOf(RdToggle, toggle())
   expect(control(el).getBoundingClientRect().height).toBeGreaterThanOrEqual(44)
+})
+
+it('強制配色では押下中でもフォーカスリングが押下の輪と見分けられる', () => {
+  // 押下は「内側の細い Highlight の輪」なので、フォーカスは**外側の太いリング**で示す。
+  // outline-color だけを書くと押下の輪と同じ形になり、フォーカスが分からなくなる
+  const pressed = forcedColorsStyle("rd-toggle > button[aria-pressed='true']")
+  expect(pressed?.getPropertyValue('outline-offset')).toBe('calc(-1 * var(--rd-space-1))')
+  const focused = forcedColorsStyle('rd-toggle > button:focus-visible')
+  // `var()` を含む一括指定は CSSOM が個別値に展開できないので、一括指定のまま見る
+  expect(focused?.getPropertyValue('outline')).toBe('var(--rd-focus-ring-width) solid Highlight')
+  expect(focused?.getPropertyValue('outline-offset')).toBe('var(--rd-focus-ring-offset)')
 })
