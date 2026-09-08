@@ -22,8 +22,10 @@ describe('listElements', () => {
     expect(result.value.map((element) => element.tag)).toEqual([
       'rd-button',
       'rd-checkbox',
+      'rd-checkbox-group',
       'rd-dialog',
       'rd-disclosure',
+      'rd-input-otp',
       'rd-live-region',
       'rd-meter',
       'rd-radio-group',
@@ -42,8 +44,10 @@ describe('listElements', () => {
     expect(Object.keys(elementExamples).toSorted()).toEqual([
       'rd-button',
       'rd-checkbox',
+      'rd-checkbox-group',
       'rd-dialog',
       'rd-disclosure',
+      'rd-input-otp',
       'rd-meter',
       'rd-radio-group',
       'rd-select',

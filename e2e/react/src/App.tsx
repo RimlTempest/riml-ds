@@ -2,6 +2,8 @@ import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-react'
 // experimental は専用サブパスからしか出ない（ADR-0009）
 import {
   RdCheckbox,
+  RdCheckboxGroup,
+  RdInputOtp,
   RdMeter,
   RdRadioGroup,
   RdSelect,
@@ -49,6 +51,39 @@ export const App = (): ReactNode => (
       </label>
     </RdRadioGroup>
     <RdSlider id="volume" label="音量" name="volume" defaultValue="3" min="0" max="10" />
+    <RdCheckboxGroup label="タグ">
+      <label>
+        <input type="checkbox" id="tag-work" name="tags" value="a" />
+        仕事
+      </label>
+      <label>
+        <input type="checkbox" id="tag-private" name="tags" value="b" />
+        私用
+      </label>
+    </RdCheckboxGroup>
+    <RdInputOtp label="確認コード">
+      <input
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]"
+        maxLength={1}
+        id="code-1"
+        name="code-1"
+        aria-label="1 桁目"
+        required
+        autoComplete="one-time-code"
+      />
+      <input
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]"
+        maxLength={1}
+        id="code-2"
+        name="code-2"
+        aria-label="2 桁目"
+        required
+      />
+    </RdInputOtp>
     <rd-live-region />
   </main>
 )

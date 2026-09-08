@@ -22,6 +22,16 @@
     "limit": "14 KB"
   },
   {
+    "name": "@rimltempest/riml-ds-elements/experimental/checkbox-group/define (lit 込み)",
+    "path": "library/elements/dist/checkbox-group/checkbox-group.define.js",
+    "limit": "12 KB"
+  },
+  {
+    "name": "@rimltempest/riml-ds-elements/experimental/input-otp/define (lit 込み)",
+    "path": "library/elements/dist/input-otp/input-otp.define.js",
+    "limit": "12 KB"
+  },
+  {
     "name": "@rimltempest/riml-ds-elements/experimental/meter/define (lit 込み)",
     "path": "library/elements/dist/meter/meter.define.js",
     "limit": "12 KB"

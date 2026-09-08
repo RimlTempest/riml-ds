@@ -10,7 +10,15 @@
 import { markup as buttonMarkup } from '@rimltempest/riml-ds-elements/button/contract'
 import { markup as dialogMarkup } from '@rimltempest/riml-ds-elements/dialog/contract'
 import { markup as checkboxMarkup } from '@rimltempest/riml-ds-elements/experimental/checkbox/contract'
+import {
+  checkboxOptionMarkup,
+  markup as checkboxGroupMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/checkbox-group/contract'
 import { markup as disclosureMarkup } from '@rimltempest/riml-ds-elements/experimental/disclosure/contract'
+import {
+  markup as inputOtpMarkup,
+  otpCellsMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/input-otp/contract'
 import { markup as meterMarkup } from '@rimltempest/riml-ds-elements/experimental/meter/contract'
 import {
   markup as radioGroupMarkup,
@@ -82,6 +90,20 @@ const SLIDER = {
   max: '10',
   step: '1',
 } as const
+/** 「1 つ以上」は `min`。ネイティブの検証には出ないので部品が見る（JS が無いと効かない） */
+const CHECKBOX_GROUP = {
+  label: 'タグ',
+  min: '1',
+  children:
+    checkboxOptionMarkup({ id: 'tag-work', name: 'tags', value: 'work', label: '仕事' })
+    + checkboxOptionMarkup({ id: 'tag-private', name: 'tags', value: 'private', label: '私用' }),
+} as const
+/** 値は `code-1..N` の N フィールドで送信される。連結した値は `el.value` で読む */
+const INPUT_OTP = {
+  label: '確認コード',
+  hint: '6 桁の数字',
+  children: otpCellsMarkup({ name: 'code' }),
+} as const
 const DISCLOSURE = {
   label: '送料について',
   children: '<p>5,000 円以上で無料です。</p>',
@@ -99,7 +121,9 @@ export const elementExamples = {
   'rd-dialog': { html: dialogMarkup(DIALOG), props: DIALOG },
   'rd-select': { html: selectMarkup(SELECT), props: SELECT },
   'rd-checkbox': { html: checkboxMarkup(CHECKBOX), props: CHECKBOX },
+  'rd-checkbox-group': { html: checkboxGroupMarkup(CHECKBOX_GROUP), props: CHECKBOX_GROUP },
   'rd-disclosure': { html: disclosureMarkup(DISCLOSURE), props: DISCLOSURE },
+  'rd-input-otp': { html: inputOtpMarkup(INPUT_OTP), props: INPUT_OTP },
   'rd-meter': { html: meterMarkup(METER), props: METER },
   'rd-radio-group': { html: radioGroupMarkup(RADIO_GROUP), props: RADIO_GROUP },
   'rd-slider': { html: sliderMarkup(SLIDER), props: SLIDER },

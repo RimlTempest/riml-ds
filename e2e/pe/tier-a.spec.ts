@@ -70,6 +70,51 @@ test('checkbox: JS 無しでも文言までがタップ標的になる（44px）
   await expect(page.locator('rd-checkbox > label')).toHaveCSS('min-block-size', '44px')
 })
 
+test('checkbox group: JS 無しでも複数の値が同じ name で送信される', async ({ page }) => {
+  await page.goto('/checkbox-group.html')
+  const group = page.getByRole('group', { name: 'タグ' })
+  await group.getByLabel('仕事').check()
+  await group.getByLabel('私用').check()
+  await page.getByRole('button', { name: '送信' }).click()
+  await expect(page).toHaveURL(/tags=a&tags=b/u)
+})
+
+test('checkbox group: JS 無しでは min が効かない（正しい縮退。サーバで検証する）', async ({
+  page,
+}) => {
+  await page.goto('/checkbox-group.html')
+  await page.getByRole('button', { name: '送信' }).click()
+  // 1 つも選ばなくてもネイティブは止めない（min は部品が JS で見る）
+  await expect(page).toHaveURL(/\/echo\.html/u)
+})
+
+test('checkbox group: JS 無しでは segmented の見た目にならない（:state() は JS が付ける）', async ({
+  page,
+}) => {
+  await page.goto('/checkbox-group.html')
+  await expect(page.locator('rd-checkbox-group[segmented] label').first()).toHaveCSS(
+    'min-block-size',
+    '44px',
+  )
+})
+
+test('input otp: JS 無しでも桁ごとに入力して送信できる', async ({ page }) => {
+  await page.goto('/input-otp.html')
+  await page.getByLabel('1 桁目').fill('1')
+  await page.getByLabel('2 桁目').fill('2')
+  await page.getByLabel('3 桁目').fill('3')
+  await page.getByLabel('4 桁目').fill('4')
+  await page.getByRole('button', { name: '送信' }).click()
+  await expect(page).toHaveURL(/code-1=1&code-2=2&code-3=3&code-4=4/u)
+})
+
+test('input otp: required な桁が空なら遷移しない（ネイティブ検証）', async ({ page }) => {
+  await page.goto('/input-otp.html')
+  await page.getByRole('button', { name: '送信' }).click()
+  await expect(page).toHaveURL(/\/input-otp\.html$/u)
+  await expect(page.getByLabel('1 桁目')).toBeFocused()
+})
+
 test('disclosure: JS 無しでも開閉できる（<details> そのもの）', async ({ page }) => {
   await page.goto('/disclosure.html')
   const body = page.getByText('全国一律 500 円です。')

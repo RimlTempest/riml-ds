@@ -45,7 +45,9 @@ describe('既定 export の部品', () => {
     expect(Object.keys(index)).not.toContain('RdSelect')
     expect(Object.keys(experimental)).toEqual([
       'RdCheckbox',
+      'RdCheckboxGroup',
       'RdDisclosure',
+      'RdInputOtp',
       'RdMeter',
       'RdRadioGroup',
       'RdSelect',
