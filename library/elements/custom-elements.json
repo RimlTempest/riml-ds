@@ -1013,6 +1013,244 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/radio-group/radio-group.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-radio-group",
+          "declaration": {
+            "name": "RdRadioGroup",
+            "module": "/src/radio-group/radio-group.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/radio-group/radio-group.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "択一。`<legend>` と `<label>` が包む `<input type=\"radio\">` に状態と文言を足す（ティア A、\nADR-0012）。送信・検証・矢印キーはブラウザが素で行う。`segmented` は見た目だけを区画に変え、\n無効化は `<fieldset disabled>` をそのまま使う。",
+          "name": "RdRadioGroup",
+          "cssProperties": [
+            {
+              "description": "選択肢の間隔。既定 var(--rd-space-2)",
+              "name": "--rd-radio-group-gap"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "選択肢の入れ物",
+              "name": "options"
+            },
+            {
+              "description": "補足文言",
+              "name": "hint"
+            },
+            {
+              "description": "エラー文言",
+              "name": "error"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "hint",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "hint"
+            },
+            {
+              "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "error"
+            },
+            {
+              "kind": "field",
+              "name": "segmented",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "segmented",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#fieldset",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLFieldSetElement | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#touched",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#bindings",
+              "privacy": "private",
+              "type": {
+                "text": "readonly Binding[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "description": "選択はネイティブ要素が持つ。部品は委譲するだけ"
+            },
+            {
+              "kind": "method",
+              "name": "checkValidity",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#radios",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#anchor",
+              "privacy": "private",
+              "description": "検証と文言の基準にする radio。`required` は group のどれか 1 つに付いていればよい"
+            },
+            {
+              "kind": "field",
+              "name": "#setTouched",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#listeners",
+              "privacy": "private",
+              "type": {
+                "text": "Listeners"
+              },
+              "default": "{ change: this.#setTouched, blur: this.#setTouched, invalid: (event) => { event.preventDefault() this.#setTouched() }, }"
+            },
+            {
+              "kind": "field",
+              "name": "#view",
+              "privacy": "private"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "hint",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "hint"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "error"
+            },
+            {
+              "name": "segmented",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "segmented"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "segmented",
+              "description": "segmented 属性が付いている（見た目だけ区画になる）"
+            },
+            {
+              "name": "invalid",
+              "description": "検証に通っていない（操作後、または error 属性がある）"
+            },
+            {
+              "name": "errored",
+              "description": "error 属性で文言を強制表示している"
+            },
+            {
+              "name": "hinted",
+              "description": "hint がある"
+            },
+            {
+              "name": "filled",
+              "description": "どれかを選んでいる"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "択一。<fieldset><legend> と <input type=radio> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-radio-group",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdRadioGroup",
+          "declaration": {
+            "name": "RdRadioGroup",
+            "module": "src/radio-group/radio-group.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/select/select.define.ts",
       "declarations": [],
       "exports": [
