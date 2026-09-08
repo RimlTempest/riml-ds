@@ -65,6 +65,7 @@ const { variant, loading, type, label, class: className } = Astro.props
       'experimental/menu.astro',
       'experimental/select.astro',
       'text-field.astro',
+      'experimental/toggle.astro',
     ])
   })
 })
@@ -78,6 +79,7 @@ describe('astroExports', () => {
       './text-field.astro': './src/generated/text-field.astro',
       './experimental/menu.astro': './src/generated/experimental/menu.astro',
       './experimental/select.astro': './src/generated/experimental/select.astro',
+      './experimental/toggle.astro': './src/generated/experimental/toggle.astro',
       './package.json': './package.json',
     })
   })
@@ -90,6 +92,7 @@ describe('astroExports', () => {
       './text-field.astro',
       './experimental/menu.astro',
       './experimental/select.astro',
+      './experimental/toggle.astro',
       './package.json',
     ])
   })

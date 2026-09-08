@@ -1,4 +1,4 @@
-/** 6 部品の CEM 断片と契約。生成器のテストが共有する（実物の写し）。`rd-select` / `rd-menu` が `@status experimental` */
+/** 7 部品の CEM 断片と契約。生成器のテストが共有する（実物の写し）。`rd-select` / `rd-menu` / `rd-toggle` が `@status experimental` */
 import type { Package } from 'custom-elements-manifest/schema'
 import type { Contract } from '../../src/wrappers/core/common.js'
 
@@ -108,6 +108,20 @@ export const manifest: Package = {
     },
     {
       kind: 'javascript-module',
+      path: 'src/toggle/toggle.element.js',
+      declarations: [
+        declaration('rd-toggle', {
+          pe: 'A',
+          status: 'experimental',
+          attributes: [
+            { name: 'pressed', type: { text: "'true' | 'false'" } },
+            { name: 'label', type: { text: 'string' } },
+          ],
+        }),
+      ],
+    },
+    {
+      kind: 'javascript-module',
       path: 'src/live-region/live-region.element.js',
       declarations: [
         declaration('rd-live-region', {
@@ -188,6 +202,23 @@ export const contracts: Readonly<Record<string, Contract>> = {
       children: [
         { raw: '$trigger' },
         { tag: 'div', attrs: { popover: '', id: '$id' }, children: [{ raw: '$items' }] },
+      ],
+    },
+  },
+  toggle: {
+    pe: 'A',
+    roles: { control: ':scope > button' },
+    required: ['control'],
+    tree: {
+      tag: 'rd-toggle',
+      attrs: { disabled: '$disabled' },
+      children: [
+        {
+          tag: 'button',
+          // `aria-pressed` はハイフンを含む属性。Vue の `h()` はキーを引用しないと構文エラーになる
+          attrs: { type: 'button', 'aria-pressed': '$pressed' },
+          children: [{ prop: 'label' }],
+        },
       ],
     },
   },

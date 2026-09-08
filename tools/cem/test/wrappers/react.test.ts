@@ -76,6 +76,7 @@ export const RdButton = ({
       'menu.tsx',
       'select.tsx',
       'text-field.tsx',
+      'toggle.tsx',
     ])
     for (const file of markupFiles) {
       expect(file.content).not.toContain('use client')
@@ -120,6 +121,13 @@ export const RdButton = ({
     expect(find('client/experimental.ts')).toContain("export { RdSelect } from './select.js'")
   })
 
+  it('aria-pressed は HTML の決まった値に絞る（React の JSX 型に載る）', () => {
+    const source = find('toggle.tsx')
+    expect(source).toContain(`readonly pressed?: 'true' | 'false' | undefined`)
+    expect(source).toContain('aria-pressed={pressed}')
+    expect(source).not.toContain('readonly pressed?: string | undefined')
+  })
+
   it('jsx の型は rd-* を IntrinsicElements に足す', () => {
     const source = find('jsx.ts')
     expect(source).toContain("declare module 'react'")
@@ -134,6 +142,7 @@ export const RdButton = ({
       'menu.tsx',
       'select.tsx',
       'text-field.tsx',
+      'toggle.tsx',
       'client/internal.ts',
       'client/button.tsx',
       'client/dialog.tsx',
@@ -141,6 +150,7 @@ export const RdButton = ({
       'client/menu.tsx',
       'client/select.tsx',
       'client/text-field.tsx',
+      'client/toggle.tsx',
       'jsx.ts',
       'index.ts',
       'experimental.ts',

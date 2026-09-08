@@ -119,6 +119,9 @@ const HTML_BOOLEAN_ATTRS: ReadonlySet<string> = new Set([
 /** HTML 仕様で値が決まっている属性。`<tag>.<attr>` で引く */
 const HTML_ENUM_ATTRS: Readonly<Record<string, readonly string[]>> = {
   'button.type': ['button', 'submit', 'reset'],
+  // `aria-*` はホストの属性名（`pressed`）と綴りが違うので CEM から引けない。
+  // 絞らないと `string` になり、React の JSX 型（`boolean | 'true' | 'false' | 'mixed'`）に載らない
+  'button.aria-pressed': ['true', 'false'],
 }
 
 /** ネイティブの操作要素。契約の木で最初に見つかったものが `controlTag` */
