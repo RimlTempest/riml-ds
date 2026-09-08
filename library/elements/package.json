@@ -116,6 +116,32 @@
       "default": "./dist/disclosure/disclosure.define.js"
     },
     "./experimental/disclosure/style.css": "./dist/disclosure/disclosure.css",
+    "./experimental/radio-group": {
+      "types": "./dist/experimental/radio-group/index.d.ts",
+      "default": "./dist/experimental/radio-group/index.js"
+    },
+    "./experimental/radio-group/contract": {
+      "types": "./dist/radio-group/radio-group.contract.d.ts",
+      "default": "./dist/radio-group/radio-group.contract.js"
+    },
+    "./experimental/radio-group/define": {
+      "types": "./dist/radio-group/radio-group.define.d.ts",
+      "default": "./dist/radio-group/radio-group.define.js"
+    },
+    "./experimental/radio-group/style.css": "./dist/radio-group/radio-group.css",
+    "./experimental/slider": {
+      "types": "./dist/experimental/slider/index.d.ts",
+      "default": "./dist/experimental/slider/index.js"
+    },
+    "./experimental/slider/contract": {
+      "types": "./dist/slider/slider.contract.d.ts",
+      "default": "./dist/slider/slider.contract.js"
+    },
+    "./experimental/slider/define": {
+      "types": "./dist/slider/slider.define.d.ts",
+      "default": "./dist/slider/slider.define.js"
+    },
+    "./experimental/slider/style.css": "./dist/slider/slider.css",
     "./experimental/toast": {
       "types": "./dist/experimental/toast/index.d.ts",
       "default": "./dist/experimental/toast/index.js"

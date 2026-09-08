@@ -1502,12 +1502,34 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "TODO: 部品の役割を 1〜2 文で書く。ネイティブ要素を子として包む（ティア A、ADR-0012）。\nJS が無くても動く。部品が足すのは `:state()` と強化ノードだけ。",
+          "description": "連続値を 1 つ。`<label for>` と `<input type=\"range\">`（任意で `<output for>`）を包む（ティア A、\nADR-0012）。値・範囲・刻み・キーボード操作はネイティブが持ち、部品がするのは塗りの割合を\n`--rd-slider-fill` に写すことと `<output>` に現在値を書くことだけ。",
           "name": "RdSlider",
+          "cssProperties": [
+            {
+              "description": "塗りの割合（0–1）。部品が書く。読む側は上書きしない",
+              "name": "--rd-slider-fill"
+            },
+            {
+              "description": "縦向きのときの長さ。既定 10rem",
+              "name": "--rd-slider-block-size"
+            }
+          ],
           "cssParts": [
+            {
+              "description": "塗りのトラック（装飾。aria-hidden）",
+              "name": "track"
+            },
+            {
+              "description": "トラックの塗り",
+              "name": "fill"
+            },
             {
               "description": "補足文言",
               "name": "hint"
+            },
+            {
+              "description": "エラー文言",
+              "name": "error"
             }
           ],
           "members": [
@@ -1523,8 +1545,48 @@
             },
             {
               "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "error"
+            },
+            {
+              "kind": "field",
+              "name": "unit",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "unit"
+            },
+            {
+              "kind": "field",
+              "name": "orientation",
+              "privacy": "public",
+              "type": {
+                "text": "SliderOrientation"
+              },
+              "default": "'horizontal'",
+              "attribute": "orientation",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "#internals",
               "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#control",
+              "privacy": "private",
+              "type": {
+                "text": "HTMLInputElement | undefined"
+              },
+              "default": "undefined"
             },
             {
               "kind": "field",
@@ -1534,6 +1596,73 @@
                 "text": "boolean"
               },
               "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#touched",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#binding",
+              "privacy": "private",
+              "type": {
+                "text": "Binding | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#observer",
+              "privacy": "private",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "description": "値はネイティブ要素が持つ。部品は委譲するだけ"
+            },
+            {
+              "kind": "field",
+              "name": "valueAsNumber",
+              "type": {
+                "text": "number"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "#redraw",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#setTouched",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#listeners",
+              "privacy": "private",
+              "type": {
+                "text": "Listeners"
+              },
+              "default": "{ input: this.#redraw, change: this.#setTouched, blur: this.#setTouched, invalid: (event) => { event.preventDefault() this.#setTouched() }, }"
+            },
+            {
+              "kind": "field",
+              "name": "#view",
+              "privacy": "private"
             }
           ],
           "attributes": [
@@ -1544,9 +1673,53 @@
               },
               "default": "''",
               "fieldName": "hint"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "error"
+            },
+            {
+              "name": "unit",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "unit"
+            },
+            {
+              "name": "orientation",
+              "type": {
+                "text": "SliderOrientation"
+              },
+              "default": "'horizontal'",
+              "fieldName": "orientation"
             }
           ],
           "cssStates": [
+            {
+              "name": "vertical",
+              "description": "orientation=\"vertical\""
+            },
+            {
+              "name": "invalid",
+              "description": "検証に通っていない（操作後、または error 属性がある）"
+            },
+            {
+              "name": "errored",
+              "description": "error 属性で文言を強制表示している"
+            },
+            {
+              "name": "hinted",
+              "description": "hint がある"
+            },
+            {
+              "name": "filled",
+              "description": "値がある（range は常に値を持つ）"
+            },
             {
               "name": "malformed",
               "description": "契約の子が無い"
@@ -1556,7 +1729,7 @@
             "name": "LitElement",
             "package": "lit"
           },
-          "summary": "TODO",
+          "summary": "連続値を 1 つ。<label for> と <input type=range> は利用側が書く",
           "status": "experimental",
           "pe": "A",
           "tagName": "rd-slider",

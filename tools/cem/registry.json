@@ -84,7 +84,7 @@
     "tag": "rd-slider",
     "pe": "A",
     "status": "experimental",
-    "summary": "TODO",
+    "summary": "連続値を 1 つ。<label for> と <input type=range> は利用側が書く",
     "files": ["slider/index.js", "slider/slider.define.js", "slider/slider.css"],
     "dependsOn": []
   },
