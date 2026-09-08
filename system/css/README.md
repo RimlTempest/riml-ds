@@ -129,22 +129,33 @@ JS が要らないもの（バッジ・アバター・区切り・表・注意�
 
 ## 窓（`.rd-window`）
 
-視覚言語「まど」の骨格（[docs/brand.md](../../docs/brand.md) §7.1）。帯・丸 3 つ・硬い影は CSS だけで描く。
+視覚言語「まど」の骨格（[docs/brand.md](../../docs/brand.md) §7.1）。帯・丸・硬い影は CSS だけで描く。
 JS が要らないので部品にしない（[ADR-0012](../../docs/adr/0012-progressive-enhancement-tiers.md) §6）。
 
 ```html
-<section class="rd-window">
-  <h2 class="rd-window-title"><span>設定</span></h2>
+<section class="rd-window" aria-labelledby="w1">
+  <header class="rd-window-bar" data-tone="warning">
+    <div class="rd-window-controls">
+      <button
+        type="button"
+        class="rd-window-control"
+        data-action="close"
+        aria-label="閉じる"
+      ></button>
+    </div>
+    <h2 class="rd-window-title" id="w1">設定</h2>
+  </header>
   <div class="rd-window-body">…</div>
 </section>
 ```
 
-帯は**見出し要素そのもの**（文書構造と見た目が一致する）。左端の丸 3 つは `::before` の
-`radial-gradient` なので DOM に無く、読み上げられず、押せない。帯の色は
+帯は `header`、その中に**見出し要素そのもの**を置く（文書構造と見た目が一致する。
+[ADR-0014](../../docs/adr/0014-window-controls-are-buttons.md) 決定 2）。左端の丸は装飾ではなく
+**本物の `<button>`**（決定 1）。`data-action="close" | "collapse" | "expand"` で印が変わり、
+`aria-label` が必須。押したときの動作は利用側が書く（動作まで要るなら `rd-window` 要素）。
+操作が 1 つも無いなら `.rd-window-controls` ごと省く——押せない丸は置かない。帯の色は
 `data-tone="accent" | "warning" | "danger"` で変わり、文字色は対応する `on-*` が付く。
-タイトルを 1 行で切りたいときは `<span>` などの要素で包む（素のテキストは匿名グリッド項目になり
-`text-overflow` が効かない）。`forced-colors: active` では帯が `Canvas` / `CanvasText` の
-1px 罫線に置き換わり、丸は消える。
+`forced-colors: active` では帯が `Canvas` / `CanvasText` の 1px 罫線に置き換わり、丸は `ButtonFace` / `ButtonText` の輪郭で残る（操作だから消さない）。
 
 ## ユーティリティ
 

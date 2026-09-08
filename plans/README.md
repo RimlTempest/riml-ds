@@ -71,7 +71,7 @@
 | 019 | [フォーム第 3 波（rd-radio-group・rd-slider・.rd-input-group）](019-form-wave3.md) | P1 | L | 017, 018 | DONE（`d1cf0c2`） |
 | 020 | [ナビゲーションと重ね窓（rd-tabs・rd-menu・rd-popover・rd-tooltip・navigation.css）](020-navigation-and-overlays.md) | P1 | XL | 017, 018 | DONE（`4ebf45e`） |
 | 021 | [フォーム第 4 波（rd-toggle・rd-checkbox-group・rd-input-otp・.rd-button-group）](021-form-wave4.md) | P1 | L | 019 | TODO |
-| 022 | [面と待ち（.rd-card / .rd-empty / .rd-spinner / .rd-accordion / .rd-carousel / .rd-scroll-area / .rd-aspect、rd-dialog の alert / placement）](022-surfaces-and-feedback.md) | P1 | L | 017, 018 | TODO |
+| 022 | [面と待ち（.rd-card / .rd-empty / .rd-spinner / .rd-accordion / .rd-carousel / .rd-scroll-area / .rd-aspect、rd-dialog の alert / placement）](022-surfaces-and-feedback.md) | P1 | L | 017, 018 | DONE（`4f9b19e`） |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
@@ -250,4 +250,21 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - 存在しないトークンは代用で通した: 太罫 `calc(var(--rd-border-width-default) * 2)`、影 `--rd-shadow-overlay`、反転文字は `chrome.default` / `chrome.text`
 - guard 検査 14 は lanes.tsv の `_shared/popover-anchor.ts` が `.test.ts` にプレフィックス一致しなかった → `aed76cd` で拡張子を落とした
 - 見直し候補: `.rd-nav-rail` の選択印（pe ページでは括弧状の線に見える）と Storybook `Patterns/Navigation` story（advisor）
+
+### 022 の実行メモ（2026-09-08）
+
+- マージ `4f9b19e`（020 の後。`tier-b.spec.ts` / `css/README.md` / `build.test.ts` の union 衝突は advisor が両取りで解消）。
+  `atoms.css` に `.rd-card` / `.rd-empty` / `.rd-spinner` / `.rd-accordion` / `.rd-carousel` / `.rd-scroll-area`、`utilities.css` に `.rd-aspect`、
+  `rd-dialog` に `alert`（`alertdialog`。背面クリックだけ止める）と `placement`（`start` / `end` / `bottom` の帯）。既存 Dialog の VRT は 1 枚も変わらず、新規 16 枚
+- 検査: check 0、test 1070、pe 53、e2e:frameworks 50、a11y 16、VRT 737（全 project）、lint:html 通過、release:check 0（dialog/define 9.19 KB）。`dialog.element.ts` 148 行 / `if` 4
+- 計画から変えた点: spinner の `linear` と強制配色の `scrollbar-color: auto` は `declaration-strict-value` を理由コメント付きで無効化。
+  `scrollbar-*` は `@supports` で囲む（`scrollbar-gutter` が baseline-newly のため）。`.rd-card:has(.rd-card-link:focus-visible)` に単純化（詳細度 0,3,0 の上限）。
+  `#onCancel` / `#onClick` は `event.type` から理由を導く `#dismiss(event)` に統合。`@starting-style` の placement 規則から `[open]` を外した（詳細度）。
+  `e2e/frameworks` の `compareMarkup` は `placement` だけ（boolean `alert` は vue/svelte が `"true"`、react/astro が `""` を書く既知の差）。
+  `tools/mcp/src/examples.ts` は 1 タグ 1 例なので dialog の例を `placement="end"` に差し替え。
+  `dialog.sr.test.ts` は `alertdialog` を直接見ない（virtual-screen-reader は shadow の `<dialog>` を走査しない）。幾何は `expect.poll`
+- guard 検査 15 は「属性追加だけでは `registry.json` が 1 バイトも変わらない」のに差分を要求して `release:check` と矛盾していた → `3e97592` で「新しい `*.element.ts` が増えたときだけ要求」に緩和。生成物の鮮度は CI の「エージェント向けの面」が見る
+- 残件: `system/css/README.md` の `.rd-window` 節が古い（丸 3 つは `radial-gradient` ではなく本物の `<button>`。ADR-0014）→ advisor が直す。
+  `.rd-card` のリンクカードは中に別の操作要素を置くと `::after` の下に隠れる（`position: relative` を付ける、と `atoms.css` に明記）。
+  `dialog.element.ts` は 148 / 150 行でほぼ満杯 — 次に属性を足すなら判断を `dialog.logic.ts` に寄せる
 
