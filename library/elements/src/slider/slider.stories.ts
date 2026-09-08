@@ -80,10 +80,10 @@ export const WithTicks: Story = {
       }}
     >
       ${unsafeHTML(sliderMarkup(args))}
-      <datalist id="sb-volume-ticks">
-        <option value="0" label="0"></option>
-        <option value="5" label="5"></option>
-        <option value="10" label="10"></option>
+      <datalist id="sb-volume-ticks" aria-label="音量の目盛">
+        <option value="0">0</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
       </datalist>
     </form>`,
   play: async ({ canvasElement }) => {
