@@ -4,7 +4,7 @@
 （executor は会話の文脈を持たない前提）。テンプレートは qrcc の
 `.claude/skills/improve/references/plan-template.md`。
 
-**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）、017〜018 は `b501378`（2026-09-08。窓の丸はボタン = ADR-0014）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
+**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）、017〜018 は `b501378`（2026-09-08。窓の丸はボタン = ADR-0014）、019〜020 は `da4200a`（2026-09-08。017・018 マージ後）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
 `system/guidelines/**`, `.claude/skills/riml-ds-*`）が仕様の正で、計画はそれを手順に落としたもの。
 矛盾を見つけたら計画側を直すのではなく STOP して advisor に返す。
 
@@ -62,7 +62,7 @@
 | 014 | [既定ブランドを riml の色にし「まど」の形・影・文字をトークンへ](014-riml-brand-tokens.md) | P1 | M | 013 | DONE（`0c941c3`。palette 26 段（+neutral.700 / accent.500 / signature.400・500）、`brand.*` / `chrome.*` / `font.family.display`、radius 8/12/16、硬い影。contrastAgainst 15、葉 104、テスト 568 → 594、8 モード AAA を L 調整なしで通過。noter は旧既定 26 段。VRT 319/321 更新） |
 | 015 | [「まど」を部品に当てる（.rd-window・ピルのボタン・rd-meter）](015-mado-components.md) | P1 | L | 014 | DONE（`9d2e26a`: patterns.css の `.rd-window`、tier A ピル化、dialog/toast 窓化、`rd-meter` 実験、VRT 359 枚撮り直し） |
 | 016 | [Storybook のブランド切替と Foundations Brand / Mado](016-brand-showcase.md) | P2 | S | 015 | DONE |
-| 017 | [窓の左端の丸を本物のボタンにする（rd-window・.rd-window-bar・dialog の ×）](017-window-controls.md) | P1 | L | 016 | TODO |
+| 017 | [窓の左端の丸を本物のボタンにする（rd-window・.rd-window-bar・dialog の ×）](017-window-controls.md) | P1 | L | 016 | DONE（`da4200a`） |
 | 018 | [Typography（typography.css）と静的パターン集 atoms.css](018-typography-and-atoms.md) | P1 | M | 016 | DONE（`6275931`） |
 | 019 | [フォーム第 3 波（rd-radio-group・rd-slider・.rd-input-group）](019-form-wave3.md) | P1 | L | 017, 018 | TODO |
 | 020 | [ナビゲーションと重ね窓（rd-tabs・rd-menu・rd-popover・rd-tooltip・navigation.css）](020-navigation-and-overlays.md) | P1 | XL | 017, 018 | TODO |
@@ -194,4 +194,22 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
   `.rd-alert` / `.rd-badge` / `.rd-kbd` / `.rd-skeleton` / 選択行が見えない（`vrt-dark-1024/patterns-atoms--dark.png`）。`neutral.950` を足してダークの
   sunken に当てるのが筋（前景は全部明るい側なので比は上がるだけ）。016 の影の件と一緒に tokens レーンで
 - `docs/agent-integration.md` に guidelines の topic 一覧は無い（テンプレート行だけ）ので追記なし。`DESIGN.md` は typography トークンを載せていないため差分なし
+
+### 017 の実行メモ（2026-09-08）
+
+- マージ `da4200a`。`patterns.css` の `.rd-window-bar` / `.rd-window-controls` / `.rd-window-control[data-action]`（`::before` 丸 + `::after` マスクの記号、
+  `--rd-window-control-size: 1.25rem` / `--rd-window-glyph-size: 0.75rem`）、`_shared/window-chrome.ts`（記号 SVG・ja/en ラベル・`windowControls` / `dialogBar`）、
+  `rd-window`（experimental。close / expand / collapse、`rd-dismiss` / `rd-toggle` / `rd-expand`）、`rd-dialog` の帯に ×（`persistent` で消える、`reason: 'button'`）、
+  `rd-meter` の塗り端を丸める。`docs/migration.md`「0.2 → 0.3: 窓の帯」。VRT 493 枚（撮り直し込み）
+- レビューで直したもの: **フォーカスの輪が二重**になっていた。`outline-width: 0` で UA の輪を消したつもりが、Chromium は `outline-style: auto` のとき幅を無視して
+  自前の輪を描く。**輪はボタン自身の outline を負の `outline-offset` で丸のすぐ外に置く**形に（`window-chrome.ts` / `patterns.css` 同形、forced-colors は `Highlight`）。
+  回帰テストは node（`outline-width: 0` / `outline: none` が無い）と browser（`userEvent.tab()` 後の computed outline）の 2 本。
+  → `riml-ds-css` skill に「`outline: none` / `0` を書かない。置き換える」を足す（advisor 宿題）
+- 計画から変えたもの: `tone` は `'chrome' | 'accent' | 'warning' | 'danger'` の 4 値で既定 `'chrome'`（CEM の wrapper 生成が `'a' | 'b' | undefined` を読み違える）。
+  lanes.tsv の `feat/window-controls` に `library/react/test` を足した（`markup.test.tsx` が帯の DOM を検証しているため）。
+  `docs/proposals/dialog.md` は存在しない
+- 注意点: `::part(control)` は `<dialog>` と ×（`part="control close"`）の両方に当たる。開いたダイアログの初期フォーカスは帯の ×（`showModal()` の既定）→ 主ボタンから
+  始めたいなら `slot="actions"` に `autofocus`。guidepup は shadow 内の名前を読めないので `.sr.test.ts` は light DOM の投影で確認
+- 見つけた穴（未解決 → 021 候補）: astro に `experimental/meter.astro` / `window.astro` の export が無く、frameworks e2e から astro を外している。
+  vue / svelte の wrapper 生成が boolean 属性を `="true"` で出す（`reflect` する Boolean プロパティと噛み合わない）。`vitest.config.ts` の include に `apps/**/*.test.ts` が無い
 

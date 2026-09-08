@@ -1,7 +1,7 @@
 # 020: ナビと重ね物 — `rd-tabs`、`rd-menu`、`rd-tooltip`、`rd-popover` と `navigation.css`（breadcrumb / pagination / nav-rail / menubar）
 
 **優先度**: P1　**規模**: L　**依存**: 017・018（マージ済み）。019 と**並行**できる（レーンが重ならない）
-**レーン**: `feat/nav-overlays`　**計画時の main**: 017 / 018 のマージ後に advisor が `plans/README.md` の Planned at に記す
+**レーン**: `feat/nav-overlays`　**計画時の main**: `da4200a`（017 / 018 マージ後）
 
 > **Drift check（最初に実行）**:
 > `test -d library/elements/src/tabs -o -d library/elements/src/menu -o -d library/elements/src/tooltip -o -d library/elements/src/popover && echo EXISTS` が何も出ないこと。出たら STOP。

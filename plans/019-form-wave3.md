@@ -1,7 +1,7 @@
 # 019: フォーム部品 wave 3 — `rd-radio-group`（segmented 付き）、`rd-slider`、`.rd-input-group`
 
 **優先度**: P1　**規模**: L　**依存**: 017・018（両方マージ済み。`patterns.css` に `.rd-window-bar`、`system/css/src/atoms.css` が在ること）
-**レーン**: `feat/form-wave3`　**計画時の main**: 017 / 018 のマージ後に advisor が `plans/README.md` の Planned at に記す
+**レーン**: `feat/form-wave3`　**計画時の main**: `da4200a`（017 / 018 マージ後）
 
 > **Drift check（最初に実行）**:
 > `test -d library/elements/src/radio-group -o -d library/elements/src/slider && echo EXISTS` が何も出ないこと。出たら STOP。
