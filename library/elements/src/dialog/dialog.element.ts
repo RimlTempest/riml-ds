@@ -2,6 +2,7 @@ import { html, LitElement, type PropertyDeclarations, type TemplateResult } from
 import { checkContract } from '../_shared/contract.js'
 import { syncStates } from '../_shared/internals.js'
 import { asFocusable } from '../_shared/native-control.js'
+import { dialogBar, windowControlLabels } from '../_shared/window-chrome.js'
 import { contract } from './dialog.contract.js'
 import {
   computeStates,
@@ -25,10 +26,13 @@ const SHADOW_OPTIONS = { ...LitElement.shadowRootOptions, delegatesFocus: true, 
  * @slot - 本文
  * @slot label - 見出し。省略不可（aria-labelledby で結ばれる）
  * @slot actions - 確定・取消などのボタン
- * @csspart control - 内側の <dialog>
- * @csspart label - 見出しの入れ物（窓の帯）
+ * @csspart control - 内側の <dialog>。帯の × にも付く（`close` と両方）
+ * @csspart bar - 窓の帯（× と見出しの入れ物）
+ * @csspart controls - × の入れ物。persistent では描かれない
+ * @csspart close - 帯の左端の ×（閉じる）
+ * @csspart label - 見出しの入れ物
  * @csspart body - 本文とアクションの入れ物
- * @event {CustomEvent<{ reason: 'esc' | 'backdrop' | 'api' }>} rd-dismiss - 閉じたときに発火
+ * @event {CustomEvent<{ reason: 'esc' | 'backdrop' | 'button' | 'api' }>} rd-dismiss - 閉じたときに発火
  * @state open - 開いている
  * @state malformed - slot="label" の子が無い
  */
@@ -77,7 +81,7 @@ export class RdDialog extends LitElement {
       @click=${this.#onClick}
       @close=${this.#onClose}
     >
-      <div id="rd-dialog-label" part="label"><slot name="label"></slot></div>
+      ${dialogBar(this.persistent, windowControlLabels(this).close, this.#closeByButton)}
       <div part="body"><slot></slot><slot name="actions"></slot></div>
     </dialog>`
   }
@@ -93,6 +97,10 @@ export class RdDialog extends LitElement {
   close(reason: DismissReason = 'api'): void {
     this.#reason = reason
     this.open = false
+  }
+
+  #closeByButton = (): void => {
+    this.close('button')
   }
 
   #dialog = (): HTMLDialogElement | null => this.renderRoot.querySelector('dialog')
@@ -113,14 +121,11 @@ export class RdDialog extends LitElement {
 
   #onCancel = (event: Event): void => {
     const decision = decideClose({ persistent: this.persistent, reason: 'esc' })
-    switch (decision.kind) {
-      case 'blocked':
-        event.preventDefault()
-        break
-      case 'close':
-        this.#reason = decision.reason
-        break
+    if (decision.kind === 'blocked') {
+      event.preventDefault()
+      return
     }
+    this.#reason = decision.reason
   }
 
   /** `<dialog>` 自身が click の対象なら背面（backdrop）を押している */
@@ -136,13 +141,8 @@ export class RdDialog extends LitElement {
   #onClose = (): void => {
     this.open = false
     focusReturnTarget(this.#opener, this).focus()
-    this.dispatchEvent(
-      new CustomEvent('rd-dismiss', {
-        bubbles: true,
-        composed: true,
-        detail: { reason: this.#reason },
-      }),
-    )
+    const detail = { reason: this.#reason }
+    this.dispatchEvent(new CustomEvent('rd-dismiss', { bubbles: true, composed: true, detail }))
     this.#reason = 'api'
   }
 }

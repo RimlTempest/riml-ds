@@ -427,11 +427,23 @@
           "name": "RdDialog",
           "cssParts": [
             {
-              "description": "内側の <dialog>",
+              "description": "内側の <dialog>。帯の × にも付く（`close` と両方）",
               "name": "control"
             },
             {
-              "description": "見出しの入れ物（窓の帯）",
+              "description": "窓の帯（× と見出しの入れ物）",
+              "name": "bar"
+            },
+            {
+              "description": "× の入れ物。persistent では描かれない",
+              "name": "controls"
+            },
+            {
+              "description": "帯の左端の ×（閉じる）",
+              "name": "close"
+            },
+            {
+              "description": "見出しの入れ物",
               "name": "label"
             },
             {
@@ -547,6 +559,11 @@
             },
             {
               "kind": "field",
+              "name": "#closeByButton",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
               "name": "#dialog",
               "privacy": "private"
             },
@@ -575,7 +592,7 @@
           "events": [
             {
               "type": {
-                "text": "CustomEvent<{ reason: 'esc' | 'backdrop' | 'api' }>"
+                "text": "CustomEvent<{ reason: 'esc' | 'backdrop' | 'button' | 'api' }>"
               },
               "description": "閉じたときに発火",
               "name": "rd-dismiss"

@@ -38,3 +38,13 @@ it('本文が読み上げに含まれる', async () => {
   await virtual.start({ container: el })
   expect(await advanceTo('元に戻せません。', 8)).toContain('元に戻せません。')
 })
+
+it('読み上げるダイアログの名前に「閉じる」が混ざらない（ADR-0014 決定 2）', async () => {
+  const el = await fixtureOf(RdDialog, DIALOG)
+  el.show()
+  await el.updateComplete
+  await virtual.start({ container: el })
+  const spoken = await advanceTo('削除の確認', 8)
+  expect(spoken).toContain('削除の確認')
+  expect(spoken).not.toContain('閉じる')
+})

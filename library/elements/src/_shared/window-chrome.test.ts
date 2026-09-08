@@ -6,7 +6,7 @@
  * 置き場所が `library/elements/test/` ではなく `src/_shared/` なのは、`vitest.config.ts` が
  * `library/elements/test/**` を browser プロジェクトに割り当てているため（node の fs が要る）。
  */
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { WINDOW_GLYPHS, windowChrome, windowControlLabels } from './window-chrome.js'
@@ -21,6 +21,14 @@ const patternsCss = (): string => {
 }
 
 const glyphs = Object.values(WINDOW_GLYPHS)
+
+/** `library/elements/src` の実装ファイル（テストは除く。この検査自身が語を含むため） */
+const sourceFiles = (): readonly string[] => {
+  const root = fileURLToPath(new URL('../', import.meta.url))
+  return readdirSync(root, { recursive: true, encoding: 'utf8' })
+    .filter((name) => /\.(ts|css)$/.test(name) && !name.includes('.test.'))
+    .map((name) => `${root}${name}`)
+}
 
 describe('WINDOW_GLYPHS', () => {
   it('3 つの data URI が patterns.css にそのまま入っている', () => {
@@ -48,6 +56,13 @@ describe('WINDOW_GLYPHS', () => {
   it('丸の装飾（radial-gradient）はもう無い', () => {
     expect(windowChrome.cssText).not.toContain('radial-gradient')
     expect(patternsCss()).not.toContain('radial-gradient')
+  })
+
+  it('部品側にも 1 つも残っていない（dialog / toast 含む。ADR-0014 §影響）', () => {
+    const offenders = sourceFiles().filter((file) =>
+      readFileSync(file, 'utf8').includes('radial-gradient'),
+    )
+    expect(offenders).toEqual([])
   })
 })
 

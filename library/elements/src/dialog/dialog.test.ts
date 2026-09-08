@@ -123,18 +123,19 @@ const resolvedColor = (token: string): string => {
   return value
 }
 
-it('見出しが窓の帯になり、本文は body part に入る（brand.md §7.1 / §7.7）', async () => {
+it('帯 ⊃ 見出しになり、本文は body part に入る（brand.md §7.1 / §7.7）', async () => {
   const el = await fixtureOf(RdDialog, DIALOG)
   el.show()
   await el.updateComplete
+  const header = el.shadowRoot?.querySelector('[part=bar]')
   const label = el.shadowRoot?.querySelector('[part=label]')
   const body = el.shadowRoot?.querySelector('[part=body]')
-  expect(label).not.toBeNull()
+  expect(header?.contains(label ?? null)).toBe(true)
   expect(body).not.toBeNull()
   // 本文と actions はどちらも body に入る（帯と本体を分ける）
   expect(body?.querySelectorAll('slot')).toHaveLength(2)
 
-  const bar = label === null || label === undefined ? undefined : getComputedStyle(label)
+  const bar = header === null || header === undefined ? undefined : getComputedStyle(header)
   expect(bar?.backgroundColor).toBe(resolvedColor('--rd-color-chrome-default'))
   expect(bar?.display).toBe('grid')
 
@@ -144,4 +145,45 @@ it('見出しが窓の帯になり、本文は body part に入る（brand.md §
   expect(frame?.paddingTop).toBe('0px')
   expect(frame?.borderTopWidth).toBe('0px')
   expect(frame?.borderTopLeftRadius).toBe('16px')
+})
+
+const closeControl = (el: RdDialog): HTMLButtonElement | null => {
+  const button = el.shadowRoot?.querySelector('button[data-action=close]')
+  return button instanceof HTMLButtonElement ? button : null
+}
+
+it('帯の左端に × があり、押すと rd-dismiss { reason: "button" } が上がる', async () => {
+  const el = await fixtureOf(RdDialog, DIALOG)
+  const listener = vi.fn<(event: Event) => void>()
+  el.addEventListener('rd-dismiss', listener)
+  el.show()
+  await el.updateComplete
+  closeControl(el)?.click()
+  // `close()` は open を同期で倒すので、rd-dismiss（<dialog> の close 経由）は次の更新で来る
+  await expect.poll(() => listener.mock.calls.length).toBe(1)
+  expect(el.open).toBe(false)
+  const event = listener.mock.calls[0]?.[0]
+  expect(event instanceof CustomEvent ? event.detail : undefined).toEqual({ reason: 'button' })
+})
+
+it('persistent なら × を出さない（閉じられないことを見た目でも示す。brand.md §7.7）', async () => {
+  const el = await fixtureOf(
+    RdDialog,
+    '<rd-dialog persistent><h2 slot="label">確定</h2></rd-dialog>',
+  )
+  expect(closeControl(el)).toBeNull()
+  expect(el.shadowRoot?.querySelector('[part=controls]')).toBeNull()
+})
+
+it('× の名前はダイアログの名前に混ざらない（帯 ⊃ 見出し。ADR-0014 決定 2）', async () => {
+  const el = await fixtureOf(RdDialog, DIALOG)
+  const labelId = nativeDialog(el)?.getAttribute('aria-labelledby') ?? ''
+  const label = el.shadowRoot?.getElementById(labelId)
+  expect(label?.querySelector('button')).toBeNull()
+  expect(closeControl(el)?.getAttribute('aria-label')).not.toBe('')
+})
+
+it('□ と − はダイアログに無い（brand.md §7.7）', async () => {
+  const el = await fixtureOf(RdDialog, DIALOG)
+  expect(el.shadowRoot?.querySelectorAll('button[data-action]')).toHaveLength(1)
 })

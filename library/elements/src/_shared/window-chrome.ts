@@ -50,6 +50,8 @@ export type WindowControlView = {
   /** `aria-controls` の先（たたむボタンだけが使う） */
   readonly bodyId: string
   readonly onClick: () => void
+  /** `part` の値。既定 `control`（`rd-dialog` は `<dialog>` が control を先に使っている） */
+  readonly part?: string | undefined
 }
 
 /**
@@ -58,7 +60,7 @@ export type WindowControlView = {
  */
 export const windowControl = (view: WindowControlView): TemplateResult =>
   html`<button
-    part="control"
+    part=${view.part ?? 'control'}
     type="button"
     data-action=${view.action}
     aria-label=${view.label}
@@ -93,6 +95,34 @@ export const windowControls = (view: {
           }),
         )}
       </div>`
+
+/**
+ * `rd-dialog` の帯（ADR-0014 決定 4）。左端の × は `persistent` では**描かない**。
+ * 見出し（`slot="label"`）の入れ物が `aria-labelledby` の先なので、× は必ずその外に置く。
+ * ここに置いてあるのは `rd-window` と同じ帯を 1 か所から出すため（見た目がずれない）。
+ */
+export const dialogBar = (
+  persistent: boolean,
+  closeLabel: string,
+  onClose: () => void,
+): TemplateResult => html`<header part="bar">
+  ${
+    persistent
+      ? nothing
+      : html`<div part="controls">
+          ${windowControl({
+            action: 'close',
+            label: closeLabel,
+            collapsed: false,
+            expanded: false,
+            bodyId: '',
+            part: 'control close',
+            onClick: onClose,
+          })}
+        </div>`
+  }
+  <div id="rd-dialog-label" part="label"><slot name="label"></slot></div>
+</header>`
 
 /**
  * shadow の帯。`[part='bar']` ⊃ `[part='controls']` + 見出しの入れ物。
