@@ -8,6 +8,7 @@ import {
   meterAndWindowSuite,
   navigationSuite,
   radioGroupAndSliderSuite,
+  splitterSuite,
   toggleSuite,
 } from './shared.js'
 
@@ -18,6 +19,7 @@ navigationSuite('react')
 formWave4Suite('react')
 toggleSuite('react')
 comboboxSuite('react')
+splitterSuite('react')
 commandSuite('react')
 dataTableSuite('react')
 

@@ -1,0 +1,18 @@
+@layer rd.components {
+  /* ティア B（ADR-0012）。定義後の並べ方とつまみは shadow（`splitter.styles.ts`）が持つので、
+     light DOM 側の仕事は「**JS が無いときに 2 つの面が両方読める**」ことだけ。
+     割合を変えるのは JS が来てからで、それまでは縦に積んで全部見せるのが正しい姿。 */
+  rd-splitter {
+    display: grid;
+  }
+
+  rd-splitter:not(:defined) {
+    display: grid;
+    gap: var(--rd-space-3);
+  }
+
+  /* slot 属性は付いているが shadow がまだ無い状態。素の div のままだと inline になるものもある */
+  rd-splitter:not(:defined) > [slot] {
+    display: block;
+  }
+}

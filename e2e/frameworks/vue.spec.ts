@@ -8,6 +8,7 @@ import {
   meterAndWindowSuite,
   navigationSuite,
   radioGroupAndSliderSuite,
+  splitterSuite,
   toggleSuite,
 } from './shared.js'
 
@@ -18,6 +19,7 @@ navigationSuite('vue')
 formWave4Suite('vue')
 toggleSuite('vue')
 comboboxSuite('vue')
+splitterSuite('vue')
 commandSuite('vue')
 dataTableSuite('vue')
 

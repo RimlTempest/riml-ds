@@ -36,6 +36,7 @@ describe('listElements', () => {
       'rd-radio-group',
       'rd-select',
       'rd-slider',
+      'rd-splitter',
       'rd-tabs',
       'rd-text-field',
       'rd-toast',
@@ -65,6 +66,7 @@ describe('listElements', () => {
       'rd-radio-group',
       'rd-select',
       'rd-slider',
+      'rd-splitter',
       'rd-tabs',
       'rd-text-field',
       'rd-toast',
@@ -195,6 +197,20 @@ describe('getElement', () => {
     expect(examples.vue).toContain(`from '@rimltempest/riml-ds-vue/experimental'`)
     expect(examples.svelte).toContain(`from '@rimltempest/riml-ds-svelte/experimental'`)
     expect(examples.astro).toContain(`from '@rimltempest/riml-ds-astro/experimental/select.astro'`)
+  })
+
+  it('rd-splitter の例は 2 つの面と可動域を属性として出す（plan 030）', () => {
+    const result = getElement(manifest, elementExamples, 'rd-splitter')
+    expect(result.ok).toBe(true)
+    if (!result.ok) {
+      return
+    }
+    expect(result.value.pe).toBe('B')
+    expect(result.value.examples.html).toContain('<div slot="start">')
+    expect(result.value.examples.html).toContain('<div slot="end">')
+    expect(result.value.examples.html).toContain('label="サイドバーの幅"')
+    expect(result.value.examples.html).toContain('min="30"')
+    expect(result.value.examples.html).toContain('max="70"')
   })
 
   it('知らないタグは unknown-tag で返す', () => {

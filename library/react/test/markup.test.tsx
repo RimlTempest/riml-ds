@@ -1,4 +1,5 @@
 import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
+import { splitterMarkup } from '@rimltempest/riml-ds-elements/experimental/splitter'
 import {
   commandGroupMarkup,
   commandItemMarkup,
@@ -13,7 +14,7 @@ import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import * as experimental from '../src/experimental.js'
-import { RdCommand, RdDataTable } from '../src/experimental.js'
+import { RdCommand, RdDataTable, RdSplitter } from '../src/experimental.js'
 import * as index from '../src/index.js'
 import { RdButton, RdTextField } from '../src/index.js'
 import { normalize } from './normalize.js'
@@ -98,10 +99,36 @@ describe('既定 export の部品', () => {
       'RdRadioGroup',
       'RdSelect',
       'RdSlider',
+      'RdSplitter',
       'RdTabs',
       'RdToggle',
       'RdWindow',
     ])
+  })
+
+  it('RdSplitter の renderToString が splitterMarkup と同じ HTML になる（数値の props も属性になる）', () => {
+    const rendered = renderToString(
+      <RdSplitter
+        label="サイドバーの幅"
+        position={40}
+        min={30}
+        max={70}
+        start={<p>一覧</p>}
+        end={<p>本文</p>}
+      />,
+    )
+    expect(normalize(rendered)).toBe(
+      normalize(
+        splitterMarkup({
+          label: 'サイドバーの幅',
+          position: 40,
+          min: 30,
+          max: 70,
+          start: '<p>一覧</p>',
+          end: '<p>本文</p>',
+        }),
+      ),
+    )
   })
 })
 

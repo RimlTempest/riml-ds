@@ -13,6 +13,7 @@ import {
   RdRadioGroup,
   RdSelect,
   RdSlider,
+  RdSplitter,
   RdTabs,
   RdToggle,
   RdWindow,
@@ -179,6 +180,7 @@ export const App = (): ReactNode => (
     <RdCombobox id="reading" listId="reading-list" label="読み" name="reading">
       {readings}
     </RdCombobox>
+    <RdSplitter label="面の割合" start={<p>一覧の面。</p>} end={<p>本文の面。</p>} />
     <RdCommand id="palette" label="コマンド" groups={commandGroups} />
     <RdDataTable
       caption="保存したコード"

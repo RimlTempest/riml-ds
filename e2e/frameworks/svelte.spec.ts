@@ -7,6 +7,7 @@ import {
   meterAndWindowSuite,
   navigationSuite,
   radioGroupAndSliderSuite,
+  splitterSuite,
   toggleSuite,
 } from './shared.js'
 
@@ -17,5 +18,6 @@ navigationSuite('svelte')
 formWave4Suite('svelte')
 toggleSuite('svelte')
 comboboxSuite('svelte')
+splitterSuite('svelte')
 commandSuite('svelte')
 dataTableSuite('svelte')

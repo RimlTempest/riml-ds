@@ -37,6 +37,7 @@ const PAGES = [
   '/input-group.html',
   '/radio-group.html',
   '/slider.html',
+  '/splitter.html',
   '/data-table.html',
 ] as const
 

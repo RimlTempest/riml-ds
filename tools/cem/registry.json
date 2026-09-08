@@ -160,6 +160,15 @@
     "dependsOn": []
   },
   {
+    "name": "splitter",
+    "tag": "rd-splitter",
+    "pe": "B",
+    "status": "experimental",
+    "summary": "つまみを動かして 2 つの面の割合を変える",
+    "files": ["splitter/index.js", "splitter/splitter.define.js", "splitter/splitter.css"],
+    "dependsOn": []
+  },
+  {
     "name": "tabs",
     "tag": "rd-tabs",
     "pe": "B",

@@ -31,6 +31,7 @@
     "./experimental/radio-group.astro": "./src/generated/experimental/radio-group.astro",
     "./experimental/select.astro": "./src/generated/experimental/select.astro",
     "./experimental/slider.astro": "./src/generated/experimental/slider.astro",
+    "./experimental/splitter.astro": "./src/generated/experimental/splitter.astro",
     "./experimental/tabs.astro": "./src/generated/experimental/tabs.astro",
     "./experimental/toggle.astro": "./src/generated/experimental/toggle.astro",
     "./experimental/window.astro": "./src/generated/experimental/window.astro",

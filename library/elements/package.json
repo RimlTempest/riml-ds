@@ -116,6 +116,19 @@
       "default": "./dist/combobox/combobox.define.js"
     },
     "./experimental/combobox/style.css": "./dist/combobox/combobox.css",
+    "./experimental/splitter": {
+      "types": "./dist/experimental/splitter/index.d.ts",
+      "default": "./dist/experimental/splitter/index.js"
+    },
+    "./experimental/splitter/contract": {
+      "types": "./dist/splitter/splitter.contract.d.ts",
+      "default": "./dist/splitter/splitter.contract.js"
+    },
+    "./experimental/splitter/define": {
+      "types": "./dist/splitter/splitter.define.d.ts",
+      "default": "./dist/splitter/splitter.define.js"
+    },
+    "./experimental/splitter/style.css": "./dist/splitter/splitter.css",
     "./experimental/command": {
       "types": "./dist/experimental/command/index.d.ts",
       "default": "./dist/experimental/command/index.js"
