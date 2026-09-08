@@ -1,4 +1,4 @@
-import { html, LitElement, type PropertyDeclarations, type TemplateResult } from 'lit'
+import { html, LitElement, nothing, type PropertyDeclarations, type TemplateResult } from 'lit'
 import { checkContract } from '../_shared/contract.js'
 import { syncStates } from '../_shared/internals.js'
 import { asFocusable } from '../_shared/native-control.js'
@@ -8,6 +8,7 @@ import {
   computeStates,
   decideClose,
   decideDialogAction,
+  type DialogPlacement,
   type DismissReason,
   focusReturnTarget,
 } from './dialog.logic.js'
@@ -37,6 +38,9 @@ const SHADOW_OPTIONS = { ...LitElement.shadowRootOptions, delegatesFocus: true, 
  * @event {CustomEvent<{ reason: 'esc' | 'backdrop' | 'button' | 'api' }>} rd-dismiss - 閉じたときに発火
  * @state open - 開いている
  * @state malformed - slot="label" の子が無い
+ * @state start - placement="start"（行頭側に着く帯 = Sheet）
+ * @state end - placement="end"（行末側に着く帯 = Sheet）
+ * @state bottom - placement="bottom"（下端に着く帯 = Drawer）
  */
 export class RdDialog extends LitElement {
   static override styles = styles
@@ -44,12 +48,16 @@ export class RdDialog extends LitElement {
   static override shadowRootOptions = SHADOW_OPTIONS
 
   static override properties: PropertyDeclarations = {
+    alert: { type: Boolean, reflect: true },
     open: { type: Boolean, reflect: true },
     persistent: { type: Boolean, reflect: true },
+    placement: { reflect: true },
   }
 
+  declare alert: boolean
   declare open: boolean
   declare persistent: boolean
+  declare placement: DialogPlacement
 
   #internals = this.attachInternals()
   #contractOk = false
@@ -58,8 +66,10 @@ export class RdDialog extends LitElement {
 
   constructor() {
     super()
+    this.alert = false
     this.open = false
     this.persistent = false
+    this.placement = 'center'
   }
 
   override firstUpdated(): void {
@@ -71,16 +81,19 @@ export class RdDialog extends LitElement {
   }
 
   override updated(): void {
-    syncStates(this.#internals, computeStates({ open: this.open, malformed: !this.#contractOk }))
+    const { open, placement } = this
+    const states = computeStates({ open, placement, malformed: !this.#contractOk })
+    syncStates(this.#internals, states)
     this.#applyOpen()
   }
 
   override render(): TemplateResult {
     return html`<dialog
       part="control"
+      role=${this.alert ? 'alertdialog' : nothing}
       aria-labelledby="rd-dialog-label"
-      @cancel=${this.#onCancel}
-      @click=${this.#onClick}
+      @cancel=${this.#dismiss}
+      @click=${this.#dismiss}
       @close=${this.#onClose}
     >
       ${dialogBar(this.persistent, windowControlLabels(this).close, this.#closeByButton)}
@@ -90,9 +103,8 @@ export class RdDialog extends LitElement {
 
   /** 開く。閉じたときにフォーカスを戻す先として、いま focus のある要素を覚える */
   show(): void {
-    this.#opener = asFocusable(
-      this.getRootNode() instanceof Document ? document.activeElement : null,
-    )
+    const root = this.getRootNode()
+    this.#opener = asFocusable(root instanceof Document ? document.activeElement : null)
     this.open = true
   }
 
@@ -101,43 +113,29 @@ export class RdDialog extends LitElement {
     this.open = false
   }
 
-  #closeByButton = (): void => {
-    this.close('button')
-  }
+  #closeByButton = (): void => this.close('button')
 
   #dialog = (): HTMLDialogElement | null => this.renderRoot.querySelector('dialog')
 
   #applyOpen = (): void => {
     const dialog = this.#dialog()
-    switch (decideDialogAction({ wanted: this.open, actual: dialog?.open ?? false })) {
-      case 'open':
-        dialog?.showModal()
-        break
-      case 'close':
-        dialog?.close()
-        break
-      case 'none':
-        break
+    const actions = {
+      open: () => dialog?.showModal(),
+      close: () => dialog?.close(),
+      none: () => undefined,
     }
+    actions[decideDialogAction({ wanted: this.open, actual: dialog?.open ?? false })]()
   }
 
-  #onCancel = (event: Event): void => {
-    const decision = decideClose({ persistent: this.persistent, reason: 'esc' })
-    if (decision.kind === 'blocked') {
-      event.preventDefault()
-      return
-    }
-    this.#reason = decision.reason
-  }
-
-  /** `<dialog>` 自身が click の対象なら背面（backdrop）を押している */
-  #onClick = (event: Event): void => {
-    const decision = decideClose({ persistent: this.persistent, reason: 'backdrop' })
+  /** Esc と背面クリックの共通の出口。`<dialog>` 自身が click の対象なら背面を押している */
+  #dismiss = (event: Event): void => {
     const dialog = this.#dialog()
-    if (decision.kind === 'close' && event.target === dialog) {
-      this.#reason = decision.reason
-      dialog?.close()
-    }
+    if (event.type === 'click' && event.target !== dialog) return
+    const reason = event.type === 'cancel' ? 'esc' : 'backdrop'
+    const decision = decideClose({ persistent: this.persistent, alert: this.alert, reason })
+    if (decision.kind === 'blocked') return event.preventDefault()
+    this.#reason = decision.reason
+    if (event.type === 'click') dialog?.close()
   }
 
   #onClose = (): void => {

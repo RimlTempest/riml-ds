@@ -23,7 +23,7 @@
     <RdCheckbox label="お知らせを受け取る" name="news" defaultValue="yes" />
     <RdButton type="submit">送信</RdButton>
   </form>
-  <RdDialog label="送信しました"><p>確認メールを送りました。</p></RdDialog>
+  <RdDialog label="送信しました" placement="end"><p>確認メールを送りました。</p></RdDialog>
   <RdMeter id="disk" label="ディスク使用量" value="3.2" max="10" text="3.2 GB / 10 GB" />
   <RdWindow title="バックアップの設定" collapsible><p>毎晩 3 時に実行します。</p></RdWindow>
   <RdRadioGroup label="プラン">

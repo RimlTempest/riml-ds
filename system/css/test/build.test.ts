@@ -36,6 +36,10 @@ const KNOBS = new Set([
   '--rd-alert-tone',
   '--rd-legend-swatch',
   '--rd-sidebar-inline-size',
+  // plan 022
+  '--rd-spinner-size',
+  '--rd-carousel-item',
+  '--rd-scroll-area-max',
 ])
 
 /** plan 018 の 2 表 + plan 020 の navigation。dist に出ていることだけをここで押さえる */

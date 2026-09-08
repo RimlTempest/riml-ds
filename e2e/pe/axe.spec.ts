@@ -16,6 +16,8 @@ const PAGES = [
   '/disclosure.html',
   '/meter.html',
   '/dialog.html',
+  '/dialog-sheet.html',
+  '/card.html',
   '/window.html',
   '/tabs.html',
   '/menu.html',

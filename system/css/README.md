@@ -37,18 +37,18 @@ tokens を `file:` / `workspace:` で取り込む利用側が 404 で止まら�
 
 ## ファイル
 
-| ファイル            | レイヤー        | 中身                                                                              |
-| ------------------- | --------------- | --------------------------------------------------------------------------------- |
-| `layers.css`        | （宣言のみ）    | `@layer rd.reset, rd.tokens, rd.base, rd.components, rd.utilities, rd.overrides;` |
-| `reset.css`         | `rd.reset`      | `box-sizing`、`margin: 0`、メディア要素、フォームの `font: inherit`               |
-| `base.css`          | `rd.base`       | `body`・見出し・行長・`hr`（点線）・リンク・`:focus-visible`・等幅                |
-| `typography.css`    | `rd.components` | 文字のクラス（`.rd-display` … `.rd-prose`）                                       |
-| `atoms.css`         | `rd.components` | JS が要らない小さなパターン（`.rd-badge` … `.rd-legend`）                         |
-| `navigation.css`    | `rd.components` | 移動のための形（`.rd-breadcrumb` … `.rd-sidebar`）                                |
-| `patterns.css`      | `rd.components` | 窓（`.rd-window` / `.rd-window-title` / `.rd-window-body`）                       |
-| `utilities.css`     | `rd.utilities`  | `.rd-visually-hidden`、`.rd-skip-link`、`.rd-stack`、`.rd-cluster`、`[hidden]`    |
-| `print.css`         | `rd.base`       | `@media print`（リンク先の URL、ナビを消す、システム色）                          |
-| `forced-colors.css` | `rd.base`       | `@media (forced-colors: active)`（リンク・フォーカス・ボタンの境界）              |
+| ファイル            | レイヤー        | 中身                                                                                         |
+| ------------------- | --------------- | -------------------------------------------------------------------------------------------- |
+| `layers.css`        | （宣言のみ）    | `@layer rd.reset, rd.tokens, rd.base, rd.components, rd.utilities, rd.overrides;`            |
+| `reset.css`         | `rd.reset`      | `box-sizing`、`margin: 0`、メディア要素、フォームの `font: inherit`                          |
+| `base.css`          | `rd.base`       | `body`・見出し・行長・`hr`（点線）・リンク・`:focus-visible`・等幅                           |
+| `typography.css`    | `rd.components` | 文字のクラス（`.rd-display` … `.rd-prose`）                                                  |
+| `atoms.css`         | `rd.components` | JS が要らない小さなパターン（`.rd-badge` … `.rd-scroll-area`）                               |
+| `navigation.css`    | `rd.components` | 移動のための形（`.rd-breadcrumb` … `.rd-sidebar`）                                           |
+| `patterns.css`      | `rd.components` | 窓（`.rd-window` / `.rd-window-title` / `.rd-window-body`）                                  |
+| `utilities.css`     | `rd.utilities`  | `.rd-visually-hidden`、`.rd-skip-link`、`.rd-stack`、`.rd-cluster`、`.rd-aspect`、`[hidden]` |
+| `print.css`         | `rd.base`       | `@media print`（リンク先の URL、ナビを消す、システム色）                                     |
+| `forced-colors.css` | `rd.base`       | `@media (forced-colors: active)`（リンク・フォーカス・ボタンの境界）                         |
 
 ダークと高コントラストと密度はここに書かない（トークンが `light-dark()` と
 `prefers-contrast` / `[data-density]` で持つ）。
@@ -85,21 +85,27 @@ JS が要らないもの（バッジ・アバター・区切り・表・注意�
 `src/atoms.css` の各クラスの直前のコメントが持つ**（読み上げに要る `aria-label` / `aria-hidden` /
 `role` / `scope` もそこに書いてある）。色だけで意味を伝えるクラスは 1 つも無い。
 
-| クラス                                             | 使うところ                                                                     |
-| -------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `.rd-badge`                                        | 数や状態のピル。`data-tone="accent \| success \| warning \| danger \| info"`   |
-| `.rd-dot` / `.rd-has-dot`                          | 通知の点。件数と意味は文字で別に出す                                           |
-| `.rd-avatar` / `.rd-avatar-group`                  | 丸いアバターと重ね並べ。大きさは `--rd-avatar-size`                            |
-| `.rd-separator`                                    | 点線の区切り。`aria-orientation="vertical"` で縦線                             |
-| `.rd-skeleton`                                     | 読み込み中の骨組み。幅は `--rd-skeleton-width`、`data-shape="circle \| block"` |
-| `.rd-kbd`                                          | キーキャップ                                                                   |
-| `.rd-tile`                                         | インクの角丸タイル。大きさは `--rd-tile-size`、`data-tone="accent"`            |
-| `.rd-icon-button`                                  | アイコンだけのボタン（44px の当たり判定）。`aria-label` 必須                   |
-| `.rd-toolbar`                                      | 押せるものを並べる帯。`data-position="top"` で罫線が上下入れ替わる             |
-| `.rd-list` / `.rd-list-row` / `.rd-list-meta`      | 一覧。選択は `aria-current` / `aria-selected` が持つ                           |
-| `.rd-table` / `.rd-table-scroll`                   | 表と横スクロールの入れ物。`data-numeric` で桁揃え、`data-sticky` で見出し固定  |
-| `.rd-alert` / `.rd-alert-title` / `.rd-alert-icon` | 注意書き。`data-tone` で左の帯の色。`role` は利用側が付ける                    |
-| `.rd-legend` / `.rd-legend-item`                   | 区分メーターの凡例。`data-series="1".."4"` の色は `rd-meter` と同じ順          |
+| クラス                                             | 使うところ                                                                            |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `.rd-badge`                                        | 数や状態のピル。`data-tone="accent \| success \| warning \| danger \| info"`          |
+| `.rd-dot` / `.rd-has-dot`                          | 通知の点。件数と意味は文字で別に出す                                                  |
+| `.rd-avatar` / `.rd-avatar-group`                  | 丸いアバターと重ね並べ。大きさは `--rd-avatar-size`                                   |
+| `.rd-separator`                                    | 点線の区切り。`aria-orientation="vertical"` で縦線                                    |
+| `.rd-skeleton`                                     | 読み込み中の骨組み。幅は `--rd-skeleton-width`、`data-shape="circle \| block"`        |
+| `.rd-kbd`                                          | キーキャップ                                                                          |
+| `.rd-tile`                                         | インクの角丸タイル。大きさは `--rd-tile-size`、`data-tone="accent"`                   |
+| `.rd-icon-button`                                  | アイコンだけのボタン（44px の当たり判定）。`aria-label` 必須                          |
+| `.rd-toolbar`                                      | 押せるものを並べる帯。`data-position="top"` で罫線が上下入れ替わる                    |
+| `.rd-list` / `.rd-list-row` / `.rd-list-meta`      | 一覧。選択は `aria-current` / `aria-selected` が持つ                                  |
+| `.rd-table` / `.rd-table-scroll`                   | 表と横スクロールの入れ物。`data-numeric` で桁揃え、`data-sticky` で見出し固定         |
+| `.rd-alert` / `.rd-alert-title` / `.rd-alert-icon` | 注意書き。`data-tone` で左の帯の色。`role` は利用側が付ける                           |
+| `.rd-legend` / `.rd-legend-item`                   | 区分メーターの凡例。`data-series="1".."4"` の色は `rd-meter` と同じ順                 |
+| `.rd-card` ほか 4 つ                               | 面のカード（`-media` / `-body` / `-title` / `-footer`）。`.rd-card-link` で全面リンク |
+| `.rd-empty` ほか 3 つ                              | 空の知らせ（`-icon` / `-title` / `-actions`）。次の行動を必ず置く                     |
+| `.rd-spinner`                                      | 罫線で描く待ちの輪。大きさは `--rd-spinner-size`。文言は利用側が書く                  |
+| `.rd-accordion`                                    | `rd-disclosure` を積む入れ物。排他は `<details name>` が持つ                          |
+| `.rd-carousel` ほか 2 つ                           | scroll snap の横帯（`-track` / `-item`）。1 枚の幅は `--rd-carousel-item`             |
+| `.rd-scroll-area`                                  | 転がる入れ物。高さは `--rd-scroll-area-max`、`data-axis="x"` で横だけ                 |
 
 ```html
 <div class="rd-alert" data-tone="warning" role="status">
@@ -112,11 +118,14 @@ JS が要らないもの（バッジ・アバター・区切り・表・注意�
 ```
 
 つまみ（`--rd-avatar-size` / `--rd-tile-size` / `--rd-skeleton-width` / `--rd-legend-swatch` /
-`--rd-clamp-lines`）は**トークンではない**。`tokens.css` に定義は無く、利用側が
+`--rd-clamp-lines` / `--rd-spinner-size` / `--rd-carousel-item` / `--rd-scroll-area-max`）は
+**トークンではない**。`tokens.css` に定義は無く、利用側が
 `style="--rd-skeleton-width: 12ch"` のように渡す。
 
-`prefers-reduced-motion: no-preference` の中でだけ `.rd-skeleton` が明滅し、`.rd-icon-button`
-が押し込まれる。`forced-colors: active` では面に輪郭が付き、選択行が `Highlight` になる。
+`prefers-reduced-motion: no-preference` の中でだけ `.rd-skeleton` が明滅し、`.rd-spinner` が
+回り、`.rd-carousel` / `.rd-scroll-area` が滑らかに転がり、`.rd-icon-button` が押し込まれる。
+`forced-colors: active` では面に輪郭が付き、選択行が `Highlight` になり、細いスクロールバーの
+色指定（`scrollbar-color`）は `auto` に戻る。
 
 ## 窓（`.rd-window`）
 
@@ -147,7 +156,15 @@ JS が要らないので部品にしない（[ADR-0012](../../docs/adr/0012-prog
 `.rd-skip-link` は `<body>` 直下に置く。フォーカスされるまでは隠れる。スキップリンクを部品に
 しないのは、JS 無しで動くのが `<a href="#main">` そのものだから（[ADR-0012](../../docs/adr/0012-progressive-enhancement-tiers.md) §6）。
 
-ユーティリティはこの 5 つで打ち止め。ユーティリティ CSS フレームワークにしない。
+`.rd-aspect` は比を固定した入れ物で、中の `img` / `video` / `iframe` を切り抜いて埋める。
+比は `--rd-aspect`（既定 `16 / 9`）。`data-ratio="1"` と `data-ratio="4-3"` だけ用意してあり、
+それ以外は `style="--rd-aspect: 21 / 9"` のように渡す。
+
+```html
+<div class="rd-aspect" data-ratio="1"><img src="cover.avif" alt="" /></div>
+```
+
+ユーティリティはこの 6 つで打ち止め。ユーティリティ CSS フレームワークにしない。
 
 ## 上書き
 

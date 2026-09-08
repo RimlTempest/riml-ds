@@ -447,13 +447,240 @@
     --rd-legend-swatch: var(--rd-color-border-strong);
   }
 
+  /* 面のカード。写真・本文・脚注の 3 段。脚注は点線で区切る（brand.md §7.6）。
+     見出しの**レベルは利用側が決める**（クラスは大きさだけを持つ）。カード全体を押せるようにするなら
+     見出しの中に .rd-card-link を 1 つだけ置く — 疑似要素がカードを覆うので、
+     **他のリンクやボタンを一緒に置くときは、そちらに position: relative を付けて上に出す**。
+     <article class="rd-card">
+       <img class="rd-card-media" src="…" alt="">
+       <div class="rd-card-body">
+         <h3 class="rd-card-title"><a class="rd-card-link" href="/a">記事の題</a></h3>
+         <p>説明。</p>
+       </div>
+       <div class="rd-card-footer"><span class="rd-badge">新着</span></div>
+     </article> */
+  .rd-card {
+    position: relative;
+    display: grid;
+    overflow: clip;
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-radius: var(--rd-radius-lg);
+    background: var(--rd-color-surface-raised);
+    box-shadow: var(--rd-shadow-raised);
+    color: var(--rd-color-text-default);
+  }
+
+  /* 写真は横 16:9 で切り抜く。比を変えたいときは .rd-aspect で包む（utilities.css） */
+  .rd-card-media {
+    inline-size: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .rd-card-body {
+    display: grid;
+    gap: var(--rd-space-2);
+    padding: var(--rd-space-4);
+  }
+
+  .rd-card-title {
+    margin: 0;
+    font: var(--rd-type-heading-3);
+  }
+
+  .rd-card-footer {
+    padding: var(--rd-space-3) var(--rd-space-4);
+    border-block-start: var(--rd-border-width-default) dashed var(--rd-color-border-default);
+  }
+
+  /* リンクの当たり判定をカード全面に広げる。名前は文字が持つので疑似要素は空でよい */
+  .rd-card-link::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+  }
+
+  .rd-card:has(.rd-card-link:hover) {
+    background: var(--rd-color-surface-hover);
+  }
+
+  /* 輪はリンクではなくカードに出す（押せる範囲と輪郭を一致させる） */
+  .rd-card:has(.rd-card-link:focus-visible) {
+    outline: var(--rd-focus-ring-width) solid var(--rd-color-focus-ring);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* 何も無いことの知らせ。**次の行動を必ず置く**（writing.md）。絵は装飾なので aria-hidden。
+     <div class="rd-empty">
+       <span class="rd-empty-icon" aria-hidden="true"><svg>…</svg></span>
+       <p class="rd-empty-title">まだありません</p>
+       <p>最初の 1 つを作ると、ここに出ます。</p>
+       <div class="rd-empty-actions"><rd-button><button type="button">作る</button></rd-button></div>
+     </div> */
+  .rd-empty {
+    display: grid;
+    justify-items: center;
+    gap: var(--rd-space-2);
+    padding: var(--rd-space-8) var(--rd-space-4);
+    color: var(--rd-color-text-muted);
+    /* stylelint-disable-next-line property-disallowed-list -- center は論理値。RTL でも中央 */
+    text-align: center;
+  }
+
+  .rd-empty-icon > :is(svg, img) {
+    display: block;
+    inline-size: var(--rd-space-12);
+    block-size: var(--rd-space-12);
+  }
+
+  /* 絵を置かないなら隙間も空けない */
+  .rd-empty-icon:empty {
+    display: none;
+  }
+
+  /* 題は本文と同じインク（面全体が muted なので、ここだけ戻す） */
+  .rd-empty-title {
+    margin: 0;
+    color: var(--rd-color-text-default);
+    font: var(--rd-type-heading-3);
+  }
+
+  .rd-empty-actions {
+    display: flex;
+    gap: var(--rd-space-2);
+    margin-block-start: var(--rd-space-2);
+  }
+
+  /* 待っていることを示す輪。罫線で描く（グラデーションを使わない。brand.md §9）。
+     **文言は利用側が書く** — 輪だけでは読み上げに何も出ない。
+     reduced-motion では止まった輪のまま（意味は文字が持つので情報は落ちない）。
+     <span class="rd-spinner" role="status"><span class="rd-visually-hidden">読み込み中</span></span> */
+  .rd-spinner {
+    display: inline-block;
+    inline-size: var(--rd-spinner-size, var(--rd-space-6));
+    block-size: var(--rd-spinner-size, var(--rd-space-6));
+    border-width: var(--rd-space-1);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-block-start-color: var(--rd-color-accent-default);
+    border-radius: var(--rd-radius-full);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes rd-spin {
+      to {
+        rotate: 1turn;
+      }
+    }
+
+    .rd-spinner {
+      animation-name: rd-spin;
+      animation-duration: calc(var(--rd-motion-duration-base) * 5);
+      /* stylelint-disable-next-line scale-unlimited/declaration-strict-value -- 回転は等速でないと引っかかって見える。linear は「値」であってトークンにできない */
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+  }
+
+  /* 折りたたみを積む入れ物。中身は 009 の rd-disclosure（<details>）で、見た目はそちらの持ち物。
+     1 つだけ開く（排他）にするなら <details name="…"> を利用側が揃える。
+     <div class="rd-accordion">
+       <rd-disclosure><details name="faq"><summary>送料</summary><p>…</p></details></rd-disclosure>
+       <rd-disclosure><details name="faq"><summary>返品</summary><p>…</p></details></rd-disclosure>
+     </div> */
+  .rd-accordion {
+    display: grid;
+    border-block: var(--rd-border-width-default) solid var(--rd-color-border-default);
+  }
+
+  .rd-accordion > rd-disclosure + rd-disclosure {
+    border-block-start: var(--rd-border-width-default) dashed var(--rd-color-border-default);
+  }
+
+  /* 横に流す帯。**前後ボタンは付けない**（JS が要る）。要るなら利用側が rd-button と
+     scrollBy() で足す。キーボードで転がせるように tabindex="0" と role / aria-label は
+     利用側が付ける（入れ物にしか使わない形もあるので CSS では前提にしない）。
+     <div class="rd-carousel" role="region" aria-roledescription="carousel" aria-label="新着" tabindex="0">
+       <ul class="rd-carousel-track">
+         <li class="rd-carousel-item"><article class="rd-card">…</article></li>
+       </ul>
+     </div> */
+  .rd-carousel {
+    overflow-x: auto;
+    padding-block-end: var(--rd-space-2);
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+  }
+
+  .rd-carousel-track {
+    display: flex;
+    gap: var(--rd-space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* 1 枚の幅は --rd-carousel-item。画面より広くならない */
+  .rd-carousel-item {
+    flex: 0 0 var(--rd-carousel-item, min(100%, 20rem));
+    scroll-snap-align: start;
+  }
+
+  /* 中身が溢れる入れ物。高さの上限は --rd-scroll-area-max。
+     読み上げと keyboard のために role / aria-label / tabindex は利用側が付ける。
+     <div class="rd-scroll-area" role="region" aria-label="ログ" tabindex="0">…</div>
+     <div class="rd-scroll-area" data-axis="x" role="region" aria-label="表" tabindex="0">…</div> */
+  .rd-scroll-area {
+    overflow: auto;
+    max-block-size: var(--rd-scroll-area-max, 20rem);
+    overscroll-behavior: contain;
+  }
+
+  /* 横だけ転がす（縦は親に任せる） */
+  .rd-scroll-area[data-axis='x'] {
+    overflow: auto hidden;
+  }
+
+  /* 転がる入れ物はキーボードで焦点が当たる（WCAG 2.1.1）。輪は入れ物ごと出す */
+  .rd-carousel:focus-visible,
+  .rd-scroll-area:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-color-focus-ring);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* 細いスクロールバー（Baseline Newly。docs/baseline.md）。無ければ既定の見た目のまま */
+  @supports (scrollbar-width: thin) {
+    .rd-carousel,
+    .rd-scroll-area {
+      scrollbar-width: thin;
+      scrollbar-color: var(--rd-color-border-strong) transparent;
+    }
+  }
+
+  @supports (scrollbar-gutter: stable) {
+    .rd-scroll-area {
+      scrollbar-gutter: stable;
+    }
+  }
+
+  /* 転がりを滑らかにするのは opt-in（WCAG 2.3.3）。scrollBy() の見え方もここで決まる */
+  @media (prefers-reduced-motion: no-preference) {
+    .rd-carousel,
+    .rd-scroll-area {
+      scroll-behavior: smooth;
+    }
+  }
+
   /* 強制配色ではシステム色で描き直す（ADR-0004 §9）。塗り分けが消えるので、
      面には輪郭を、選択行には Highlight を与えて区別を残す */
   @media (forced-colors: active) {
     .rd-badge,
     .rd-tile,
     .rd-kbd,
-    .rd-alert {
+    .rd-alert,
+    .rd-card {
       border-width: var(--rd-border-width-default);
       border-style: solid;
       border-color: CanvasText;
@@ -461,8 +688,24 @@
 
     .rd-separator,
     .rd-toolbar,
+    .rd-accordion,
+    .rd-accordion > rd-disclosure + rd-disclosure,
+    .rd-card-footer,
     .rd-table :where(th, td) {
       border-color: CanvasText;
+    }
+
+    /* 輪は罫線なので消えない。進んでいる側だけ Highlight にして向きを残す */
+    .rd-spinner {
+      border-color: CanvasText;
+      border-block-start-color: Highlight;
+    }
+
+    /* 細いスクロールバーの色指定は強制配色で意味を失う（背景も枠もシステム色）。既定に戻す */
+    .rd-carousel,
+    .rd-scroll-area {
+      /* stylelint-disable-next-line scale-unlimited/declaration-strict-value -- auto は色ではなく「指定しない」。システム配色のスクロールバーに戻す */
+      scrollbar-color: auto;
     }
 
     .rd-avatar,

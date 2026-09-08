@@ -477,6 +477,17 @@
             },
             {
               "kind": "field",
+              "name": "alert",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "alert",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "open",
               "privacy": "public",
               "type": {
@@ -495,6 +506,17 @@
               },
               "default": "false",
               "attribute": "persistent",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "placement",
+              "privacy": "public",
+              "type": {
+                "text": "DialogPlacement"
+              },
+              "default": "'center'",
+              "attribute": "placement",
               "reflects": true
             },
             {
@@ -574,14 +596,9 @@
             },
             {
               "kind": "field",
-              "name": "#onCancel",
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "#onClick",
+              "name": "#dismiss",
               "privacy": "private",
-              "description": "`<dialog>` 自身が click の対象なら背面（backdrop）を押している"
+              "description": "Esc と背面クリックの共通の出口。`<dialog>` 自身が click の対象なら背面を押している"
             },
             {
               "kind": "field",
@@ -600,6 +617,14 @@
           ],
           "attributes": [
             {
+              "name": "alert",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "alert"
+            },
+            {
               "name": "open",
               "type": {
                 "text": "boolean"
@@ -614,6 +639,14 @@
               },
               "default": "false",
               "fieldName": "persistent"
+            },
+            {
+              "name": "placement",
+              "type": {
+                "text": "DialogPlacement"
+              },
+              "default": "'center'",
+              "fieldName": "placement"
             }
           ],
           "cssStates": [
@@ -624,6 +657,18 @@
             {
               "name": "malformed",
               "description": "slot=\"label\" の子が無い"
+            },
+            {
+              "name": "start",
+              "description": "placement=\"start\"（行頭側に着く帯 = Sheet）"
+            },
+            {
+              "name": "end",
+              "description": "placement=\"end\"（行末側に着く帯 = Sheet）"
+            },
+            {
+              "name": "bottom",
+              "description": "placement=\"bottom\"（下端に着く帯 = Drawer）"
             }
           ],
           "superclass": {

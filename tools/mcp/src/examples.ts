@@ -40,9 +40,14 @@ const TEXT_FIELD = {
   type: 'email',
   required: true,
 } as const
+/**
+ * `placement`（plan 022）で帯（Sheet / Drawer）にもできる。既定の `center` は属性を省くだけなので、
+ * 例では珍しい方（行末側の帯）を見せる。返事を求める窓にする `alert` は CEM の attributes に出る。
+ */
 const DIALOG = {
-  label: '削除の確認',
-  children: '<p>削除すると元に戻せません。</p>',
+  label: '絞り込み',
+  children: '<p>条件を選ぶとすぐに反映されます。</p>',
+  placement: 'end',
 } as const
 const SELECT = {
   id: 'country',

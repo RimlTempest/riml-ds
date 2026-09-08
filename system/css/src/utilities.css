@@ -43,6 +43,31 @@
     gap: var(--rd-space-2);
   }
 
+  /* 比を固定した入れ物。中身（img / video / iframe）を切り抜いて埋める。
+     比は --rd-aspect（既定 16 / 9）。よく使う 2 つだけ data-ratio を用意し、
+     それ以外は style で渡す（属性を増やすと「どれが正しい比か」が読めなくなる）。
+     <div class="rd-aspect"><img src="…" alt=""></div>
+     <div class="rd-aspect" data-ratio="1"><img src="…" alt=""></div>
+     <div class="rd-aspect" style="--rd-aspect: 21 / 9"><video …></video></div> */
+  .rd-aspect {
+    overflow: clip;
+    aspect-ratio: var(--rd-aspect, 16 / 9);
+  }
+
+  .rd-aspect > :is(img, video, iframe) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .rd-aspect[data-ratio='1'] {
+    --rd-aspect: 1;
+  }
+
+  .rd-aspect[data-ratio='4-3'] {
+    --rd-aspect: 4 / 3;
+  }
+
   /* [hidden] は強制指定（important）を使わず、レイヤー順で勝たせる。
      hidden="until-found" は検索で開くので display: none にしない */
   [hidden]:not([hidden='until-found']) {
