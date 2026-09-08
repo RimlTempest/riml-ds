@@ -2,6 +2,7 @@
   /* 太いピルのトラック（docs/brand.md §7.5）。塗りは --rd-meter-fill（部品が書く）で決まる。
      ネイティブの ::-webkit-meter-* は使わない（appearance: none + 背景で描く） */
   rd-meter {
+    position: relative;
     display: block;
 
     --rd-meter-color: var(--rd-color-accent-default);
@@ -34,21 +35,21 @@
     block-size: var(--rd-space-4);
     border-width: 0;
     border-radius: var(--rd-radius-full);
-    background: linear-gradient(
-      to right,
-      var(--rd-meter-color) calc(var(--rd-meter-fill, 0) * 100%),
-      var(--rd-color-surface-sunken) 0
-    );
+    background: var(--rd-color-surface-sunken);
   }
 
-  /* RTL は逆から塗る。グラデーションの向きは論理プロパティで書けない */
-  [dir='rtl'] rd-meter > meter,
-  [dir='rtl'] rd-meter > progress {
-    background: linear-gradient(
-      to left,
-      var(--rd-meter-color) calc(var(--rd-meter-fill, 0) * 100%),
-      var(--rd-color-surface-sunken) 0
-    );
+  /* 塗りはトラックの上に重ねる。<meter> の背景で描くと端が四角くなる（塗りもピルにする）。
+     論理プロパティで置くので RTL では自動で右から伸びる */
+  rd-meter::after {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    inline-size: calc(var(--rd-meter-fill, 0) * 100%);
+    block-size: var(--rd-space-4);
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-meter-color);
+    content: '';
+    pointer-events: none;
   }
 
   /* Blink / WebKit は `appearance: none` でもネイティブの内側（緑・黄・赤の棒）を別に描くので消す。
@@ -84,6 +85,11 @@
     rd-meter > meter::-webkit-meter-inner-element,
     rd-meter > progress::-webkit-progress-bar {
       display: revert;
+    }
+
+    /* 自前の塗りは出さない（ネイティブ表示に戻すので二重になる） */
+    rd-meter::after {
+      display: none;
     }
   }
 }
