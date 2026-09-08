@@ -94,6 +94,52 @@ export const Invalid: Story = {
   },
 }
 
+/**
+ * 入力の型は `<input type>`（と `<textarea>`）がそのまま持つ。部品は型ごとの見た目を持たず、
+ * ネイティブのピッカー・キーボード・検証をそのまま出す（ADR-0012）。
+ * `number` / `date` は契約の `TextFieldType` に無い型なので、light DOM を手で書く。
+ */
+export const Types: Story = {
+  render: () =>
+    html`<form
+      @submit=${(event: Event) => {
+        event.preventDefault()
+      }}
+    >
+      <div class="rd-stack">
+        ${unsafeHTML(textFieldMarkup({ id: 'sb-q', label: '検索', name: 'q', type: 'search' }))}
+        <rd-text-field>
+          <label for="sb-qty">数量</label>
+          <input id="sb-qty" name="qty" type="number" min="1" max="99" />
+        </rd-text-field>
+        <rd-text-field>
+          <label for="sb-due">期日</label>
+          <input id="sb-due" name="due" type="date" />
+        </rd-text-field>
+        ${unsafeHTML(
+          textFieldMarkup({
+            id: 'sb-password',
+            label: 'パスワード',
+            name: 'password',
+            type: 'password',
+          }),
+        )}
+        ${unsafeHTML(textFieldMarkup({ id: 'sb-site', label: 'サイト', name: 'site', type: 'url' }))}
+        <rd-text-field>
+          <label for="sb-note">備考</label>
+          <textarea id="sb-note" name="note" rows="3"></textarea>
+        </rd-text-field>
+      </div>
+    </form>`,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByLabelText('検索')).toHaveAttribute('type', 'search')
+    await expect(canvas.getByLabelText('数量')).toHaveAttribute('type', 'number')
+    await expect(canvas.getByLabelText('期日')).toHaveAttribute('type', 'date')
+    await expect(canvas.getByLabelText('備考').tagName).toBe('TEXTAREA')
+  },
+}
+
 export const Dark: Story = { globals: { scheme: 'dark' } }
 
 export const Dense: Story = { globals: { density: 'compact' } }
