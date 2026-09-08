@@ -147,3 +147,4 @@ export const styles = css`
 | `riml-ds/baseline-newly-needs-supports`               | `@supports` で囲み、フォールバックを書く       |
 | `riml-ds/no-palette-token`                            | `--rd-color-palette-*` → semantic トークン     |
 | `unit-disallowed-list` (`px`)                         | `rem` に。`1px` 罫線だけ許可                   |
+| `declaration-strict-value` の `box-shadow`（`inset …`） | 状態バーは `border-*` + `transparent` 既定に。影は `--rd-shadow-*` |

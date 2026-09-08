@@ -25,6 +25,8 @@ description: riml-ds のテスト規約。部品・トークン・ツールの�
 | **story**     | Storybook のレンダリング + axe         | addon-vitest + addon-a11y               | `*.stories.ts`（`play`）      | < 2s   |
 | **読み上げ**  | 仮想スクリーンリーダー                 | `@guidepup/virtual-screen-reader`       | `*.sr.test.ts`（browser）     | < 2s   |
 | **e2e**       | フレームワーク別アプリ                 | Playwright                              | `e2e/<fw>/`                   | < 30s  |
+| **e2e（JS 無し）** | PE ティア A/B の素の HTML          | Playwright（`javaScriptEnabled: false`） | `e2e/pe/`                     | < 30s  |
+| **e2e（キーボード）** | JS ありの操作・ARIA 同期        | Playwright                              | `e2e/a11y/keyboard.spec.ts`   | < 30s  |
 | **VRT**       | Docker 固定イメージ                    | Playwright `toHaveScreenshot`           | `e2e/vrt/`                    | —      |
 
 **比率の目安 60 : 25 : 15（純関数 : 実 DOM + story : e2e）。** 実 DOM が増えたら logic に

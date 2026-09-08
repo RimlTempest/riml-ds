@@ -64,6 +64,19 @@ library/elements/src/live-region/         ティア C の例
   リテラル型に絞られる（`button.aria-pressed` → `'true' | 'false'`）。新しい enum 属性はそこに足す。
 - `bun run scaffold:element` は `*.contract.test.ts` も作る（ティア A 11 / B 12 / C 9 ファイル）。
   雛形の期待値は既定の roles / tree のものなので、契約を書き換えたら期待値も直す。
+- **ラッパーの props は契約の `tree.attrs` から生成される**（`static properties` からではない — 025）。
+  ホスト属性（`filter` / `column` / `position` など）を足したら契約の `tree` にも属性を書く。生成される
+  props は**すべて文字列**（`min?: string | undefined`）なので、数値属性も `position="40"` の形で渡す。
+  数値型の props が要るなら `tools/cem` 側の課題として plan に切り出す。
+- **状態バーやアクセントの縦線に `box-shadow: inset …` を使わない**。stylelint の `declaration-strict-value`
+  が落とす。`border-inline-start: var(--rd-border-width-default) solid transparent` を既定にし、状態側で色を
+  差し替える（025 の combobox / 026 の nav-menu）。
+- **`showPopover()` は開いている popover に対して `InvalidStateError` を投げる。** 位置を変えて再表示するときは
+  `if (list.matches(':popover-open')) list.hidePopover()` してから `showPopover()`（026 の contextmenu）。
+  同一タスク内の hide → show は `toggle` 1 回（`newState: 'open'`）に畳まれる。
+- **markuplint の落とし穴**：`<datalist>` はアクセシブル名が要る（装飾用なら `aria-hidden="true"`）、
+  空の `role="listbox"` は不可（項目が無いときは `hidden` で隠すか描かない）、`heading-levels` /
+  `landmark-roles` / `permitted-contents` は story のマークアップにも効く。
 
 ## 2. 命名
 
@@ -178,6 +191,7 @@ JSDoc の `@summary` / `@status` / `@pe` / `@slot` / `@csspart` / `@cssprop` / `
 
 - [ ] `bun run gen` で `custom-elements.json` に部品が出る（`@status` / `@pe` 付き）
 - [ ] ティア A/B：`e2e/pe` の JS 無しテスト（送信できる／内容が見える）が通る
+- [ ] JS が要る操作の e2e は `e2e/a11y/keyboard.spec.ts` に置く（`e2e/pe` プロジェクトは `javaScriptEnabled: false`）
 - [ ] `library/react/src/generated/<Name>.ts` が生成され `e2e/react` で描画・操作できる
 - [ ] story 8 種、addon-a11y（AAA）が通る
 - [ ] `*.logic.test.ts` / `*.test.ts` / `*.sr.test.ts`
