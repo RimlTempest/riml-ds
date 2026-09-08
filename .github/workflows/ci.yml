@@ -43,8 +43,8 @@ jobs:
       agent: ${{ steps.filter.outputs.agent }}
       library: ${{ steps.filter.outputs.library }}
     steps:
-      - uses: actions/checkout@v5
-      - uses: dorny/paths-filter@v3
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |
@@ -88,7 +88,7 @@ jobs:
     steps:
       # guard.sh のレーン所有権検査（14）と CEM の鮮度検査（15）は
       # `origin/main...HEAD` の差分を読むので、全履歴と origin/main の ref が要る
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       # bash + git + node（ubuntu-latest に同梱）だけで動く。bun install は要らない
@@ -99,8 +99,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
-      - uses: jdx/mise-action@v3
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@v4
         with: { cache: true }
       - run: bun install --frozen-lockfile
       - run: bun run fmt:check
@@ -114,8 +114,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
-      - uses: jdx/mise-action@v3
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@v4
         with: { cache: true }
       - run: bun install --frozen-lockfile
       # tsc --build は library/*/src/generated と各 dist の型を読む。生成物はコミットしないので先に作る
@@ -129,8 +129,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
-      - uses: jdx/mise-action@v3
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@v4
         with: { cache: true }
       - run: bun install --frozen-lockfile
       # node/react project は system/tokens/dist・library/elements/dist・library/react/src/generated を読む
@@ -148,14 +148,14 @@ jobs:
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       # e2e/Dockerfile と同じ層。fonts-noto-cjk が無いと日本語が豆腐になり VRT が壊れる。
       # unzip は mise が bun の zip を展開するのに要る
       - run: |
           apt-get update
           apt-get install -y --no-install-recommends fonts-noto-cjk unzip
           rm -rf /var/lib/apt/lists/*
-      - uses: jdx/mise-action@v3
+      - uses: jdx/mise-action@v4
         with: { cache: true }
       # コンテナ内では checkout 先の所有者が実行ユーザーと違い、prepare（lefthook install）の
       # git rev-parse が "dubious ownership" で落ちる。作業ディレクトリだけ信頼する
@@ -164,7 +164,7 @@ jobs:
       # browser project は library/elements/dist を読む
       - run: bun run build
       - run: bun run test -- --project browser --project storybook
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: test-browser-report
@@ -184,12 +184,12 @@ jobs:
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: |
           apt-get update
           apt-get install -y --no-install-recommends fonts-noto-cjk unzip
           rm -rf /var/lib/apt/lists/*
-      - uses: jdx/mise-action@v3
+      - uses: jdx/mise-action@v4
         with: { cache: true }
       # コンテナ内では checkout 先の所有者が実行ユーザーと違い、prepare（lefthook install）の
       # git rev-parse が "dubious ownership" で落ちる。作業ディレクトリだけ信頼する
@@ -212,12 +212,12 @@ jobs:
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: |
           apt-get update
           apt-get install -y --no-install-recommends fonts-noto-cjk unzip
           rm -rf /var/lib/apt/lists/*
-      - uses: jdx/mise-action@v3
+      - uses: jdx/mise-action@v4
         with: { cache: true }
       # コンテナ内では checkout 先の所有者が実行ユーザーと違い、prepare（lefthook install）の
       # git rev-parse が "dubious ownership" で落ちる。作業ディレクトリだけ信頼する
@@ -227,7 +227,7 @@ jobs:
       - run: bun run storybook:build
       # --project 指定なし = vrt(4) / forced / reduced / a11y / pe / pe-axe を全部
       - run: bunx playwright test -c e2e/playwright.config.ts
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: e2e-report
@@ -247,12 +247,12 @@ jobs:
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: |
           apt-get update
           apt-get install -y --no-install-recommends fonts-noto-cjk unzip
           rm -rf /var/lib/apt/lists/*
-      - uses: jdx/mise-action@v3
+      - uses: jdx/mise-action@v4
         with: { cache: true }
       # コンテナ内では checkout 先の所有者が実行ユーザーと違い、prepare（lefthook install）の
       # git rev-parse が "dubious ownership" で落ちる。作業ディレクトリだけ信頼する
@@ -260,7 +260,7 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run build
       - run: bun run e2e:frameworks
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: frameworks-report
@@ -277,8 +277,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
-      - uses: jdx/mise-action@v3
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@v4
         with: { cache: true }
       - run: bun install --frozen-lockfile
       - run: bun run release:check
@@ -290,8 +290,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
-      - uses: jdx/mise-action@v3
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@v4
         with: { cache: true }
       - run: bun install --frozen-lockfile
       # mcp のテストは system/tokens/dist と library/elements/dist（contract サブパス）を読む。
