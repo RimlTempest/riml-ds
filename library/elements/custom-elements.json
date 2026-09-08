@@ -1041,6 +1041,212 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/input-otp/input-otp.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-input-otp",
+          "declaration": {
+            "name": "RdInputOtp",
+            "module": "/src/input-otp/input-otp.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/input-otp/input-otp.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "ワンタイムコード。桁ごとの `<input inputmode=\"numeric\" maxlength=\"1\">` に状態と文言を足す\n（ティア A、ADR-0012）。JS 無しでも Tab で 1 桁ずつ入力して送信でき、JS があるときだけ\n自動前進・Backspace で戻る・貼り付けで分配する。値は `name-1..N` の N フィールドで送る。",
+          "name": "RdInputOtp",
+          "cssProperties": [
+            {
+              "description": "桁の間隔。既定 var(--rd-space-2)",
+              "name": "--rd-input-otp-gap"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "桁の入れ物",
+              "name": "cells"
+            },
+            {
+              "description": "補足文言",
+              "name": "hint"
+            },
+            {
+              "description": "エラー文言",
+              "name": "error"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "hint",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "hint"
+            },
+            {
+              "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "error"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#touched",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#bindings",
+              "privacy": "private",
+              "type": {
+                "text": "readonly Binding[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "description": "値はネイティブの桁が持つ。部品は連結・分配するだけ"
+            },
+            {
+              "kind": "method",
+              "name": "checkValidity",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#cells",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#values",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#setTouched",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#listeners",
+              "privacy": "private",
+              "type": {
+                "text": "Listeners"
+              },
+              "default": "{ input: (event) => { moveFocus(this.#cells(), event.target, valueOf(event.target) === '' ? '' : 'input') this.requestUpdate() }, keydown: (event) => { const key = event instanceof KeyboardEvent ? event.key : '' const stay = key === 'Backspace' && valueOf(event.target) !== '' moveFocus(this.#cells(), event.target, stay ? '' : key) }, paste: (event) => { event.preventDefault() pasteInto(this.#cells(), event) this.#setTouched() }, blur: this.#setTouched, invalid: (event) => { event.preventDefault() this.#setTouched() }, }",
+              "description": "1 文字入ったら次へ。Backspace は**空のときだけ**戻る（値があればネイティブの削除に任せる）"
+            },
+            {
+              "kind": "field",
+              "name": "#view",
+              "privacy": "private"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "hint",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "hint"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "error"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "invalid",
+              "description": "検証に通っていない（操作後、または error 属性がある）"
+            },
+            {
+              "name": "errored",
+              "description": "error 属性で文言を強制表示している"
+            },
+            {
+              "name": "hinted",
+              "description": "hint がある"
+            },
+            {
+              "name": "filled",
+              "description": "全桁が埋まっている"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "ワンタイムコード。<fieldset><legend> と桁の <input> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-input-otp",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdInputOtp",
+          "declaration": {
+            "name": "RdInputOtp",
+            "module": "src/input-otp/input-otp.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/live-region/live-region.define.ts",
       "declarations": [],
       "exports": [

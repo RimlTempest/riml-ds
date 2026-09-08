@@ -53,6 +53,15 @@
     "dependsOn": []
   },
   {
+    "name": "input-otp",
+    "tag": "rd-input-otp",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "ワンタイムコード。<fieldset><legend> と桁の <input> は利用側が書く",
+    "files": ["input-otp/index.js", "input-otp/input-otp.define.js", "input-otp/input-otp.css"],
+    "dependsOn": []
+  },
+  {
     "name": "live-region",
     "tag": "rd-live-region",
     "pe": "C",
