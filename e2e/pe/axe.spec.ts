@@ -18,6 +18,8 @@ const PAGES = [
   '/dialog.html',
   '/window.html',
   '/tabs.html',
+  '/menu.html',
+  '/popover.html',
   '/tooltip.html',
   '/navigation.html',
   '/live-region.html',

@@ -13,7 +13,13 @@ import { buttonMarkup } from '../../library/elements/src/button/index.js'
 import { checkboxMarkup } from '../../library/elements/src/checkbox/index.js'
 import { dialogMarkup } from '../../library/elements/src/dialog/index.js'
 import { disclosureMarkup } from '../../library/elements/src/disclosure/index.js'
+import {
+  markup as menuMarkup,
+  menuItemMarkup,
+  menuSeparatorMarkup,
+} from '../../library/elements/src/menu/menu.contract.js'
 import { meterMarkup } from '../../library/elements/src/meter/index.js'
+import { markup as popoverMarkup } from '../../library/elements/src/popover/popover.contract.js'
 import {
   radioGroupMarkup,
   radioOptionMarkup,
@@ -48,6 +54,8 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/slider/slider.css', 'slider.css'],
   ['library/elements/src/window/window.css', 'window.css'],
   ['library/elements/src/tabs/tabs.css', 'tabs.css'],
+  ['library/elements/src/menu/menu.css', 'menu.css'],
+  ['library/elements/src/popover/popover.css', 'popover.css'],
 ]
 
 const STYLESHEETS = CSS_SOURCES.map(
@@ -178,6 +186,29 @@ const PAGES: Readonly<Record<string, string>> = {
       panels:
         panelMarkup({ id: 'overview', children: '<p>この部品の概要。</p>' })
         + panelMarkup({ id: 'usage', children: '<p>使い方の説明。</p>' }),
+    })}`,
+  ),
+  /**
+   * ティア B。**HTML だけで開閉する**（`popovertarget`）。JS が来る前は
+   * `:not(:defined)` が受けて項目をその場に開いたまま見せる（内容が見える）。
+   */
+  'menu.html': page(
+    'メニュー',
+    `      ${menuMarkup({
+      id: 'row-actions',
+      label: '操作',
+      items:
+        menuItemMarkup({ label: '複製', href: '/echo.html' })
+        + menuSeparatorMarkup()
+        + menuItemMarkup({ label: '削除' }),
+    })}`,
+  ),
+  'popover.html': page(
+    '重ね物',
+    `      ${popoverMarkup({
+      id: 'filters',
+      label: '絞り込み',
+      children: '<p>条件を選ぶと一覧がその場で変わる。</p>',
     })}`,
   ),
   /** ティア C。JS が無ければ吹き出しは出ず、対象の `title` が代わりに説明する */
