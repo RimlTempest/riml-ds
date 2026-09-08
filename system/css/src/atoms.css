@@ -479,9 +479,11 @@
       background: GrayText;
     }
 
+    /* 塗りを Highlight に替えると Chromium が文字の背後に Canvas 色のバックプレートを
+       描き、HighlightText の文字が読めなくなる。線で示す（focus リングと同じ流儀） */
     .rd-list-row:is([aria-selected='true'], [aria-current]) {
-      background: Highlight;
-      color: HighlightText;
+      outline: var(--rd-border-width-default) solid Highlight;
+      outline-offset: calc(-1 * var(--rd-border-width-default));
     }
 
     .rd-alert-icon {
