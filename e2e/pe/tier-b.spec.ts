@@ -30,3 +30,22 @@ test('window: JS 無しでは操作の丸が 1 つも出ない', async ({ page }
   await expect(page.locator('rd-window')).toHaveCSS('display', 'block')
   await expect(page.locator('rd-window button')).toHaveCount(0)
 })
+
+/**
+ * `rd-tabs` は JS が無ければ**ページ内リンクの列**。パネルは**すべて見える**
+ * （どれかを隠すのは JS が来てから）。
+ */
+test('tabs: JS 無しでもすべてのパネルが読める', async ({ page }) => {
+  await page.goto('/tabs.html')
+  await expect(page.getByText('この部品の概要。')).toBeVisible()
+  await expect(page.getByText('使い方の説明。')).toBeVisible()
+})
+
+test('tabs: JS 無しではタブがただのページ内リンク', async ({ page }) => {
+  await page.goto('/tabs.html')
+  const tab = page.getByRole('link', { name: '使い方' })
+  await expect(tab).toBeVisible()
+  await expect(tab).toHaveAttribute('href', '#usage')
+  // JS が来る前に role を先取りしない（tablist は element が足す）
+  await expect(page.locator('rd-tabs [slot=tabs]')).not.toHaveAttribute('role', 'tablist')
+})

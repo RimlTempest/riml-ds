@@ -23,7 +23,7 @@
 | `:state()`                          | Newly  | `@supports selector(:state(x))`。外では `[open]` 属性セレクタ    |
 | `@property`                         | Newly  | 型付き変数（アニメーション用）。無くても動く                      |
 | `@starting-style` + `transition-behavior: allow-discrete` | Newly | dialog / popover の入場。無ければ瞬時表示 |
-| `popover` 属性                      | Newly  | rd-tooltip / rd-menu（plan 009）。無ければ `<dialog>` 非モーダルに退避 |
+| `popover` 属性                      | Newly  | rd-tooltip（plan 020）。無ければ流し込みのまま見える／出さない          |
 | Invoker Commands（`commandfor`）    | Newly  | 使わない（JS 1 行で足りる。属性が増えると CEM が濁る）            |
 | `field-sizing: content`             | Newly  | rd-textarea。無ければ固定行数                                     |
 | `text-wrap: balance` / `pretty`     | Newly  | 見出し / 段落。無ければ通常折返し                                 |

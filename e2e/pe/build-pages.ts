@@ -15,6 +15,11 @@ import { dialogMarkup } from '../../library/elements/src/dialog/index.js'
 import { disclosureMarkup } from '../../library/elements/src/disclosure/index.js'
 import { meterMarkup } from '../../library/elements/src/meter/index.js'
 import { selectMarkup } from '../../library/elements/src/select/index.js'
+import {
+  markup as tabsMarkup,
+  panelMarkup,
+  tabMarkup,
+} from '../../library/elements/src/tabs/tabs.contract.js'
 import { textFieldMarkup } from '../../library/elements/src/text-field/index.js'
 import { windowMarkup } from '../../library/elements/src/window/index.js'
 
@@ -35,6 +40,7 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/disclosure/disclosure.css', 'disclosure.css'],
   ['library/elements/src/meter/meter.css', 'meter.css'],
   ['library/elements/src/window/window.css', 'window.css'],
+  ['library/elements/src/tabs/tabs.css', 'tabs.css'],
 ]
 
 const STYLESHEETS = CSS_SOURCES.map(
@@ -141,6 +147,69 @@ const PAGES: Readonly<Record<string, string>> = {
       closable: true,
       collapsible: true,
     })}`,
+  ),
+  'tabs.html': page(
+    'タブ',
+    `      ${tabsMarkup({
+      label: '設定',
+      tabs:
+        tabMarkup({ href: '#overview', label: '概要' })
+        + tabMarkup({ href: '#usage', label: '使い方' }),
+      panels:
+        panelMarkup({ id: 'overview', children: '<p>この部品の概要。</p>' })
+        + panelMarkup({ id: 'usage', children: '<p>使い方の説明。</p>' }),
+    })}`,
+  ),
+  /** ティア C。JS が無ければ吹き出しは出ず、対象の `title` が代わりに説明する */
+  'tooltip.html': page(
+    'ツールチップ',
+    `      <button id="save" type="button" title="⌘S で保存します">保存</button>
+      <rd-tooltip for="save">⌘S で保存します</rd-tooltip>`,
+  ),
+  /** `navigation.css` の 5 クラス。**ARIA は利用側の責務**なので、ここが正しい見本になる */
+  'navigation.html': page(
+    'ナビゲーション',
+    `      <nav class="rd-breadcrumb" aria-label="現在地">
+        <ol>
+          <li><a href="/">ホーム</a></li>
+          <li><a href="/docs">ドキュメント</a></li>
+          <li><a href="/docs/nav" aria-current="page">ナビゲーション</a></li>
+        </ol>
+      </nav>
+      <nav class="rd-menubar" aria-label="メニュー">
+        <ul>
+          <li><a href="/file">ファイル</a></li>
+          <li><a href="/edit">編集</a></li>
+          <li><a href="/view">表示</a></li>
+        </ul>
+      </nav>
+      <aside class="rd-sidebar">
+        <nav class="rd-nav-rail" aria-label="主要">
+          <ul>
+            <li>
+              <a href="/" aria-current="page">
+                <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8 8 3 14 8" /><path d="M4 8 4 13 12 13 12 8" /></svg>
+                <span>ホーム</span>
+              </a>
+            </li>
+            <li>
+              <a href="/settings">
+                <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="3" /><path d="M8 1 8 3" /><path d="M8 13 8 15" /></svg>
+                <span>設定</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+      <nav class="rd-pagination" aria-label="ページ">
+        <ul>
+          <li><a href="?p=1" aria-label="前のページ">‹</a></li>
+          <li><a href="?p=1">1</a></li>
+          <li><a href="?p=2" aria-current="page">2</a></li>
+          <li><a href="?p=3">3</a></li>
+          <li><a href="?p=3" aria-label="次のページ">›</a></li>
+        </ul>
+      </nav>`,
   ),
   'live-region.html': page('ライブリージョン', '      <rd-live-region></rd-live-region>'),
   'echo.html': page('送信済み', '      <p>フォームはネイティブに送信された。</p>'),

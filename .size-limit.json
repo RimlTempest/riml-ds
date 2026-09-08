@@ -32,6 +32,16 @@
     "limit": "10 KB"
   },
   {
+    "name": "@rimltempest/riml-ds-elements/experimental/tabs/define (lit 込み)",
+    "path": "library/elements/dist/tabs/tabs.define.js",
+    "limit": "12 KB"
+  },
+  {
+    "name": "@rimltempest/riml-ds-elements/experimental/tooltip/define (lit 込み)",
+    "path": "library/elements/dist/tooltip/tooltip.define.js",
+    "limit": "12 KB"
+  },
+  {
     "name": "@rimltempest/riml-ds-react (button のみ import)",
     "path": "library/react/dist/generated/button.js",
     "import": "{ RdButton }",
