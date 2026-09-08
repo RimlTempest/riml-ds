@@ -68,6 +68,9 @@ jobs:
             stories:
               - '**/*.stories.ts'
               - 'apps/storybook/**'
+              - 'library/elements/**'
+              - '.markuplintrc.json'
+              - 'tools/markuplint/**'
             e2e:
               - 'e2e/**'
               - 'library/**'
