@@ -173,7 +173,7 @@ test('data table: もう一度押すと降順になる（「無し」には戻�
   await expect(header).toHaveAttribute('aria-sort', 'ascending')
   await button.click()
   await expect(header).toHaveAttribute('aria-sort', 'descending')
-  // 「1,234」は data-value の 12000 より小さい（表示ではなく比較キーで比べる）
+  // 降順の先頭は最大の 12,000（表示の「12,000」ではなく data-value の 12000 で比べる）
   await expect(page.locator('rd-data-table tbody > tr > td:first-child').first()).toHaveText(
     '展示のカタログ',
   )
