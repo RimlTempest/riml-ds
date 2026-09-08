@@ -37,6 +37,8 @@
   npm 初回 publish（ユーザー作業）を待つ
 - 017 と 018 は 016 の後に**並行**できる（017 = `patterns.css` + `library/elements`、018 = `typography.css` / `atoms.css` + 文字トークン。
   `e2e/__screenshots__` は別ファイル）。qrcc2 への適用（qrcc2 plan 013）は両方のマージ後
+- 019 と 020 は 017・018 の**両方のマージ後**に並行できる（019 = `radio-group` / `slider` / `patterns.css`、020 = `tabs` / `menu` / `popover` / `tooltip` / `navigation.css`。
+  `e2e/pe/build-pages.ts`・`e2e/frameworks/shared.ts`・`.size-limit.json`・`library/elements/package.json` は両方が追記する → 後にマージする側で advisor が解決）
 
 レーンとの対応は `docs/parallel-lanes.md` / `scripts/lanes.tsv`。
 
@@ -62,6 +64,8 @@
 | 016 | [Storybook のブランド切替と Foundations Brand / Mado](016-brand-showcase.md) | P2 | S | 015 | DONE |
 | 017 | [窓の左端の丸を本物のボタンにする（rd-window・.rd-window-bar・dialog の ×）](017-window-controls.md) | P1 | L | 016 | TODO |
 | 018 | [Typography（typography.css）と静的パターン集 atoms.css](018-typography-and-atoms.md) | P1 | M | 016 | TODO |
+| 019 | [フォーム第 3 波（rd-radio-group・rd-slider・.rd-input-group）](019-form-wave3.md) | P1 | L | 017, 018 | TODO |
+| 020 | [ナビゲーションと重ね窓（rd-tabs・rd-menu・rd-popover・rd-tooltip・navigation.css）](020-navigation-and-overlays.md) | P1 | XL | 017, 018 | TODO |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
