@@ -240,9 +240,15 @@ if [ -n "$changed_files" ] \
     report "library/elements/custom-elements.json" \
       "*.element.ts / *.contract.ts changed without regenerating the manifest (bun run gen)"
   fi
-  if ! printf '%s\n' "$changed_files" | grep -qx 'tools/cem/registry.json'; then
+  # registry.json は name / tag / pe / status / summary / files / dependsOn しか持たないので、
+  # 属性を足しただけでは 1 バイトも変わらない。要素の追加（新しい *.element.ts）のときだけ要求する。
+  # 生成物が古いままかどうかは CI の「エージェント向けの面」が bun run gen + diff で見る。
+  added_elements=$(git diff --name-only --diff-filter=A "$base_ref...HEAD" 2>/dev/null \
+    | grep -E '^library/elements/src/.*\.element\.ts$' || true)
+  if [ -n "$added_elements" ] \
+    && ! printf '%s\n' "$changed_files" | grep -qx 'tools/cem/registry.json'; then
     report "tools/cem/registry.json" \
-      "*.element.ts / *.contract.ts changed without regenerating the registry (bun run gen)"
+      "a new *.element.ts was added without regenerating the registry (bun run gen)"
   fi
 fi
 
