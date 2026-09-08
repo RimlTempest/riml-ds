@@ -3,6 +3,8 @@
   // experimental は専用サブパスからしか出ない（ADR-0009）
   import {
     RdCheckbox,
+    RdCheckboxGroup,
+    RdInputOtp,
     RdMenu,
     RdMeter,
     RdPopover,
@@ -52,5 +54,34 @@
       >{/snippet}
     {#snippet children()}<p>条件を選ぶと一覧がその場で変わる。</p>{/snippet}
   </RdPopover>
+  <RdCheckboxGroup label="タグ">
+    <label><input type="checkbox" id="tag-work" name="tags" value="a" />仕事</label>
+    <label><input type="checkbox" id="tag-private" name="tags" value="b" />私用</label>
+  </RdCheckboxGroup>
+  <RdInputOtp label="確認コード">
+    <input
+      type="text"
+      inputmode="numeric"
+      pattern="[0-9]"
+      maxlength="1"
+      id="code-1"
+      name="code-1"
+      aria-label="1 桁目"
+      title="0〜9 の数字 1 文字"
+      required
+      autocomplete="one-time-code"
+    />
+    <input
+      type="text"
+      inputmode="numeric"
+      pattern="[0-9]"
+      maxlength="1"
+      id="code-2"
+      name="code-2"
+      aria-label="2 桁目"
+      title="0〜9 の数字 1 文字"
+      required
+    />
+  </RdInputOtp>
   <rd-live-region></rd-live-region>
 </main>

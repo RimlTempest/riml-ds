@@ -1,4 +1,5 @@
 import {
+  formWave4Suite,
   frameworkSuite,
   meterAndWindowSuite,
   navigationSuite,
@@ -9,3 +10,4 @@ frameworkSuite('svelte')
 meterAndWindowSuite('svelte')
 radioGroupAndSliderSuite('svelte')
 navigationSuite('svelte')
+formWave4Suite('svelte')

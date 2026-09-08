@@ -2,6 +2,8 @@ import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-react'
 // experimental は専用サブパスからしか出ない（ADR-0009）
 import {
   RdCheckbox,
+  RdCheckboxGroup,
+  RdInputOtp,
   RdMenu,
   RdMeter,
   RdPopover,
@@ -101,6 +103,41 @@ export const App = (): ReactNode => (
     >
       <p>条件を選ぶと一覧がその場で変わる。</p>
     </RdPopover>
+    <RdCheckboxGroup label="タグ">
+      <label>
+        <input type="checkbox" id="tag-work" name="tags" value="a" />
+        仕事
+      </label>
+      <label>
+        <input type="checkbox" id="tag-private" name="tags" value="b" />
+        私用
+      </label>
+    </RdCheckboxGroup>
+    <RdInputOtp label="確認コード">
+      <input
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]"
+        maxLength={1}
+        id="code-1"
+        name="code-1"
+        aria-label="1 桁目"
+        title="0〜9 の数字 1 文字"
+        required
+        autoComplete="one-time-code"
+      />
+      <input
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]"
+        maxLength={1}
+        id="code-2"
+        name="code-2"
+        aria-label="2 桁目"
+        title="0〜9 の数字 1 文字"
+        required
+      />
+    </RdInputOtp>
     <rd-live-region />
   </main>
 )

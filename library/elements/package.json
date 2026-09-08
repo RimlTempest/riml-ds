@@ -90,6 +90,19 @@
       "default": "./dist/checkbox/checkbox.define.js"
     },
     "./experimental/checkbox/style.css": "./dist/checkbox/checkbox.css",
+    "./experimental/checkbox-group": {
+      "types": "./dist/experimental/checkbox-group/index.d.ts",
+      "default": "./dist/experimental/checkbox-group/index.js"
+    },
+    "./experimental/checkbox-group/contract": {
+      "types": "./dist/checkbox-group/checkbox-group.contract.d.ts",
+      "default": "./dist/checkbox-group/checkbox-group.contract.js"
+    },
+    "./experimental/checkbox-group/define": {
+      "types": "./dist/checkbox-group/checkbox-group.define.d.ts",
+      "default": "./dist/checkbox-group/checkbox-group.define.js"
+    },
+    "./experimental/checkbox-group/style.css": "./dist/checkbox-group/checkbox-group.css",
     "./experimental/meter": {
       "types": "./dist/experimental/meter/index.d.ts",
       "default": "./dist/experimental/meter/index.js"
@@ -116,6 +129,19 @@
       "default": "./dist/disclosure/disclosure.define.js"
     },
     "./experimental/disclosure/style.css": "./dist/disclosure/disclosure.css",
+    "./experimental/input-otp": {
+      "types": "./dist/experimental/input-otp/index.d.ts",
+      "default": "./dist/experimental/input-otp/index.js"
+    },
+    "./experimental/input-otp/contract": {
+      "types": "./dist/input-otp/input-otp.contract.d.ts",
+      "default": "./dist/input-otp/input-otp.contract.js"
+    },
+    "./experimental/input-otp/define": {
+      "types": "./dist/input-otp/input-otp.define.d.ts",
+      "default": "./dist/input-otp/input-otp.define.js"
+    },
+    "./experimental/input-otp/style.css": "./dist/input-otp/input-otp.css",
     "./experimental/radio-group": {
       "types": "./dist/experimental/radio-group/index.d.ts",
       "default": "./dist/experimental/radio-group/index.js"

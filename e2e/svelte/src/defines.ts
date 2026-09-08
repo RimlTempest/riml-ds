@@ -1,6 +1,8 @@
 /** 部品の define。**ハイドレーションの後**に読む（ティア A は light DOM に強化ノードを足す） */
 import '@rimltempest/riml-ds-elements/button/define'
+import '@rimltempest/riml-ds-elements/experimental/checkbox-group/define'
 import '@rimltempest/riml-ds-elements/experimental/checkbox/define'
+import '@rimltempest/riml-ds-elements/experimental/input-otp/define'
 import '@rimltempest/riml-ds-elements/experimental/menu/define'
 import '@rimltempest/riml-ds-elements/experimental/meter/define'
 import '@rimltempest/riml-ds-elements/experimental/popover/define'

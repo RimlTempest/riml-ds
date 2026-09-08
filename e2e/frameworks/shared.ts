@@ -8,6 +8,14 @@ import type { Page } from '@playwright/test'
 import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
 import { dialogMarkup } from '@rimltempest/riml-ds-elements/dialog'
 import { checkboxMarkup } from '@rimltempest/riml-ds-elements/experimental/checkbox'
+import {
+  checkboxGroupMarkup,
+  checkboxOptionMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/checkbox-group'
+import {
+  inputOtpMarkup,
+  otpCellsMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/input-otp'
 import { meterMarkup } from '@rimltempest/riml-ds-elements/experimental/meter'
 import {
   radioGroupMarkup,
@@ -394,6 +402,75 @@ export const navigationSuite = (framework: string): void => {
       await expect
         .poll(async () => panel.evaluate((element) => element.matches(':popover-open')))
         .toBe(true)
+    })
+  })
+}
+
+/** 4 フレームワークで同じ選択肢を出す（`checkboxOptionMarkup` が唯一の正） */
+const TAG_OPTIONS = [
+  checkboxOptionMarkup({ id: 'tag-work', name: 'tags', value: 'a', label: '仕事' }),
+  checkboxOptionMarkup({ id: 'tag-private', name: 'tags', value: 'b', label: '私用' }),
+].join('')
+
+/**
+ * `rd-checkbox-group` と `rd-input-otp`（plan 021）。`@rimltempest/riml-ds-astro` の
+ * `package.json` がこの 2 つの `.astro` をまだ export していないので、astro 以外の 3 つで回す
+ * （`meterAndWindowSuite` / `radioGroupAndSliderSuite` と同じ理由。
+ * `library/astro/package.json` は別レーンの持ち物）。
+ */
+export const formWave4Suite = (framework: string): void => {
+  test.describe(`${framework}: checkbox-group と input-otp`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-checkbox-group',
+          checkboxGroupMarkup({ label: 'タグ', children: TAG_OPTIONS }),
+        )
+        await compareMarkup(
+          page,
+          'rd-input-otp',
+          inputOtpMarkup({
+            label: '確認コード',
+            children: otpCellsMarkup({ name: 'code', length: 2 }),
+          }),
+        )
+      })
+
+      test('checkbox group は JS 無しでも選べる（ネイティブの checkbox そのもの）', async ({
+        page,
+      }) => {
+        await page.goto('/')
+        const work = page.getByRole('group', { name: 'タグ' }).getByLabel('仕事')
+        await work.check()
+        await expect(work).toBeChecked()
+      })
+    })
+
+    test('checkbox group を選ぶと :state(filled) が付き、value が配列になる', async ({ page }) => {
+      await page.goto('/')
+      await page.getByRole('group', { name: 'タグ' }).getByLabel('私用').check()
+      const group = page.locator('rd-checkbox-group')
+      await expect
+        .poll(async () => group.evaluate((element) => element.matches(':state(filled)')))
+        .toBe(true)
+      await expect
+        .poll(async () =>
+          group.evaluate((element) =>
+            'value' in element && Array.isArray(element.value) ? element.value.join(',') : '',
+          ),
+        )
+        .toBe('b')
+    })
+
+    test('input otp は 1 文字入れると次の桁へ進む', async ({ page }) => {
+      await page.goto('/')
+      await page.getByLabel('1 桁目').fill('1')
+      await page.getByLabel('1 桁目').dispatchEvent('input')
+      await expect(page.getByLabel('2 桁目')).toBeFocused()
     })
   })
 }

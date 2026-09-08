@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import {
+  formWave4Suite,
   frameworkSuite,
   meterAndWindowSuite,
   navigationSuite,
@@ -10,6 +11,7 @@ frameworkSuite('react')
 meterAndWindowSuite('react')
 radioGroupAndSliderSuite('react')
 navigationSuite('react')
+formWave4Suite('react')
 
 test.describe('react: controlled の再同期', () => {
   test('親が拒否した文字は入力欄から消える（<input> と同じ意味論）', async ({ page }) => {

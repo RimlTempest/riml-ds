@@ -250,4 +250,39 @@
       outline-color: CanvasText;
     }
   }
+
+  /* ボタンの列を 1 つの沈んだ枕にまとめる（`.rd-input-group` と同じ判断で、部品にしない：
+     JS が要らないので `@rimltempest/riml-ds-css` のクラスで出す）。
+     中の `rd-button` / `.rd-icon-button` はピルのまま（docs/brand.md §7.2。角は削らない）。
+     `role="group"` と `aria-label` は**利用側が付ける**（`.rd-alert` の role と同じ判断）。
+     **`ghost` は入れない**：枕が沈んだ面なので accent-text だと 6.65:1 で AAA（7:1）に届かない。
+     選んでいる方を `primary`、選んでいない方を `secondary` にする:
+
+     <div class="rd-button-group" role="group" aria-label="表示">
+       <rd-button><button type="button">一覧</button></rd-button>
+       <rd-button variant="secondary"><button type="button">格子</button></rd-button>
+     </div> */
+  .rd-button-group {
+    display: inline-flex;
+    gap: var(--rd-space-1);
+    align-items: center;
+    padding: var(--rd-space-1);
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-surface-sunken);
+  }
+
+  /* 縦の並び（参考画面のツールバー）。角は削らず、向きだけを変える */
+  .rd-button-group[data-orientation='vertical'] {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* 強制配色では面の色が消えるので、枕の輪郭を罫線で描く */
+  @media (forced-colors: active) {
+    .rd-button-group {
+      border-width: var(--rd-border-width-default);
+      border-style: solid;
+      border-color: CanvasText;
+    }
+  }
 }

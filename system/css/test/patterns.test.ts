@@ -93,3 +93,30 @@ describe('patterns.css の入力とボタンの枕（.rd-input-group）', () => 
     expect(forced).toContain('CanvasText')
   })
 })
+
+describe('patterns.css のボタンの枕（.rd-button-group）', () => {
+  it('枕と縦並びの規則がある', () => {
+    const all = selectors().join('\n')
+    expect(all).toContain('.rd-button-group')
+    expect(all).toContain(".rd-button-group[data-orientation='vertical']")
+  })
+
+  it('枕はピル（radius.full）で沈んだ面。塗りはグラデーションを使わない', () => {
+    const decls = declsOf(/^\.rd-button-group$/)
+    expect(decls).toContain('border-radius:var(--rd-radius-full)')
+    expect(decls).toContain('background:var(--rd-color-surface-sunken)')
+    expect(css()).not.toContain('linear-gradient')
+  })
+
+  it('縦並びは flex-direction を変えるだけ（角は削らない）', () => {
+    expect(declsOf(/\.rd-button-group\[data-orientation='vertical'\]/)).toContain(
+      'flex-direction:column',
+    )
+  })
+
+  it('強制配色では枕に CanvasText の罫線を引く', () => {
+    const forced = css().slice(css().lastIndexOf('@media (forced-colors: active)'))
+    expect(forced).toContain('.rd-button-group')
+    expect(forced).toContain('CanvasText')
+  })
+})
