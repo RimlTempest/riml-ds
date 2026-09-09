@@ -313,6 +313,48 @@ test('data table: Tab で見出しのボタンに届き、Enter で並ぶ', asyn
   await expect(button).toBeFocused()
 })
 
+/**
+ * `rd-carousel`（plan 032）。前へ／次へと「n / N」は **JS があるときだけ**足される強化ノードなので、
+ * ここ（Storybook）で見る。転がる箱そのものは `<ul tabindex="0">` として契約が持っているので、
+ * `e2e/pe` の JS 無しの回でも Tab で届く。
+ */
+const CAROUSEL_STORY = 'components-carousel--default'
+
+const carouselStory = async (page: Page): Promise<void> => {
+  await page.goto(storyUrl(CAROUSEL_STORY))
+  await waitForStoryFinished(page, CAROUSEL_STORY)
+}
+
+test('carousel: Tab で <ul> → 前へ → 次へ の順に届き、Enter で「n / N」が進む', async ({
+  page,
+}) => {
+  await carouselStory(page)
+  await page.keyboard.press('Tab')
+  await expect(page.locator('rd-carousel > ul')).toBeFocused()
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('button', { name: '前へ' })).toBeFocused()
+  await page.keyboard.press('Tab')
+  const next = page.getByRole('button', { name: '次へ' })
+  await expect(next).toBeFocused()
+  await next.press('Enter')
+  await expect(page.locator("rd-carousel [part='counter']")).toHaveText('2 / 5')
+})
+
+test('carousel: aria-disabled の端でも Tab は素通りしない（フォーカスは受け取れるまま）', async ({
+  page,
+}) => {
+  await carouselStory(page)
+  const prev = page.getByRole('button', { name: '前へ' })
+  await expect(prev).toHaveAttribute('aria-disabled', 'true')
+  await prev.focus()
+  await expect(prev).toBeFocused()
+  // 押しても動かないが、`disabled` ではないので押せてしまうことも読み上げも壊れない
+  await prev.press('Enter')
+  await expect(page.locator("rd-carousel [part='counter']")).toHaveText('1 / 5')
+  await prev.press('Tab')
+  await expect(page.getByRole('button', { name: '次へ' })).toBeFocused()
+})
+
 const TOGGLE_GROUP_STORY = 'components-togglegroup--default'
 const TOGGLE_GROUP_SINGLE_STORY = 'components-togglegroup--single'
 

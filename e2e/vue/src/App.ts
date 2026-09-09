@@ -1,6 +1,7 @@
 import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-vue'
 // experimental は専用サブパスからしか出ない（ADR-0009）
 import {
+  RdCarousel,
   RdCheckbox,
   RdCheckboxGroup,
   RdCombobox,
@@ -237,6 +238,17 @@ export const App = defineComponent(
                   h('td', { 'data-value': '820', 'data-numeric': '' }, '820'),
                 ]),
               ]),
+          },
+        ),
+        h(
+          RdCarousel,
+          { label: 'おすすめ' },
+          {
+            default: () => [
+              h('li', null, h('p', null, '秋の便り')),
+              h('li', null, h('p', null, '冬の支度')),
+              h('li', null, h('p', null, '春の準備')),
+            ],
           },
         ),
         h(RdToggle, { label: '太字', pressed: 'false' }),

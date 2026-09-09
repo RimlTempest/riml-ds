@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import {
+  carouselSuite,
   comboboxSuite,
   commandSuite,
   dataTableSuite,
@@ -23,6 +24,7 @@ comboboxSuite('vue')
 splitterSuite('vue')
 commandSuite('vue')
 dataTableSuite('vue')
+carouselSuite('vue')
 toggleGroupSuite('vue')
 
 test.describe('vue: <select> の v-model', () => {

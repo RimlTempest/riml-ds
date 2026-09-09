@@ -12,6 +12,7 @@ export default defineConfig({
         'live-region',
         'text-field',
         'experimental/select',
+        'experimental/carousel',
         'experimental/checkbox',
         'experimental/checkbox-group',
         'experimental/combobox',

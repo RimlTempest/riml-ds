@@ -10,6 +10,7 @@ import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buttonMarkup } from '../../library/elements/src/button/index.js'
+import { carouselItemMarkup, carouselMarkup } from '../../library/elements/src/carousel/index.js'
 import { checkboxMarkup } from '../../library/elements/src/checkbox/index.js'
 import {
   checkboxGroupMarkup,
@@ -66,6 +67,7 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['system/tokens/dist/tokens.css', 'tokens.css'],
   ['system/css/dist/index.css', 'index.css'],
   ['library/elements/src/button/button.css', 'button.css'],
+  ['library/elements/src/carousel/carousel.css', 'carousel.css'],
   ['library/elements/src/text-field/text-field.css', 'text-field.css'],
   ['library/elements/src/dialog/dialog.css', 'dialog.css'],
   ['library/elements/src/select/select.css', 'select.css'],
@@ -582,6 +584,29 @@ const PAGES: Readonly<Record<string, string>> = {
       body: CODES,
     })}`,
   ),
+  /**
+   * ティア A。JS が来る前は `.rd-carousel` の atom と同じ「横に転がる列」で、
+   * `<ul tabindex="0">` があるからキーボードでも中身を読める（axe scrollable-region-focusable）。
+   * 前へ／次へと「n / N」は強化ノードなので、ここには 1 つも現れない。
+   */
+  'carousel.html': page(
+    '横に並ぶ枚',
+    `      <h2>おすすめ</h2>
+      ${carouselMarkup({
+        label: 'おすすめ',
+        children: ['秋の便り', '冬の支度', '春の準備']
+          .map((title) =>
+            carouselItemMarkup({
+              children:
+                `<article class="rd-card"><div class="rd-card-body">`
+                + `<h3 class="rd-card-title">${title}</h3><p>季節ごとのおすすめ。</p>`
+                + `</div></article>`,
+            }),
+          )
+          .join(''),
+      })}`,
+  ),
+
   /**
    * ティア A。JS 無しでは「押しても変わらない普通のボタンの列」に縮退する（害は無い）。
    * `tabindex` は JS が付けるので、JS 無しでは 3 個とも Tab で辿れる。

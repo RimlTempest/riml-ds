@@ -1,4 +1,5 @@
 import {
+  carouselSuite,
   comboboxSuite,
   commandSuite,
   dataTableSuite,
@@ -22,4 +23,5 @@ comboboxSuite('astro')
 splitterSuite('astro')
 commandSuite('astro')
 dataTableSuite('astro')
+carouselSuite('astro')
 toggleGroupSuite('astro')

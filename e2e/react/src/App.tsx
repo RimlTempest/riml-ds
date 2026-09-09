@@ -1,6 +1,7 @@
 import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-react'
 // experimental は専用サブパスからしか出ない（ADR-0009）
 import {
+  RdCarousel,
   RdCheckbox,
   RdCheckboxGroup,
   RdCombobox,
@@ -214,6 +215,17 @@ export const App = (): ReactNode => (
         </tbody>
       }
     />
+    <RdCarousel label="おすすめ">
+      <li>
+        <p>秋の便り</p>
+      </li>
+      <li>
+        <p>冬の支度</p>
+      </li>
+      <li>
+        <p>春の準備</p>
+      </li>
+    </RdCarousel>
     <RdToggle label="太字" pressed="false" />
     <RdToggleGroup label="書式" mode="single">
       <button type="button" value="bold" aria-pressed="true">

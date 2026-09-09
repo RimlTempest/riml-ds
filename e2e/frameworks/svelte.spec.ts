@@ -1,4 +1,5 @@
 import {
+  carouselSuite,
   comboboxSuite,
   commandSuite,
   dataTableSuite,
@@ -22,4 +23,5 @@ comboboxSuite('svelte')
 splitterSuite('svelte')
 commandSuite('svelte')
 dataTableSuite('svelte')
+carouselSuite('svelte')
 toggleGroupSuite('svelte')

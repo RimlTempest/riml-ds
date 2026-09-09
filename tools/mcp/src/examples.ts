@@ -9,6 +9,10 @@
  */
 import { markup as buttonMarkup } from '@rimltempest/riml-ds-elements/button/contract'
 import { markup as dialogMarkup } from '@rimltempest/riml-ds-elements/dialog/contract'
+import {
+  itemMarkup as carouselItemMarkup,
+  markup as carouselMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/carousel/contract'
 import { markup as checkboxMarkup } from '@rimltempest/riml-ds-elements/experimental/checkbox/contract'
 import {
   checkboxOptionMarkup,
@@ -297,11 +301,27 @@ const SPLITTER_PROPS = {
  */
 const TOOLTIP = { for: 'save', children: '⌘S で保存します' } as const
 
+/**
+ * 枚（`<li>`）は利用側が書く。`carouselItemMarkup` で 1 枚ずつ組み、
+ * 中身にはカードなどの既存のマークアップをそのまま入れる。自動再生は無い（AAA 2.3.3）。
+ */
+const CAROUSEL = {
+  label: 'おすすめ',
+  children: ['秋の便り', '冬の支度', '春の準備']
+    .map((title) =>
+      carouselItemMarkup({
+        children: `<article class="rd-card"><div class="rd-card-body"><h3 class="rd-card-title">${title}</h3></div></article>`,
+      }),
+    )
+    .join(''),
+} as const
+
 export const elementExamples = {
   'rd-button': { html: buttonMarkup(BUTTON), props: BUTTON },
   'rd-text-field': { html: textFieldMarkup(TEXT_FIELD), props: TEXT_FIELD },
   'rd-dialog': { html: dialogMarkup(DIALOG), props: DIALOG },
   'rd-select': { html: selectMarkup(SELECT), props: SELECT },
+  'rd-carousel': { html: carouselMarkup(CAROUSEL), props: CAROUSEL },
   'rd-checkbox': { html: checkboxMarkup(CHECKBOX), props: CHECKBOX },
   'rd-checkbox-group': { html: checkboxGroupMarkup(CHECKBOX_GROUP), props: CHECKBOX_GROUP },
   'rd-combobox': { html: comboboxMarkup(COMBOBOX), props: COMBOBOX },

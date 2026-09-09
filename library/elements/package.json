@@ -77,6 +77,19 @@
       "default": "./dist/select/select.define.js"
     },
     "./experimental/select/style.css": "./dist/select/select.css",
+    "./experimental/carousel": {
+      "types": "./dist/experimental/carousel/index.d.ts",
+      "default": "./dist/experimental/carousel/index.js"
+    },
+    "./experimental/carousel/contract": {
+      "types": "./dist/carousel/carousel.contract.d.ts",
+      "default": "./dist/carousel/carousel.contract.js"
+    },
+    "./experimental/carousel/define": {
+      "types": "./dist/carousel/carousel.define.d.ts",
+      "default": "./dist/carousel/carousel.define.js"
+    },
+    "./experimental/carousel/style.css": "./dist/carousel/carousel.css",
     "./experimental/checkbox": {
       "types": "./dist/experimental/checkbox/index.d.ts",
       "default": "./dist/experimental/checkbox/index.js"

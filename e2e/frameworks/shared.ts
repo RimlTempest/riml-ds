@@ -7,6 +7,10 @@ import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
 import { dialogMarkup } from '@rimltempest/riml-ds-elements/dialog'
+import {
+  carouselItemMarkup,
+  carouselMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/carousel'
 import { checkboxMarkup } from '@rimltempest/riml-ds-elements/experimental/checkbox'
 import {
   checkboxGroupMarkup,
@@ -761,6 +765,52 @@ export const dataTableSuite = (framework: string): void => {
           page.locator('rd-data-table').evaluate((element) => element.matches(':state(sorted)')),
         )
         .toBe(true)
+    })
+  })
+}
+
+/** 4 フレームワークで同じ 3 枚。`<li>` は利用側が書く（部品は 1 枚も作らない） */
+const CAROUSEL_TITLES = ['秋の便り', '冬の支度', '春の準備'] as const
+
+const CAROUSEL_CHILDREN = CAROUSEL_TITLES.map((title) =>
+  carouselItemMarkup({ children: `<p>${title}</p>` }),
+).join('')
+
+/**
+ * `rd-carousel`（plan 032）。列（`<ul><li>`）は利用側が書き、部品は前へ／次へと「n / N」だけを足す。
+ * JS が無ければ契約どおりの横に転がる列がそのまま残る（ティア A）。
+ */
+export const carouselSuite = (framework: string): void => {
+  test.describe(`${framework}: carousel`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-carousel',
+          carouselMarkup({ label: 'おすすめ', children: CAROUSEL_CHILDREN }),
+        )
+      })
+
+      test('JS 無しでは前へ／次へも「n / N」も出ない', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.locator("rd-carousel [part='controls']")).toHaveCount(0)
+        await expect(page.locator('rd-carousel > ul')).toHaveAttribute('tabindex', '0')
+      })
+    })
+
+    test('「次へ」を押すと「n / N」が進み、枚に名前が付く', async ({ page }) => {
+      await page.goto('/')
+      const counter = page.locator("rd-carousel [part='counter']")
+      await expect(counter).toHaveText('1 / 3')
+      await expect(page.locator('rd-carousel > ul > li').first()).toHaveAttribute(
+        'aria-label',
+        '1 / 3',
+      )
+      await page.getByRole('button', { name: '次へ' }).click()
+      await expect(counter).toHaveText('2 / 3')
     })
   })
 }
