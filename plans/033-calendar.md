@@ -6,6 +6,13 @@
 > **改訂（2026-09-09）**: 初版は「`<input type="date">` を包む**ティア B**（shadow に grid）」だったが、これは ADR-0012 決定 1
 > （フォームに参加する部品は **A 以外を選べない**）と `scripts/guard.sh` 規則 9 に反し、executor が正しく STOP した。
 > 本版は **ティア A**——grid も light DOM に描く（`rd-input-otp` の hint / error、`rd-command` の `[part='empty']` と同じ「強化ノード」）。
+>
+> **改訂 2（2026-09-09）**: 2 回目の STOP で見つかった計画側の欠陥 3 つを直した。(a) 契約の `value: '$value'` → **`'$defaultValue'`**
+> （`tools/cem/src/wrappers/core/react.ts` の `clientFile()` は `<input>` を持つティア A の prop 名を **`defaultValue` に固定**しており、
+> `'$value'` だと React ラッパーが `TS2339 Property 'defaultValue' does not exist` で build できない。`text-field` / `checkbox` / `combobox` / `slider` と同じ綴りにする）。
+> (b) `td[data-iso]:hover:not([aria-disabled='true'])` は stylelint `selector-max-specificity: 0,3,0` を超える → `:where()` で下げる。
+> (c) 完了条件の `generated/index.ts` の grep は experimental 部品では満たせない（実験部品は `experimental.ts` / `jsx.ts` に出る）。
+> あわせて `base.css` に `table` / `th` / `td` の要素既定は**無い**（opt-in の `.rd-table` だけ）ので、上書き規則と STOP 条件を削った。
 > `<input type="date">` は**隠さない**（入力欄として残る。モバイルでは OS のピッカー、デスクトップでは下の月表）。
 
 > **Drift check（最初に実行）**:
@@ -181,7 +188,7 @@ export const contract = {
       { tag: 'label', attrs: { for: '$id' }, children: [{ prop: 'label' }] },
       {
         tag: 'input',
-        attrs: { id: '$id', name: '$name', type: 'date', value: '$value', min: '$min', max: '$max', required: '$required' },
+        attrs: { id: '$id', name: '$name', type: 'date', value: '$defaultValue', min: '$min', max: '$max', required: '$required' },
       },
     ],
   },
@@ -191,8 +198,8 @@ export type CalendarMarkupProps = {
   readonly id: string
   readonly label: string
   readonly name?: string
-  /** 選ばれている日（`YYYY-MM-DD`）。`<input value>` に書く */
-  readonly value?: string
+  /** 選ばれている日（`YYYY-MM-DD`）。`<input value>` に書く。**綴りは `defaultValue`**（React ラッパー生成器がティア A の `<input>` に対して固定している名前。`text-field.contract.ts` と同じ） */
+  readonly defaultValue?: string
   /** 「今日」。省略すると element が実時刻から決める。テスト・story は必ず書く */
   readonly today?: string
   /** 週の始まり。`0`（日曜、既定）〜 `6` */
@@ -323,12 +330,12 @@ export const navCopy = (japanese: boolean): { readonly prev: string; readonly ne
 - `rd-calendar > [part='header'] { display: flex; align-items: center; justify-content: space-between; gap: var(--rd-space-2) }`、`rd-calendar > [part='header'] > [part='title'] { margin: 0; font: var(--rd-type-body); font-weight: var(--rd-font-weight-bold) }`
 - `[part='prev'], [part='next']`: `.rd-icon-button` と同じ寸法（`inline-size: var(--rd-sizing-target-min); block-size: var(--rd-sizing-target-min); border: 0; border-radius: var(--rd-radius-full); background: transparent; color: inherit`）。`[aria-disabled='true'] { color: var(--rd-color-text-muted); cursor: not-allowed }`
 - `rd-calendar > [part='grid'] { border-collapse: separate; border-spacing: var(--rd-space-1); inline-size: 100% }`、`th { font: var(--rd-type-small); font-weight: var(--rd-font-weight-bold); color: var(--rd-color-text-muted) }`
-  （`base.css` の `table` / `th` / `td` の既定（罫線・余白）を **ここで上書きする**——`rd-calendar > [part='grid'] :is(th, td) { border: 0; padding: 0 }`）
+  （`base.css` には `table` / `th` / `td` の要素既定は**無い**（`.rd-table` は opt-in）。UA の `td { padding: 1px }` だけ `rd-calendar :where(th, td) { padding: 0 }` で消す）
 - `td[data-iso] { inline-size: var(--rd-calendar-cell-size, var(--rd-sizing-target-min)); block-size: var(--rd-calendar-cell-size, var(--rd-sizing-target-min)); border-radius: var(--rd-radius-md); text-align: center; cursor: pointer }`（**丸いタイル**。ブランド §7 の ink tile）
   `td[aria-selected='true'] { background: var(--rd-color-accent-default); color: var(--rd-color-accent-text); font-weight: var(--rd-font-weight-bold) }`
   `td[aria-current='date']:not([aria-selected='true']) { box-shadow: 0 0 0 var(--rd-border-width-default) var(--rd-color-accent-default) }`（**`inset` は書かない**）
   `td[aria-disabled='true'] { color: var(--rd-color-text-muted); cursor: not-allowed }`
-  `td[data-iso]:hover:not([aria-disabled='true']) { background: var(--rd-color-surface-hover) }`
+  `rd-calendar td[data-iso]:hover:where(:not([aria-disabled])) { background: var(--rd-color-surface-hover) }`（stylelint `selector-max-specificity: 0,3,0`。`:not()` を素で書くと 0,4,0 になる）
 - `td:focus-visible, button:focus-visible { outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color); outline-offset: var(--rd-focus-ring-offset) }`
 - 強制配色: `td[aria-selected='true'] { forced-color-adjust: none; background: SelectedItem; color: SelectedItemText }`、`td[aria-current='date'] { box-shadow: 0 0 0 var(--rd-border-width-default) CanvasText }`
 - `@media (prefers-reduced-motion: no-preference)` の中だけに `td { transition: background-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard) }`
@@ -393,7 +400,8 @@ export const navCopy = (japanese: boolean): { readonly prev: string; readonly ne
 - `grep -c 'Temporal\|getWeekInfo' library/elements/src/calendar/*.ts` = 0、`grep -c 'new Date([0-9a-z]' library/elements/src/calendar/calendar.logic.ts` = 0（ローカル時刻の `Date` を作っていない）
 - `bash scripts/guard.sh` = 0（規則 8・9・15 を含む）、`bun run pe` = 0、`bun run e2e:frameworks` = 0、`bash scripts/vrt.sh` = 0、`bun run a11y` = 0、`bun run release:check` = 0
 - `git diff --name-only main...HEAD -- e2e/__screenshots__` に**既存**画像が 1 枚も無い
-- `grep -c 'rd-calendar' library/react/src/generated/index.ts` ≥ 1、React の props に `weekStart` / `today` があり、`markup` の props に `min` / `max` / `required` があり、生成物に `'week-start'` が引用付きで出る
+- `grep -c "'rd-calendar'" library/react/src/generated/jsx.ts` ≥ 1、`grep -c 'RdCalendar' library/react/src/generated/experimental.ts` ≥ 1（実験部品なので `index.ts` には出ない）、React の props に `weekStart` / `today` / `defaultValue` があり、`markup` の props に `min` / `max` / `required` があり、生成物に `'week-start'` が引用付きで出る
+- `grep -c "'\$defaultValue'" library/elements/src/calendar/calendar.contract.ts` = 1、`grep -c "'\$value'" library/elements/src/calendar/calendar.contract.ts` = 0
 - `.size-limit.json` の `calendar/define` が通る（15 KB）
 
 ## STOP する条件（改善せず報告する）
@@ -403,7 +411,7 @@ export const navCopy = (japanese: boolean): { readonly prev: string; readonly ne
 - `git merge main` で `e2e/**` / `.size-limit.json` / `package.json` / `examples.ts` がコンフリクトする
 - markuplint が light DOM の `<td role="gridcell" tabindex>`、`aria-hidden` の空欄 `<td>`、`<table aria-labelledby>` を落とす（規則を緩めない。報告する）
 - axe が `role="grid"` の中の `<td tabindex>` に `nested-interactive` や `aria-required-children` を出す
-- `base.css` の `table` / `th` / `td` の既定が `rd-calendar > [part='grid'] :is(th, td)` で上書きできない（詳細度や `@layer` の順で負ける）。`system/**` を触らずに解けなければ報告する
+- `calendar.css` のどの規則も stylelint `selector-max-specificity: 0,3,0` に**収められない**（`:where()` で下げても足りない）。`tools/lint/**` を触らずに解けなければ報告する
 - vitest browser で `document.activeElement` がフォーカス移動後に更新されない（月またぎのフォーカス保持が検証できない）
 - `Intl.DateTimeFormat` の出力が CI（Linux Chromium）とローカルで違って VRT が安定しない（`lang` を固定しても揺れるなら報告）
 - `_shared/**` / `system/**` / `tabs/**` / `text-field/**` / `input-otp/**` / `command/**` を変えないと実装できない
@@ -416,7 +424,8 @@ export const navCopy = (japanese: boolean): { readonly prev: string; readonly ne
 
 - 値の真実は light DOM の `<input type="date">`。**部品は `value` を自分で持たない**（`#selected` は描画用のコピーで、`input` イベントで追随する）。
   外から値を変えるときは `element.value = …` か「`input.value = …` + `input` イベント」のどちらか
-- 月表は **light DOM** にある。`base.css` の `table` / `th` / `td` の既定を `calendar.css` で上書きしているので、`system/css` の table 既定を変えるときは `Default` story の VRT で暦が崩れていないか見る
+- 月表は **light DOM** にある。`base.css` に `table` / `th` / `td` の要素既定は無い前提で `calendar.css` を書いている。**将来 `base.css` に table 既定を足すときは** `Default` story の VRT で暦が崩れていないか見る
+- 契約の `<input value>` は **`'$defaultValue'`**。`'$value'` に戻すと React ラッパー（`tools/cem/src/wrappers/core/react.ts` `clientFile()`）が build で落ちる
 - 「今日」を実時刻から決めるのは element の 1 箇所だけ。テスト・story・e2e は必ず `today` を書く（書き忘れると年が変わった日に VRT が落ちる）
 - `Intl.DateTimeFormat` の出力はブラウザの ICU に依存する。VRT は `lang="ja"` / `lang="en-US"` の 2 つに絞ってある。3 つ目を足すときは Docker の Chromium で確認する
 - 034 は **この部品に `popover` 属性を足し、header + grid を `[popover]` に入れて開くボタンを 1 つ描く**だけで作る。暦側に「閉じる」責務を足さない（`rd-change` を受けて `hidePopover()` するのは 034 の element 側の 1 行）
