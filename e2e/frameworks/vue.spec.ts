@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import {
+  calendarSuite,
   carouselSuite,
   comboboxSuite,
   commandSuite,
@@ -24,6 +25,7 @@ comboboxSuite('vue')
 splitterSuite('vue')
 commandSuite('vue')
 dataTableSuite('vue')
+calendarSuite('vue')
 carouselSuite('vue')
 toggleGroupSuite('vue')
 

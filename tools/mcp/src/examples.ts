@@ -8,6 +8,7 @@
  * `experimental` の部品は `.../experimental/<name>/contract` から読む（ADR-0009）。
  */
 import { markup as buttonMarkup } from '@rimltempest/riml-ds-elements/button/contract'
+import { markup as calendarMarkup } from '@rimltempest/riml-ds-elements/experimental/calendar/contract'
 import { markup as dialogMarkup } from '@rimltempest/riml-ds-elements/dialog/contract'
 import {
   itemMarkup as carouselItemMarkup,
@@ -89,6 +90,19 @@ const SELECT = {
   children:
     '<option value="">選択してください</option><option value="jp">日本</option>'
     + '<option value="us">アメリカ</option>',
+} as const
+/**
+ * 「今日」は属性で注入する（時計に依存する例は日が変わると出力が変わる）。`min` / `max` /
+ * `required` は `<input>` の属性なので、JS が無くてもネイティブの検証がそのまま働く。
+ */
+const CALENDAR = {
+  id: 'due',
+  label: '期限',
+  name: 'due',
+  defaultValue: '2026-09-15',
+  today: '2026-09-09',
+  min: '2026-09-01',
+  max: '2026-12-31',
 } as const
 const CHECKBOX = {
   id: 'news',
@@ -321,6 +335,7 @@ export const elementExamples = {
   'rd-text-field': { html: textFieldMarkup(TEXT_FIELD), props: TEXT_FIELD },
   'rd-dialog': { html: dialogMarkup(DIALOG), props: DIALOG },
   'rd-select': { html: selectMarkup(SELECT), props: SELECT },
+  'rd-calendar': { html: calendarMarkup(CALENDAR), props: CALENDAR },
   'rd-carousel': { html: carouselMarkup(CAROUSEL), props: CAROUSEL },
   'rd-checkbox': { html: checkboxMarkup(CHECKBOX), props: CHECKBOX },
   'rd-checkbox-group': { html: checkboxGroupMarkup(CHECKBOX_GROUP), props: CHECKBOX_GROUP },

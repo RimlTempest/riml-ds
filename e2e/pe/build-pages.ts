@@ -10,6 +10,7 @@ import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buttonMarkup } from '../../library/elements/src/button/index.js'
+import { calendarMarkup } from '../../library/elements/src/calendar/index.js'
 import { carouselItemMarkup, carouselMarkup } from '../../library/elements/src/carousel/index.js'
 import { checkboxMarkup } from '../../library/elements/src/checkbox/index.js'
 import {
@@ -67,6 +68,7 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['system/tokens/dist/tokens.css', 'tokens.css'],
   ['system/css/dist/index.css', 'index.css'],
   ['library/elements/src/button/button.css', 'button.css'],
+  ['library/elements/src/calendar/calendar.css', 'calendar.css'],
   ['library/elements/src/carousel/carousel.css', 'carousel.css'],
   ['library/elements/src/text-field/text-field.css', 'text-field.css'],
   ['library/elements/src/dialog/dialog.css', 'dialog.css'],
@@ -584,6 +586,28 @@ const PAGES: Readonly<Record<string, string>> = {
       body: CODES,
     })}`,
   ),
+  /**
+   * ティア A。JS が無ければ **`<input type="date">` がそのまま入力欄**として働く
+   * （モバイルでは OS のピッカーが出る）。月表は JS が来てから light DOM の末尾に足される。
+   * `min` / `max` / `required` は `<input>` の属性なので、JS 無しでも検証が効く。
+   */
+  'calendar.html': page(
+    '月の暦',
+    `      <form method="get" action="/echo.html">
+        ${calendarMarkup({
+          id: 'due',
+          label: '期限',
+          name: 'due',
+          defaultValue: '2026-09-15',
+          today: '2026-09-09',
+          min: '2026-09-01',
+          max: '2026-12-31',
+          required: true,
+        })}
+        ${submit}
+      </form>`,
+  ),
+
   /**
    * ティア A。JS が来る前は `.rd-carousel` の atom と同じ「横に転がる列」で、
    * `<ul tabindex="0">` があるからキーボードでも中身を読める（axe scrollable-region-focusable）。

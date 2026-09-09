@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import {
+  calendarSuite,
   carouselSuite,
   comboboxSuite,
   commandSuite,
@@ -24,6 +25,7 @@ comboboxSuite('react')
 splitterSuite('react')
 commandSuite('react')
 dataTableSuite('react')
+calendarSuite('react')
 carouselSuite('react')
 toggleGroupSuite('react')
 

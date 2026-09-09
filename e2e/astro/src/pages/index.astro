@@ -4,6 +4,7 @@ import RdCarousel from '@rimltempest/riml-ds-astro/experimental/carousel.astro'
 import RdCheckbox from '@rimltempest/riml-ds-astro/experimental/checkbox.astro'
 import RdCheckboxGroup from '@rimltempest/riml-ds-astro/experimental/checkbox-group.astro'
 import RdCombobox from '@rimltempest/riml-ds-astro/experimental/combobox.astro'
+import RdCalendar from '@rimltempest/riml-ds-astro/experimental/calendar.astro'
 import RdCommand from '@rimltempest/riml-ds-astro/experimental/command.astro'
 import RdDataTable from '@rimltempest/riml-ds-astro/experimental/data-table.astro'
 import RdInputOtp from '@rimltempest/riml-ds-astro/experimental/input-otp.astro'
@@ -141,6 +142,7 @@ import RdWindow from '@rimltempest/riml-ds-astro/experimental/window.astro'
             ></tbody
           >
         </RdDataTable>
+        <RdCalendar id="due" label="期限" name="due" defaultValue="2026-09-15" today="2026-09-09" />
         <RdCarousel label="おすすめ">
           <li><p>秋の便り</p></li>
           <li><p>冬の支度</p></li>

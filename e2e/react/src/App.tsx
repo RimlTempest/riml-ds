@@ -1,6 +1,7 @@
 import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-react'
 // experimental は専用サブパスからしか出ない（ADR-0009）
 import {
+  RdCalendar,
   RdCarousel,
   RdCheckbox,
   RdCheckboxGroup,
@@ -215,6 +216,7 @@ export const App = (): ReactNode => (
         </tbody>
       }
     />
+    <RdCalendar id="due" label="期限" name="due" defaultValue="2026-09-15" today="2026-09-09" />
     <RdCarousel label="おすすめ">
       <li>
         <p>秋の便り</p>

@@ -2,6 +2,7 @@
   import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-svelte'
   // experimental は専用サブパスからしか出ない（ADR-0009）
   import {
+    RdCalendar,
     RdCarousel,
     RdCheckbox,
     RdCheckboxGroup,
@@ -129,6 +130,7 @@
         ><tr><td>a.png</td><td data-value="820" data-numeric="">820</td></tr></tbody
       >{/snippet}
   </RdDataTable>
+  <RdCalendar id="due" label="期限" name="due" defaultValue="2026-09-15" today="2026-09-09" />
   <RdCarousel label="おすすめ">
     <li><p>秋の便り</p></li>
     <li><p>冬の支度</p></li>

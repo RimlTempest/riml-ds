@@ -1,6 +1,7 @@
 import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-vue'
 // experimental は専用サブパスからしか出ない（ADR-0009）
 import {
+  RdCalendar,
   RdCarousel,
   RdCheckbox,
   RdCheckboxGroup,
@@ -240,6 +241,13 @@ export const App = defineComponent(
               ]),
           },
         ),
+        h(RdCalendar, {
+          id: 'due',
+          label: '期限',
+          name: 'due',
+          defaultValue: '2026-09-15',
+          today: '2026-09-09',
+        }),
         h(
           RdCarousel,
           { label: 'おすすめ' },

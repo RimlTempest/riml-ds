@@ -7,6 +7,7 @@ import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
 import { dialogMarkup } from '@rimltempest/riml-ds-elements/dialog'
+import { calendarMarkup } from '@rimltempest/riml-ds-elements/experimental/calendar'
 import {
   carouselItemMarkup,
   carouselMarkup,
@@ -695,6 +696,55 @@ export const splitterSuite = (framework: string): void => {
           }),
         )
         .toBe('51%')
+    })
+  })
+}
+
+/** 4 フレームワークで同じ暦を出す。「今日」は属性で固定する（時計に依存させない） */
+const CALENDAR = {
+  id: 'due',
+  label: '期限',
+  name: 'due',
+  defaultValue: '2026-09-15',
+  today: '2026-09-09',
+} as const
+
+/**
+ * `rd-calendar`（plan 033）。`<label for>` と `<input type="date">` は利用側（＝各フレームワークの
+ * アプリ）が書き、部品は月表を light DOM の末尾に足すだけ。JS が無ければ入力欄がそのまま働く。
+ */
+export const calendarSuite = (framework: string): void => {
+  test.describe(`${framework}: calendar`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(page, 'rd-calendar', calendarMarkup(CALENDAR))
+      })
+
+      test('JS 無しでは <input type="date"> だけが出る（月表は強化ノード）', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.locator('rd-calendar > input')).toHaveValue('2026-09-15')
+        await expect(page.locator("rd-calendar [part='grid']")).toHaveCount(0)
+      })
+    })
+
+    test('月表は <label> の名前を借りた grid になる', async ({ page }) => {
+      await page.goto('/')
+      await expect(page.getByRole('grid', { name: '期限' })).toBeVisible()
+      await expect(page.locator("rd-calendar [part='title']")).toHaveText('2026年9月')
+    })
+
+    test('日を押すと <input> の値が変わる（値の真実は <input>）', async ({ page }) => {
+      await page.goto('/')
+      await page.locator('rd-calendar [data-iso="2026-09-20"]').click()
+      // `getByLabel` は <input> と grid の両方に当たる（同じ <label> が名前を付ける）
+      await expect(page.locator('rd-calendar > input')).toHaveValue('2026-09-20')
+      await expect(page.locator('rd-calendar [data-iso="2026-09-20"]')).toHaveAttribute(
+        'aria-selected',
+        'true',
+      )
     })
   })
 }

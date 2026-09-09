@@ -1,5 +1,6 @@
 import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
 import { splitterMarkup } from '@rimltempest/riml-ds-elements/experimental/splitter'
+import { calendarMarkup } from '@rimltempest/riml-ds-elements/experimental/calendar'
 import {
   carouselItemMarkup,
   carouselMarkup,
@@ -23,6 +24,7 @@ import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import * as experimental from '../src/experimental.js'
 import {
+  RdCalendar,
   RdCarousel,
   RdCommand,
   RdDataTable,
@@ -100,6 +102,7 @@ describe('既定 export の部品', () => {
   it('experimental の部品は root から出ず、./experimental から出る（ADR-0009）', () => {
     expect(Object.keys(index)).not.toContain('RdSelect')
     expect(Object.keys(experimental)).toEqual([
+      'RdCalendar',
       'RdCarousel',
       'RdCheckbox',
       'RdCheckboxGroup',
@@ -145,6 +148,39 @@ describe('既定 export の部品', () => {
         }),
       ),
     )
+  })
+
+  it('RdCalendar は week-start をハイフン付きの属性に、min / max を <input> に出す', () => {
+    const rendered = renderToString(
+      <RdCalendar
+        id="due"
+        label="期限"
+        name="due"
+        today="2026-09-09"
+        weekStart="1"
+        defaultValue="2026-09-15"
+        min="2026-09-05"
+        max="2026-09-25"
+        required
+      />,
+    )
+    expect(normalize(rendered)).toBe(
+      normalize(
+        calendarMarkup({
+          id: 'due',
+          label: '期限',
+          name: 'due',
+          today: '2026-09-09',
+          weekStart: '1',
+          defaultValue: '2026-09-15',
+          min: '2026-09-05',
+          max: '2026-09-25',
+          required: true,
+        }),
+      ),
+    )
+    expect(normalize(rendered)).toContain('week-start="1"')
+    expect(normalize(rendered)).toContain('min="2026-09-05"')
   })
 
   it('RdCarousel の renderToString が carouselMarkup と同じ HTML になる（枚は children で渡す）', () => {

@@ -18,6 +18,7 @@
     "./button.astro": "./src/generated/button.astro",
     "./dialog.astro": "./src/generated/dialog.astro",
     "./text-field.astro": "./src/generated/text-field.astro",
+    "./experimental/calendar.astro": "./src/generated/experimental/calendar.astro",
     "./experimental/carousel.astro": "./src/generated/experimental/carousel.astro",
     "./experimental/checkbox.astro": "./src/generated/experimental/checkbox.astro",
     "./experimental/checkbox-group.astro": "./src/generated/experimental/checkbox-group.astro",

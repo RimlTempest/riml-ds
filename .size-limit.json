@@ -22,6 +22,11 @@
     "limit": "14 KB"
   },
   {
+    "name": "@rimltempest/riml-ds-elements/experimental/calendar/define (lit 込み)",
+    "path": "library/elements/dist/calendar/calendar.define.js",
+    "limit": "15 KB"
+  },
+  {
     "name": "@rimltempest/riml-ds-elements/experimental/carousel/define (lit 込み)",
     "path": "library/elements/dist/carousel/carousel.define.js",
     "limit": "12 KB"
