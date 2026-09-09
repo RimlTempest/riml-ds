@@ -346,3 +346,24 @@ test('toggle group: JS 無しでも押下状態が markup のまま読める', a
   await group.getByRole('button', { name: '斜体' }).click()
   await expect(group.getByRole('button', { name: '斜体' })).toHaveAttribute('aria-pressed', 'false')
 })
+
+/**
+ * `rd-number-field`（plan 036）。値・範囲・刻みはすべて `<input type="number">` の属性なので、
+ * JS が無くても送信・検証・↑↓ キーの刻みがそのまま働く。− / + は強化ノードで、ここには出ない。
+ */
+test('number field: JS 無しでも値が送信される', async ({ page }) => {
+  await page.goto('/number-field.html')
+  const input = page.getByLabel('枚数')
+  await expect(input).toHaveAttribute('type', 'number')
+  await expect(input).toHaveAttribute('max', '99')
+  await page.getByRole('button', { name: '送信' }).click()
+  await expect(page).toHaveURL(/copies=1/u)
+})
+
+test('number field: JS 無しでは − / + の枕が出ない（強化ノード）', async ({ page }) => {
+  await page.goto('/number-field.html')
+  await expect(page.locator("rd-number-field [part='stepper']")).toHaveCount(0)
+  await expect(page.locator('rd-number-field button')).toHaveCount(0)
+  // 入力欄の見た目は number-field.css がそのまま当てる（44px の標的）
+  await expect(page.locator('rd-number-field > input')).toHaveCSS('min-block-size', '44px')
+})

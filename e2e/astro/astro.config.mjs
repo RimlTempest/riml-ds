@@ -22,6 +22,7 @@ export default defineConfig({
         'experimental/input-otp',
         'experimental/menu',
         'experimental/meter',
+        'experimental/number-field',
         'experimental/popover',
         'experimental/radio-group',
         'experimental/slider',

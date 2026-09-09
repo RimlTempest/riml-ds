@@ -8,6 +8,7 @@ import {
   frameworkSuite,
   meterAndWindowSuite,
   navigationSuite,
+  numberFieldSuite,
   radioGroupAndSliderSuite,
   splitterSuite,
   toggleGroupSuite,
@@ -27,3 +28,4 @@ dataTableSuite('astro')
 calendarSuite('astro')
 carouselSuite('astro')
 toggleGroupSuite('astro')
+numberFieldSuite('astro')

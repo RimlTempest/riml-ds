@@ -42,6 +42,7 @@ const PAGES = [
   '/data-table.html',
   '/carousel.html',
   '/toggle-group.html',
+  '/number-field.html',
 ] as const
 
 for (const path of PAGES) {

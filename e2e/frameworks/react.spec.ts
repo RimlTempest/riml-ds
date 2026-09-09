@@ -9,6 +9,7 @@ import {
   frameworkSuite,
   meterAndWindowSuite,
   navigationSuite,
+  numberFieldSuite,
   radioGroupAndSliderSuite,
   splitterSuite,
   toggleGroupSuite,
@@ -28,6 +29,7 @@ dataTableSuite('react')
 calendarSuite('react')
 carouselSuite('react')
 toggleGroupSuite('react')
+numberFieldSuite('react')
 
 test.describe('react: controlled の再同期', () => {
   test('親が拒否した文字は入力欄から消える（<input> と同じ意味論）', async ({ page }) => {

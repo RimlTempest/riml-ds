@@ -12,6 +12,7 @@
     RdInputOtp,
     RdMenu,
     RdMeter,
+    RdNumberField,
     RdPopover,
     RdRadioGroup,
     RdSelect,
@@ -141,5 +142,6 @@
     {#snippet children()}<button type="button" value="bold" aria-pressed="true">強調</button
       ><button type="button" value="italic" aria-pressed="false">斜体</button>{/snippet}
   </RdToggleGroup>
+  <RdNumberField id="copies" label="枚数" name="copies" defaultValue="1" min="1" max="99" />
   <rd-live-region></rd-live-region>
 </main>
