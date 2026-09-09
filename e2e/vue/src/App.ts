@@ -17,6 +17,7 @@ import {
   RdSplitter,
   RdTabs,
   RdToggle,
+  RdToggleGroup,
   RdWindow,
 } from '@rimltempest/riml-ds-vue/experimental'
 import { defineComponent, h, ref } from 'vue'
@@ -251,6 +252,16 @@ export const App = defineComponent(
           },
         ),
         h(RdToggle, { label: '太字', pressed: 'false' }),
+        h(
+          RdToggleGroup,
+          { label: '書式', mode: 'single' },
+          {
+            default: () => [
+              h('button', { type: 'button', value: 'bold', 'aria-pressed': 'true' }, '強調'),
+              h('button', { type: 'button', value: 'italic', 'aria-pressed': 'false' }, '斜体'),
+            ],
+          },
+        ),
         h('rd-live-region'),
       ])
   },

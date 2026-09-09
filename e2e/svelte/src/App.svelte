@@ -18,6 +18,7 @@
     RdSplitter,
     RdTabs,
     RdToggle,
+    RdToggleGroup,
     RdWindow,
   } from '@rimltempest/riml-ds-svelte/experimental'
 </script>
@@ -134,5 +135,9 @@
     <li><p>春の準備</p></li>
   </RdCarousel>
   <RdToggle label="太字" pressed="false" />
+  <RdToggleGroup label="書式" mode="single">
+    {#snippet children()}<button type="button" value="bold" aria-pressed="true">強調</button
+      ><button type="button" value="italic" aria-pressed="false">斜体</button>{/snippet}
+  </RdToggleGroup>
   <rd-live-region></rd-live-region>
 </main>

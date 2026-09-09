@@ -301,3 +301,22 @@ test('carousel: JS 無しでは前へ／次へも「n / N」も出ない（強�
   await expect(page.locator('rd-carousel button')).toHaveCount(0)
   await expect(page.locator('rd-carousel output')).toHaveCount(0)
 })
+
+test('toggle group: JS 無しでは 3 個とも Tab で辿れる（tabindex は JS が付ける）', async ({
+  page,
+}) => {
+  await page.goto('/toggle-group.html')
+  await expect(page.locator("rd-toggle-group [part='options'] > button")).toHaveCount(3)
+  // roving tabindex は JS の仕事。JS 無しでは 1 個も付かない＝全部ネイティブの順で辿れる
+  await expect(page.locator('rd-toggle-group button[tabindex]')).toHaveCount(0)
+})
+
+test('toggle group: JS 無しでも押下状態が markup のまま読める', async ({ page }) => {
+  await page.goto('/toggle-group.html')
+  const group = page.getByRole('group', { name: '書式' })
+  await expect(group.getByRole('button', { name: '太字' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(group.getByRole('button', { name: '斜体' })).toHaveAttribute('aria-pressed', 'false')
+  // JS 無しでは押しても変わらない（ただのボタンの列に縮退する）
+  await group.getByRole('button', { name: '斜体' }).click()
+  await expect(group.getByRole('button', { name: '斜体' })).toHaveAttribute('aria-pressed', 'false')
+})

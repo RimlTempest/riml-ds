@@ -14,11 +14,21 @@ import {
   dataTableHeadMarkup,
   dataTableRowMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/data-table/contract'
+import {
+  toggleGroupMarkup,
+  toggleItemMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/toggle-group'
 import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import * as experimental from '../src/experimental.js'
-import { RdCarousel, RdCommand, RdDataTable, RdSplitter } from '../src/experimental.js'
+import {
+  RdCarousel,
+  RdCommand,
+  RdDataTable,
+  RdSplitter,
+  RdToggleGroup,
+} from '../src/experimental.js'
 import * as index from '../src/index.js'
 import { RdButton, RdTextField } from '../src/index.js'
 import { normalize } from './normalize.js'
@@ -107,6 +117,7 @@ describe('既定 export の部品', () => {
       'RdSplitter',
       'RdTabs',
       'RdToggle',
+      'RdToggleGroup',
       'RdWindow',
     ])
   })
@@ -182,5 +193,33 @@ describe('experimental の部品', () => {
     expect(normalize(rendered)).toContain('manual=""')
     // 表そのものは利用側が書く（部品は行を作らない）
     expect(normalize(rendered)).toContain('<caption>保存したコード</caption>')
+  })
+
+  it('RdToggleGroup は mode / orientation / variant を属性として出す', () => {
+    const items =
+      toggleItemMarkup({ label: '太字', value: 'bold', pressed: 'true' })
+      + toggleItemMarkup({ label: '斜体', value: 'italic' })
+    const rendered = normalize(
+      renderToString(
+        <RdToggleGroup label="書式" mode="single" orientation="vertical" variant="ghost">
+          <span dangerouslySetInnerHTML={{ __html: items }} />
+        </RdToggleGroup>,
+      ),
+    )
+    expect(rendered).toContain('mode="single"')
+    expect(rendered).toContain('orientation="vertical"')
+    expect(rendered).toContain('variant="ghost"')
+    // JSX は生 HTML を <span> でしか差し込めない。その分を除けば markup() と同じ木になる
+    expect(rendered.replaceAll('<span>', '').replaceAll('</span>', '')).toBe(
+      normalize(
+        toggleGroupMarkup({
+          label: '書式',
+          mode: 'single',
+          orientation: 'vertical',
+          variant: 'ghost',
+          children: items,
+        }),
+      ),
+    )
   })
 })

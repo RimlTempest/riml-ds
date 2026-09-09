@@ -102,6 +102,11 @@
     "limit": "12 KB"
   },
   {
+    "name": "@rimltempest/riml-ds-elements/experimental/toggle-group/define (lit 込み)",
+    "path": "library/elements/dist/toggle-group/toggle-group.define.js",
+    "limit": "12 KB"
+  },
+  {
     "name": "@rimltempest/riml-ds-react (button のみ import)",
     "path": "library/react/dist/generated/button.js",
     "import": "{ RdButton }",

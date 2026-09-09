@@ -27,6 +27,7 @@ export default defineConfig({
         'experimental/splitter',
         'experimental/tabs',
         'experimental/toggle',
+        'experimental/toggle-group',
         'experimental/window',
       ],
     }),

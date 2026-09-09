@@ -7,6 +7,8 @@
 > `git diff --stat 0428da0..HEAD -- library/elements/src/command library/elements/src/splitter library/elements/src/menu/menu.stories.ts system/css/src/atoms.css system/css/test docs/proposals/splitter.md`
 > 差分が出たら、その内容を読んでから進める。`splitter.element.ts` の行数が 150 でなくなっていたり、`splitter.dom.ts` の `wireHandle` が無くなっていたら STOP して報告。
 
+> **改訂（2026-09-09）**: executor の STOP を受けて 2 点を直した。(A) Step 1 の red テストの置き場 `command.test.ts` と、(B) §2 の `#dispose` フィールドで必ず変わる `custom-elements.json` を「触ってよいパス」と `scripts/lanes.tsv` に足した（guard 規則 15 は CEM の同時更新を**要求**するので、変わらないことを完了条件にしていた初版が矛盾していた）。§2 の 1 行削りは executor が `#onKeydown` の早期 return を畳む形で解決済み（挙動不変）。
+
 ## なぜ
 
 028（`rd-command`）・030（`rd-splitter`）のレビューで「後で」にした 4 件と、010 の `.rd-table` の 1 件を片付ける。どれも小さいが、放置すると利用側の axe や見た目に出る。
@@ -124,9 +126,9 @@ export const Placement: Story = { args: { placement: 'end' }, play: openMenu }
 - CSS の値はトークン `var(--rd-*)` だけ（stylelint `declaration-strict-value`）。キーワード値（`none` / `nowrap`）は対象外。要素 CSS は `selector-max-specificity: 0,3,0`
 - **失敗するテストを先に書く**（red → green）。要素のテストは `library/elements/src/<name>/<name>.test.ts`（vitest browser。`cd library/elements && bunx vitest run --root ../.. --project browser <name>`）、CSS のテストは `system/css/test/*.test.ts`（`--project node`）
 - `splitter.element.ts` は **150 行 / `if` 5 個以内**（guard 規則 8）。溢れる分は `splitter.dom.ts` に出す
-- `bun run gen` は決定的で、実行後に `git status` が汚れないこと（この計画では contract を変えないので CEM / registry は変わらないはず。変わったら STOP）
+- `bun run gen` は決定的。contract を変えないので `tools/cem/registry.json` は変わらない。**`custom-elements.json` は §2 の `#dispose` フィールド 1 個分（+8 行）だけ変わる**——CEM は private フィールドも載せる。それをコミットしてから `git status` が空になること
 - `.changeset/*.md` は手書きで置く（対話 CLI は使わない）。fixed group なので全パッケージが一緒に上がる
-- 触ってよいパス（`scripts/lanes.tsv` の `chore/follow-ups-035`）: `library/elements/src/command/command.css`, `library/elements/src/splitter`, `library/elements/src/menu/menu.stories.ts`, `system/css/src/atoms.css`, `system/css/test`, `e2e/__screenshots__`, `docs/proposals/splitter.md`, `.changeset`。
+- 触ってよいパス（`scripts/lanes.tsv` の `chore/follow-ups-035`）: `library/elements/src/command/command.css`, `library/elements/src/command/command.test.ts`（Step 1 の red テスト）, `library/elements/custom-elements.json`（§2 の `#dispose` フィールドで CEM が変わる。guard 規則 15 のとおり**同じブランチで再生成してコミットする**）, `library/elements/src/splitter`, `library/elements/src/menu/menu.stories.ts`, `system/css/src/atoms.css`, `system/css/test`, `e2e/__screenshots__`, `docs/proposals/splitter.md`, `.changeset`。
   **触らない**: `library/elements/src/_shared/**`, `system/css/src/base.css`, `toggle-group/**`, `carousel/**`, `calendar/**`, `docs/**`（`docs/proposals/splitter.md` を除く）, `plans/README.md`, `README.md`, `.claude/**`, `skills/**`, `scripts/**`, `.github/**`, lint 設定, `scripts/lanes.tsv`
 
 ## 設計（決定事項。変えたくなったら STOP）
@@ -228,13 +230,13 @@ red: `atoms.test.ts`。green: §4。`cd system/css && bunx vitest run --root ../
 - `grep -c 'export const Placement' library/elements/src/menu/menu.stories.ts` = 0、`command ls e2e/__screenshots__/*/components-menu--placement.png 2>/dev/null | wc -l` = 0
 - `command ls e2e/__screenshots__/*/components-splitter--overflow.png | wc -l` = 4
 - `git diff --name-only main...HEAD -- e2e/__screenshots__` が **`components-menu--variants.png` × 4、`components-menu--placement.png` × 4（削除）、`components-splitter--overflow.png` × 4** だけ（`.rd-table` の story が変わったなら報告に書く）
-- `git status --porcelain` が `bun run build && bun run gen` の後に空（CEM / registry が変わらない）
+- `bun run build && bun run gen` の後に `git status --porcelain` が空（CEM の `#dispose` 分はコミット済み、`registry.json` は無変更）。`git diff main...HEAD -- library/elements/custom-elements.json | grep -c '^+.*"name"'` = 1（増えたエントリは `#dispose` だけ）
 - `bun run pe` = 0、`bun run e2e:frameworks` = 0、`bash scripts/vrt.sh` = 0、`bun run a11y` = 0、`bun run release:check` = 0
 
 ## STOP する条件（改善せず報告する）
 
 - `splitter.element.ts` が 150 行 / `if` 5 に収まらない（§2 の 1 行削りで足りない）
-- `bun run gen` で `custom-elements.json` / `registry.json` が変わる（contract を変えていないのに変わる＝別の原因）
+- `bun run gen` で `registry.json` が変わる、または `custom-elements.json` の差分が `RdSplitter` の `#dispose` エントリ以外を含む（contract を変えていないのに変わる＝別の原因）
 - ResizeObserver の `sync` が vitest browser で発火せず (a) が緑にできない（`await new Promise(requestAnimationFrame)` を 2 回挟んでも）
 - 上に挙げた 12 枚以外の VRT 画像が変わる（`.rd-table` の story を除く）
 - `_shared/**` / `base.css` を変えないと解けない

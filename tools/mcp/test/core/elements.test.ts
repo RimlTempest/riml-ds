@@ -42,6 +42,7 @@ describe('listElements', () => {
       'rd-text-field',
       'rd-toast',
       'rd-toggle',
+      'rd-toggle-group',
       'rd-tooltip',
       'rd-window',
     ])
@@ -73,6 +74,7 @@ describe('listElements', () => {
       'rd-text-field',
       'rd-toast',
       'rd-toggle',
+      'rd-toggle-group',
       'rd-tooltip',
       'rd-window',
     ])

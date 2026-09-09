@@ -17,6 +17,7 @@ import {
   RdSplitter,
   RdTabs,
   RdToggle,
+  RdToggleGroup,
   RdWindow,
 } from '@rimltempest/riml-ds-react/experimental'
 import type { ReactNode } from 'react'
@@ -226,6 +227,14 @@ export const App = (): ReactNode => (
       </li>
     </RdCarousel>
     <RdToggle label="太字" pressed="false" />
+    <RdToggleGroup label="書式" mode="single">
+      <button type="button" value="bold" aria-pressed="true">
+        強調
+      </button>
+      <button type="button" value="italic" aria-pressed="false">
+        斜体
+      </button>
+    </RdToggleGroup>
     <rd-live-region />
   </main>
 )

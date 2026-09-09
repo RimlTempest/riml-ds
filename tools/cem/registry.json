@@ -218,6 +218,19 @@
     "dependsOn": []
   },
   {
+    "name": "toggle-group",
+    "tag": "rd-toggle-group",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "押下ボタンの列。単一 / 複数選択と矢印キー移動。<fieldset><legend> と <button aria-pressed> は利用側が書く",
+    "files": [
+      "toggle-group/index.js",
+      "toggle-group/toggle-group.define.js",
+      "toggle-group/toggle-group.css"
+    ],
+    "dependsOn": []
+  },
+  {
     "name": "tooltip",
     "tag": "rd-tooltip",
     "pe": "C",

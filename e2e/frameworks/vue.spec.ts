@@ -10,6 +10,7 @@ import {
   navigationSuite,
   radioGroupAndSliderSuite,
   splitterSuite,
+  toggleGroupSuite,
   toggleSuite,
 } from './shared.js'
 
@@ -24,6 +25,7 @@ splitterSuite('vue')
 commandSuite('vue')
 dataTableSuite('vue')
 carouselSuite('vue')
+toggleGroupSuite('vue')
 
 test.describe('vue: <select> の v-model', () => {
   test('選択すると v-model の値が変わる', async ({ page }) => {

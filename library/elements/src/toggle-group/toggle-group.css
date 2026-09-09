@@ -1,0 +1,121 @@
+@layer rd.components {
+  /* 見た目は `rd-checkbox-group:state(segmented)` と揃えてある（丸い面に区画を並べ、押下は
+     raised）。3 つ目が出たら `patterns.css` の `.rd-segmented` に寄せる — proposal の保守メモ。
+     `:not(:defined)` は「普通のボタンの列」に見える（何も足さない） */
+  rd-toggle-group {
+    display: inline-block;
+  }
+
+  rd-toggle-group > fieldset {
+    display: inline-grid;
+    gap: var(--rd-space-2);
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+  }
+
+  /* group の名前。checkbox-group の <legend> より控えめ（ツールバーの中に置くため） */
+  rd-toggle-group legend {
+    padding: 0;
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+  }
+
+  rd-toggle-group [part='options'] {
+    display: inline-flex;
+    gap: 0;
+    padding: var(--rd-space-1);
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-surface-sunken);
+  }
+
+  rd-toggle-group [part='options'] > button {
+    display: inline-flex;
+    gap: var(--rd-space-2);
+    align-items: center;
+    justify-content: center;
+    min-block-size: var(--rd-sizing-target-min);
+    min-inline-size: var(--rd-sizing-target-min);
+    padding-inline: var(--rd-space-4);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: transparent;
+    border-radius: var(--rd-radius-full);
+    background: transparent;
+    color: var(--rd-color-text-default);
+    font: var(--rd-type-body);
+    line-height: var(--rd-line-height-body);
+    cursor: pointer;
+  }
+
+  /* 押下は面・影・太字の 3 つで示す。色だけに頼らない（accessibility.md 9） */
+  rd-toggle-group [part='options'] > button[aria-pressed='true'] {
+    background: var(--rd-color-surface-raised);
+    box-shadow: var(--rd-shadow-raised);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  @media (hover: hover) {
+    /* `:where()` で :enabled を包むのは詳細度を上げないため（stylelint） */
+    rd-toggle-group [part='options'] > button:hover:where(:enabled) {
+      background: var(--rd-color-surface-hover);
+    }
+  }
+
+  rd-toggle-group [part='options'] > button:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* disabled はネイティブに任せる。部品は disabled 属性を持たない */
+  rd-toggle-group [part='options'] > button:disabled {
+    color: var(--rd-color-text-muted);
+    cursor: not-allowed;
+  }
+
+  @supports selector(:state(vertical)) {
+    rd-toggle-group:state(vertical) [part='options'] {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    /* ghost は面も罫線も持たない。押下の面だけで区切る（rd-toggle の ghost と同じ） */
+    rd-toggle-group:state(ghost) [part='options'] {
+      padding: 0;
+      background: transparent;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    rd-toggle-group [part='options'] > button {
+      transition: background-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+    }
+  }
+
+  /* 強制配色では自前の面も影も消える。押下はシステムの選択色で示し、フォーカスは
+     **別の形**（外側の太いリング）にする — 押下とフォーカスが同じ形にならないこと（024 の指摘） */
+  @media (forced-colors: active) {
+    rd-toggle-group [part='options'] > button {
+      border-color: ButtonText;
+      color: ButtonText;
+    }
+
+    rd-toggle-group [part='options'] > button[aria-pressed='true'] {
+      forced-color-adjust: none;
+      border-color: ButtonText;
+      background: SelectedItem;
+      color: SelectedItemText;
+    }
+
+    rd-toggle-group [part='options'] > button:focus-visible {
+      outline: var(--rd-focus-ring-width) solid Highlight;
+      outline-offset: var(--rd-focus-ring-offset);
+    }
+
+    rd-toggle-group [part='options'] > button:disabled {
+      border-color: GrayText;
+      color: GrayText;
+    }
+  }
+}
