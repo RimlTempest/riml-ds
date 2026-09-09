@@ -37,6 +37,7 @@ import {
   menuItemMarkup,
 } from '../../library/elements/src/menu/menu.contract.js'
 import { meterMarkup } from '../../library/elements/src/meter/index.js'
+import { numberFieldMarkup } from '../../library/elements/src/number-field/index.js'
 import { markup as popoverMarkup } from '../../library/elements/src/popover/popover.contract.js'
 import {
   radioGroupMarkup,
@@ -81,6 +82,7 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/disclosure/disclosure.css', 'disclosure.css'],
   ['library/elements/src/input-otp/input-otp.css', 'input-otp.css'],
   ['library/elements/src/meter/meter.css', 'meter.css'],
+  ['library/elements/src/number-field/number-field.css', 'number-field.css'],
   ['library/elements/src/radio-group/radio-group.css', 'radio-group.css'],
   ['library/elements/src/slider/slider.css', 'slider.css'],
   ['library/elements/src/splitter/splitter.css', 'splitter.css'],
@@ -663,6 +665,25 @@ const PAGES: Readonly<Record<string, string>> = {
         + toggleItemMarkup({ label: '斜体', value: 'italic' })
         + toggleItemMarkup({ label: '下線', value: 'underline' }),
     })}`,
+  ),
+  /**
+   * ティア A。JS が無ければ **`<input type="number">` がそのまま入力欄**として働き、
+   * ブラウザ既定の spinner も残る（`appearance: textfield` は `:defined` の中だけ）。
+   * − / + の枕は強化ノードなので、ここには 1 つも現れない。
+   */
+  'number-field.html': page(
+    '数値入力',
+    `      <form method="get" action="/echo.html">
+        ${numberFieldMarkup({
+          id: 'copies',
+          label: '枚数',
+          name: 'copies',
+          defaultValue: '1',
+          min: '1',
+          max: '99',
+        })}
+        ${submit}
+      </form>`,
   ),
   'echo.html': page('送信済み', '      <p>フォームはネイティブに送信された。</p>'),
 }

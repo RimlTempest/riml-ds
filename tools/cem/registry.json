@@ -138,6 +138,19 @@
     "dependsOn": []
   },
   {
+    "name": "number-field",
+    "tag": "rd-number-field",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "数値を 1 つ。<label for> と <input type=number> は利用側が書く。− / + の 44px ボタンと丸めだけ部品が足す",
+    "files": [
+      "number-field/index.js",
+      "number-field/number-field.define.js",
+      "number-field/number-field.css"
+    ],
+    "dependsOn": []
+  },
+  {
     "name": "popover",
     "tag": "rd-popover",
     "pe": "B",

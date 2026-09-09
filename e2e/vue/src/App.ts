@@ -11,6 +11,7 @@ import {
   RdInputOtp,
   RdMenu,
   RdMeter,
+  RdNumberField,
   RdPopover,
   RdRadioGroup,
   RdSelect,
@@ -278,6 +279,14 @@ export const App = defineComponent(
             ],
           },
         ),
+        h(RdNumberField, {
+          id: 'copies',
+          label: '枚数',
+          name: 'copies',
+          defaultValue: '1',
+          min: '1',
+          max: '99',
+        }),
         h('rd-live-region'),
       ])
   },

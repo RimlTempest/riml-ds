@@ -15,6 +15,7 @@ import {
   dataTableHeadMarkup,
   dataTableRowMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/data-table/contract'
+import { numberFieldMarkup } from '@rimltempest/riml-ds-elements/experimental/number-field'
 import {
   toggleGroupMarkup,
   toggleItemMarkup,
@@ -28,6 +29,7 @@ import {
   RdCarousel,
   RdCommand,
   RdDataTable,
+  RdNumberField,
   RdSplitter,
   RdToggleGroup,
 } from '../src/experimental.js'
@@ -113,6 +115,7 @@ describe('既定 export の部品', () => {
       'RdInputOtp',
       'RdMenu',
       'RdMeter',
+      'RdNumberField',
       'RdPopover',
       'RdRadioGroup',
       'RdSelect',
@@ -282,5 +285,37 @@ describe('experimental の部品', () => {
         }),
       ),
     )
+  })
+
+  it('RdNumberField は min / max / step / defaultValue を <input> に出す', () => {
+    const rendered = renderToString(
+      <RdNumberField
+        id="copies"
+        label="枚数"
+        name="copies"
+        defaultValue="1"
+        min="1"
+        max="99"
+        step="1"
+        required
+        hint="1 から 99 まで"
+      />,
+    )
+    expect(normalize(rendered)).toBe(
+      normalize(
+        numberFieldMarkup({
+          id: 'copies',
+          label: '枚数',
+          name: 'copies',
+          defaultValue: '1',
+          min: '1',
+          max: '99',
+          step: '1',
+          required: true,
+          hint: '1 から 99 まで',
+        }),
+      ),
+    )
+    expect(normalize(rendered)).toContain('type="number"')
   })
 })

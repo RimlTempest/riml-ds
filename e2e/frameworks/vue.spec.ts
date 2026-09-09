@@ -9,6 +9,7 @@ import {
   frameworkSuite,
   meterAndWindowSuite,
   navigationSuite,
+  numberFieldSuite,
   radioGroupAndSliderSuite,
   splitterSuite,
   toggleGroupSuite,
@@ -28,6 +29,7 @@ dataTableSuite('vue')
 calendarSuite('vue')
 carouselSuite('vue')
 toggleGroupSuite('vue')
+numberFieldSuite('vue')
 
 test.describe('vue: <select> の v-model', () => {
   test('選択すると v-model の値が変わる', async ({ page }) => {

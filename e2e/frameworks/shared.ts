@@ -37,6 +37,7 @@ import {
   otpCellsMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/input-otp'
 import { meterMarkup } from '@rimltempest/riml-ds-elements/experimental/meter'
+import { numberFieldMarkup } from '@rimltempest/riml-ds-elements/experimental/number-field'
 import {
   radioGroupMarkup,
   radioOptionMarkup,
@@ -942,6 +943,55 @@ export const toggleGroupSuite = (framework: string): void => {
           page.locator('rd-toggle-group').evaluate((element) => element.matches(':state(single)')),
         )
         .toBe(true)
+    })
+  })
+}
+
+/** 4 フレームワークで同じ数値入力（`numberFieldMarkup` が唯一の正） */
+const COPIES = {
+  id: 'copies',
+  label: '枚数',
+  name: 'copies',
+  defaultValue: '1',
+  min: '1',
+  max: '99',
+} as const
+
+/**
+ * `rd-number-field`（plan 036）。値の真実は `<input type="number">` で、部品が足すのは
+ * 44px の − / + と刻みの丸めだけ。押すと `<input>` から `input` → `change` が上がるので、
+ * どのフレームワークの購読（`v-model` / `onChange` / `bind:value`）もそのまま動く。
+ * JS が無ければ「ボタンの無い普通の数値入力」に縮退する。
+ */
+export const numberFieldSuite = (framework: string): void => {
+  test.describe(`${framework}: number field`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(page, 'rd-number-field', numberFieldMarkup(COPIES))
+      })
+
+      test('JS 無しでは − / + の枕が出ない', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.locator("rd-number-field [part='stepper']")).toHaveCount(0)
+      })
+    })
+
+    test('+ を押すと <input> の値が刻まれ、input イベントが上がる', async ({ page }) => {
+      await page.goto('/')
+      const input = page.locator('rd-number-field > input')
+      await expect(input).toHaveValue('1')
+      // フレームワークの購読と同じ経路（<input> の input）に印を付けて、上がることを見る
+      await input.evaluate((element) => {
+        element.addEventListener('input', () => {
+          element.setAttribute('data-echo', 'seen')
+        })
+      })
+      await page.getByRole('button', { name: '増やす' }).click()
+      await expect(input).toHaveValue('2')
+      await expect(input).toHaveAttribute('data-echo', 'seen')
     })
   })
 }

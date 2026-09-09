@@ -13,6 +13,7 @@ import RdDialog from '@rimltempest/riml-ds-astro/dialog.astro'
 import RdTextField from '@rimltempest/riml-ds-astro/text-field.astro'
 import RdMenu from '@rimltempest/riml-ds-astro/experimental/menu.astro'
 import RdMeter from '@rimltempest/riml-ds-astro/experimental/meter.astro'
+import RdNumberField from '@rimltempest/riml-ds-astro/experimental/number-field.astro'
 import RdPopover from '@rimltempest/riml-ds-astro/experimental/popover.astro'
 import RdRadioGroup from '@rimltempest/riml-ds-astro/experimental/radio-group.astro'
 import RdSlider from '@rimltempest/riml-ds-astro/experimental/slider.astro'
@@ -164,6 +165,7 @@ import RdWindow from '@rimltempest/riml-ds-astro/experimental/window.astro'
             aria-pressed="false">斜体</button
           ></RdToggleGroup
         >
+        <RdNumberField id="copies" label="枚数" name="copies" defaultValue="1" min="1" max="99" />
         <rd-live-region></rd-live-region>
       </main>
     </div>
