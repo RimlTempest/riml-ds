@@ -1,6 +1,6 @@
 {
   "name": "@rimltempest/riml-ds-react",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "riml-ds の React 19 ラッパー。CEM とマークアップ契約から生成する",
   "license": "MIT",
   "files": [

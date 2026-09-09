@@ -1,6 +1,6 @@
 {
   "name": "@rimltempest/riml-ds-astro",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "riml-ds の Astro integration と .astro 部品。CEM とマークアップ契約から生成する",
   "license": "MIT",
   "files": [

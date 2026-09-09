@@ -1,5 +1,13 @@
 # @rimltempest/riml-ds-mcp
 
+## 0.3.0
+
+### Patch Changes
+
+- Updated dependencies [[`50ab1f3`](https://github.com/RimlTempest/riml-ds/commit/50ab1f35d34af541e5efb5660fcbcb395400de3a), [`2add6f1`](https://github.com/RimlTempest/riml-ds/commit/2add6f1b9318276bb3c5ff700aeb695646863752), [`dcf0d36`](https://github.com/RimlTempest/riml-ds/commit/dcf0d36013cc6687584735dbc0f5513f6fa8a547)]:
+  - @rimltempest/riml-ds-tokens@0.3.0
+  - @rimltempest/riml-ds-lint@0.3.0
+
 ## 0.2.0
 
 ### Minor Changes
