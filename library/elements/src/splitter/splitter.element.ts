@@ -7,7 +7,7 @@ import {
   dragController,
   positionFromKey,
   reportMissing,
-  wireHandle,
+  wireShadow,
 } from './splitter.dom.js'
 import { ariaOrientation, clampPosition, computeStates } from './splitter.logic.js'
 import { styles } from './splitter.styles.js'
@@ -63,6 +63,7 @@ export class RdSplitter extends LitElement {
 
   #internals = this.attachInternals()
   #contractOk = false
+  #dispose: () => void = () => undefined
   #drag = dragController({
     host: this,
     direction: () => this.direction,
@@ -83,14 +84,14 @@ export class RdSplitter extends LitElement {
 
   override disconnectedCallback(): void {
     super.disconnectedCallback()
-    this.#drag.dispose()
+    this.#dispose()
   }
 
   override firstUpdated(): void {
     const result = checkContract(this, contract)
     this.#contractOk = result.kind === 'ok'
     reportMissing(result, this.label)
-    wireHandle(this.shadowRoot, this.#drag)
+    this.#dispose = wireShadow(this.shadowRoot, this.#drag)
     this.requestUpdate()
   }
 
@@ -141,10 +142,9 @@ export class RdSplitter extends LitElement {
   #onKeydown = (event: KeyboardEvent): void => {
     const bounds = { min: this.min, max: this.max }
     const next = positionFromKey(this, event, this.direction, this.position, bounds)
-    if (next === undefined) {
-      return
+    if (next !== undefined) {
+      event.preventDefault()
+      this.#setPosition(next, true)
     }
-    event.preventDefault()
-    this.#setPosition(next, true)
   }
 }

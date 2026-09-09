@@ -134,10 +134,66 @@ export const dragController = (parts: DragParts): DragController => {
   }
 }
 
-/** shadow のつまみを掴んでドラッグを配線する（見つからなければ何もしない） */
-export const wireHandle = (root: ShadowRoot | null, drag: DragController): void => {
+/** 面の内容が溢れているか（縦横どちらでも） */
+export const isOverflowing = (pane: HTMLElement): boolean =>
+  pane.scrollHeight > pane.clientHeight || pane.scrollWidth > pane.clientWidth
+
+/**
+ * 溢れた面だけ Tab で届くようにする（axe `scrollable-region-focusable`）。
+ * 溢れていない面に tabindex を残すと、Tab の止まる所が増えるだけなので外す。
+ * ResizeObserver は面（部品の割合が変わる・窓が変わる）と slot の中身（slotchange）の
+ * 両方で回す。面の大きさは割合と窓で変わり、溢れるかどうかは中身でも変わるため。
+ */
+export const overflowWatcher = (root: ShadowRoot | null): { readonly dispose: () => void } => {
+  const panes = [...(root?.querySelectorAll('[part=start], [part=end]') ?? [])].filter(
+    (pane): pane is HTMLElement => pane instanceof HTMLElement,
+  )
+  const sync = (): void => {
+    for (const pane of panes) {
+      if (isOverflowing(pane)) {
+        pane.setAttribute('tabindex', '0')
+      } else {
+        pane.removeAttribute('tabindex')
+      }
+    }
+  }
+  // 測れない環境（ResizeObserver が無い）では一度だけ測る。Chromium には在る
+  if (typeof ResizeObserver === 'undefined') {
+    sync()
+    return { dispose: (): void => undefined }
+  }
+  const observer = new ResizeObserver(sync)
+  const slots: HTMLSlotElement[] = []
+  for (const pane of panes) {
+    observer.observe(pane)
+    const slot = pane.querySelector('slot')
+    if (slot instanceof HTMLSlotElement) {
+      slot.addEventListener('slotchange', sync)
+      slots.push(slot)
+    }
+  }
+  return {
+    dispose: (): void => {
+      observer.disconnect()
+      for (const slot of slots) {
+        slot.removeEventListener('slotchange', sync)
+      }
+    },
+  }
+}
+
+/**
+ * shadow のつまみにドラッグを配線し、面の溢れの監視を起こす（つまみが無ければ配線だけ飛ばす）。
+ * 返り値を `disconnectedCallback` で呼ぶと両方止まる。
+ */
+export const wireShadow = (root: ShadowRoot | null, drag: DragController): (() => void) => {
   const handle = root?.querySelector('[part=handle]')
   if (handle instanceof HTMLElement) {
     drag.wire(handle)
+  }
+  const watcher = overflowWatcher(root)
+  return (): void => {
+    drag.dispose()
+    watcher.dispose()
   }
 }
