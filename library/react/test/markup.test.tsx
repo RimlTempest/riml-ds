@@ -23,8 +23,8 @@ import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import * as experimental from '../src/experimental.js'
-import { RdCalendar, RdCommand, RdDataTable, RdSplitter } from '../src/experimental.js'
 import {
+  RdCalendar,
   RdCarousel,
   RdCommand,
   RdDataTable,
