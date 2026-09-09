@@ -2,6 +2,7 @@
   import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-svelte'
   // experimental は専用サブパスからしか出ない（ADR-0009）
   import {
+    RdCarousel,
     RdCheckbox,
     RdCheckboxGroup,
     RdCombobox,
@@ -127,6 +128,11 @@
         ><tr><td>a.png</td><td data-value="820" data-numeric="">820</td></tr></tbody
       >{/snippet}
   </RdDataTable>
+  <RdCarousel label="おすすめ">
+    <li><p>秋の便り</p></li>
+    <li><p>冬の支度</p></li>
+    <li><p>春の準備</p></li>
+  </RdCarousel>
   <RdToggle label="太字" pressed="false" />
   <rd-live-region></rd-live-region>
 </main>

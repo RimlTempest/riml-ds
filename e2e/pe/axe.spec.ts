@@ -39,6 +39,7 @@ const PAGES = [
   '/slider.html',
   '/splitter.html',
   '/data-table.html',
+  '/carousel.html',
 ] as const
 
 for (const path of PAGES) {

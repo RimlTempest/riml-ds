@@ -276,3 +276,28 @@ test('data table: JS 無しの見出しは文字のまま（押せないボタ�
   // 横に溢れる表は部品自身が転がす（WCAG 1.4.10）
   await expect(page.locator('rd-data-table')).toHaveCSS('overflow-x', 'auto')
 })
+
+/**
+ * `rd-carousel`（plan 032）。JS が来る前は `.rd-carousel` の atom と同じ横に転がる列で、
+ * 契約が持つ `<ul tabindex="0">` のおかげでキーボードだけでも中身を辿れる。
+ */
+test('carousel: JS 無しでも <ul> が横に転がる（atom と同じ縮退）', async ({ page }) => {
+  await page.goto('/carousel.html')
+  await expect(page.locator('rd-carousel > ul')).toHaveCSS('overflow-x', 'auto')
+  await expect(page.getByRole('listitem')).toHaveCount(3)
+})
+
+test('carousel: JS 無しでも Tab で <ul> に届く（契約が tabindex を持つ）', async ({ page }) => {
+  await page.goto('/carousel.html')
+  // 1 回目は本文へのスキップリンク、2 回目が転がる箱
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Tab')
+  await expect(page.locator('rd-carousel > ul')).toBeFocused()
+})
+
+test('carousel: JS 無しでは前へ／次へも「n / N」も出ない（強化ノード）', async ({ page }) => {
+  await page.goto('/carousel.html')
+  await expect(page.locator("rd-carousel [part='controls']")).toHaveCount(0)
+  await expect(page.locator('rd-carousel button')).toHaveCount(0)
+  await expect(page.locator('rd-carousel output')).toHaveCount(0)
+})
