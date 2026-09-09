@@ -178,7 +178,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "月の暦。子の `<label for>` と `<input type=\"date\">` を包む（ティア A、ADR-0012）。**JS 無しでも動く**\n——入力欄がそのまま送信され、モバイルでは OS のピッカーが出る。JS が来たら同じ light DOM の末尾に\n`role=\"grid\"` の月表を足す。**値の真実は `<input>`**（`min` / `max` / `required` も `<input>` の属性）。",
+          "description": "月の暦。子の `<label for>` と `<input type=\"date\">` を包む（ティア A、ADR-0012）。**JS 無しでも動く**\n——入力欄がそのまま送信され、モバイルでは OS のピッカーが出る。JS が来たら同じ light DOM の末尾に\n`role=\"grid\"` の月表を足す。`picker` なら月表は `[popover]` に入り、`<input>` の右のボタンで開く\n（開くのも閉じるのも UA）。**値の真実は `<input>`**（`min` / `max` / `required` も `<input>` の属性）。",
           "name": "RdCalendar",
           "cssProperties": [
             {
@@ -206,6 +206,14 @@
             {
               "description": "月表（<table role=\"grid\">）",
               "name": "grid"
+            },
+            {
+              "description": "月表を開くボタン（picker のとき）",
+              "name": "toggle"
+            },
+            {
+              "description": "月表を入れる [popover]（picker のとき）",
+              "name": "popover"
             }
           ],
           "slots": [
@@ -319,12 +327,6 @@
             },
             {
               "kind": "field",
-              "name": "#setup",
-              "privacy": "private",
-              "description": "初回だけ。契約を見て子を掴み、`<input>` の書き換えに追随する道を作る"
-            },
-            {
-              "kind": "field",
               "name": "#follow",
               "privacy": "private",
               "description": "`<input>` の値・範囲に月表を合わせる（打ち込みにも `value` setter にも同じ道）"
@@ -334,6 +336,12 @@
               "name": "#onEvent",
               "privacy": "private",
               "description": "click も keydown も 1 本道。`<input>` の上のキーは `decideKey` が `none` に落とす"
+            },
+            {
+              "kind": "field",
+              "name": "#onToggle",
+              "privacy": "private",
+              "description": "popover の開閉。開いたら升目へ焦点を移す（閉じたときの復帰は UA に任せる）"
             },
             {
               "kind": "field",
@@ -400,6 +408,10 @@
               "description": "まだ選ばれていない"
             },
             {
+              "name": "open",
+              "description": "picker の月表が開いている"
+            },
+            {
               "name": "at",
               "description": "min - 前の月がまるごと min より前"
             },
@@ -416,7 +428,7 @@
             "name": "LitElement",
             "package": "lit"
           },
-          "summary": "月の暦。<label> と <input type=\"date\"> は利用側が書き、JS があるときだけその下に月表が付く",
+          "summary": "月の暦。<label> と <input type=\"date\"> は利用側が書き、JS があるときだけその下（picker ならボタンで開く窓）に月表が付く",
           "status": "experimental",
           "pe": "A",
           "tagName": "rd-calendar",

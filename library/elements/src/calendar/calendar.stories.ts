@@ -11,7 +11,7 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html, type TemplateResult } from 'lit'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { argTypes } from '@rd-argtypes'
-import { expect, within } from 'storybook/test'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 import './calendar.define.js'
 import './calendar.css'
 import { calendarMarkup, type CalendarMarkupProps } from './index.js'
@@ -121,6 +121,44 @@ export const Required: Story = {
     await expect(canvasElement.querySelector('rd-calendar')?.checkValidity()).toBe(false)
   },
 }
+
+/**
+ * `picker`（plan 034）。月表を常設せず、`<input>` の右のボタン 1 つで開く。
+ * 下に開くので、開いた月表が切れない高さを確保する（`popover.stories.ts` と同じ理由）。
+ */
+const inPicker = (args: Args): TemplateResult =>
+  html`<div lang="ja" style="min-block-size: 26rem">
+    ${unsafeHTML(calendarMarkup({ ...args, picker: true }))}
+  </div>`
+
+const toggleOf = (canvasElement: HTMLElement): HTMLElement =>
+  within(canvasElement).getByRole('button', { name: '暦を開く' })
+
+export const Picker: Story = {
+  args: { picker: true },
+  render: inPicker,
+  play: async ({ canvasElement }) => {
+    await expect(toggleOf(canvasElement)).toHaveAttribute('aria-expanded', 'false')
+    await expect(canvasElement.querySelector('[part="popover"]')?.matches(':popover-open')).toBe(
+      false,
+    )
+  },
+}
+
+/** 開いた姿。焦点は選ばれている日に移る（閉じるのは Escape / 外側 = UA に任せる） */
+export const PickerOpen: Story = {
+  args: { picker: true },
+  render: inPicker,
+  play: async ({ canvasElement }) => {
+    await userEvent.click(toggleOf(canvasElement))
+    await waitFor(async () => {
+      await expect(canvasElement.querySelector('rd-calendar')?.matches(':state(open)')).toBe(true)
+    })
+    await expect(canvasElement.querySelector('[data-iso="2026-09-15"]')).toHaveFocus()
+  },
+}
+
+export const PickerDark: Story = { ...PickerOpen, globals: { scheme: 'dark' } }
 
 export const Dark: Story = { globals: { scheme: 'dark' } }
 

@@ -1,5 +1,5 @@
 import { virtual } from '@guidepup/virtual-screen-reader'
-import { afterEach, beforeAll, expect, it } from 'vitest'
+import { afterEach, beforeAll, expect, it, vi } from 'vitest'
 import { cleanupFixtures, fixtureOf } from '../../test/fixture.js'
 import { markup } from './calendar.contract.js'
 // rd-calendar を登録するための副作用 import
@@ -76,4 +76,50 @@ it('月の外の空欄は読み上げに現れない（1 週目は 1 日から 5
   expect(firstWeek).toBe(
     'row, 2026年9月1日火曜日 2026年9月2日水曜日 2026年9月3日木曜日 2026年9月4日金曜日 2026年9月5日土曜日',
   )
+})
+
+/** `picker`（plan 034）。月表は `[popover]` の中なので、開くまで読み上げに現れない */
+const PICKER = markup({
+  id: 'due',
+  label: '期限',
+  name: 'due',
+  today: '2026-09-09',
+  defaultValue: '2026-09-15',
+  picker: true,
+})
+
+const openPicker = async (el: RdCalendar): Promise<void> => {
+  el.querySelector<HTMLElement>('[part="toggle"]')?.click()
+  await vi.waitFor(() => {
+    expect(el.matches(':state(open)')).toBe(true)
+  })
+  await el.updateComplete
+}
+
+it('picker の開くボタンは「暦を開く」という名前の button として読まれる', async () => {
+  const el = await fixtureOf(RdCalendar, PICKER)
+  await virtual.start({ container: el })
+  const spoken = await spokenAll(12)
+  expect(at(spoken, 'button, 暦を開く')).toBeGreaterThanOrEqual(0)
+})
+
+it('lang が日本語でなければ開くボタンの名前は Open calendar', async () => {
+  const el = await fixtureOf(
+    RdCalendar,
+    '<rd-calendar lang="en-US" picker today="2026-09-09"><label for="due">Due</label>'
+      + '<input id="due" name="due" type="date" value="2026-09-15"></rd-calendar>',
+  )
+  await virtual.start({ container: el })
+  const spoken = await spokenAll(12)
+  expect(at(spoken, 'button, Open calendar')).toBeGreaterThanOrEqual(0)
+})
+
+it('開いた月表は <label> の名前を借りた dialog の中に入る', async () => {
+  const el = await fixtureOf(RdCalendar, PICKER)
+  await openPicker(el)
+  const spoken = await readAll(el)
+  const dialog = at(spoken, 'dialog, 期限')
+  const grid = at(spoken, 'grid, 期限')
+  expect(dialog).toBeGreaterThanOrEqual(0)
+  expect(grid).toBeGreaterThan(dialog)
 })

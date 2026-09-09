@@ -53,14 +53,16 @@
     border-color: var(--rd-color-status-danger-default);
   }
 
-  rd-calendar > [part='header'] {
+  /* header と grid は inline（ホスト直下）と picker（[popover] の中）の両方に当たる。
+     `>` に戻さないこと（popover に入れた途端に外れる） */
+  rd-calendar [part='header'] {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--rd-space-2);
   }
 
-  rd-calendar > [part='header'] > [part='title'] {
+  rd-calendar [part='header'] [part='title'] {
     margin: 0;
     font: var(--rd-type-body);
     font-weight: var(--rd-font-weight-bold);
@@ -86,7 +88,7 @@
     cursor: not-allowed;
   }
 
-  rd-calendar > [part='grid'] {
+  rd-calendar [part='grid'] {
     inline-size: 100%;
     border-collapse: separate;
     border-spacing: var(--rd-space-1);
@@ -140,6 +142,81 @@
     outline-offset: var(--rd-focus-ring-offset);
   }
 
+  /* picker: 枠と月表の常設をやめ、<label> / <input> / 開くボタンだけを 2 列に並べる。
+     月表は top layer へ出す（下の [part='popover']） */
+  rd-calendar[picker] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--rd-space-2);
+    align-items: end;
+    inline-size: auto;
+    padding: 0;
+    border-width: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  rd-calendar[picker] > label {
+    grid-column: 1 / -1;
+  }
+
+  rd-calendar[picker] > input {
+    margin-block-end: 0;
+  }
+
+  /* 開くボタン。<input> と同じ高さ・枠・角（44px のタップ標的） */
+  rd-calendar > [part='toggle'] {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--rd-sizing-target-min);
+    block-size: var(--rd-sizing-target-min);
+    padding: 0;
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-surface-raised);
+    color: var(--rd-color-text-default);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  rd-calendar > [part='toggle'] > svg {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+
+  /* 月表の窓（docs/brand.md §7.3）。top layer に出るので fixed。inset を戻さないと UA の
+     中央寄せが残る。**通常状態に display を書かない**——author の @layer が UA の
+     `[popover]:not(:popover-open) { display: none }` に勝って、閉じても見えてしまう（024） */
+  rd-calendar > [part='popover'] {
+    position: fixed;
+    box-sizing: border-box;
+    inset: auto;
+    z-index: var(--rd-layer-overlay);
+    inline-size: max-content;
+    max-inline-size: calc(100vi - var(--rd-space-4));
+    margin: 0;
+    margin-block-start: var(--rd-space-1);
+    padding: var(--rd-space-3);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-radius: var(--rd-radius-lg);
+    background: var(--rd-color-surface-raised);
+    box-shadow: var(--rd-shadow-raised);
+    color: var(--rd-color-text-default);
+  }
+
+  /* anchor positioning は Baseline Newly。無ければ element が top / left を書く
+     （_shared/popover-anchor.ts） */
+  @supports (position-area: block-end) {
+    rd-calendar > [part='popover'] {
+      position-area: block-end span-inline-end;
+      position-try-fallbacks: flip-block;
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     rd-calendar td[data-iso] {
       transition: background-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
@@ -164,6 +241,15 @@
     }
 
     rd-calendar td[aria-current='date'] {
+      border-color: CanvasText;
+    }
+
+    rd-calendar > [part='toggle'] {
+      border-color: ButtonText;
+      color: ButtonText;
+    }
+
+    rd-calendar > [part='popover'] {
       border-color: CanvasText;
     }
   }
