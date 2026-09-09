@@ -162,6 +162,12 @@ export const RdButton = ({
     ])
   })
 
+  it('ネイティブ要素のリテラル数値属性は number で出す（tabIndex="0" は React の型に合わない）', () => {
+    const source = find('note.tsx')
+    expect(source).toContain('<p tabIndex={0}>')
+    expect(source).not.toContain('tabIndex="0"')
+  })
+
   it('ハイフンを含むホスト属性はオブジェクトのキーと JSX 型で引用する', () => {
     const source = find('note.tsx')
     expect(source).toContain(`{...(emptyText === undefined ? {} : { 'empty-text': emptyText })}`)
