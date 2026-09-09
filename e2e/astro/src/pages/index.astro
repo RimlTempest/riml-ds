@@ -17,6 +17,7 @@ import RdSlider from '@rimltempest/riml-ds-astro/experimental/slider.astro'
 import RdSplitter from '@rimltempest/riml-ds-astro/experimental/splitter.astro'
 import RdTabs from '@rimltempest/riml-ds-astro/experimental/tabs.astro'
 import RdToggle from '@rimltempest/riml-ds-astro/experimental/toggle.astro'
+import RdToggleGroup from '@rimltempest/riml-ds-astro/experimental/toggle-group.astro'
 import RdWindow from '@rimltempest/riml-ds-astro/experimental/window.astro'
 ---
 
@@ -140,6 +141,13 @@ import RdWindow from '@rimltempest/riml-ds-astro/experimental/window.astro'
           >
         </RdDataTable>
         <RdToggle label="太字" pressed="false" />
+        <RdToggleGroup label="書式" mode="single"
+          ><button type="button" value="bold" aria-pressed="true">強調</button><button
+            type="button"
+            value="italic"
+            aria-pressed="false">斜体</button
+          ></RdToggleGroup
+        >
         <rd-live-region></rd-live-region>
       </main>
     </div>

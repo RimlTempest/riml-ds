@@ -276,3 +276,22 @@ test('data table: JS 無しの見出しは文字のまま（押せないボタ�
   // 横に溢れる表は部品自身が転がす（WCAG 1.4.10）
   await expect(page.locator('rd-data-table')).toHaveCSS('overflow-x', 'auto')
 })
+
+test('toggle group: JS 無しでは 3 個とも Tab で辿れる（tabindex は JS が付ける）', async ({
+  page,
+}) => {
+  await page.goto('/toggle-group.html')
+  await expect(page.locator("rd-toggle-group [part='options'] > button")).toHaveCount(3)
+  // roving tabindex は JS の仕事。JS 無しでは 1 個も付かない＝全部ネイティブの順で辿れる
+  await expect(page.locator('rd-toggle-group button[tabindex]')).toHaveCount(0)
+})
+
+test('toggle group: JS 無しでも押下状態が markup のまま読める', async ({ page }) => {
+  await page.goto('/toggle-group.html')
+  const group = page.getByRole('group', { name: '書式' })
+  await expect(group.getByRole('button', { name: '太字' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(group.getByRole('button', { name: '斜体' })).toHaveAttribute('aria-pressed', 'false')
+  // JS 無しでは押しても変わらない（ただのボタンの列に縮退する）
+  await group.getByRole('button', { name: '斜体' }).click()
+  await expect(group.getByRole('button', { name: '斜体' })).toHaveAttribute('aria-pressed', 'false')
+})

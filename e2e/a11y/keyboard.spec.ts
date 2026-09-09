@@ -312,3 +312,43 @@ test('data table: Tab で見出しのボタンに届き、Enter で並ぶ', asyn
   // 行を動かすだけなのでフォーカスは見出しに残る
   await expect(button).toBeFocused()
 })
+
+const TOGGLE_GROUP_STORY = 'components-togglegroup--default'
+const TOGGLE_GROUP_SINGLE_STORY = 'components-togglegroup--single'
+
+test('toggle group: single は 2 個目を押すと 1 個目が戻る', async ({ page }) => {
+  await page.goto(storyUrl(TOGGLE_GROUP_SINGLE_STORY))
+  await waitForStoryFinished(page, TOGGLE_GROUP_SINGLE_STORY)
+  const group = page.getByRole('group', { name: '書式' })
+  // story の play が「下線」を押した状態で終わる
+  await expect(group.getByRole('button', { name: '下線' })).toHaveAttribute('aria-pressed', 'true')
+  await group.getByRole('button', { name: '斜体' }).click()
+  await expect(group.getByRole('button', { name: '斜体' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(group.getByRole('button', { name: '下線' })).toHaveAttribute('aria-pressed', 'false')
+})
+
+test('toggle group: 矢印で列の中を移動する（押さない。roving tabindex）', async ({ page }) => {
+  await page.goto(storyUrl(TOGGLE_GROUP_STORY))
+  await waitForStoryFinished(page, TOGGLE_GROUP_STORY)
+  const group = page.getByRole('group', { name: '書式' })
+  const bold = group.getByRole('button', { name: '太字' })
+  await bold.focus()
+  await page.keyboard.press('ArrowRight')
+  await expect(group.getByRole('button', { name: '斜体' })).toBeFocused()
+  // フォーカスを動かすだけで押さない（APG Toolbar）
+  await expect(group.getByRole('button', { name: '斜体' })).toHaveAttribute('aria-pressed', 'true')
+  await page.keyboard.press('End')
+  await expect(group.getByRole('button', { name: '下線' })).toBeFocused()
+  await page.keyboard.press('ArrowRight')
+  await expect(bold).toBeFocused()
+})
+
+test('toggle group: Space で押下が切り替わる（ネイティブの click）', async ({ page }) => {
+  await page.goto(storyUrl(TOGGLE_GROUP_STORY))
+  await waitForStoryFinished(page, TOGGLE_GROUP_STORY)
+  const underline = page.getByRole('group', { name: '書式' }).getByRole('button', { name: '下線' })
+  await underline.focus()
+  await expect(underline).toHaveAttribute('aria-pressed', 'false')
+  await page.keyboard.press('Space')
+  await expect(underline).toHaveAttribute('aria-pressed', 'true')
+})
