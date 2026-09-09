@@ -79,19 +79,27 @@ export const Narrow: Story = {
   },
 }
 
+/** 高さのある入れ物（文字列版）。面の中に入れる内側の splitter に使う */
+const framedMarkup = (markup: string, scale: number): string =>
+  `<div style="block-size: calc(var(--rd-space-16) * ${scale})">${markup}</div>`
+
 /** 横の面の中に縦の splitter を入れる。つまみは面ごとに 1 つずつ独立して動く */
 export const Nested: Story = {
   args: {
     label: '外側（横）',
-    end: splitterMarkup({
-      label: '内側（縦）',
-      direction: 'vertical',
-      start: '<h2>本文</h2><p>上の面。</p>',
-      end: '<h2>下書き</h2><p>下の面。</p>',
-    }),
+    // 面（part=end）に直接入れると内側の host の block-size: 100% が解けず中身の高さになり、
+    // 端数の切り上げだけで「転がるのに焦点が入らない面」になって axe の
+    // scrollable-region-focusable に落ちる（Linux の Chromium で再現）。内側にも高さのある入れ物を与える
+    end: framedMarkup(
+      splitterMarkup({
+        label: '内側（縦）',
+        direction: 'vertical',
+        start: '<h2>本文</h2><p>上の面。</p>',
+        end: '<h2>下書き</h2><p>下の面。</p>',
+      }),
+      6,
+    ),
   },
-  // 内側の面は外側の半分の高さしか無い。h2 + p が溢れると「転がるのに焦点が入らない面」になり
-  // axe の scrollable-region-focusable に落ちる（CI の Linux フォントで再現）ので入れ物を 2 倍にする
   render: (args) => framed(splitterMarkup(args), 8),
   play: async ({ canvasElement }) => {
     await expect(canvasElement.querySelectorAll('rd-splitter')).toHaveLength(2)
