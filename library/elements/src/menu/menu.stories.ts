@@ -57,7 +57,10 @@ export const Closed: Story = {
   },
 }
 
-/** `placement` は `start`（既定）と `end` の 2 通り。インライン方向の揃えだけが変わる */
+/**
+ * `placement` は `start`（既定）と `end` の 2 通り。インライン方向の揃えだけが変わる。
+ * **違いは開かないと見えない**ので、終端側を開いた姿で撮る（閉じた 2 つを並べても比較にならない）。
+ */
 export const Variants: Story = {
   render: (args) =>
     html`<div class="rd-stack" style="min-block-size: 18rem">
@@ -67,12 +70,16 @@ export const Variants: Story = {
       )}
     </div>`,
   play: async ({ canvasElement }) => {
-    await expect(canvasElement.querySelectorAll('rd-menu')).toHaveLength(2)
+    const menus = canvasElement.querySelectorAll('rd-menu')
+    await expect(menus).toHaveLength(2)
+    const trigger = within(canvasElement).getByRole('button', { name: '終端に揃える' })
+    await userEvent.click(trigger)
+    await waitFor(async () => {
+      await expect(menus[1]?.matches(':state(open)')).toBe(true)
+    })
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true')
   },
 }
-
-/** トリガーの終端に揃える。画面の端で溢れそうなときに使う */
-export const Placement: Story = { args: { placement: 'end' }, play: openMenu }
 
 /** 押せない項目は `aria-disabled`。**フォーカスは残す**（見つけられない項目を作らない） */
 export const Disabled: Story = {
