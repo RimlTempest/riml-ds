@@ -83,7 +83,7 @@
 | 031 | [rd-toggle-group（`<fieldset>` + `<button aria-pressed>` の列。単一／複数選択と roving focus）](031-toggle-group.md) | P1 | M | 024 | DONE（c138e37） |
 | 032 | [rd-carousel（`<ul><li>` を包み「前へ／次へ」と枚数を足す。scroll-snap + IntersectionObserver）](032-carousel.md) | P2 | M | 020 | TODO |
 | 033 | [rd-calendar（`<label>` + `<input type="date">` を包み、JS で light DOM に `role="grid"` の月表を描くティア A）](033-calendar.md) | P1 | L | 023 | TODO |
-| 035 | [小さな追随 2（command の空表示幅・splitter の溢れた面に tabindex・menu の Variants story・.rd-table th の nowrap・splitter proposal の入れ子メモ）](035-small-follow-ups-2.md) | P2 | S | 028, 030 | TODO |
+| 035 | [小さな追随 2（command の空表示幅・splitter の溢れた面に tabindex・menu の Variants story・.rd-table th の nowrap・splitter proposal の入れ子メモ）](035-small-follow-ups-2.md) | P2 | S | 028, 030 | DONE（fb263a7） |
 | 036 | [rd-number-field（`<input type=number>` を包む。− / + の 44px ボタンと刻みの丸め）](036-number-field.md) | P1 | M | 004, 009, 019 | TODO |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
@@ -398,4 +398,12 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - 計画からの逸脱（すべて受け入れ）: `generated/index.ts` の grep は生成器の仕様（experimental は `experimental.ts` に出る）で満たせない → `experimental.ts` で確認、element 150 行を守るため `toggle-group.dom.ts`（103 行）へ描画と MutationObserver を出した、frameworks e2e の項目名を「太字」→「強調」（既存の `rd-toggle` suite と strict-mode で衝突するため）
 - 検証（main マージ後の worktree）: check 0、test 1597 passed / 1 skipped（169 files）、guard 0（main を push した後。**規則 14 は `origin/main` と比べる**ので、未 push の main コミットが混ざると「別レーン所有」と出る）、vrt 1367（新規 46、既存の変更 0）、pe 91、e2e:frameworks 178、a11y 43、release:check 0。main 側: build/gen 0、guard 0
 - 宿題（advisor）: 見た目は `rd-checkbox-group:state(segmented)` と重複している。**3 つ目が出たら `patterns.css` の `.rd-segmented` に寄せる**（proposal 保守メモ）
+
+### 035 の実行メモ（2026-09-09）
+
+- `chore/follow-ups-035` を `fb263a7` で `--no-ff` マージ（executor 6 コミット `cc12fe9`〜`59c8645` + reviewer の `0b871e5 test(vrt)` と merge コミット 2 つ）。032・033 と並行
+- 中身: `rd-command` の空表示が候補リストの幅を保つ（`command.css`）、`rd-splitter` の**溢れた面に `tabindex="0"` と焦点環**（axe `scrollable-region-focusable`。`splitter.dom.ts` の `ResizeObserver` が溢れている面にだけ付け、溢れていなければ外す）、`menu.stories.ts` の Variants を play 付きに、`.rd-table th { white-space: nowrap }`（短い見出しが 2 行になると行の高さが揃わない）、`docs/proposals/splitter.md` に入れ子のメモ
+- executor は計画の欠陥 2 つで正しく STOP（レーンが `command.test.ts` を所有していない／`#dispose` フィールドで `custom-elements.json` が必ず変わるのに計画が禁じていた）→ advisor が `2eee32c` で `scripts/lanes.tsv` と計画を直して再投入。その後 API 制限（HTTP 429）で executor が落ちたため、**VRT の撮り直しと残りのゲートは advisor が引き取った**
+- VRT: 新規 4 枚（`components-splitter--overflow` × 4 プロジェクト）、**意図した更新 24 枚**（`.rd-table th` の nowrap で `components-datatable--*` の 360px が 20 枚、play を足した `components-menu--variants` が 4 枚）。差分画像を目視して「サイズ」の折り返しが消えたことだけを確認した
+- 検証（main マージ後の worktree）: check 0、test 1602 passed / 1 skipped、guard 0、vrt 0（差分なし）、pe 91、e2e:frameworks 178、a11y 43、release:check 0。main 側: build/gen 0、guard 0
 
