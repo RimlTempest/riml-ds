@@ -81,7 +81,7 @@
 | 029 | [rd-data-table（`<table class="rd-table">` を包み `th[data-sort]` でクライアント並べ替え）](029-data-table-sort.md) | P1 | M | 022 | DONE（`1bff5b7`） |
 | 030 | [rd-splitter（`role="separator"` のハンドルで 2 面をドラッグ・キーボードで分割するティア B）](030-splitter.md) | P2 | M | 020 | DONE（`855b4d2`） |
 | 031 | [rd-toggle-group（`<fieldset>` + `<button aria-pressed>` の列。単一／複数選択と roving focus）](031-toggle-group.md) | P1 | M | 024 | DONE（c138e37） |
-| 032 | [rd-carousel（`<ul><li>` を包み「前へ／次へ」と枚数を足す。scroll-snap + IntersectionObserver）](032-carousel.md) | P2 | M | 020 | TODO |
+| 032 | [rd-carousel（`<ul><li>` を包み「前へ／次へ」と枚数を足す。scroll-snap + IntersectionObserver）](032-carousel.md) | P2 | M | 020 | DONE（3318c57） |
 | 033 | [rd-calendar（`<label>` + `<input type="date">` を包み、JS で light DOM に `role="grid"` の月表を描くティア A）](033-calendar.md) | P1 | L | 023 | TODO |
 | 035 | [小さな追随 2（command の空表示幅・splitter の溢れた面に tabindex・menu の Variants story・.rd-table th の nowrap・splitter proposal の入れ子メモ）](035-small-follow-ups-2.md) | P2 | S | 028, 030 | DONE（fb263a7） |
 | 036 | [rd-number-field（`<input type=number>` を包む。− / + の 44px ボタンと刻みの丸め）](036-number-field.md) | P1 | M | 004, 009, 019 | TODO |
@@ -406,4 +406,13 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - executor は計画の欠陥 2 つで正しく STOP（レーンが `command.test.ts` を所有していない／`#dispose` フィールドで `custom-elements.json` が必ず変わるのに計画が禁じていた）→ advisor が `2eee32c` で `scripts/lanes.tsv` と計画を直して再投入。その後 API 制限（HTTP 429）で executor が落ちたため、**VRT の撮り直しと残りのゲートは advisor が引き取った**
 - VRT: 新規 4 枚（`components-splitter--overflow` × 4 プロジェクト）、**意図した更新 24 枚**（`.rd-table th` の nowrap で `components-datatable--*` の 360px が 20 枚、play を足した `components-menu--variants` が 4 枚）。差分画像を目視して「サイズ」の折り返しが消えたことだけを確認した
 - 検証（main マージ後の worktree）: check 0、test 1602 passed / 1 skipped、guard 0、vrt 0（差分なし）、pe 91、e2e:frameworks 178、a11y 43、release:check 0。main 側: build/gen 0、guard 0
+
+### 032 の実行メモ（2026-09-10）
+
+- `feat/carousel` を `3318c57` で `--no-ff` マージ（executor 4 コミット `b2aea81`〜`a4fe67e` + reviewer が引き取った Step 4・5 のコミット 2 つ + merge コミット 3 つ）。031・033・035 と並行
+- `rd-carousel`（experimental、ティア A、light DOM）: 利用側が書いた `<ul tabindex="0"><li>` を包み、**JS が無ければ `.rd-carousel` の atom と同じ横スクロールの列**のまま。定義されると前へ／次へのボタンと `<output part="counter">`「n / N」が末尾に付き、各 `<li>` に `aria-roledescription="slide"` と `aria-label="n / N"` が付く（`role` は書かない — axe `list` / `aria-allowed-role`）。列の役割と名前は `ElementInternals`（`role="group"` / `ariaRoleDescription="carousel"`）が持つ
+- 見えている枚は `IntersectionObserver`（root は `<ul>`、threshold `[0.5, 1]`）で決める（`scrollend` は Safari 26.2 以降、`scrollsnapchange` は Chromium だけ）。**自動再生は作らない**（WCAG 2.2.2 / AAA 2.3.3・3.2.5。`docs/proposals/carousel.md`）。`loop` が無ければ端でボタンが `aria-disabled`（`disabled` にはしない）。`carousel/define` 6.81 kB / 12 kB
+- 計画からの逸脱（すべて受け入れ）: `firstUpdated` ではなく `willUpdate` + `hasUpdated` ガードで契約検査（初回描画から操作が出る）、`dom.ts` のヘルパー名（`readTrack` / `labelSlides` / `watchVisible` / `syncButtons` / `controlsTemplate`）が計画の名前と一部違う
+- executor は API 制限（HTTP 429）で Step 3 の直後に落ちたため、**Step 4（VRT 40 枚）と Step 5（proposal + changeset）のコミット、main の取り込み、全ゲートは advisor が引き取った**
+- 検証（main マージ後の worktree）: check 0、test 1653 passed / 1 skipped、guard 0、vrt 0（新規 40 枚、既存の変更 0）、pe 95、e2e:frameworks 190、a11y 46、release:check 0。main 側: build/gen 0、guard 0
 
