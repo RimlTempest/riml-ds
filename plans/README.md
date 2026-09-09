@@ -85,7 +85,7 @@
 | 033 | [rd-calendar（`<label>` + `<input type="date">` を包み、JS で light DOM に `role="grid"` の月表を描くティア A）](033-calendar.md) | P1 | L | 023 | DONE（41acedc） |
 | 034 | [rd-calendar の `picker`（月表を `[popover]` に入れ、44px のボタン 1 つで開く Date Picker）](034-date-picker.md) | P1 | M | 033, 022, 027 | TODO |
 | 035 | [小さな追随 2（command の空表示幅・splitter の溢れた面に tabindex・menu の Variants story・.rd-table th の nowrap・splitter proposal の入れ子メモ）](035-small-follow-ups-2.md) | P2 | S | 028, 030 | DONE（fb263a7） |
-| 036 | [rd-number-field（`<input type=number>` を包む。− / + の 44px ボタンと刻みの丸め）](036-number-field.md) | P1 | M | 004, 009, 019 | TODO |
+| 036 | [rd-number-field（`<input type=number>` を包む。− / + の 44px ボタンと刻みの丸め）](036-number-field.md) | P1 | M | 004, 009, 019 | DONE（688317c） |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
@@ -426,4 +426,14 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - reviewer が直したもの: ①選択日の文字色が `--rd-color-accent-text`（リンク色。`accent-default` と同じ値）だったので `--rd-color-text-on-accent` に（`224b2d8`）②main 取り込み後の `markup.test.tsx` の重複 import（`5630e7a`）③`<td role="gridcell">` は `<table role="grid">` の中では暗黙の役割なので削除（`6ac862d`。**CI の `lint:html` は `bun run check` に入っていない**ので、マージ前に `bun run render && bun run lint:html` を回して見つけた。032 の `<li>` に `role` を書かない判断と同じ）
 - 検証（main マージ後の worktree）: check 0、test 1736 passed / 1 skipped、guard 0、vrt 0（新規 46、既存の変更 0）、pe 98、e2e:frameworks 206、a11y 50、lint:html 0、release:check 0。main 側: build/gen 0、guard 0
 - 宿題（advisor）: 034（Date Picker）はこの部品に `picker` 属性を足し、header + grid を `[popover]` に入れる形で作る（`docs/proposals/calendar.md`「034 への道筋」）
+
+### 036 の実行メモ（2026-09-10）
+
+- `feat/number-field` を `688317c` で `--no-ff` マージ（executor 5 コミット `b814962`〜`c73b8d4`。main の取り込みは不要だった）。034 と並行。90 ファイル（新規スクリーンショット 50）
+- `rd-number-field`（experimental、ティア A、light DOM）: `<label for>` + `<input type="number">` を包み、**44px の − / + と刻みの丸め**だけを足す。値・範囲・送信・検証・↑↓ はネイティブのままなので、JS が無ければ「ボタンの無い普通の数値入力」に縮退する
+- 刻みは純関数（`stepValue`）が決める。**ネイティブの `stepUp()` を呼ばない**（`step="any"` で例外／空欄からの開始値がブラウザ依存／浮動小数の誤差が値に残る）。空欄は 0 から刻んで `min` / `max` で clamp し、`step` と現在値の桁数の大きい方で丸めるので `0.2 + 0.1` は `0.3`。格子に寄せる補正はせず、ずれは `stepMismatch` の文言に任せる
+- − / + は `tabindex="-1"`（キーボードは入力欄の ↑↓。APG Spinbutton / react-aria と同じ）。押しても `focus()` しない。**独自イベントを出さず** `<input>` から `input` → `change` を上げる。`number-field/define` 7.64 kB / 12 kB
+- 計画からの逸脱（すべて受け入れ）: 150 行を守るため `attach` / `viewOf` も `number-field.dom.ts` へ（`rd-calendar` と同じ形）、`firstUpdated` ではなく `willUpdate`（Lit の change-in-update 警告）、強制配色の枠は longhand、`:active` は影ではなく沈んだ面（stylelint のトークン規則）、4 FW の e2e は echo ではなく `<input>` に直接リスナ
+- 検証（reviewer 再走）: check 0、test 1789 passed / 1 skipped、guard 0、vrt 0（新規 50、既存の変更 0）、pe 101、e2e:frameworks 218、a11y 53、lint:html 0、release:check 0。main 側: build/gen 0、guard 0
+- 宿題（advisor）: 長押しの連続刻みと `unit` は**入れていない**（proposal「決めたこと」）。要望が出たら時計の注入から設計する
 
