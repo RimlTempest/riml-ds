@@ -709,6 +709,16 @@ const CALENDAR = {
   today: '2026-09-09',
 } as const
 
+/** `picker`（plan 034）。同じ暦を「1 行に収める」形。月表は [popover] の中で、ボタン 1 つで開く */
+const CALENDAR_PICKER = {
+  id: 'deadline',
+  label: '締め切り',
+  name: 'deadline',
+  defaultValue: '2026-09-15',
+  today: '2026-09-09',
+  picker: true,
+} as const
+
 /**
  * `rd-calendar`（plan 033）。`<label for>` と `<input type="date">` は利用側（＝各フレームワークの
  * アプリ）が書き、部品は月表を light DOM の末尾に足すだけ。JS が無ければ入力欄がそのまま働く。
@@ -725,26 +735,49 @@ export const calendarSuite = (framework: string): void => {
 
       test('JS 無しでは <input type="date"> だけが出る（月表は強化ノード）', async ({ page }) => {
         await page.goto('/')
-        await expect(page.locator('rd-calendar > input')).toHaveValue('2026-09-15')
+        await expect(page.locator('rd-calendar > input').first()).toHaveValue('2026-09-15')
         await expect(page.locator("rd-calendar [part='grid']")).toHaveCount(0)
+      })
+
+      test('picker も JS 無しでは <input type="date"> だけ（開くボタンは強化ノード）', async ({
+        page,
+      }) => {
+        await page.goto('/')
+        // ホストの真偽属性の書き出し方はラッパーごとに違う（react は `picker=""`、
+        // vue / svelte / astro は `picker="true"`）。どちらも `[picker]` に当たるので、
+        // ここは属性の**存在**と縮退した姿だけを見る（`compareMarkup` の全文一致は使わない）
+        const control = page.getByLabel(CALENDAR_PICKER.label)
+        await expect(control).toHaveValue(CALENDAR_PICKER.defaultValue)
+        await expect(control).toHaveAttribute('type', 'date')
+        await expect(page.locator("rd-calendar[picker] [part='toggle']")).toHaveCount(0)
+        await expect(page.locator("rd-calendar[picker] [part='popover']")).toHaveCount(0)
       })
     })
 
     test('月表は <label> の名前を借りた grid になる', async ({ page }) => {
       await page.goto('/')
       await expect(page.getByRole('grid', { name: '期限' })).toBeVisible()
-      await expect(page.locator("rd-calendar [part='title']")).toHaveText('2026年9月')
+      await expect(page.locator("rd-calendar:not([picker]) [part='title']")).toHaveText('2026年9月')
     })
 
     test('日を押すと <input> の値が変わる（値の真実は <input>）', async ({ page }) => {
       await page.goto('/')
-      await page.locator('rd-calendar [data-iso="2026-09-20"]').click()
+      await page.locator('rd-calendar:not([picker]) [data-iso="2026-09-20"]').click()
       // `getByLabel` は <input> と grid の両方に当たる（同じ <label> が名前を付ける）
-      await expect(page.locator('rd-calendar > input')).toHaveValue('2026-09-20')
-      await expect(page.locator('rd-calendar [data-iso="2026-09-20"]')).toHaveAttribute(
-        'aria-selected',
-        'true',
-      )
+      await expect(page.locator('rd-calendar:not([picker]) > input')).toHaveValue('2026-09-20')
+      await expect(
+        page.locator('rd-calendar:not([picker]) [data-iso="2026-09-20"]'),
+      ).toHaveAttribute('aria-selected', 'true')
+    })
+
+    test('picker は開くボタンで月表が開き、日を押すと閉じて <input> が変わる', async ({ page }) => {
+      await page.goto('/')
+      const popover = page.locator("rd-calendar[picker] [part='popover']")
+      await page.locator("rd-calendar[picker] [part='toggle']").click()
+      await expect(popover).toBeVisible()
+      await page.locator('rd-calendar[picker] [data-iso="2026-09-20"]').click()
+      await expect(page.locator('rd-calendar[picker] > input')).toHaveValue('2026-09-20')
+      await expect(popover).toBeHidden()
     })
   })
 }

@@ -364,6 +364,61 @@ test('calendar: Enter で <input> の値が選んだ日になる', async ({ page
 })
 
 /**
+ * `rd-calendar picker`（plan 034）。開くのは `popovertarget`（UA）、Escape と light dismiss も UA。
+ * 閉じたあとのフォーカス復帰も UA の hide popover algorithm に任せている（部品は `focus()` を呼ばない）。
+ */
+const PICKER_STORY = 'components-calendar--picker'
+
+const openPicker = async (page: Page): Promise<void> => {
+  await page.goto(storyUrl(PICKER_STORY))
+  await waitForStoryFinished(page, PICKER_STORY)
+  await page.getByRole('button', { name: '暦を開く' }).click()
+  await expect
+    .poll(async () =>
+      page.locator('rd-calendar').evaluate((element) => element.matches(':state(open)')),
+    )
+    .toBe(true)
+}
+
+test('date-picker: Tab で開くボタンに届き、Enter で開くと焦点が選ばれている日に移る', async ({
+  page,
+}) => {
+  await page.goto(storyUrl(PICKER_STORY))
+  await waitForStoryFinished(page, PICKER_STORY)
+  await page.locator('rd-calendar > input').focus()
+  // 日付欄は年・月・日の内部フィールドを持つので、Tab の回数はブラウザに任せる
+  await expect
+    .poll(async () => {
+      await page.keyboard.press('Tab')
+      return page.evaluate(() => document.activeElement?.getAttribute('part') ?? '')
+    })
+    .toBe('toggle')
+  await page.keyboard.press('Enter')
+  await expect(page.locator("rd-calendar [part='popover']")).toBeVisible()
+  await expect(page.locator('rd-calendar [data-iso="2026-09-15"]')).toBeFocused()
+})
+
+test('date-picker: 開いた月表で日を選ぶと閉じ、フォーカスが開くボタンに戻る（UA の復帰）', async ({
+  page,
+}) => {
+  await openPicker(page)
+  await page.keyboard.press('ArrowRight')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('rd-calendar > input')).toHaveValue('2026-09-16')
+  await expect(page.locator("rd-calendar [part='popover']")).toBeHidden()
+  await expect(page.getByRole('button', { name: '暦を開く' })).toBeFocused()
+})
+
+test('date-picker: Escape で閉じ、フォーカスが開くボタンに戻る（ネイティブの light dismiss）', async ({
+  page,
+}) => {
+  await openPicker(page)
+  await page.keyboard.press('Escape')
+  await expect(page.locator("rd-calendar [part='popover']")).toBeHidden()
+  await expect(page.getByRole('button', { name: '暦を開く' })).toBeFocused()
+})
+
+/**
  * `rd-carousel`（plan 032）。前へ／次へと「n / N」は **JS があるときだけ**足される強化ノードなので、
  * ここ（Storybook）で見る。転がる箱そのものは `<ul tabindex="0">` として契約が持っているので、
  * `e2e/pe` の JS 無しの回でも Tab で届く。

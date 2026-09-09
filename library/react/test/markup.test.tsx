@@ -183,6 +183,31 @@ describe('既定 export の部品', () => {
     expect(normalize(rendered)).toContain('min="2026-09-05"')
   })
 
+  it('RdCalendar の picker は真偽 prop（月表を [popover] に入れる Date Picker）', () => {
+    const rendered = renderToString(
+      <RdCalendar
+        id="deadline"
+        label="締め切り"
+        name="deadline"
+        today="2026-09-09"
+        defaultValue="2026-09-15"
+        picker
+      />,
+    )
+    expect(normalize(rendered)).toBe(
+      normalize(
+        calendarMarkup({
+          id: 'deadline',
+          label: '締め切り',
+          name: 'deadline',
+          today: '2026-09-09',
+          defaultValue: '2026-09-15',
+          picker: true,
+        }),
+      ),
+    )
+  })
+
   it('RdCarousel の renderToString が carouselMarkup と同じ HTML になる（枚は children で渡す）', () => {
     const rendered = renderToString(
       <RdCarousel label="おすすめ" loop>

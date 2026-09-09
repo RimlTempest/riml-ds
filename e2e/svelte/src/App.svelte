@@ -131,6 +131,14 @@
       >{/snippet}
   </RdDataTable>
   <RdCalendar id="due" label="期限" name="due" defaultValue="2026-09-15" today="2026-09-09" />
+  <RdCalendar
+    id="deadline"
+    label="締め切り"
+    name="deadline"
+    defaultValue="2026-09-15"
+    today="2026-09-09"
+    picker
+  />
   <RdCarousel label="おすすめ">
     <li><p>秋の便り</p></li>
     <li><p>冬の支度</p></li>

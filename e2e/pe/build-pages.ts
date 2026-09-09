@@ -609,6 +609,25 @@ const PAGES: Readonly<Record<string, string>> = {
   ),
 
   /**
+   * ティア A、`picker`（plan 034）。JS が無ければ **`<input type="date">` だけの普通の入力欄**
+   * （OS のピッカーが出る）。開くボタンも `[popover]` も JS が足す強化ノードなので 1 つも出ない。
+   */
+  'date-picker.html': page(
+    '締め切りを選ぶ',
+    `      <form method="get" action="/echo.html">
+        ${calendarMarkup({
+          id: 'deadline',
+          label: '締め切り',
+          name: 'deadline',
+          defaultValue: '2026-09-15',
+          today: '2026-09-09',
+          picker: true,
+        })}
+        ${submit}
+      </form>`,
+  ),
+
+  /**
    * ティア A。JS が来る前は `.rd-carousel` の atom と同じ「横に転がる列」で、
    * `<ul tabindex="0">` があるからキーボードでも中身を読める（axe scrollable-region-focusable）。
    * 前へ／次へと「n / N」は強化ノードなので、ここには 1 つも現れない。

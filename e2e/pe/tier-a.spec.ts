@@ -304,6 +304,29 @@ test('calendar: JS 無しでは月表が出ない（強化ノードは JS が足
 })
 
 /**
+ * `rd-calendar picker`（plan 034）。JS 無しでは月表も開くボタンも出ず、`<input type="date">` が
+ * そのまま入力欄になる（OS のピッカー）。枠も無い——`rd-calendar[picker]` は 1 行に収まる。
+ */
+test('date-picker: JS 無しでは <input type="date"> だけが残る（強化ノードは 0 個）', async ({
+  page,
+}) => {
+  await page.goto('/date-picker.html')
+  const control = page.getByLabel('締め切り')
+  await expect(control).toBeVisible()
+  await expect(control).toHaveAttribute('type', 'date')
+  await expect(page.locator("rd-calendar [part='toggle']")).toHaveCount(0)
+  await expect(page.locator("rd-calendar [part='popover']")).toHaveCount(0)
+  await page.getByRole('button', { name: '送信' }).click()
+  await expect(page).toHaveURL(/deadline=2026-09-15/u)
+})
+
+test('date-picker: JS 無しでも枠を出さない（月表が無いので囲う理由が無い）', async ({ page }) => {
+  await page.goto('/date-picker.html')
+  await expect(page.locator('rd-calendar[picker]')).toHaveCSS('border-top-width', '0px')
+  await expect(page.locator('rd-calendar[picker] > input')).toHaveCSS('min-block-size', '44px')
+})
+
+/**
  * `rd-carousel`（plan 032）。JS が来る前は `.rd-carousel` の atom と同じ横に転がる列で、
  * 契約が持つ `<ul tabindex="0">` のおかげでキーボードだけでも中身を辿れる。
  */

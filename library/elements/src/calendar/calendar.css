@@ -212,7 +212,7 @@
      （_shared/popover-anchor.ts） */
   @supports (position-area: block-end) {
     rd-calendar > [part='popover'] {
-      position-area: block-end span-inline-end;
+      position-area: block-end span-inline-start;
       position-try-fallbacks: flip-block;
     }
   }
