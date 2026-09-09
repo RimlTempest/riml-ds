@@ -53,6 +53,7 @@ describe('listElements', () => {
     // rd-live-region だけは core が空タグに落とす（skills 側の説明が別にある）
     expect(Object.keys(elementExamples).toSorted()).toEqual([
       'rd-button',
+      'rd-calendar',
       'rd-checkbox',
       'rd-checkbox-group',
       'rd-combobox',

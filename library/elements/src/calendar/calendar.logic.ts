@@ -2,11 +2,11 @@
  * `rd-calendar` の純関数。DOM を触らない。`*.element.ts` はここを呼ぶだけ（ADR-0005）。
  *
  * 日付は `YYYY-MM-DD` の文字列（`IsoDate`）か `{ year, month }` で持ち、`Date` は
- * **`Date.UTC` の往復にだけ**使う。ローカル時刻の `Date`（`new Date(2026, 8, 9)` /
- * `new Date('2026-09-09T00:00')`）は実行環境のタイムゾーンで日がずれるので作らない。
+ * **`Date.UTC` の往復にだけ**使う。ローカル時刻で年月日から作る `Date`（引数が数値のもの、
+ * 時刻付きの文字列）は実行環境のタイムゾーンで日がずれるので作らない。
  *
- * `Temporal` は Safari に無く、`Intl.Locale.prototype.getWeekInfo` は TS 7 の lib にも
- * Firefox にも無いので、どちらも使わない（週の始まりは `week-start` 属性で受ける）。
+ * 新しい日付 API は Safari に無く、週の始まりを返す `Intl` の拡張は TS 7 の lib にも
+ * Firefox にも無いので、どちらも使わない（週の始まりは `week-start` 属性で受ける。docs/baseline.md）。
  */
 
 /** `YYYY-MM-DD`。実在する日かどうかは `parseIsoDate` が確かめる */
@@ -155,6 +155,9 @@ export type CalendarView = {
   readonly focused: IsoDate
   readonly selected: IsoDate | undefined
   readonly today: IsoDate
+  /** 選べる範囲（`<input min max>` そのまま）。升目ごとの `aria-disabled` はここから決まる */
+  readonly min: IsoDate | undefined
+  readonly max: IsoDate | undefined
   readonly states: ReadonlySet<string>
 }
 
@@ -184,6 +187,8 @@ export const computeView = (input: CalendarViewInput): CalendarView => ({
   focused: input.focused,
   selected: input.selected,
   today: input.today,
+  min: input.min,
+  max: input.max,
   states: input.malformed
     ? new Set(['malformed'])
     : new Set([input.selected === undefined ? 'empty' : 'selected', ...navStates(input)]),
@@ -225,3 +230,61 @@ export type NavCopy = { readonly prev: string; readonly next: string }
 
 export const navCopy = (japanese: boolean): NavCopy =>
   japanese ? { prev: '前の月', next: '次の月' } : { prev: 'Previous month', next: 'Next month' }
+
+/**
+ * 押されたキー・クリックから「何をするか」だけを決める（DOM を触らない）。
+ * `*.element.ts` を薄く保つための表——分岐はここに集める（`command.logic.ts` の `decideKey` と同じ形）。
+ */
+export type CalendarAction =
+  | { readonly kind: 'none' }
+  | { readonly kind: 'select'; readonly iso: IsoDate }
+  /** `focus` は「描き直したあとに升目へフォーカスを戻すか」（キー操作だけ true） */
+  | { readonly kind: 'move'; readonly iso: IsoDate; readonly focus: boolean }
+
+const NONE: CalendarAction = { kind: 'none' }
+
+export type KeyInput = {
+  /** キーを受けた升目の日。`<input>` や枠の上で押されたなら `undefined`（何もしない） */
+  readonly cell: IsoDate | undefined
+  readonly focused: IsoDate
+  readonly key: string
+  readonly shift: boolean
+  readonly weekStart: number
+}
+
+export const decideKey = (input: KeyInput): CalendarAction => {
+  const commits = input.key === 'Enter' || input.key === ' '
+  const next = moveDate(input.focused, input.key, input.shift, input.weekStart)
+  if (input.cell === undefined) {
+    return NONE
+  }
+  if (commits) {
+    return { kind: 'select', iso: input.focused }
+  }
+  return next === undefined ? NONE : { kind: 'move', iso: next, focus: true }
+}
+
+export type ClickInput = {
+  readonly cell: IsoDate | undefined
+  /** 前の月なら -1、次の月なら 1。どちらでもなければ `undefined` */
+  readonly nav: number | undefined
+  readonly month: YearMonth
+  readonly focused: IsoDate
+  readonly states: ReadonlySet<string>
+}
+
+/**
+ * 升目を押したら選ぶ。前後の月ボタンを押したら表示月を送る（同じ日が無ければ末日に寄せる）。
+ * 行き止まり（`at-min` / `at-max`）の向きへは動かさない——ボタンは `aria-disabled` で見えている。
+ */
+export const decideClick = (input: ClickInput): CalendarAction => {
+  const blocked = input.states.has((input.nav ?? 0) < 0 ? 'at-min' : 'at-max')
+  if (input.cell !== undefined) {
+    return { kind: 'select', iso: input.cell }
+  }
+  if (input.nav === undefined || blocked) {
+    return NONE
+  }
+  const month = addMonths(input.month, input.nav)
+  return { kind: 'move', iso: sameDayIn(input.focused, month), focus: false }
+}

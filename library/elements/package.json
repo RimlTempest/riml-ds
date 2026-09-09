@@ -77,6 +77,19 @@
       "default": "./dist/select/select.define.js"
     },
     "./experimental/select/style.css": "./dist/select/select.css",
+    "./experimental/calendar": {
+      "types": "./dist/experimental/calendar/index.d.ts",
+      "default": "./dist/experimental/calendar/index.js"
+    },
+    "./experimental/calendar/contract": {
+      "types": "./dist/calendar/calendar.contract.d.ts",
+      "default": "./dist/calendar/calendar.contract.js"
+    },
+    "./experimental/calendar/define": {
+      "types": "./dist/calendar/calendar.define.d.ts",
+      "default": "./dist/calendar/calendar.define.js"
+    },
+    "./experimental/calendar/style.css": "./dist/calendar/calendar.css",
     "./experimental/checkbox": {
       "types": "./dist/experimental/checkbox/index.d.ts",
       "default": "./dist/experimental/checkbox/index.js"

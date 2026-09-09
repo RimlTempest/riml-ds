@@ -6,6 +6,8 @@ import {
   clampToRange,
   computeView,
   daysInMonth,
+  decideClick,
+  decideKey,
   formatIsoDate,
   inRange,
   monthGrid,
@@ -219,6 +221,12 @@ describe('computeView', () => {
     expect(view.selected).toBe('2026-09-15')
     expect(view.today).toBe('2026-09-09')
   })
+
+  it('選べる範囲をそのまま持つ（升目ごとの aria-disabled を描く側が読む）', () => {
+    const view = computeView({ ...base, min: '2026-09-05', max: '2026-09-25' })
+    expect(view.min).toBe('2026-09-05')
+    expect(view.max).toBe('2026-09-25')
+  })
 })
 
 describe('表示用の名前（すべて UTC）', () => {
@@ -261,5 +269,82 @@ describe('表示用の名前（すべて UTC）', () => {
   it('前後の月の文言は日本語と英語の 2 つ', () => {
     expect(navCopy(true)).toEqual({ prev: '前の月', next: '次の月' })
     expect(navCopy(false)).toEqual({ prev: 'Previous month', next: 'Next month' })
+  })
+})
+
+describe('decideKey', () => {
+  const base = { cell: '2026-09-15', focused: '2026-09-15', shift: false, weekStart: 0 } as const
+
+  it('升目の上でなければ何もしない（<input> の矢印はネイティブに任せる）', () => {
+    expect(decideKey({ ...base, cell: undefined, key: 'ArrowRight' })).toEqual({ kind: 'none' })
+  })
+
+  it('Enter と Space は焦点のある日を選ぶ', () => {
+    expect(decideKey({ ...base, key: 'Enter' })).toEqual({ kind: 'select', iso: '2026-09-15' })
+    expect(decideKey({ ...base, key: ' ' })).toEqual({ kind: 'select', iso: '2026-09-15' })
+  })
+
+  it('矢印・PageDown は焦点を動かし、描き直したあとに升目へ戻す', () => {
+    expect(decideKey({ ...base, key: 'ArrowRight' })).toEqual({
+      kind: 'move',
+      iso: '2026-09-16',
+      focus: true,
+    })
+    expect(decideKey({ ...base, key: 'PageDown' })).toEqual({
+      kind: 'move',
+      iso: '2026-10-15',
+      focus: true,
+    })
+  })
+
+  it('扱わないキーは何もしない', () => {
+    expect(decideKey({ ...base, key: 'a' })).toEqual({ kind: 'none' })
+  })
+})
+
+describe('decideClick', () => {
+  const base = {
+    cell: undefined,
+    nav: undefined,
+    month: { year: 2026, month: 9 },
+    focused: '2026-09-15',
+    states: new Set<string>(),
+  } as const
+
+  it('升目を押したら選ぶ', () => {
+    expect(decideClick({ ...base, cell: '2026-09-20' })).toEqual({
+      kind: 'select',
+      iso: '2026-09-20',
+    })
+  })
+
+  it('前後の月ボタンを押したら表示月を送る（フォーカスは動かさない）', () => {
+    expect(decideClick({ ...base, nav: 1 })).toEqual({
+      kind: 'move',
+      iso: '2026-10-15',
+      focus: false,
+    })
+    expect(decideClick({ ...base, nav: -1 })).toEqual({
+      kind: 'move',
+      iso: '2026-08-15',
+      focus: false,
+    })
+  })
+
+  it('末日の無い月へ送るときは末日に寄せる', () => {
+    expect(decideClick({ ...base, nav: -7, focused: '2026-09-30' })).toEqual({
+      kind: 'move',
+      iso: '2026-02-28',
+      focus: false,
+    })
+  })
+
+  it('行き止まりの向きへは動かさない', () => {
+    expect(decideClick({ ...base, nav: -1, states: new Set(['at-min']) })).toEqual({ kind: 'none' })
+    expect(decideClick({ ...base, nav: 1, states: new Set(['at-max']) })).toEqual({ kind: 'none' })
+  })
+
+  it('どちらでもなければ何もしない', () => {
+    expect(decideClick(base)).toEqual({ kind: 'none' })
   })
 })

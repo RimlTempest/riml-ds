@@ -1,21 +1,46 @@
 @layer rd.components {
+  /* 月表も light DOM にあるので、JS が無いときは <label> + <input> だけがこの枠の中に残る */
   rd-calendar {
     display: block;
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    padding: var(--rd-space-3);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-radius: var(--rd-radius-lg);
+    background: var(--rd-color-surface-raised);
+    color: var(--rd-color-text-default);
+    overflow-x: auto;
   }
 
-  /* TODO: セレクタは `rd-calendar > <native>` の 1 段に留める（利用側のクラスを仮定しない） */
+  rd-calendar[hidden] {
+    display: none;
+  }
+
+  /* ラベルは太字のインク（docs/brand.md §7.3。rd-text-field と同じ宣言） */
+  rd-calendar > label {
+    display: block;
+    margin-block-end: var(--rd-space-1);
+    color: var(--rd-color-text-default);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
   rd-calendar > input {
     display: block;
+    inline-size: 100%;
     min-block-size: var(--rd-sizing-target-min);
+    margin-block-end: var(--rd-space-3);
     padding-block: var(--rd-space-2);
     padding-inline: var(--rd-space-3);
     border-width: var(--rd-border-width-default);
     border-style: solid;
-    border-color: var(--rd-color-border-strong);
+    border-color: var(--rd-color-border-default);
     border-radius: var(--rd-radius-md);
-    background: var(--rd-color-surface-default);
+    background: var(--rd-color-surface-raised);
     color: var(--rd-color-text-default);
     font: inherit;
+    line-height: var(--rd-line-height-body);
   }
 
   rd-calendar > input:focus-visible {
@@ -23,10 +48,100 @@
     outline-offset: var(--rd-focus-ring-offset);
   }
 
-  rd-calendar > [part='hint'] {
-    margin-block: var(--rd-space-1) 0;
+  /* JS が無くても検証表示が出る。入力中には怒らない（:user-invalid） */
+  rd-calendar > input:user-invalid {
+    border-color: var(--rd-color-status-danger-default);
+  }
+
+  rd-calendar > [part='header'] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rd-space-2);
+  }
+
+  rd-calendar > [part='header'] > [part='title'] {
+    margin: 0;
+    font: var(--rd-type-body);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  rd-calendar [part='prev'],
+  rd-calendar [part='next'] {
+    display: grid;
+    place-items: center;
+    inline-size: var(--rd-sizing-target-min);
+    block-size: var(--rd-sizing-target-min);
+    border-width: 0;
+    border-radius: var(--rd-radius-full);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  /* 行き止まりは disabled にしない（Tab で止まって理由が分かる） */
+  rd-calendar [aria-disabled='true'] {
+    color: var(--rd-color-text-muted);
+    cursor: not-allowed;
+  }
+
+  rd-calendar > [part='grid'] {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: var(--rd-space-1);
+  }
+
+  /* UA の td { padding: 1px } を消す（base.css に table の要素既定は無い） */
+  rd-calendar :where(th, td) {
+    padding: 0;
+  }
+
+  rd-calendar th {
     color: var(--rd-color-text-muted);
     font: var(--rd-type-small);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  /* 丸いタイル（docs/brand.md §7 の ink tile）。枠は「今日」を示すために既定で透明にしておく */
+  rd-calendar td[data-iso] {
+    inline-size: var(--rd-calendar-cell-size, var(--rd-sizing-target-min));
+    block-size: var(--rd-calendar-cell-size, var(--rd-sizing-target-min));
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: transparent;
+    border-radius: var(--rd-radius-md);
+    /* stylelint-disable-next-line property-disallowed-list -- center は方向を持たない。RTL でも同じ */
+    text-align: center;
+    cursor: pointer;
+  }
+
+  rd-calendar td[aria-selected='true'] {
+    background: var(--rd-color-accent-default);
+    color: var(--rd-color-accent-text);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  /* 「今日」は色だけでなく枠でも示す（accessibility.md 9）。
+     枠は border（box-shadow の生値は stylelint の色規則を通せない — combobox.css と同じ判断） */
+  rd-calendar td[aria-current='date']:not([aria-selected='true']) {
+    border-color: var(--rd-color-accent-default);
+  }
+
+  rd-calendar td[data-iso]:hover:where(:not([aria-disabled])) {
+    background: var(--rd-color-surface-hover);
+  }
+
+  rd-calendar td:focus-visible,
+  rd-calendar button:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    rd-calendar td[data-iso] {
+      transition: background-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+    }
   }
 
   @media (forced-colors: active) {
@@ -34,8 +149,20 @@
       border-color: FieldText;
     }
 
-    rd-calendar > input:focus-visible {
+    rd-calendar > input:focus-visible,
+    rd-calendar td:focus-visible,
+    rd-calendar button:focus-visible {
       outline-color: Highlight;
+    }
+
+    rd-calendar td[aria-selected='true'] {
+      forced-color-adjust: none;
+      background: SelectedItem;
+      color: SelectedItemText;
+    }
+
+    rd-calendar td[aria-current='date'] {
+      border-color: CanvasText;
     }
   }
 }

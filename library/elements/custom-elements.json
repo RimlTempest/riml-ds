@@ -178,24 +178,62 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "TODO: 部品の役割を 1〜2 文で書く。ネイティブ要素を子として包む（ティア A、ADR-0012）。\nJS が無くても動く。部品が足すのは `:state()` と強化ノードだけ。",
+          "description": "月の暦。子の `<label for>` と `<input type=\"date\">` を包む（ティア A、ADR-0012）。**JS 無しでも動く**\n——入力欄がそのまま送信され、モバイルでは OS のピッカーが出る。JS が来たら同じ light DOM の末尾に\n`role=\"grid\"` の月表を足す。**値の真実は `<input>`**（`min` / `max` / `required` も `<input>` の属性）。",
           "name": "RdCalendar",
+          "cssProperties": [
+            {
+              "description": "日のタイルの一辺。既定 var(--rd-sizing-target-min)",
+              "name": "--rd-calendar-cell-size"
+            }
+          ],
           "cssParts": [
             {
-              "description": "補足文言",
-              "name": "hint"
+              "description": "月の見出しと前後の月ボタン",
+              "name": "header"
+            },
+            {
+              "description": "表示している年月",
+              "name": "title"
+            },
+            {
+              "description": "前の月へ送るボタン",
+              "name": "prev"
+            },
+            {
+              "description": "次の月へ送るボタン",
+              "name": "next"
+            },
+            {
+              "description": "月表（<table role=\"grid\">）",
+              "name": "grid"
+            }
+          ],
+          "slots": [
+            {
+              "description": "<label for> と <input type=\"date\">（省略不可）",
+              "name": ""
             }
           ],
           "members": [
             {
               "kind": "field",
-              "name": "hint",
+              "name": "today",
               "privacy": "public",
               "type": {
                 "text": "string"
               },
               "default": "''",
-              "attribute": "hint"
+              "attribute": "today"
+            },
+            {
+              "kind": "field",
+              "name": "weekStart",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "week-start"
             },
             {
               "kind": "field",
@@ -204,35 +242,162 @@
             },
             {
               "kind": "field",
-              "name": "#contractOk",
+              "name": "#attached",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#month",
+              "privacy": "private",
+              "type": {
+                "text": "logic.YearMonth"
+              },
+              "default": "{ year: 1970, month: 1 }"
+            },
+            {
+              "kind": "field",
+              "name": "#focused",
+              "privacy": "private",
+              "type": {
+                "text": "logic.IsoDate"
+              },
+              "default": "'1970-01-01'"
+            },
+            {
+              "kind": "field",
+              "name": "#pendingFocus",
               "privacy": "private",
               "type": {
                 "text": "boolean"
               },
               "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#hostBinding",
+              "privacy": "private",
+              "type": {
+                "text": "Binding | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "description": "値はネイティブの `<input>` が持つ。部品は委譲するだけ"
+            },
+            {
+              "kind": "method",
+              "name": "checkValidity",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "reportValidity",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#setup",
+              "privacy": "private",
+              "description": "初回だけ。契約を見て子を掴み、`<input>` の書き換えに追随する道を作る"
+            },
+            {
+              "kind": "field",
+              "name": "#follow",
+              "privacy": "private",
+              "description": "`<input>` の値・範囲に月表を合わせる（打ち込みにも `value` setter にも同じ道）"
+            },
+            {
+              "kind": "field",
+              "name": "#onEvent",
+              "privacy": "private",
+              "description": "click も keydown も 1 本道。`<input>` の上のキーは `decideKey` が `none` に落とす"
+            },
+            {
+              "kind": "field",
+              "name": "#run",
+              "privacy": "private",
+              "description": "範囲の外へ焦点は動けるが選べない（`aria-disabled`。APG と同じ）"
+            },
+            {
+              "kind": "field",
+              "name": "#read",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#view",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ value: string }>"
+              },
+              "description": "日を選んだときに発火（value は YYYY-MM-DD）",
+              "name": "rd-change"
             }
           ],
           "attributes": [
             {
-              "name": "hint",
+              "description": "「今日」（YYYY-MM-DD）。省略すると実時刻から決める。テスト・story は必ず書く",
+              "name": "today",
               "type": {
                 "text": "string"
               },
               "default": "''",
-              "fieldName": "hint"
+              "fieldName": "today"
+            },
+            {
+              "description": "週の始まり。0（日曜、既定）〜 6",
+              "name": "week-start",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "weekStart"
             }
           ],
           "cssStates": [
             {
+              "name": "selected",
+              "description": "日が選ばれている"
+            },
+            {
+              "name": "empty",
+              "description": "まだ選ばれていない"
+            },
+            {
+              "name": "at",
+              "description": "min - 前の月がまるごと min より前"
+            },
+            {
+              "name": "at",
+              "description": "max - 次の月がまるごと max より後"
+            },
+            {
               "name": "malformed",
-              "description": "契約の子が無い"
+              "description": "契約の子（<label> と <input type=\"date\">）が無い"
             }
           ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "summary": "TODO",
+          "summary": "月の暦。<label> と <input type=\"date\"> は利用側が書き、JS があるときだけその下に月表が付く",
           "status": "experimental",
           "pe": "A",
           "tagName": "rd-calendar",

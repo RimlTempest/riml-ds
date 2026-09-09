@@ -1,5 +1,6 @@
 import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
 import { splitterMarkup } from '@rimltempest/riml-ds-elements/experimental/splitter'
+import { calendarMarkup } from '@rimltempest/riml-ds-elements/experimental/calendar'
 import {
   commandGroupMarkup,
   commandItemMarkup,
@@ -14,7 +15,7 @@ import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import * as experimental from '../src/experimental.js'
-import { RdCommand, RdDataTable, RdSplitter } from '../src/experimental.js'
+import { RdCalendar, RdCommand, RdDataTable, RdSplitter } from '../src/experimental.js'
 import * as index from '../src/index.js'
 import { RdButton, RdTextField } from '../src/index.js'
 import { normalize } from './normalize.js'
@@ -130,6 +131,39 @@ describe('既定 export の部品', () => {
         }),
       ),
     )
+  })
+
+  it('RdCalendar は week-start をハイフン付きの属性に、min / max を <input> に出す', () => {
+    const rendered = renderToString(
+      <RdCalendar
+        id="due"
+        label="期限"
+        name="due"
+        today="2026-09-09"
+        weekStart="1"
+        defaultValue="2026-09-15"
+        min="2026-09-05"
+        max="2026-09-25"
+        required
+      />,
+    )
+    expect(normalize(rendered)).toBe(
+      normalize(
+        calendarMarkup({
+          id: 'due',
+          label: '期限',
+          name: 'due',
+          today: '2026-09-09',
+          weekStart: '1',
+          defaultValue: '2026-09-15',
+          min: '2026-09-05',
+          max: '2026-09-25',
+          required: true,
+        }),
+      ),
+    )
+    expect(normalize(rendered)).toContain('week-start="1"')
+    expect(normalize(rendered)).toContain('min="2026-09-05"')
   })
 })
 
