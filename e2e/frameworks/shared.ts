@@ -8,6 +8,10 @@ import type { Page } from '@playwright/test'
 import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
 import { dialogMarkup } from '@rimltempest/riml-ds-elements/dialog'
 import { calendarMarkup } from '@rimltempest/riml-ds-elements/experimental/calendar'
+import {
+  carouselItemMarkup,
+  carouselMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/carousel'
 import { checkboxMarkup } from '@rimltempest/riml-ds-elements/experimental/checkbox'
 import {
   checkboxGroupMarkup,
@@ -46,6 +50,10 @@ import {
   tabsPanelMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/tabs'
 import { toggleMarkup } from '@rimltempest/riml-ds-elements/experimental/toggle'
+import {
+  toggleGroupMarkup,
+  toggleItemMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/toggle-group'
 import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 
 const AAA_TAGS = ['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag22aa'] as const
@@ -805,6 +813,100 @@ export const dataTableSuite = (framework: string): void => {
       await expect
         .poll(async () =>
           page.locator('rd-data-table').evaluate((element) => element.matches(':state(sorted)')),
+        )
+        .toBe(true)
+    })
+  })
+}
+
+/** 4 フレームワークで同じ 3 枚。`<li>` は利用側が書く（部品は 1 枚も作らない） */
+const CAROUSEL_TITLES = ['秋の便り', '冬の支度', '春の準備'] as const
+
+const CAROUSEL_CHILDREN = CAROUSEL_TITLES.map((title) =>
+  carouselItemMarkup({ children: `<p>${title}</p>` }),
+).join('')
+
+/**
+ * `rd-carousel`（plan 032）。列（`<ul><li>`）は利用側が書き、部品は前へ／次へと「n / N」だけを足す。
+ * JS が無ければ契約どおりの横に転がる列がそのまま残る（ティア A）。
+ */
+export const carouselSuite = (framework: string): void => {
+  test.describe(`${framework}: carousel`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-carousel',
+          carouselMarkup({ label: 'おすすめ', children: CAROUSEL_CHILDREN }),
+        )
+      })
+
+      test('JS 無しでは前へ／次へも「n / N」も出ない', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.locator("rd-carousel [part='controls']")).toHaveCount(0)
+        await expect(page.locator('rd-carousel > ul')).toHaveAttribute('tabindex', '0')
+      })
+    })
+
+    test('「次へ」を押すと「n / N」が進み、枚に名前が付く', async ({ page }) => {
+      await page.goto('/')
+      const counter = page.locator("rd-carousel [part='counter']")
+      await expect(counter).toHaveText('1 / 3')
+      await expect(page.locator('rd-carousel > ul > li').first()).toHaveAttribute(
+        'aria-label',
+        '1 / 3',
+      )
+      await page.getByRole('button', { name: '次へ' }).click()
+      await expect(counter).toHaveText('2 / 3')
+    })
+  })
+}
+
+/** 4 フレームワークで同じ項目（`toggleItemMarkup` が唯一の正） */
+const FORMAT_ITEMS =
+  toggleItemMarkup({ label: '強調', value: 'bold', pressed: 'true' })
+  + toggleItemMarkup({ label: '斜体', value: 'italic' })
+
+/**
+ * `rd-toggle-group`（plan 031）。項目は利用側が書く `<button aria-pressed>` のままで、
+ * 部品は `single` の排他・roving tabindex・`rd-change` だけを足す。
+ * JS が無ければ「押しても変わらない普通のボタンの列」に縮退する。
+ */
+export const toggleGroupSuite = (framework: string): void => {
+  test.describe(`${framework}: toggle group`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-toggle-group',
+          toggleGroupMarkup({ label: '書式', mode: 'single', children: FORMAT_ITEMS }),
+        )
+      })
+
+      test('JS 無しでは tabindex が付かない（3 個とも Tab で辿れる）', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.locator('rd-toggle-group button[tabindex]')).toHaveCount(0)
+      })
+    })
+
+    test('mode="single" は 2 個目を押すと 1 個目が戻る', async ({ page }) => {
+      await page.goto('/')
+      const group = page.getByRole('group', { name: '書式' })
+      const bold = group.getByRole('button', { name: '強調' })
+      const italic = group.getByRole('button', { name: '斜体' })
+      await expect(bold).toHaveAttribute('aria-pressed', 'true')
+      await italic.click()
+      await expect(italic).toHaveAttribute('aria-pressed', 'true')
+      await expect(bold).toHaveAttribute('aria-pressed', 'false')
+      await expect
+        .poll(async () =>
+          page.locator('rd-toggle-group').evaluate((element) => element.matches(':state(single)')),
         )
         .toBe(true)
     })

@@ -21,6 +21,25 @@ const sized = async (html: string): Promise<RdSplitter> => {
   return el
 }
 
+/** 面の中身が縦に溢れる長さ（200px の高さには収まらない） */
+const LONG = '<p>左の面。狭くしても中身は面ごと転がる。</p>'.repeat(6)
+
+/** 150px の板。50% では面に収まり、position を上げて面が狭くなると横に溢れる */
+const WIDE_BLOCK = '<div style="inline-size: 150px; block-size: 20px"></div>'
+
+const OVERFLOWING = markup({ label: '溢れる面', start: LONG, end: WIDE_BLOCK })
+
+const paneOf = (el: RdSplitter, part: 'start' | 'end'): HTMLElement => {
+  const pane = el.shadowRoot?.querySelector(`[part=${part}]`)
+  if (!(pane instanceof HTMLElement)) {
+    throw new Error(`[part=${part}] が無い`)
+  }
+  return pane
+}
+
+const tabindexOf = (el: RdSplitter, part: 'start' | 'end'): string | null =>
+  paneOf(el, part).getAttribute('tabindex')
+
 const handleOf = (el: RdSplitter): HTMLElement => {
   const handle = el.shadowRoot?.querySelector('[part=handle]')
   if (!(handle instanceof HTMLElement)) {
@@ -191,4 +210,29 @@ it('つまみの当たり領域は 44px 以上ある（WCAG 2.5.5 AAA）', async
 it('既定ではアニメーションが動いていない（prefers-reduced-motion 既定オフ）', async () => {
   const el = await sized(FIXTURE)
   expect(handleOf(el).getAnimations()).toHaveLength(0)
+})
+
+it('溢れた面だけ Tab で届く（axe scrollable-region-focusable）', async () => {
+  const el = await sized(OVERFLOWING)
+  await expect.poll(() => tabindexOf(el, 'start')).toBe('0')
+  expect(tabindexOf(el, 'end')).toBe(null)
+})
+
+it('割合が変わって面が溢れたら、その面にも tabindex が付く', async () => {
+  const el = await sized(OVERFLOWING)
+  await expect.poll(() => tabindexOf(el, 'end')).toBe(null)
+  el.position = 80
+  await el.updateComplete
+  await expect.poll(() => tabindexOf(el, 'end')).toBe('0')
+})
+
+it('外した後は面を測らない（dispose）', async () => {
+  const el = await sized(OVERFLOWING)
+  await expect.poll(() => tabindexOf(el, 'start')).toBe('0')
+  el.remove()
+  const empty = el.querySelector('[slot=start]')
+  empty?.replaceChildren()
+  await new Promise(requestAnimationFrame)
+  await new Promise(requestAnimationFrame)
+  expect(tabindexOf(el, 'start')).toBe('0')
 })

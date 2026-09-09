@@ -4,7 +4,7 @@
 （executor は会話の文脈を持たない前提）。テンプレートは qrcc の
 `.claude/skills/improve/references/plan-template.md`。
 
-**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）、017〜018 は `b501378`（2026-09-08。窓の丸はボタン = ADR-0014）、019〜020 は `da4200a`（2026-09-08。017・018 マージ後）、021〜022 は `9cfed6d`（2026-09-08。019 マージ後。020 と並行）、023 は `c661a96`（2026-09-08。022 マージ後。021 と並行）、024・027 は `b61ee24`（2026-09-08。023 マージ後。並行）、025・026 は `7684d09`（2026-09-08。024・027 マージ後。並行）。028・029・030 は `fa1835c`（2026-09-08。025・026 マージ後。並行）。031・032・033 は `28f2c5e`（2026-09-09。028・029・030 マージ後。並行）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
+**Planned at**: 001〜002 は `0014780`、003〜005 は `7bf04e8`（ADR-0012 反映で改訂）、006〜010 は `7bf04e8`（いずれも 2026-09-07）、014〜016 は `3d85de1`（2026-09-08。ブランド = `docs/brand.md` / ADR-0013）、017〜018 は `b501378`（2026-09-08。窓の丸はボタン = ADR-0014）、019〜020 は `da4200a`（2026-09-08。017・018 マージ後）、021〜022 は `9cfed6d`（2026-09-08。019 マージ後。020 と並行）、023 は `c661a96`（2026-09-08。022 マージ後。021 と並行）、024・027 は `b61ee24`（2026-09-08。023 マージ後。並行）、025・026 は `7684d09`（2026-09-08。024・027 マージ後。並行）。028・029・030 は `fa1835c`（2026-09-08。025・026 マージ後。並行）。031・032・033 は `28f2c5e`（2026-09-09。028・029・030 マージ後。並行）。035 は `0428da0`（2026-09-09。031〜033 と並行。034 は 033 マージ後に書く）、036 は `c9355a7`（2026-09-09。031 マージ後。032・033・035 と並行）。設計文書（`docs/**`, `docs/adr/**`, `DESIGN.md`,
 `system/guidelines/**`, `.claude/skills/riml-ds-*`）が仕様の正で、計画はそれを手順に落としたもの。
 矛盾を見つけたら計画側を直すのではなく STOP して advisor に返す。
 
@@ -80,9 +80,11 @@
 | 028 | [rd-command（検索欄 + グループ化された項目のコマンドパレット。`_shared/text-filter.ts` へ絞り込みを共通化）](028-command.md) | P1 | M | 025 | DONE（`f3c7bbc`） |
 | 029 | [rd-data-table（`<table class="rd-table">` を包み `th[data-sort]` でクライアント並べ替え）](029-data-table-sort.md) | P1 | M | 022 | DONE（`1bff5b7`） |
 | 030 | [rd-splitter（`role="separator"` のハンドルで 2 面をドラッグ・キーボードで分割するティア B）](030-splitter.md) | P2 | M | 020 | DONE（`855b4d2`） |
-| 031 | [rd-toggle-group（`<fieldset>` + `<button aria-pressed>` の列。単一／複数選択と roving focus）](031-toggle-group.md) | P1 | M | 024 | TODO |
-| 032 | [rd-carousel（`<ul><li>` を包み「前へ／次へ」と枚数を足す。scroll-snap + IntersectionObserver）](032-carousel.md) | P2 | M | 020 | TODO |
+| 031 | [rd-toggle-group（`<fieldset>` + `<button aria-pressed>` の列。単一／複数選択と roving focus）](031-toggle-group.md) | P1 | M | 024 | DONE（c138e37） |
+| 032 | [rd-carousel（`<ul><li>` を包み「前へ／次へ」と枚数を足す。scroll-snap + IntersectionObserver）](032-carousel.md) | P2 | M | 020 | DONE（3318c57） |
 | 033 | [rd-calendar（`<label>` + `<input type="date">` を包み、JS で light DOM に `role="grid"` の月表を描くティア A）](033-calendar.md) | P1 | L | 023 | TODO |
+| 035 | [小さな追随 2（command の空表示幅・splitter の溢れた面に tabindex・menu の Variants story・.rd-table th の nowrap・splitter proposal の入れ子メモ）](035-small-follow-ups-2.md) | P2 | S | 028, 030 | DONE（fb263a7） |
+| 036 | [rd-number-field（`<input type=number>` を包む。− / + の 44px ボタンと刻みの丸め）](036-number-field.md) | P1 | M | 004, 009, 019 | TODO |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
@@ -388,4 +390,29 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - main 取り込み（028・029 の後）: 14 ファイルが競合し union で解いた。落ちた共通行 5 か所（`e2e/vue/src/App.ts` の `},\n ),`、`keyboard.spec.ts` の `})\n\n/**`、`build-pages.ts` の `})}\`,\n ),`、`shared.ts` の `})\n })\n}`、`markup.test.tsx` の import 重複）を `bunx oxfmt --check` の位置から直した。JSON 3 本は境界を含めて無事、CEM / registry は `bun run gen`
 - 検証（main マージ後の worktree）: check 0、test 1528 passed / 1 skipped（164 files）、guard 0、vrt 1314（新規 42、既存の変更 0）、pe 88、e2e:frameworks 166、a11y 39、release:check 0。main 側: build/gen 0、guard 0
 - 宿題（advisor）: story の面に余白が無く、文字がつまみに接して見える（利用側の責任だが見本としては `padding` を足したい）。`riml-ds-worktree` skill §7 に reviewer のマージ手順を追記済み（`b9f48ba`）
+
+### 031 の実行メモ（2026-09-09）
+
+- `feat/toggle-group` を `c138e37` で `--no-ff` マージ（executor 5 コミット `4d8f7a9`〜`3739d5b` + `c6b3438 chore(merge)`）。032・033・035 と並行。86 ファイル（新規スクリーンショット 46）
+- `rd-toggle-group`（experimental、ティア A、light DOM）: `<fieldset>` / `<legend>` と `<button aria-pressed>` の列を包み、**送信には載せない**押下ボタンの列にする。押下の真実は各 `<button>` の `aria-pressed`（`values` は委譲だけ）、`mode="single"` の排他と解除（0 個を許す）、矢印 / Home / End の roving tabindex（APG「Toolbar」。`tabindex` は JS が付けるので JS 無しでは全部 Tab で辿れる）、`rd-change` はユーザー操作だけ。項目は `<button>` 直書き（`rd-toggle` を中に入れない——押下の所有者が二重になる）。`toggle-group/define` 6.77 kB / 12 kB
+- 計画からの逸脱（すべて受け入れ）: `generated/index.ts` の grep は生成器の仕様（experimental は `experimental.ts` に出る）で満たせない → `experimental.ts` で確認、element 150 行を守るため `toggle-group.dom.ts`（103 行）へ描画と MutationObserver を出した、frameworks e2e の項目名を「太字」→「強調」（既存の `rd-toggle` suite と strict-mode で衝突するため）
+- 検証（main マージ後の worktree）: check 0、test 1597 passed / 1 skipped（169 files）、guard 0（main を push した後。**規則 14 は `origin/main` と比べる**ので、未 push の main コミットが混ざると「別レーン所有」と出る）、vrt 1367（新規 46、既存の変更 0）、pe 91、e2e:frameworks 178、a11y 43、release:check 0。main 側: build/gen 0、guard 0
+- 宿題（advisor）: 見た目は `rd-checkbox-group:state(segmented)` と重複している。**3 つ目が出たら `patterns.css` の `.rd-segmented` に寄せる**（proposal 保守メモ）
+
+### 035 の実行メモ（2026-09-09）
+
+- `chore/follow-ups-035` を `fb263a7` で `--no-ff` マージ（executor 6 コミット `cc12fe9`〜`59c8645` + reviewer の `0b871e5 test(vrt)` と merge コミット 2 つ）。032・033 と並行
+- 中身: `rd-command` の空表示が候補リストの幅を保つ（`command.css`）、`rd-splitter` の**溢れた面に `tabindex="0"` と焦点環**（axe `scrollable-region-focusable`。`splitter.dom.ts` の `ResizeObserver` が溢れている面にだけ付け、溢れていなければ外す）、`menu.stories.ts` の Variants を play 付きに、`.rd-table th { white-space: nowrap }`（短い見出しが 2 行になると行の高さが揃わない）、`docs/proposals/splitter.md` に入れ子のメモ
+- executor は計画の欠陥 2 つで正しく STOP（レーンが `command.test.ts` を所有していない／`#dispose` フィールドで `custom-elements.json` が必ず変わるのに計画が禁じていた）→ advisor が `2eee32c` で `scripts/lanes.tsv` と計画を直して再投入。その後 API 制限（HTTP 429）で executor が落ちたため、**VRT の撮り直しと残りのゲートは advisor が引き取った**
+- VRT: 新規 4 枚（`components-splitter--overflow` × 4 プロジェクト）、**意図した更新 24 枚**（`.rd-table th` の nowrap で `components-datatable--*` の 360px が 20 枚、play を足した `components-menu--variants` が 4 枚）。差分画像を目視して「サイズ」の折り返しが消えたことだけを確認した
+- 検証（main マージ後の worktree）: check 0、test 1602 passed / 1 skipped、guard 0、vrt 0（差分なし）、pe 91、e2e:frameworks 178、a11y 43、release:check 0。main 側: build/gen 0、guard 0
+
+### 032 の実行メモ（2026-09-10）
+
+- `feat/carousel` を `3318c57` で `--no-ff` マージ（executor 4 コミット `b2aea81`〜`a4fe67e` + reviewer が引き取った Step 4・5 のコミット 2 つ + merge コミット 3 つ）。031・033・035 と並行
+- `rd-carousel`（experimental、ティア A、light DOM）: 利用側が書いた `<ul tabindex="0"><li>` を包み、**JS が無ければ `.rd-carousel` の atom と同じ横スクロールの列**のまま。定義されると前へ／次へのボタンと `<output part="counter">`「n / N」が末尾に付き、各 `<li>` に `aria-roledescription="slide"` と `aria-label="n / N"` が付く（`role` は書かない — axe `list` / `aria-allowed-role`）。列の役割と名前は `ElementInternals`（`role="group"` / `ariaRoleDescription="carousel"`）が持つ
+- 見えている枚は `IntersectionObserver`（root は `<ul>`、threshold `[0.5, 1]`）で決める（`scrollend` は Safari 26.2 以降、`scrollsnapchange` は Chromium だけ）。**自動再生は作らない**（WCAG 2.2.2 / AAA 2.3.3・3.2.5。`docs/proposals/carousel.md`）。`loop` が無ければ端でボタンが `aria-disabled`（`disabled` にはしない）。`carousel/define` 6.81 kB / 12 kB
+- 計画からの逸脱（すべて受け入れ）: `firstUpdated` ではなく `willUpdate` + `hasUpdated` ガードで契約検査（初回描画から操作が出る）、`dom.ts` のヘルパー名（`readTrack` / `labelSlides` / `watchVisible` / `syncButtons` / `controlsTemplate`）が計画の名前と一部違う
+- executor は API 制限（HTTP 429）で Step 3 の直後に落ちたため、**Step 4（VRT 40 枚）と Step 5（proposal + changeset）のコミット、main の取り込み、全ゲートは advisor が引き取った**
+- 検証（main マージ後の worktree）: check 0、test 1653 passed / 1 skipped、guard 0、vrt 0（新規 40 枚、既存の変更 0）、pe 95、e2e:frameworks 190、a11y 46、release:check 0。main 側: build/gen 0、guard 0
 

@@ -302,3 +302,47 @@ test('calendar: JS 無しでは月表が出ない（強化ノードは JS が足
   // 枠と入力欄の見た目は calendar.css がそのまま当てる
   await expect(page.locator('rd-calendar > input')).toHaveCSS('min-block-size', '44px')
 })
+
+/**
+ * `rd-carousel`（plan 032）。JS が来る前は `.rd-carousel` の atom と同じ横に転がる列で、
+ * 契約が持つ `<ul tabindex="0">` のおかげでキーボードだけでも中身を辿れる。
+ */
+test('carousel: JS 無しでも <ul> が横に転がる（atom と同じ縮退）', async ({ page }) => {
+  await page.goto('/carousel.html')
+  await expect(page.locator('rd-carousel > ul')).toHaveCSS('overflow-x', 'auto')
+  await expect(page.getByRole('listitem')).toHaveCount(3)
+})
+
+test('carousel: JS 無しでも Tab で <ul> に届く（契約が tabindex を持つ）', async ({ page }) => {
+  await page.goto('/carousel.html')
+  // 1 回目は本文へのスキップリンク、2 回目が転がる箱
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Tab')
+  await expect(page.locator('rd-carousel > ul')).toBeFocused()
+})
+
+test('carousel: JS 無しでは前へ／次へも「n / N」も出ない（強化ノード）', async ({ page }) => {
+  await page.goto('/carousel.html')
+  await expect(page.locator("rd-carousel [part='controls']")).toHaveCount(0)
+  await expect(page.locator('rd-carousel button')).toHaveCount(0)
+  await expect(page.locator('rd-carousel output')).toHaveCount(0)
+})
+
+test('toggle group: JS 無しでは 3 個とも Tab で辿れる（tabindex は JS が付ける）', async ({
+  page,
+}) => {
+  await page.goto('/toggle-group.html')
+  await expect(page.locator("rd-toggle-group [part='options'] > button")).toHaveCount(3)
+  // roving tabindex は JS の仕事。JS 無しでは 1 個も付かない＝全部ネイティブの順で辿れる
+  await expect(page.locator('rd-toggle-group button[tabindex]')).toHaveCount(0)
+})
+
+test('toggle group: JS 無しでも押下状態が markup のまま読める', async ({ page }) => {
+  await page.goto('/toggle-group.html')
+  const group = page.getByRole('group', { name: '書式' })
+  await expect(group.getByRole('button', { name: '太字' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(group.getByRole('button', { name: '斜体' })).toHaveAttribute('aria-pressed', 'false')
+  // JS 無しでは押しても変わらない（ただのボタンの列に縮退する）
+  await group.getByRole('button', { name: '斜体' }).click()
+  await expect(group.getByRole('button', { name: '斜体' })).toHaveAttribute('aria-pressed', 'false')
+})

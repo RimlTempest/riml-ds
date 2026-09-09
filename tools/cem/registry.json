@@ -18,6 +18,15 @@
     "dependsOn": []
   },
   {
+    "name": "carousel",
+    "tag": "rd-carousel",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "横に並ぶ枚の列。前へ／次へと「n / N」を足す。<ul><li> は利用側が書く",
+    "files": ["carousel/index.js", "carousel/carousel.define.js", "carousel/carousel.css"],
+    "dependsOn": []
+  },
+  {
     "name": "checkbox",
     "tag": "rd-checkbox",
     "pe": "A",
@@ -215,6 +224,19 @@
     "status": "experimental",
     "summary": "押下状態を持つボタン。<button aria-pressed> は利用側が書く",
     "files": ["toggle/index.js", "toggle/toggle.define.js", "toggle/toggle.css"],
+    "dependsOn": []
+  },
+  {
+    "name": "toggle-group",
+    "tag": "rd-toggle-group",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "押下ボタンの列。単一 / 複数選択と矢印キー移動。<fieldset><legend> と <button aria-pressed> は利用側が書く",
+    "files": [
+      "toggle-group/index.js",
+      "toggle-group/toggle-group.define.js",
+      "toggle-group/toggle-group.css"
+    ],
     "dependsOn": []
   },
   {

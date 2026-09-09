@@ -3,6 +3,7 @@
   // experimental は専用サブパスからしか出ない（ADR-0009）
   import {
     RdCalendar,
+    RdCarousel,
     RdCheckbox,
     RdCheckboxGroup,
     RdCombobox,
@@ -18,6 +19,7 @@
     RdSplitter,
     RdTabs,
     RdToggle,
+    RdToggleGroup,
     RdWindow,
   } from '@rimltempest/riml-ds-svelte/experimental'
 </script>
@@ -129,6 +131,15 @@
       >{/snippet}
   </RdDataTable>
   <RdCalendar id="due" label="期限" name="due" defaultValue="2026-09-15" today="2026-09-09" />
+  <RdCarousel label="おすすめ">
+    <li><p>秋の便り</p></li>
+    <li><p>冬の支度</p></li>
+    <li><p>春の準備</p></li>
+  </RdCarousel>
   <RdToggle label="太字" pressed="false" />
+  <RdToggleGroup label="書式" mode="single">
+    {#snippet children()}<button type="button" value="bold" aria-pressed="true">強調</button
+      ><button type="button" value="italic" aria-pressed="false">斜体</button>{/snippet}
+  </RdToggleGroup>
   <rd-live-region></rd-live-region>
 </main>

@@ -331,6 +331,9 @@
     padding: var(--rd-space-2) var(--rd-space-3);
     border-block-end: 0.125rem dotted var(--rd-color-border-default);
     font-weight: var(--rd-font-weight-bold);
+
+    /* 見出しは折り返さない。短い見出しが 2 行になると行の高さが揃わない。td は折り返してよい */
+    white-space: nowrap;
     /* stylelint-disable-next-line property-disallowed-list -- start は論理値。RTL で自動的に反転する */
     text-align: start;
   }

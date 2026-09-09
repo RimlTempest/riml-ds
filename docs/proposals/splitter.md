@@ -84,6 +84,12 @@ APG は separator に「Enter で折り畳む / 戻す」を任意で認めて�
   つまみに届き続ける（`window` を購読しない ＝ 部品の外に痕跡を残さない）
 - `:state(dragging)` は `@supports selector(:state(dragging))` の中でだけ使う（Newly。docs/baseline.md）。
   無いブラウザではドラッグ中の `user-select: none` が効かないだけで、操作は変わらない
+- **面の中に `rd-splitter` を直接入れると、内側の `block-size: 100%` は解けない**（面は grid の
+  軌道で、高さが内容から決まる）。内側は内容の高さになり、sub-pixel の丸めで
+  `scrollHeight > clientHeight` になって axe `scrollable-region-focusable` に落ちることがある。
+  **内側の splitter は高さを持つ箱（`<div style="block-size: …">`）で包む**
+  （`splitter.stories.ts` の `Nested` が見本）。035 で面が溢れたときだけ `tabindex="0"` に
+  なるようにしたので axe には落ちないが、内側の高さが 0 になる問題そのものは変わらない
 
 ## 生成されるラッパーの型（この計画の外）
 

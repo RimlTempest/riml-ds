@@ -362,3 +362,85 @@ test('calendar: Enter で <input> の値が選んだ日になる', async ({ page
     'true',
   )
 })
+
+/**
+ * `rd-carousel`（plan 032）。前へ／次へと「n / N」は **JS があるときだけ**足される強化ノードなので、
+ * ここ（Storybook）で見る。転がる箱そのものは `<ul tabindex="0">` として契約が持っているので、
+ * `e2e/pe` の JS 無しの回でも Tab で届く。
+ */
+const CAROUSEL_STORY = 'components-carousel--default'
+
+const carouselStory = async (page: Page): Promise<void> => {
+  await page.goto(storyUrl(CAROUSEL_STORY))
+  await waitForStoryFinished(page, CAROUSEL_STORY)
+}
+
+test('carousel: Tab で <ul> → 前へ → 次へ の順に届き、Enter で「n / N」が進む', async ({
+  page,
+}) => {
+  await carouselStory(page)
+  await page.keyboard.press('Tab')
+  await expect(page.locator('rd-carousel > ul')).toBeFocused()
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('button', { name: '前へ' })).toBeFocused()
+  await page.keyboard.press('Tab')
+  const next = page.getByRole('button', { name: '次へ' })
+  await expect(next).toBeFocused()
+  await next.press('Enter')
+  await expect(page.locator("rd-carousel [part='counter']")).toHaveText('2 / 5')
+})
+
+test('carousel: aria-disabled の端でも Tab は素通りしない（フォーカスは受け取れるまま）', async ({
+  page,
+}) => {
+  await carouselStory(page)
+  const prev = page.getByRole('button', { name: '前へ' })
+  await expect(prev).toHaveAttribute('aria-disabled', 'true')
+  await prev.focus()
+  await expect(prev).toBeFocused()
+  // 押しても動かないが、`disabled` ではないので押せてしまうことも読み上げも壊れない
+  await prev.press('Enter')
+  await expect(page.locator("rd-carousel [part='counter']")).toHaveText('1 / 5')
+  await prev.press('Tab')
+  await expect(page.getByRole('button', { name: '次へ' })).toBeFocused()
+})
+
+const TOGGLE_GROUP_STORY = 'components-togglegroup--default'
+const TOGGLE_GROUP_SINGLE_STORY = 'components-togglegroup--single'
+
+test('toggle group: single は 2 個目を押すと 1 個目が戻る', async ({ page }) => {
+  await page.goto(storyUrl(TOGGLE_GROUP_SINGLE_STORY))
+  await waitForStoryFinished(page, TOGGLE_GROUP_SINGLE_STORY)
+  const group = page.getByRole('group', { name: '書式' })
+  // story の play が「下線」を押した状態で終わる
+  await expect(group.getByRole('button', { name: '下線' })).toHaveAttribute('aria-pressed', 'true')
+  await group.getByRole('button', { name: '斜体' }).click()
+  await expect(group.getByRole('button', { name: '斜体' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(group.getByRole('button', { name: '下線' })).toHaveAttribute('aria-pressed', 'false')
+})
+
+test('toggle group: 矢印で列の中を移動する（押さない。roving tabindex）', async ({ page }) => {
+  await page.goto(storyUrl(TOGGLE_GROUP_STORY))
+  await waitForStoryFinished(page, TOGGLE_GROUP_STORY)
+  const group = page.getByRole('group', { name: '書式' })
+  const bold = group.getByRole('button', { name: '太字' })
+  await bold.focus()
+  await page.keyboard.press('ArrowRight')
+  await expect(group.getByRole('button', { name: '斜体' })).toBeFocused()
+  // フォーカスを動かすだけで押さない（APG Toolbar）
+  await expect(group.getByRole('button', { name: '斜体' })).toHaveAttribute('aria-pressed', 'true')
+  await page.keyboard.press('End')
+  await expect(group.getByRole('button', { name: '下線' })).toBeFocused()
+  await page.keyboard.press('ArrowRight')
+  await expect(bold).toBeFocused()
+})
+
+test('toggle group: Space で押下が切り替わる（ネイティブの click）', async ({ page }) => {
+  await page.goto(storyUrl(TOGGLE_GROUP_STORY))
+  await waitForStoryFinished(page, TOGGLE_GROUP_STORY)
+  const underline = page.getByRole('group', { name: '書式' }).getByRole('button', { name: '下線' })
+  await underline.focus()
+  await expect(underline).toHaveAttribute('aria-pressed', 'false')
+  await page.keyboard.press('Space')
+  await expect(underline).toHaveAttribute('aria-pressed', 'true')
+})

@@ -2,6 +2,7 @@ import { RdButton, RdDialog, RdTextField } from '@rimltempest/riml-ds-vue'
 // experimental は専用サブパスからしか出ない（ADR-0009）
 import {
   RdCalendar,
+  RdCarousel,
   RdCheckbox,
   RdCheckboxGroup,
   RdCombobox,
@@ -17,6 +18,7 @@ import {
   RdSplitter,
   RdTabs,
   RdToggle,
+  RdToggleGroup,
   RdWindow,
 } from '@rimltempest/riml-ds-vue/experimental'
 import { defineComponent, h, ref } from 'vue'
@@ -246,7 +248,28 @@ export const App = defineComponent(
           defaultValue: '2026-09-15',
           today: '2026-09-09',
         }),
+        h(
+          RdCarousel,
+          { label: 'おすすめ' },
+          {
+            default: () => [
+              h('li', null, h('p', null, '秋の便り')),
+              h('li', null, h('p', null, '冬の支度')),
+              h('li', null, h('p', null, '春の準備')),
+            ],
+          },
+        ),
         h(RdToggle, { label: '太字', pressed: 'false' }),
+        h(
+          RdToggleGroup,
+          { label: '書式', mode: 'single' },
+          {
+            default: () => [
+              h('button', { type: 'button', value: 'bold', 'aria-pressed': 'true' }, '強調'),
+              h('button', { type: 'button', value: 'italic', 'aria-pressed': 'false' }, '斜体'),
+            ],
+          },
+        ),
         h('rd-live-region'),
       ])
   },

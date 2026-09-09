@@ -240,7 +240,8 @@ export const contracts: Readonly<Record<string, Contract>> = {
     tree: {
       tag: 'rd-note',
       attrs: { 'empty-text': '$emptyText' },
-      children: [{ tag: 'p', children: [{ prop: 'body' }] }],
+      // ネイティブ要素のリテラル数値属性（React は tabIndex を number で受ける）
+      children: [{ tag: 'p', attrs: { tabindex: '0' }, children: [{ prop: 'body' }] }],
     },
   },
   dialog: {

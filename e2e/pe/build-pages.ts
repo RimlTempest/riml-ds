@@ -11,6 +11,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buttonMarkup } from '../../library/elements/src/button/index.js'
 import { calendarMarkup } from '../../library/elements/src/calendar/index.js'
+import { carouselItemMarkup, carouselMarkup } from '../../library/elements/src/carousel/index.js'
 import { checkboxMarkup } from '../../library/elements/src/checkbox/index.js'
 import {
   checkboxGroupMarkup,
@@ -51,6 +52,10 @@ import {
 } from '../../library/elements/src/tabs/tabs.contract.js'
 import { textFieldMarkup } from '../../library/elements/src/text-field/index.js'
 import { toggleMarkup } from '../../library/elements/src/toggle/index.js'
+import {
+  toggleGroupMarkup,
+  toggleItemMarkup,
+} from '../../library/elements/src/toggle-group/index.js'
 import { windowMarkup } from '../../library/elements/src/window/index.js'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
@@ -64,6 +69,7 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['system/css/dist/index.css', 'index.css'],
   ['library/elements/src/button/button.css', 'button.css'],
   ['library/elements/src/calendar/calendar.css', 'calendar.css'],
+  ['library/elements/src/carousel/carousel.css', 'carousel.css'],
   ['library/elements/src/text-field/text-field.css', 'text-field.css'],
   ['library/elements/src/dialog/dialog.css', 'dialog.css'],
   ['library/elements/src/select/select.css', 'select.css'],
@@ -83,6 +89,7 @@ const CSS_SOURCES: readonly (readonly [string, string])[] = [
   ['library/elements/src/menu/menu.css', 'menu.css'],
   ['library/elements/src/popover/popover.css', 'popover.css'],
   ['library/elements/src/toggle/toggle.css', 'toggle.css'],
+  ['library/elements/src/toggle-group/toggle-group.css', 'toggle-group.css'],
 ]
 
 const STYLESHEETS = CSS_SOURCES.map(
@@ -599,6 +606,44 @@ const PAGES: Readonly<Record<string, string>> = {
         })}
         ${submit}
       </form>`,
+  ),
+
+  /**
+   * ティア A。JS が来る前は `.rd-carousel` の atom と同じ「横に転がる列」で、
+   * `<ul tabindex="0">` があるからキーボードでも中身を読める（axe scrollable-region-focusable）。
+   * 前へ／次へと「n / N」は強化ノードなので、ここには 1 つも現れない。
+   */
+  'carousel.html': page(
+    '横に並ぶ枚',
+    `      <h2>おすすめ</h2>
+      ${carouselMarkup({
+        label: 'おすすめ',
+        children: ['秋の便り', '冬の支度', '春の準備']
+          .map((title) =>
+            carouselItemMarkup({
+              children:
+                `<article class="rd-card"><div class="rd-card-body">`
+                + `<h3 class="rd-card-title">${title}</h3><p>季節ごとのおすすめ。</p>`
+                + `</div></article>`,
+            }),
+          )
+          .join(''),
+      })}`,
+  ),
+
+  /**
+   * ティア A。JS 無しでは「押しても変わらない普通のボタンの列」に縮退する（害は無い）。
+   * `tabindex` は JS が付けるので、JS 無しでは 3 個とも Tab で辿れる。
+   */
+  'toggle-group.html': page(
+    '押下ボタンの列',
+    `      ${toggleGroupMarkup({
+      label: '書式',
+      children:
+        toggleItemMarkup({ label: '太字', value: 'bold', pressed: 'true' })
+        + toggleItemMarkup({ label: '斜体', value: 'italic' })
+        + toggleItemMarkup({ label: '下線', value: 'underline' }),
+    })}`,
   ),
   'echo.html': page('送信済み', '      <p>フォームはネイティブに送信された。</p>'),
 }

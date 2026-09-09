@@ -7,6 +7,10 @@
 > `listitem` でなければならない）に落ちる。本版は **`<li>` に role を付けず**（暗黙の `listitem` のまま）`aria-roledescription="slide"` と
 > `aria-label="n / N"` だけを足す。また `<ul>` は横に転がる箱なのに Tab で届かなかったので、**契約の `<ul>` に `tabindex="0"`** を持たせる
 > （`.rd-carousel` atom・`e2e/pe/build-pages.ts` の見本と同じ。axe `scrollable-region-focusable`）。
+>
+> **改訂 2（2026-09-09）**: 契約の `<ul tabindex="0">` は React ラッパーで `tabIndex="0"`（string）になり TS2322 で落ちた。
+> 生成器側を直した（main `1ada18b`: `tools/cem/src/wrappers/core/react.ts` がリテラル数値属性を `={0}` で出す）。
+> 完了条件の `role` / `aria-live` の grep は `aria-roledescription` とコメントに当たっていたので属性の綴りだけに絞った。
 
 > **Drift check（最初に実行）**:
 > `test -d library/elements/src/carousel && echo EXISTS` が何も出ないこと。出たら STOP（**自分がこの計画の Step 1 で scaffold した未コミットの出力なら続行**。中身が本版の設計と違う箇所は直す）。
@@ -240,8 +244,8 @@ export const computeStates = (input: { count: number; index: number; loop: boole
 - `bun run check` = 0、`bun run test` = 0（`carousel.*.test.ts` を含む）
 - `wc -l library/elements/src/carousel/carousel.element.ts` ≤ 150、`grep -c '\bif\b' …/carousel.element.ts` ≤ 5
 - `grep -c "behavior: 'smooth'" library/elements/src/carousel/*.ts` = 0（JS で smooth を書いていない）
-- `grep -c 'aria-live' library/elements/src/carousel/*.ts` = 0
-- `grep -c "role" library/elements/src/carousel/carousel.dom.ts` = 0（`<li>` に role を書いていない）、`grep -c "tabindex: '0'" library/elements/src/carousel/carousel.contract.ts` = 1
+- `grep -c "'aria-live'" library/elements/src/carousel/*.ts` = 0（属性として書いていない。コメントの言及は数えない）
+- `grep -cE "'role'|\"role\"" library/elements/src/carousel/carousel.dom.ts` = 0（`<li>` に `role` 属性を書いていない。`aria-roledescription` と `contract.roles` は当たらない）、`grep -c "tabindex: '0'" library/elements/src/carousel/carousel.contract.ts` = 1
 - `bash scripts/guard.sh` = 0、`bun run pe` = 0、`bun run e2e:frameworks` = 0、`bash scripts/vrt.sh` = 0、`bun run a11y` = 0、`bun run release:check` = 0
 - `git diff --name-only main...HEAD -- e2e/__screenshots__` に**既存**画像が 1 枚も無い
 - `grep -c 'rd-carousel' library/react/src/generated/index.ts` ≥ 1、React の props に `label` と `loop?: boolean` がある

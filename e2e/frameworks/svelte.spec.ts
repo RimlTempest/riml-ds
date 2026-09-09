@@ -1,5 +1,6 @@
 import {
   calendarSuite,
+  carouselSuite,
   comboboxSuite,
   commandSuite,
   dataTableSuite,
@@ -9,6 +10,7 @@ import {
   navigationSuite,
   radioGroupAndSliderSuite,
   splitterSuite,
+  toggleGroupSuite,
   toggleSuite,
 } from './shared.js'
 
@@ -23,3 +25,5 @@ splitterSuite('svelte')
 commandSuite('svelte')
 dataTableSuite('svelte')
 calendarSuite('svelte')
+carouselSuite('svelte')
+toggleGroupSuite('svelte')

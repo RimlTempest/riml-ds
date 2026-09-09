@@ -417,6 +417,242 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/carousel/carousel.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-carousel",
+          "declaration": {
+            "name": "RdCarousel",
+            "module": "/src/carousel/carousel.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/carousel/carousel.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "横に並ぶ枚の列。利用側が書いた `<ul><li>` を包み、前へ／次へと「n / N」を足す\n（ティア A、ADR-0012）。JS が無ければ `.rd-carousel` と同じ横スクロールできる列のまま。\n自動再生は持たない（WCAG 2.2.2 / AAA 2.3.3。`docs/proposals/carousel.md`）。",
+          "name": "RdCarousel",
+          "cssProperties": [
+            {
+              "description": "1 枚の幅。既定 min(100%, 20rem)",
+              "name": "--rd-carousel-item"
+            },
+            {
+              "description": "端の scroll-padding。既定 0",
+              "name": "--rd-carousel-padding"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "前へ／次へと「n / N」を並べた枕",
+              "name": "controls"
+            },
+            {
+              "description": "前の枚へ",
+              "name": "prev"
+            },
+            {
+              "description": "次の枚へ",
+              "name": "next"
+            },
+            {
+              "description": "「n / N」（<output>。暗黙のライブリージョン）",
+              "name": "counter"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "loop",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "loop",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#index",
+              "privacy": "private",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "#stop",
+              "privacy": "private",
+              "type": {
+                "text": "() => void"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "index",
+              "type": {
+                "text": "number"
+              },
+              "description": "いま見えている枚（0 始まり）。代入は移動だけで、`rd-change` は出さない"
+            },
+            {
+              "kind": "method",
+              "name": "#announce",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "next",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "#onVisible",
+              "privacy": "private",
+              "description": "転がりで見えている枚が変わった。同じ枚なら黙る（プログラムからの移動もここで黙る）"
+            },
+            {
+              "kind": "method",
+              "name": "#step",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "direction",
+                  "type": {
+                    "text": "Direction"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "#prev",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#next",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "name": "rd-change",
+              "type": {
+                "text": "CustomEvent<{ index: number }>"
+              },
+              "description": "見えている枚が変わったときに発火（ボタン・スクロールの両方。index への代入では出さない）"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "label"
+            },
+            {
+              "name": "loop",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "loop"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "at",
+              "description": "start - loop が無く先頭にいる"
+            },
+            {
+              "name": "at",
+              "description": "end - loop が無く末尾にいる"
+            },
+            {
+              "name": "single",
+              "description": "枚が 1 つ以下"
+            },
+            {
+              "name": "unlabeled",
+              "description": "label が無い"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子（<ul> と <li>）が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "横に並ぶ枚の列。前へ／次へと「n / N」を足す。<ul><li> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-carousel",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdCarousel",
+          "declaration": {
+            "name": "RdCarousel",
+            "module": "src/carousel/carousel.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/checkbox-group/checkbox-group.define.ts",
       "declarations": [],
       "exports": [
@@ -3750,6 +3986,14 @@
             },
             {
               "kind": "field",
+              "name": "#dispose",
+              "privacy": "private",
+              "type": {
+                "text": "() => void"
+              }
+            },
+            {
+              "kind": "field",
               "name": "#drag",
               "privacy": "private"
             },
@@ -4542,6 +4786,214 @@
           "declaration": {
             "name": "RdToast",
             "module": "src/toast/toast.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/toggle-group/toggle-group.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-toggle-group",
+          "declaration": {
+            "name": "RdToggleGroup",
+            "module": "/src/toggle-group/toggle-group.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/toggle-group/toggle-group.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "押下ボタンの列。`<fieldset>` / `<legend>` と `<button aria-pressed>` を子として包む（ティア A、\nADR-0012）。するのは 3 つだけ：`single` のとき他を戻す、矢印キーで列の中を移動する（roving\ntabindex。APG「Toolbar」）、`rd-change` を投げる。JS が無いときは「押しても変わらない普通の\nボタンの列」に縮退する（害は無い）。**送信に載せる値なら `rd-*-group segmented` を使う**。",
+          "name": "RdToggleGroup",
+          "cssParts": [
+            {
+              "description": "項目の入れ物",
+              "name": "options"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "mode",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'multiple'",
+              "attribute": "mode"
+            },
+            {
+              "kind": "field",
+              "name": "orientation",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'horizontal'",
+              "attribute": "orientation"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'outline'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#options",
+              "privacy": "private",
+              "type": {
+                "text": "Element | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#binding",
+              "privacy": "private",
+              "type": {
+                "text": "Binding | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#observer",
+              "privacy": "private",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "values",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "description": "プログラムからの変更。`rd-change` は出さない（`rd-select` / `rd-sort` と同じ方針）"
+            },
+            {
+              "kind": "field",
+              "name": "#onClick",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#onKeydown",
+              "privacy": "private",
+              "description": "フォーカスを動かすだけで押さない（APG Toolbar。押すのは Enter / Space = ネイティブの click）"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ values: readonly string[] }>"
+              },
+              "description": "押下で選択が変わったときに発火",
+              "name": "rd-change"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "mode",
+              "type": {
+                "text": "string"
+              },
+              "default": "'multiple'",
+              "fieldName": "mode"
+            },
+            {
+              "name": "orientation",
+              "type": {
+                "text": "string"
+              },
+              "default": "'horizontal'",
+              "fieldName": "orientation"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'outline'",
+              "fieldName": "variant"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "outline",
+              "description": "variant=outline（既定）。丸い面に区画を並べる"
+            },
+            {
+              "name": "ghost",
+              "description": "variant=ghost。面も罫線も持たない"
+            },
+            {
+              "name": "single",
+              "description": "mode=single。1 個だけ押せる"
+            },
+            {
+              "name": "multiple",
+              "description": "mode=multiple（既定）。いくつでも押せる"
+            },
+            {
+              "name": "horizontal",
+              "description": "orientation=horizontal（既定）"
+            },
+            {
+              "name": "vertical",
+              "description": "orientation=vertical。矢印は ↑ ↓"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "押下ボタンの列。単一 / 複数選択と矢印キー移動。<fieldset><legend> と <button aria-pressed> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-toggle-group",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdToggleGroup",
+          "declaration": {
+            "name": "RdToggleGroup",
+            "module": "src/toggle-group/toggle-group.element.ts"
           }
         }
       ]

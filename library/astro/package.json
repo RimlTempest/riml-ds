@@ -19,6 +19,7 @@
     "./dialog.astro": "./src/generated/dialog.astro",
     "./text-field.astro": "./src/generated/text-field.astro",
     "./experimental/calendar.astro": "./src/generated/experimental/calendar.astro",
+    "./experimental/carousel.astro": "./src/generated/experimental/carousel.astro",
     "./experimental/checkbox.astro": "./src/generated/experimental/checkbox.astro",
     "./experimental/checkbox-group.astro": "./src/generated/experimental/checkbox-group.astro",
     "./experimental/combobox.astro": "./src/generated/experimental/combobox.astro",
@@ -35,6 +36,7 @@
     "./experimental/splitter.astro": "./src/generated/experimental/splitter.astro",
     "./experimental/tabs.astro": "./src/generated/experimental/tabs.astro",
     "./experimental/toggle.astro": "./src/generated/experimental/toggle.astro",
+    "./experimental/toggle-group.astro": "./src/generated/experimental/toggle-group.astro",
     "./experimental/window.astro": "./src/generated/experimental/window.astro",
     "./package.json": "./package.json"
   },

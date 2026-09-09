@@ -10,6 +10,10 @@
 import { markup as buttonMarkup } from '@rimltempest/riml-ds-elements/button/contract'
 import { markup as calendarMarkup } from '@rimltempest/riml-ds-elements/experimental/calendar/contract'
 import { markup as dialogMarkup } from '@rimltempest/riml-ds-elements/dialog/contract'
+import {
+  itemMarkup as carouselItemMarkup,
+  markup as carouselMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/carousel/contract'
 import { markup as checkboxMarkup } from '@rimltempest/riml-ds-elements/experimental/checkbox/contract'
 import {
   checkboxOptionMarkup,
@@ -54,6 +58,10 @@ import {
   tabMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/tabs/contract'
 import { markup as toggleMarkup } from '@rimltempest/riml-ds-elements/experimental/toggle/contract'
+import {
+  markup as toggleGroupMarkup,
+  toggleItemMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/toggle-group/contract'
 import { markup as windowMarkup } from '@rimltempest/riml-ds-elements/experimental/window/contract'
 import { markup as textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field/contract'
 import type { ElementExampleMap } from './core/elements.js'
@@ -266,6 +274,18 @@ const DISCLOSURE = {
 /** 押下の真実は `aria-pressed`。既定は `'false'`（属性ごと消えると toggle でなくなる） */
 const TOGGLE = { label: '太字', pressed: 'false' } as const
 
+/**
+ * 押下ボタンの列。**送信には載らない**（載せるなら `rd-radio-group segmented` /
+ * `rd-checkbox-group segmented`）。項目は `<button>` 直書きだけで、`rd-toggle` は中に入れない。
+ */
+const TOGGLE_GROUP = {
+  label: '書式',
+  mode: 'multiple',
+  children:
+    toggleItemMarkup({ label: '太字', value: 'bold', pressed: 'true' })
+    + toggleItemMarkup({ label: '斜体', value: 'italic' }),
+} as const
+
 const TOAST = {} as const
 
 /**
@@ -295,12 +315,28 @@ const SPLITTER_PROPS = {
  */
 const TOOLTIP = { for: 'save', children: '⌘S で保存します' } as const
 
+/**
+ * 枚（`<li>`）は利用側が書く。`carouselItemMarkup` で 1 枚ずつ組み、
+ * 中身にはカードなどの既存のマークアップをそのまま入れる。自動再生は無い（AAA 2.3.3）。
+ */
+const CAROUSEL = {
+  label: 'おすすめ',
+  children: ['秋の便り', '冬の支度', '春の準備']
+    .map((title) =>
+      carouselItemMarkup({
+        children: `<article class="rd-card"><div class="rd-card-body"><h3 class="rd-card-title">${title}</h3></div></article>`,
+      }),
+    )
+    .join(''),
+} as const
+
 export const elementExamples = {
   'rd-button': { html: buttonMarkup(BUTTON), props: BUTTON },
   'rd-text-field': { html: textFieldMarkup(TEXT_FIELD), props: TEXT_FIELD },
   'rd-dialog': { html: dialogMarkup(DIALOG), props: DIALOG },
   'rd-select': { html: selectMarkup(SELECT), props: SELECT },
   'rd-calendar': { html: calendarMarkup(CALENDAR), props: CALENDAR },
+  'rd-carousel': { html: carouselMarkup(CAROUSEL), props: CAROUSEL },
   'rd-checkbox': { html: checkboxMarkup(CHECKBOX), props: CHECKBOX },
   'rd-checkbox-group': { html: checkboxGroupMarkup(CHECKBOX_GROUP), props: CHECKBOX_GROUP },
   'rd-combobox': { html: comboboxMarkup(COMBOBOX), props: COMBOBOX },
@@ -318,6 +354,7 @@ export const elementExamples = {
   'rd-tabs': { html: tabsMarkup(TABS), props: TABS },
   'rd-toast': { html: '<rd-toast></rd-toast>', props: TOAST },
   'rd-toggle': { html: toggleMarkup(TOGGLE), props: TOGGLE },
+  'rd-toggle-group': { html: toggleGroupMarkup(TOGGLE_GROUP), props: TOGGLE_GROUP },
   'rd-tooltip': {
     html:
       '<button id="save" type="button" title="⌘S で保存します">保存</button>'

@@ -22,6 +22,7 @@ describe('listElements', () => {
     expect(result.value.map((element) => element.tag)).toEqual([
       'rd-button',
       'rd-calendar',
+      'rd-carousel',
       'rd-checkbox',
       'rd-checkbox-group',
       'rd-combobox',
@@ -42,6 +43,7 @@ describe('listElements', () => {
       'rd-text-field',
       'rd-toast',
       'rd-toggle',
+      'rd-toggle-group',
       'rd-tooltip',
       'rd-window',
     ])
@@ -54,6 +56,7 @@ describe('listElements', () => {
     expect(Object.keys(elementExamples).toSorted()).toEqual([
       'rd-button',
       'rd-calendar',
+      'rd-carousel',
       'rd-checkbox',
       'rd-checkbox-group',
       'rd-combobox',
@@ -73,6 +76,7 @@ describe('listElements', () => {
       'rd-text-field',
       'rd-toast',
       'rd-toggle',
+      'rd-toggle-group',
       'rd-tooltip',
       'rd-window',
     ])
