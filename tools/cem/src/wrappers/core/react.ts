@@ -62,6 +62,19 @@ const DOM_TYPE: Readonly<Record<string, string>> = {
 
 const isCustomTag = (tag: string): boolean => tag.includes('-')
 
+/** React の JSX 型が `number` で受けるネイティブ属性。リテラルは `={0}` の形で出す（`="0"` は TS2322） */
+const NUMERIC_ATTRS: ReadonlySet<string> = new Set([
+  'tabindex',
+  'maxlength',
+  'minlength',
+  'rows',
+  'cols',
+  'colspan',
+  'rowspan',
+  'span',
+  'size',
+])
+
 /** React の綴りに直す。`value` はフォーム部品では uncontrolled の `defaultValue` に写す */
 const reactAttrName = (tag: string, attr: string): string => {
   if (isCustomTag(tag)) {
@@ -91,12 +104,12 @@ const propType = (markupProp: MarkupProp): string =>
 const propRef = (spec: WrapperSpec, name: string): string =>
   name === 'id' && spec.idFallback !== undefined ? 'controlId' : name
 
-const attrExpression = (context: Context, value: string | boolean): string => {
+const attrExpression = (context: Context, attr: string, value: string | boolean): string => {
   if (typeof value === 'boolean') {
     return value ? '' : '={false}'
   }
   if (!value.startsWith('$')) {
-    return `="${value}"`
+    return NUMERIC_ATTRS.has(attr) && /^\d+$/.test(value) ? `={${value}}` : `="${value}"`
   }
   const name = value.slice(1)
   const declared = context.spec.markupProps.find((item) => item.name === name)
@@ -134,7 +147,7 @@ const attrPairs = (
     .map(([attr, value]) =>
       isCustomTag(node.tag)
         ? customAttrSpread(context, attr, value)
-        : `${reactAttrName(node.tag, attr)}${attrExpression(context, value)}`,
+        : `${reactAttrName(node.tag, attr)}${attrExpression(context, attr, value)}`,
     )
     .filter((pair) => pair !== '')
   const slot = node.slot === undefined ? [] : [`slot="${node.slot}"`]

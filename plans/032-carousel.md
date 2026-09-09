@@ -1,10 +1,19 @@
 # 032: `rd-carousel` — scroll-snap の列に前へ／次へと「n / N」を足す（`<ul><li>` を包むティア A）
 
 **優先度**: P2　**規模**: M　**依存**: 020（`.rd-carousel` の CSS atom — 見た目の出どころ）、023（raw slot 付きラッパーの生成）
-**レーン**: `feat/carousel`　**計画時の main**: `28f2c5e`（028・029・030 マージ後。**031（`feat/toggle-group`）・033（`feat/calendar`）と並行** — `system/**` / `_shared/**` には触らない）
+**レーン**: `feat/carousel`　**計画時の main**: `f59612d`（028・029・030 マージ後。**031（`feat/toggle-group`）・033（`feat/calendar`）と並行** — `system/**` / `_shared/**` には触らない）
+
+> **改訂（2026-09-09）**: 初版は `<li>` に `role="group"` を付けていたが、axe の `aria-allowed-role` / `list`（`<ul>` の子は
+> `listitem` でなければならない）に落ちる。本版は **`<li>` に role を付けず**（暗黙の `listitem` のまま）`aria-roledescription="slide"` と
+> `aria-label="n / N"` だけを足す。また `<ul>` は横に転がる箱なのに Tab で届かなかったので、**契約の `<ul>` に `tabindex="0"`** を持たせる
+> （`.rd-carousel` atom・`e2e/pe/build-pages.ts` の見本と同じ。axe `scrollable-region-focusable`）。
+>
+> **改訂 2（2026-09-09）**: 契約の `<ul tabindex="0">` は React ラッパーで `tabIndex="0"`（string）になり TS2322 で落ちた。
+> 生成器側を直した（main `1ada18b`: `tools/cem/src/wrappers/core/react.ts` がリテラル数値属性を `={0}` で出す）。
+> 完了条件の `role` / `aria-live` の grep は `aria-roledescription` とコメントに当たっていたので属性の綴りだけに絞った。
 
 > **Drift check（最初に実行）**:
-> `test -d library/elements/src/carousel && echo EXISTS` が何も出ないこと。出たら STOP。
+> `test -d library/elements/src/carousel && echo EXISTS` が何も出ないこと。出たら STOP（**自分がこの計画の Step 1 で scaffold した未コミットの出力なら続行**。中身が本版の設計と違う箇所は直す）。
 > `grep -c '\.rd-carousel {' system/css/src/atoms.css` = 1、`grep -c 'scroll-snap-type: x mandatory' system/css/src/atoms.css` ≥ 1。
 > `grep -c 'export const bindListeners' library/elements/src/_shared/native-control.ts` = 1、`grep -c 'export const usesJapaneseCopy' library/elements/src/_shared/lang.ts` = 1。
 > `grep -cF "{ raw: '\$children' }" library/elements/src/window/window.contract.ts` = 1（raw の既定 slot が生成器で動いている手本）。
@@ -19,7 +28,7 @@ shadcn の **Carousel** に当たる部品が CSS atom（`.rd-carousel` — 横�
 `rd-carousel` は既存の atom と同じ HTML（`<ul><li>`）を包み、JS があるときだけ
 
 1. 前へ／次へのボタン（`[part='prev']` / `[part='next']`）と「n / N」（`<output part="counter">`）を**末尾に足す**
-2. 各 `<li>` に `role="group"` `aria-roledescription="slide"` `aria-label="n / N"` を付ける
+2. 各 `<li>` に `aria-roledescription="slide"` `aria-label="n / N"` を付ける（**`role` は付けない**。`<ul>` の子は暗黙の `listitem` のまま——axe `list` / `aria-allowed-role`）
 3. 見えているスライドを `IntersectionObserver` で追い、`rd-change { index }` を投げる
 
 をする。JS が無いときは**今までどおり横スクロールできる列**（ティア A: 動く ≠ 同じ見た目）。
@@ -122,13 +131,15 @@ export const contract = {
     attrs: { label: '$label', loop: '$loop' },
     children: [
       // スライドは生 HTML。利用側が `<li>…</li>` を並べて渡す（`carouselItemMarkup` で組める）
-      { tag: 'ul', children: [{ raw: '$children' }] },
+      // 横に転がる箱はキーボードで届く必要がある（axe scrollable-region-focusable）。JS 無しでも効くので契約に持つ
+      { tag: 'ul', attrs: { tabindex: '0' }, children: [{ raw: '$children' }] },
     ],
   },
 } as const satisfies Contract
 ```
 
 - `carouselItemMarkup({ children })` → `<li>…</li>`（`children` はエスケープされない。`.rd-card` などを入れる）。
+- `<ul tabindex="0">` は契約の一部（`markup` が出す）。element は `tabindex` を**足しも消しもしない**。`checkContract` の `track` は `:scope > ul` のままで、`tabindex` の有無は契約テストで見る
 - `label`（**必須**）: 列のアクセシブル名。element が `ElementInternals` に `role = 'group'`、`ariaRoleDescription = 'carousel'`、`ariaLabel = label` を書く
   （`internals.role` / `ariaLabel` / `ariaRoleDescription` は全エンジンにある。無ければ `unlabeled` + `console.error('[rd-carousel] label が必要')`）。
 - `loop`（boolean）: 末尾で「次へ」を押すと先頭へ、先頭で「前へ」を押すと末尾へ。無ければ端でボタンが `aria-disabled="true"`（フォーカス可能のまま。skill §4）。
@@ -152,7 +163,7 @@ export const computeStates = (input: { count: number; index: number; loop: boole
 ### 3. DOM 層（`carousel.dom.ts`）
 
 - `readItems(host): HTMLLIElement[]`（`ITEM_SELECTOR`）
-- `labelSlides(items)`: 各 `<li>` に `role="group"` `aria-roledescription="slide"` `aria-label="n / N"`（`counterText`）。**`<li>` の中身は触らない**
+- `labelSlides(items)`: 各 `<li>` に `aria-roledescription="slide"` `aria-label="n / N"`（`counterText`）。**`role` は書かない**（暗黙の `listitem`）。**`<li>` の中身は触らない**
 - `scrollTo(items, index)`: `items[index]?.scrollIntoView({ inline: 'start', block: 'nearest', behavior: 'auto' })` — **`behavior: 'auto'`** にして CSS の `scroll-behavior`（`prefers-reduced-motion` で切替）に従わせる。JS で `smooth` を書かない
 - `watchVisible(track, items, onVisible: (index) => void): () => void` — `IntersectionObserver({ root: track, threshold: [0.5, 1] })`。エントリから `pickVisible` → `onVisible`。戻り値は `disconnect`
 - `syncButtons(prev, next, states)`: `at-start` / `at-end` を `aria-disabled` に写す（`loop` なら常に無し）
@@ -180,6 +191,7 @@ export const computeStates = (input: { count: number; index: number; loop: boole
 - `rd-carousel { display: block }`、`rd-carousel > ul { display: flex; gap: var(--rd-space-4); margin: 0; padding: 0 0 var(--rd-space-2); list-style: none; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: thin }`
   （atom と同じ値。**スクロールバーは隠さない** — 位置の手がかり。`scroll-padding-inline` は `--rd-carousel-padding`（既定 0））
 - `rd-carousel > ul > li { flex: 0 0 var(--rd-carousel-item, min(100%, 20rem)); scroll-snap-align: start }`
+- `rd-carousel > ul:focus-visible { outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color); outline-offset: var(--rd-focus-ring-offset) }`（atom の `.rd-carousel:focus-visible` と同じ見え方。`outline: none` は書かない）
 - `@media (prefers-reduced-motion: no-preference) { rd-carousel > ul { scroll-behavior: smooth } }`（ここだけ。JS は `auto`）
 - `[part='controls'] { display: flex; align-items: center; justify-content: end; gap: var(--rd-space-2); margin-block-start: var(--rd-space-2) }`
 - `[part='prev'], [part='next']`: `.rd-icon-button` と同じ寸法（`inline-size: var(--rd-sizing-target-min); block-size: var(--rd-sizing-target-min); border-radius: var(--rd-radius-full); border: var(--rd-border-width-default) solid var(--rd-color-border-default); background: var(--rd-color-surface-raised)`）。`[aria-disabled='true'] { color: var(--rd-color-text-muted); cursor: not-allowed }`
@@ -198,9 +210,9 @@ export const computeStates = (input: { count: number; index: number; loop: boole
 ### 7. 検証面
 
 - `carousel.contract.test.ts`、`carousel.logic.test.ts`（`targetIndex` の端・loop、`counterText`、`pickVisible` の同率、`computeStates`）
-- `carousel.test.ts`（実 DOM。vitest browser は実レイアウトなので `IntersectionObserver` が動く）: 契約欠落で `malformed`、`label` 無しで `unlabeled` + `console.error`、`<li>` に `aria-roledescription="slide"` と `aria-label="1 / 5"`、「次へ」で `rd-change { index: 1 }` と counter「2 / 5」、端で `aria-disabled`、`loop` で折り返す、1 枚で `single`、`index` setter で `rd-change` が**出ない**、ボタン ≥ 44px、`prefers-reduced-motion: reduce` で `getComputedStyle(ul).scrollBehavior === 'auto'`
-- `carousel.sr.test.ts`: 仮想 SR が「group carousel おすすめ」→「group slide 1 / 3」の順で読む
-- `e2e/pe/build-pages.ts` に `carousel.html`、`tier-a.spec.ts` に **JS 無し 2 本**（`<ul>` が `overflow-x: auto`（横スクロールできる）／ボタンが**無い**）、`e2e/a11y/keyboard.spec.ts` に **JS あり 2 本**（Tab で「前へ」「次へ」に届き Enter で counter が変わる／`aria-disabled` の端でも Tab で止まる）、`axe.spec.ts` に 1 ページ
+- `carousel.test.ts`（実 DOM。vitest browser は実レイアウトなので `IntersectionObserver` が動く）: 契約欠落で `malformed`、`label` 無しで `unlabeled` + `console.error`、`<li>` に `aria-roledescription="slide"` と `aria-label="1 / 5"` があり **`role` 属性が無い**、`<ul>` が `tabindex="0"`、「次へ」で `rd-change { index: 1 }` と counter「2 / 5」、端で `aria-disabled`、`loop` で折り返す、1 枚で `single`、`index` setter で `rd-change` が**出ない**、ボタン ≥ 44px、`prefers-reduced-motion: reduce` で `getComputedStyle(ul).scrollBehavior === 'auto'`
+- `carousel.sr.test.ts`: 仮想 SR が「group carousel おすすめ」→「list」→「listitem 1 / 3」の順で読む（`aria-roledescription` の読み方は仮想 SR の実装次第なので、**role が `listitem` で名前が `1 / 3`** であることを見る）
+- `e2e/pe/build-pages.ts` に `carousel.html`、`tier-a.spec.ts` に **JS 無し 3 本**（`<ul>` が `overflow-x: auto`（横スクロールできる）／Tab で `<ul>` に焦点が入る／ボタンが**無い**）、`e2e/a11y/keyboard.spec.ts` に **JS あり 2 本**（Tab で `<ul>` → 「前へ」→「次へ」の順に届き Enter で counter が変わる／`aria-disabled` の端でも Tab で止まる）、`axe.spec.ts` に 1 ページ
 - `e2e/frameworks/shared.ts` に `carouselSuite`（4 フレームワークで描画・「次へ」で counter）、4 アプリに 1 例ずつ
 - `tools/mcp/src/examples.ts` に `'rd-carousel'`、`library/react/test/**` に 1 本
 - `.size-limit.json` に `carousel/define`（lit 込み）**12 KB**
@@ -232,7 +244,8 @@ export const computeStates = (input: { count: number; index: number; loop: boole
 - `bun run check` = 0、`bun run test` = 0（`carousel.*.test.ts` を含む）
 - `wc -l library/elements/src/carousel/carousel.element.ts` ≤ 150、`grep -c '\bif\b' …/carousel.element.ts` ≤ 5
 - `grep -c "behavior: 'smooth'" library/elements/src/carousel/*.ts` = 0（JS で smooth を書いていない）
-- `grep -c 'aria-live' library/elements/src/carousel/*.ts` = 0
+- `grep -c "'aria-live'" library/elements/src/carousel/*.ts` = 0（属性として書いていない。コメントの言及は数えない）
+- `grep -cE "'role'|\"role\"" library/elements/src/carousel/carousel.dom.ts` = 0（`<li>` に `role` 属性を書いていない。`aria-roledescription` と `contract.roles` は当たらない）、`grep -c "tabindex: '0'" library/elements/src/carousel/carousel.contract.ts` = 1
 - `bash scripts/guard.sh` = 0、`bun run pe` = 0、`bun run e2e:frameworks` = 0、`bash scripts/vrt.sh` = 0、`bun run a11y` = 0、`bun run release:check` = 0
 - `git diff --name-only main...HEAD -- e2e/__screenshots__` に**既存**画像が 1 枚も無い
 - `grep -c 'rd-carousel' library/react/src/generated/index.ts` ≥ 1、React の props に `label` と `loop?: boolean` がある
@@ -244,6 +257,7 @@ export const computeStates = (input: { count: number; index: number; loop: boole
 - vitest browser で `IntersectionObserver` が交差を返さない（`root` 付きで動かない）— 報告する。`scroll` イベントでの代替を勝手に入れない
 - VRT の Docker 環境で初期スクロール位置が安定しない（同じ story で画像が揺れる）
 - `git merge main` で `e2e/**` / `.size-limit.json` / `package.json` / `examples.ts` がコンフリクトする
+- axe が `<li aria-roledescription>`（role 無し）や `<ul tabindex="0">` に別の違反を出す（`aria-roledescription` 規則など）。属性を消して通さず報告する
 - `_shared/**` / `system/**` を変えないと実装できない
 
 ## スコープ外

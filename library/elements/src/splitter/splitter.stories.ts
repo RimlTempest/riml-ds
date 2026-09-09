@@ -30,9 +30,9 @@ const handleOf = (canvas: HTMLElement, index = 0): HTMLElement => {
   return handle
 }
 
-/** 高さのある入れ物。`--rd-space-16` は 3rem なので、その 4 倍を面の高さにする */
-const framed = (markup: string): TemplateResult =>
-  html`<div style="block-size: calc(var(--rd-space-16) * 4)">${unsafeHTML(markup)}</div>`
+/** 高さのある入れ物。`--rd-space-16` は 3rem なので、その 4 倍（`scale`）を面の高さにする */
+const framed = (markup: string, scale = 4): TemplateResult =>
+  html`<div style="block-size: calc(var(--rd-space-16) * ${scale})">${unsafeHTML(markup)}</div>`
 
 const meta: Meta<Args> = {
   title: 'Components/Splitter',
@@ -79,17 +79,28 @@ export const Narrow: Story = {
   },
 }
 
+/** 高さのある入れ物（文字列版）。面の中に入れる内側の splitter に使う */
+const framedMarkup = (markup: string, scale: number): string =>
+  `<div style="block-size: calc(var(--rd-space-16) * ${scale})">${markup}</div>`
+
 /** 横の面の中に縦の splitter を入れる。つまみは面ごとに 1 つずつ独立して動く */
 export const Nested: Story = {
   args: {
     label: '外側（横）',
-    end: splitterMarkup({
-      label: '内側（縦）',
-      direction: 'vertical',
-      start: '<h2>本文</h2><p>上の面。</p>',
-      end: '<h2>下書き</h2><p>下の面。</p>',
-    }),
+    // 面（part=end）に直接入れると内側の host の block-size: 100% が解けず中身の高さになり、
+    // 端数の切り上げだけで「転がるのに焦点が入らない面」になって axe の
+    // scrollable-region-focusable に落ちる（Linux の Chromium で再現）。内側にも高さのある入れ物を与える
+    end: framedMarkup(
+      splitterMarkup({
+        label: '内側（縦）',
+        direction: 'vertical',
+        start: '<h2>本文</h2><p>上の面。</p>',
+        end: '<h2>下書き</h2><p>下の面。</p>',
+      }),
+      6,
+    ),
   },
+  render: (args) => framed(splitterMarkup(args), 8),
   play: async ({ canvasElement }) => {
     await expect(canvasElement.querySelectorAll('rd-splitter')).toHaveLength(2)
   },
