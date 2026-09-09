@@ -86,6 +86,7 @@ describe('既定 export の部品', () => {
   it('experimental の部品は root から出ず、./experimental から出る（ADR-0009）', () => {
     expect(Object.keys(index)).not.toContain('RdSelect')
     expect(Object.keys(experimental)).toEqual([
+      'RdCalendar',
       'RdCheckbox',
       'RdCheckboxGroup',
       'RdCombobox',

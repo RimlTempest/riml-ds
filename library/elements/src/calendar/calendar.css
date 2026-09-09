@@ -1,0 +1,41 @@
+@layer rd.components {
+  rd-calendar {
+    display: block;
+  }
+
+  /* TODO: セレクタは `rd-calendar > <native>` の 1 段に留める（利用側のクラスを仮定しない） */
+  rd-calendar > input {
+    display: block;
+    min-block-size: var(--rd-sizing-target-min);
+    padding-block: var(--rd-space-2);
+    padding-inline: var(--rd-space-3);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-strong);
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-surface-default);
+    color: var(--rd-color-text-default);
+    font: inherit;
+  }
+
+  rd-calendar > input:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  rd-calendar > [part='hint'] {
+    margin-block: var(--rd-space-1) 0;
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+  }
+
+  @media (forced-colors: active) {
+    rd-calendar > input {
+      border-color: FieldText;
+    }
+
+    rd-calendar > input:focus-visible {
+      outline-color: Highlight;
+    }
+  }
+}

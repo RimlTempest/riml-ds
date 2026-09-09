@@ -9,6 +9,15 @@
     "dependsOn": []
   },
   {
+    "name": "calendar",
+    "tag": "rd-calendar",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "TODO",
+    "files": ["calendar/index.js", "calendar/calendar.define.js", "calendar/calendar.css"],
+    "dependsOn": []
+  },
+  {
     "name": "checkbox",
     "tag": "rd-checkbox",
     "pe": "A",
