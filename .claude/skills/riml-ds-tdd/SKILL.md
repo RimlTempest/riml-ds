@@ -98,7 +98,13 @@ a11y 検査は addon-a11y が全 story に自動で当てる。除外は `parame
   掴むとコントラスト違反に見える。**`document.getAnimations()` が空かだけで判断しない**
   （遷移がまだ始まっていない瞬間も空を返す）。`waitFor` で「遷移の結果」を見る:
   開いている枠は computed `opacity === '1'`、閉じた枠は `display === 'none'`
-  （`dialog.stories.ts` の `settled()`）。
+  （`dialog.stories.ts` の `settled()`）。他の部品の story で `rd-dialog` を開くときは
+  `@rd-shadow` の `dialogsAreSteady()` を `waitFor` してから終える（`command.stories.ts` の `InDialog`）。
+- **macOS では通るのに CI の `test (browser + storybook)` だけ落ちる**なら、推測で直さず
+  `bash scripts/test-in-docker.sh --project storybook <name>` で CI と同じ Linux Chromium で再現する。
+  フォント（Noto CJK）と端数の丸めが違うので、axe の `scrollable-region-focusable`
+  （content-sized な面が 1〜4px だけ「転がる」）や `color-contrast` はそこでしか出ないことがある。
+  面の中に部品を入れ子にする story は、内側にも高さのある入れ物を与える（`splitter.stories.ts` の `Nested`）。
 - テストごとに新しい要素を作る。`document.body` に残さない（`fixture` が cleanup を登録）。
 - VRT の差分が出たら、**まず意図した変更か**を見る。意図どおりなら `bun run vrt:update`
   （Docker 内）。macOS で撮った画像はコミットしない（guard が落とす）。
@@ -114,4 +120,5 @@ bun run test --project node      # 純関数だけ高速に
 bun run a11y                     # e2e axe（AAA）
 bun run vrt                      # スクリーンショット比較（Docker）
 bun run vrt:update               # ベースライン更新（Docker）
+bash scripts/test-in-docker.sh --project storybook <name>   # CI と同じ Linux Chromium で story を回す
 ```
