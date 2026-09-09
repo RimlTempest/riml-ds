@@ -30,9 +30,9 @@ const handleOf = (canvas: HTMLElement, index = 0): HTMLElement => {
   return handle
 }
 
-/** 高さのある入れ物。`--rd-space-16` は 3rem なので、その 4 倍を面の高さにする */
-const framed = (markup: string): TemplateResult =>
-  html`<div style="block-size: calc(var(--rd-space-16) * 4)">${unsafeHTML(markup)}</div>`
+/** 高さのある入れ物。`--rd-space-16` は 3rem なので、その 4 倍（`scale`）を面の高さにする */
+const framed = (markup: string, scale = 4): TemplateResult =>
+  html`<div style="block-size: calc(var(--rd-space-16) * ${scale})">${unsafeHTML(markup)}</div>`
 
 const meta: Meta<Args> = {
   title: 'Components/Splitter',
@@ -90,6 +90,9 @@ export const Nested: Story = {
       end: '<h2>下書き</h2><p>下の面。</p>',
     }),
   },
+  // 内側の面は外側の半分の高さしか無い。h2 + p が溢れると「転がるのに焦点が入らない面」になり
+  // axe の scrollable-region-focusable に落ちる（CI の Linux フォントで再現）ので入れ物を 2 倍にする
+  render: (args) => framed(splitterMarkup(args), 8),
   play: async ({ canvasElement }) => {
     await expect(canvasElement.querySelectorAll('rd-splitter')).toHaveLength(2)
   },
