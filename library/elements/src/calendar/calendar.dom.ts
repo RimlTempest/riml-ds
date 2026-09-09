@@ -386,7 +386,7 @@ const pickerTemplate = (
       aria-expanded=${view.open ? 'true' : 'false'}
       aria-label=${names.toggle}
     >
-      <svg aria-hidden="true" focusable="false" viewBox="0 0 16 16" width="16" height="16">
+      <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16">
         <rect
           x="1"
           y="2"
