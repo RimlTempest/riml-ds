@@ -105,6 +105,19 @@ const CALENDAR = {
   min: '2026-09-01',
   max: '2026-12-31',
 } as const
+
+/**
+ * `picker` は月表を常設せず、`<input>` の右のボタン 1 つで開く `[popover]` に入れる（plan 034）。
+ * フォームの 1 行に収めたいときはこちら。JS が無ければ `<input type="date">` だけに縮退する。
+ */
+const CALENDAR_PICKER = {
+  id: 'deadline',
+  label: '締め切り',
+  name: 'deadline',
+  defaultValue: '2026-09-15',
+  today: '2026-09-09',
+  picker: true,
+} as const
 const CHECKBOX = {
   id: 'news',
   label: 'お知らせを受け取る',
@@ -351,7 +364,10 @@ export const elementExamples = {
   'rd-text-field': { html: textFieldMarkup(TEXT_FIELD), props: TEXT_FIELD },
   'rd-dialog': { html: dialogMarkup(DIALOG), props: DIALOG },
   'rd-select': { html: selectMarkup(SELECT), props: SELECT },
-  'rd-calendar': { html: calendarMarkup(CALENDAR), props: CALENDAR },
+  'rd-calendar': {
+    html: `${calendarMarkup(CALENDAR)}${calendarMarkup(CALENDAR_PICKER)}`,
+    props: CALENDAR,
+  },
   'rd-carousel': { html: carouselMarkup(CAROUSEL), props: CAROUSEL },
   'rd-checkbox': { html: checkboxMarkup(CHECKBOX), props: CHECKBOX },
   'rd-checkbox-group': { html: checkboxGroupMarkup(CHECKBOX_GROUP), props: CHECKBOX_GROUP },

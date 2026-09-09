@@ -10,12 +10,15 @@ import { html, nothing, type TemplateResult } from 'lit'
 import { checkContract } from '../_shared/contract.js'
 import { usesJapaneseCopy } from '../_shared/lang.js'
 import { bindListeners, setControlValue } from '../_shared/native-control.js'
+import { anchorPopover } from '../_shared/popover-anchor.js'
 import { contract } from './calendar.contract.js'
 import {
   type CalendarAction,
   type CalendarView,
   type Cell,
   cellLabel,
+  clampToRange,
+  computeView,
   decideClick,
   decideKey,
   formatIsoDate,
@@ -25,8 +28,11 @@ import {
   type NavCopy,
   navCopy,
   parseIsoDate,
+  parseWeekStart,
+  toggleCopy,
   type WeekdayName,
   weekdayNames,
+  type YearMonth,
 } from './calendar.logic.js'
 
 /**
@@ -38,6 +44,8 @@ export type Attached = {
   readonly control: HTMLInputElement | undefined
   /** grid を `aria-labelledby` で結ぶ先。`<label>` に id が無ければ部品が付ける */
   readonly labelId: string
+  /** `picker` のとき、開くボタンの invoker 属性が指す先（`labelId` と同じ作り） */
+  readonly popoverId: string
   readonly detach: () => void
 }
 
@@ -45,6 +53,7 @@ export const NOT_ATTACHED: Attached = {
   ok: false,
   control: undefined,
   labelId: '',
+  popoverId: '',
   detach: () => {},
 }
 
@@ -61,14 +70,30 @@ export type CalendarNames = {
   readonly title: string
   readonly weekdays: readonly WeekdayName[]
   readonly nav: NavCopy
+  /** `picker` の開くボタンの `aria-label`（アイコンだけのボタンなので名前が要る） */
+  readonly toggle: string
   readonly locale: string
 }
 
-/** 木の中で参照する id */
-export type CalendarIds = { readonly labelId: string }
+/** 木の中で参照する id と、popover の `toggle` を受ける口 */
+export type CalendarIds = {
+  readonly labelId: string
+  readonly popoverId: string
+  readonly onToggle: (event: Event) => void
+}
+
+/** `*.element.ts` を薄く保つための組み立て（`Attached` と handler をそのまま渡す） */
+export const idsOf = (attached: Attached, onToggle: (event: Event) => void): CalendarIds => ({
+  labelId: attached.labelId,
+  popoverId: attached.popoverId,
+  onToggle,
+})
 
 const asInput = (element: Element | undefined): HTMLInputElement | undefined =>
   element instanceof HTMLInputElement ? element : undefined
+
+const asElement = (node: Element | null | undefined): HTMLElement | undefined =>
+  node instanceof HTMLElement ? node : undefined
 
 /** 空の `id` にだけ既定値を入れる。利用側が書いていればそのまま尊重する */
 const ensureLabelId = (label: Element | undefined, fallback: string): string => {
@@ -101,6 +126,7 @@ export const attach = (host: HTMLElement, onChange: () => void): Attached => {
     ok: control !== undefined,
     control,
     labelId,
+    popoverId: `${control?.id ?? 'rd-calendar'}-popover`,
     detach: () => {
       binding.detach()
       observer.disconnect()
@@ -150,6 +176,7 @@ export const namesOf = (
     title: monthTitle(view.month, locale),
     weekdays: weekdayNames(weekStart, locale),
     nav: navCopy(japanese),
+    toggle: toggleCopy(japanese),
     locale,
   }
 }
@@ -185,6 +212,96 @@ export const actionOf = (event: Event, view: CalendarView, weekStart: number): C
         states: view.states,
       })
 }
+
+/**
+ * ホストから読む「見え方だけ」の属性（値の真実は `<input>`）。`*.element.ts` を 150 行に
+ * 収める（ADR-0005）ために、見え方の組み立てはここへ出している。
+ */
+export type CalendarHost = HTMLElement & {
+  readonly today: string
+  readonly weekStart: string
+  readonly picker: boolean
+}
+
+/** `<input>` に値が無ければ「今日」（範囲の外なら端）に焦点を置く */
+export const initialFocus = (dates: CalendarDates): IsoDate =>
+  dates.selected ?? clampToRange(dates.today, dates.min, dates.max)
+
+/** `picker` の月表を入れた `[popover]`。`picker` でなければ描かれていない */
+const readPopover = (host: HTMLElement): HTMLElement | undefined =>
+  asElement(host.querySelector(':scope > [part="popover"]'))
+
+/** `picker` の月表が開いているか。popover が無ければ（`picker` でなければ）常に false */
+export const isOpen = (host: HTMLElement): boolean =>
+  readPopover(host)?.matches(':popover-open') ?? false
+
+/** `toggle` の `newState`。型に無いエンジンでも読めるように存在で見る（`popover.dom.ts` と同じ） */
+export const isOpening = (event: Event): boolean =>
+  'newState' in event && typeof event.newState === 'string' && event.newState === 'open'
+
+/**
+ * 開くボタンに月表を寄せる。同じ light DOM なので `anchor-name` / `position-anchor` を書いて
+ * あとは CSS（`@supports (position-area: block-end)`）に任せられる。`picker` でなければ何もしない。
+ */
+export const anchorPicker = (host: HTMLElement, attached: Attached): void => {
+  const toggle = asElement(host.querySelector(':scope > [part="toggle"]'))
+  anchorPopover(toggle, readPopover(host), `rd-calendar-${attached.control?.id ?? 'x'}`)
+}
+
+/**
+ * `actionOf` が決めた action を実行する。分岐をここに集めて `*.element.ts` を 150 行に収める
+ * （ADR-0005）。`move` だけは element に返して状態を動かしてもらう（`undefined` は「何も変えない」）。
+ */
+export type PerformInput = {
+  readonly host: HTMLElement
+  readonly attached: Attached
+  readonly dates: CalendarDates
+  readonly picker: boolean
+}
+
+/** 焦点の移し先。`focus` は「描き直したあとに升目へフォーカスを戻すか」 */
+export type Move = { readonly iso: IsoDate; readonly focus: boolean }
+
+export const perform = (
+  input: PerformInput,
+  action: CalendarAction,
+  event: Event,
+): Move | undefined => {
+  if (action.kind === 'none') {
+    return undefined
+  }
+  event.preventDefault()
+  if (action.kind === 'move') {
+    return { iso: action.iso, focus: action.focus }
+  }
+  // 範囲の外へ焦点は動けるが選べない（`aria-disabled`。APG と同じ）
+  if (inRange(action.iso, input.dates.min, input.dates.max)) {
+    commitDate(input.host, input.attached.control, action.iso)
+  }
+  // 日を選んだら閉じる。**部品が閉じるのはここだけ**（Escape も外側も UA に任せる）。
+  // フォーカスは UA の hide popover algorithm が invoker（開くボタン）へ戻す
+  if (input.picker) {
+    readPopover(input.host)?.hidePopover()
+  }
+  return undefined
+}
+
+/** ホストの属性・掴んだ `<input>`・いまの焦点から見え方を組み立てる（判断は純関数が持つ） */
+export const viewOf = (
+  host: CalendarHost,
+  attached: Attached,
+  month: YearMonth,
+  focused: IsoDate,
+): CalendarView =>
+  computeView({
+    ...readDates(attached.control, host.today),
+    month,
+    focused,
+    weekStart: parseWeekStart(host.weekStart),
+    malformed: !attached.ok,
+    picker: host.picker,
+    open: isOpen(host),
+  })
 
 /** 月をまたいだ再描画のあとで焦点を取り戻す。`iso` が無いときは何もしない */
 export const focusCell = (host: HTMLElement, iso: IsoDate | undefined): void => {
@@ -228,6 +345,72 @@ const navTemplate = (part: string, copy: string, glyph: string, blocked: boolean
     <span aria-hidden="true">${glyph}</span>
   </button>`
 
+/** 月の見出しと月表。`picker` のときは丸ごと `[popover]` の中に入る */
+const bodyTemplate = (view: CalendarView, names: CalendarNames, ids: CalendarIds): TemplateResult =>
+  html`<div part="header">
+      ${navTemplate('prev', names.nav.prev, '‹', view.states.has('at-min'))}
+      <p part="title" aria-live="polite">${names.title}</p>
+      ${navTemplate('next', names.nav.next, '›', view.states.has('at-max'))}
+    </div>
+    <table part="grid" role="grid" aria-labelledby=${ids.labelId}>
+      <thead>
+        <tr>
+          ${names.weekdays.map((name) => html`<th scope="col" abbr=${name.long}>${name.short}</th>`)}
+        </tr>
+      </thead>
+      <tbody>
+        ${view.rows.map(
+          (row) =>
+            html`<tr>
+              ${row.map((cell) => cellTemplate(cell, view, names.locale))}
+            </tr>`,
+        )}
+      </tbody>
+    </table>`
+
+/**
+ * `picker` のとき。開くボタンは `<input>` の右、月表は top layer の `[popover]`（**auto**）の中。
+ * 開くのはボタンの invoker 属性（UA）、Escape と light dismiss も UA。**モーダルにはしない**
+ * ——後ろも操作できる非モーダルの窓で、そうしないと light dismiss と噛み合わない。
+ */
+const pickerTemplate = (
+  body: TemplateResult,
+  view: CalendarView,
+  names: CalendarNames,
+  ids: CalendarIds,
+): TemplateResult =>
+  html`<button
+      type="button"
+      part="toggle"
+      popovertarget=${ids.popoverId}
+      aria-expanded=${view.open ? 'true' : 'false'}
+      aria-label=${names.toggle}
+    >
+      <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16">
+        <rect
+          x="1"
+          y="2"
+          width="14"
+          height="13"
+          rx="2"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        />
+        <path d="M1 6h14M5 1v3M11 1v3" stroke="currentColor" stroke-width="1.5" />
+      </svg>
+    </button>
+    <div
+      part="popover"
+      id=${ids.popoverId}
+      popover
+      role="dialog"
+      aria-labelledby=${ids.labelId}
+      @toggle=${ids.onToggle}
+    >
+      ${body}
+    </div>`
+
 /**
  * 強化ノード。Lit は既存の子（`<label>` / `<input>`）を消さず、その**後ろ**に描く。
  * 契約が欠けているときは何も足さない（JS 無しと同じ姿に留める）。
@@ -236,26 +419,10 @@ export const calendarTemplate = (
   view: CalendarView,
   names: CalendarNames,
   ids: CalendarIds,
-): TemplateResult =>
-  view.states.has('malformed')
-    ? html``
-    : html`<div part="header">
-          ${navTemplate('prev', names.nav.prev, '‹', view.states.has('at-min'))}
-          <p part="title" aria-live="polite">${names.title}</p>
-          ${navTemplate('next', names.nav.next, '›', view.states.has('at-max'))}
-        </div>
-        <table part="grid" role="grid" aria-labelledby=${ids.labelId}>
-          <thead>
-            <tr>
-              ${names.weekdays.map((name) => html`<th scope="col" abbr=${name.long}>${name.short}</th>`)}
-            </tr>
-          </thead>
-          <tbody>
-            ${view.rows.map(
-              (row) =>
-                html`<tr>
-                  ${row.map((cell) => cellTemplate(cell, view, names.locale))}
-                </tr>`,
-            )}
-          </tbody>
-        </table>`
+): TemplateResult => {
+  if (view.states.has('malformed')) {
+    return html``
+  }
+  const body = bodyTemplate(view, names, ids)
+  return view.picker ? pickerTemplate(body, view, names, ids) : body
+}

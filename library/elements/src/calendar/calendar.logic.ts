@@ -158,6 +158,10 @@ export type CalendarView = {
   /** 選べる範囲（`<input min max>` そのまま）。升目ごとの `aria-disabled` はここから決まる */
   readonly min: IsoDate | undefined
   readonly max: IsoDate | undefined
+  /** 月表を `[popover]` に入れて 1 つのボタンで開くか（`picker` 属性） */
+  readonly picker: boolean
+  /** その `[popover]` が開いているか。`picker` でなければ常に false と同じ意味 */
+  readonly open: boolean
   readonly states: ReadonlySet<string>
 }
 
@@ -170,6 +174,8 @@ export type CalendarViewInput = {
   readonly min: IsoDate | undefined
   readonly max: IsoDate | undefined
   readonly malformed: boolean
+  readonly picker: boolean
+  readonly open: boolean
 }
 
 /** 前の月がまるごと `min` より前／次の月がまるごと `max` より後なら、その向きへは進めない */
@@ -181,6 +187,10 @@ const navStates = (input: CalendarViewInput): readonly string[] => {
   return [...(atMin ? ['at-min'] : []), ...(atMax ? ['at-max'] : [])]
 }
 
+/** `picker` のときだけ開閉がある（月表が常設なら popover が無いので `open` は無視する） */
+const openStates = (input: CalendarViewInput): readonly string[] =>
+  input.picker && input.open ? ['open'] : []
+
 export const computeView = (input: CalendarViewInput): CalendarView => ({
   month: input.month,
   rows: monthGrid(input.month, input.weekStart),
@@ -189,9 +199,15 @@ export const computeView = (input: CalendarViewInput): CalendarView => ({
   today: input.today,
   min: input.min,
   max: input.max,
+  picker: input.picker,
+  open: input.open,
   states: input.malformed
     ? new Set(['malformed'])
-    : new Set([input.selected === undefined ? 'empty' : 'selected', ...navStates(input)]),
+    : new Set([
+        input.selected === undefined ? 'empty' : 'selected',
+        ...navStates(input),
+        ...openStates(input),
+      ]),
 })
 
 /** 月名・曜日名・日の読みは `Intl` に任せる。**必ず UTC**（ローカル時刻で日がずれない） */
@@ -230,6 +246,9 @@ export type NavCopy = { readonly prev: string; readonly next: string }
 
 export const navCopy = (japanese: boolean): NavCopy =>
   japanese ? { prev: '前の月', next: '次の月' } : { prev: 'Previous month', next: 'Next month' }
+
+/** `picker` の開くボタンの名前。アイコンだけのボタンなので `aria-label` はここが持つ */
+export const toggleCopy = (japanese: boolean): string => (japanese ? '暦を開く' : 'Open calendar')
 
 /**
  * 押されたキー・クリックから「何をするか」だけを決める（DOM を触らない）。

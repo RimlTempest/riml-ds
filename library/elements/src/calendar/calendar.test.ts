@@ -24,6 +24,21 @@ const focusable = (el: RdCalendar): readonly Element[] => [
   ...el.querySelectorAll('[data-iso][tabindex="0"]'),
 ]
 
+const toggleOf = (el: RdCalendar): HTMLElement | null =>
+  el.querySelector<HTMLElement>('[part="toggle"]')
+
+const popoverOf = (el: RdCalendar): HTMLElement | null =>
+  el.querySelector<HTMLElement>('[part="popover"]')
+
+/** `popovertarget` の click は UA が開く。`toggle` は task で飛ぶので状態が追いつくまで待つ */
+const openPicker = async (el: RdCalendar): Promise<void> => {
+  toggleOf(el)?.click()
+  await vi.waitFor(() => {
+    expect(el.matches(':state(open)')).toBe(true)
+  })
+  await el.updateComplete
+}
+
 const press = (target: Element | null, key: string, shiftKey = false): void => {
   target?.dispatchEvent(
     new KeyboardEvent('keydown', { key, shiftKey, bubbles: true, cancelable: true }),
@@ -216,4 +231,85 @@ it('日のタイルは 44px のタップ標的になる（WCAG 2.5.5 AAA）', as
 it('既定ではアニメーションが動いていない（prefers-reduced-motion 既定オフ）', async () => {
   const el = await fixtureOf(RdCalendar, calendar())
   expect(el.getAnimations({ subtree: true })).toHaveLength(0)
+})
+
+/**
+ * `picker`（plan 034）。月表を `[popover]` に入れ、`<input>` の右のボタン 1 つで開く。
+ * 開くのは `popovertarget`（UA）、閉じるのも Escape / light dismiss は UA に任せる。
+ */
+it('picker が無ければ開くボタンも popover も描かない（月表は常設のまま）', async () => {
+  const el = await fixtureOf(RdCalendar, calendar({ defaultValue: '2026-09-15' }))
+  expect(el.querySelectorAll('[part="toggle"]')).toHaveLength(0)
+  expect(el.querySelectorAll('[part="popover"]')).toHaveLength(0)
+  expect(el.querySelector('[part="grid"]')?.parentElement).toBe(el)
+})
+
+it('picker なら月表が [popover] の中に入り、閉じたまま描かれる', async () => {
+  const el = await fixtureOf(RdCalendar, calendar({ defaultValue: '2026-09-15', picker: true }))
+  const toggle = toggleOf(el)
+  const popover = popoverOf(el)
+  expect(el.querySelectorAll('button[part="toggle"][popovertarget]')).toHaveLength(1)
+  expect(el.querySelectorAll('[part="popover"][popover][role="dialog"]')).toHaveLength(1)
+  expect(toggle?.getAttribute('popovertarget')).toBe(popover?.id)
+  expect(el.querySelector('[part="grid"]')?.parentElement).toBe(popover)
+  expect(el.querySelector('[part="header"]')?.parentElement).toBe(popover)
+  expect(popover?.matches(':popover-open')).toBe(false)
+  expect(toggle?.getAttribute('aria-expanded')).toBe('false')
+  expect(el.matches(':state(open)')).toBe(false)
+})
+
+it('開くボタンを押すと popover が開き、焦点のある升目にフォーカスが移る', async () => {
+  const el = await fixtureOf(RdCalendar, calendar({ defaultValue: '2026-09-15', picker: true }))
+  await openPicker(el)
+  expect(popoverOf(el)?.matches(':popover-open')).toBe(true)
+  expect(toggleOf(el)?.getAttribute('aria-expanded')).toBe('true')
+  expect(document.activeElement).toBe(cellOf(el, '2026-09-15'))
+  expect(focusable(el)).toEqual([cellOf(el, '2026-09-15')])
+})
+
+it('開いた月表で日を選ぶと <input> が変わり、popover が閉じる', async () => {
+  const el = await fixtureOf(RdCalendar, calendar({ defaultValue: '2026-09-15', picker: true }))
+  const listener = vi.fn<() => void>()
+  el.addEventListener('rd-change', listener)
+  await openPicker(el)
+  press(cellOf(el, '2026-09-15'), 'Enter')
+  await vi.waitFor(() => {
+    expect(el.matches(':state(open)')).toBe(false)
+  })
+  await el.updateComplete
+  expect(controlOf(el)?.value).toBe('2026-09-15')
+  expect(listener).toHaveBeenCalledOnce()
+  expect(popoverOf(el)?.matches(':popover-open')).toBe(false)
+  expect(toggleOf(el)?.getAttribute('aria-expanded')).toBe('false')
+})
+
+it('popover を直接閉じても aria-expanded と :state(open) が追随する（toggle を聞いている）', async () => {
+  const el = await fixtureOf(RdCalendar, calendar({ defaultValue: '2026-09-15', picker: true }))
+  await openPicker(el)
+  popoverOf(el)?.hidePopover()
+  await vi.waitFor(() => {
+    expect(el.matches(':state(open)')).toBe(false)
+  })
+  await el.updateComplete
+  expect(toggleOf(el)?.getAttribute('aria-expanded')).toBe('false')
+})
+
+it('picker でも value setter で表示月が動く（popover の中の月表も追随する）', async () => {
+  const el = await fixtureOf(RdCalendar, calendar({ picker: true }))
+  el.value = '2026-12-25'
+  await el.updateComplete
+  expect(titleOf(el)).toBe('2026年12月')
+  expect(popoverOf(el)?.querySelector('[data-iso="2026-12-25"]')).not.toBeNull()
+})
+
+it('picker でも契約の子が無ければ malformed で、開くボタンも popover も描かない', async () => {
+  const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+  const el = await fixtureOf(
+    RdCalendar,
+    '<rd-calendar picker today="2026-09-09"><label for="due">期限</label></rd-calendar>',
+  )
+  expect(spy).toHaveBeenCalledOnce()
+  expect(el.matches(':state(malformed)')).toBe(true)
+  expect(el.querySelectorAll('[part="toggle"]')).toHaveLength(0)
+  expect(el.querySelectorAll('[part="popover"]')).toHaveLength(0)
 })

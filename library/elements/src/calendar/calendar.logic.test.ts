@@ -19,6 +19,7 @@ import {
   parseWeekStart,
   sameDayIn,
   selectable,
+  toggleCopy,
   weekdayNames,
 } from './calendar.logic.js'
 
@@ -191,6 +192,8 @@ describe('computeView', () => {
     min: undefined,
     max: undefined,
     malformed: false,
+    picker: false,
+    open: false,
   } as const
 
   it('契約が欠けていれば malformed だけを立てる', () => {
@@ -226,6 +229,29 @@ describe('computeView', () => {
     const view = computeView({ ...base, min: '2026-09-05', max: '2026-09-25' })
     expect(view.min).toBe('2026-09-05')
     expect(view.max).toBe('2026-09-25')
+  })
+
+  it('picker で popover が開いていれば open を足す', () => {
+    expect([...computeView({ ...base, picker: true, open: true }).states]).toEqual([
+      'empty',
+      'open',
+    ])
+  })
+
+  it('picker でなければ open は立たない（月表が常設で popover が無い）', () => {
+    expect([...computeView({ ...base, picker: false, open: true }).states]).toEqual(['empty'])
+    expect([...computeView({ ...base, picker: true, open: false }).states]).toEqual(['empty'])
+  })
+
+  it('malformed なら open も立たない', () => {
+    const view = computeView({ ...base, picker: true, open: true, malformed: true })
+    expect([...view.states]).toEqual(['malformed'])
+  })
+
+  it('picker と open は描く側が読めるようにそのまま持つ', () => {
+    const view = computeView({ ...base, picker: true, open: true })
+    expect(view.picker).toBe(true)
+    expect(view.open).toBe(true)
   })
 })
 
@@ -269,6 +295,11 @@ describe('表示用の名前（すべて UTC）', () => {
   it('前後の月の文言は日本語と英語の 2 つ', () => {
     expect(navCopy(true)).toEqual({ prev: '前の月', next: '次の月' })
     expect(navCopy(false)).toEqual({ prev: 'Previous month', next: 'Next month' })
+  })
+
+  it('月表を開くボタンの文言も日本語と英語の 2 つ', () => {
+    expect(toggleCopy(true)).toBe('暦を開く')
+    expect(toggleCopy(false)).toBe('Open calendar')
   })
 })
 

@@ -13,7 +13,7 @@
     "tag": "rd-calendar",
     "pe": "A",
     "status": "experimental",
-    "summary": "月の暦。<label> と <input type=\"date\"> は利用側が書き、JS があるときだけその下に月表が付く",
+    "summary": "月の暦。<label> と <input type=\"date\"> は利用側が書き、JS があるときだけその下（picker ならボタンで開く窓）に月表が付く",
     "files": ["calendar/index.js", "calendar/calendar.define.js", "calendar/calendar.css"],
     "dependsOn": []
   },

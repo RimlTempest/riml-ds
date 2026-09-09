@@ -19,7 +19,7 @@ export const contract = {
   required: ['label', 'control'],
   tree: {
     tag: 'rd-calendar',
-    attrs: { today: '$today', 'week-start': '$weekStart' },
+    attrs: { today: '$today', 'week-start': '$weekStart', picker: '$picker' },
     children: [
       { tag: 'label', attrs: { for: '$id' }, children: [{ prop: 'label' }] },
       {
@@ -59,6 +59,11 @@ export type CalendarMarkupProps = {
   readonly min?: string
   readonly max?: string
   readonly required?: boolean
+  /**
+   * 月表を常設せず、`<input>` の右のボタンで開く `[popover]` に入れる。
+   * JS 無しでは `<input type="date">` だけの普通の入力欄（OS のピッカーが出る）。
+   */
+  readonly picker?: boolean
 }
 
 export const markup = (props: CalendarMarkupProps): string => renderMarkup(contract.tree, props)

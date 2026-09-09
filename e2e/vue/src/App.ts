@@ -249,6 +249,14 @@ export const App = defineComponent(
           defaultValue: '2026-09-15',
           today: '2026-09-09',
         }),
+        h(RdCalendar, {
+          id: 'deadline',
+          label: '締め切り',
+          name: 'deadline',
+          defaultValue: '2026-09-15',
+          today: '2026-09-09',
+          picker: true,
+        }),
         h(
           RdCarousel,
           { label: 'おすすめ' },
