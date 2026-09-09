@@ -92,6 +92,9 @@
 
   rd-command > [part='empty'] {
     margin: 0;
+
+    /* base.css の p は 80ch で止まる。中央揃えの文言を枡の幅いっぱいに置く */
+    max-inline-size: none;
     padding: var(--rd-space-3);
     color: var(--rd-color-text-muted);
     font: var(--rd-type-small);

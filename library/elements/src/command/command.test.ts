@@ -56,6 +56,8 @@ const type = async (el: RdCommand, value: string): Promise<void> => {
 beforeAll(async () => {
   document.documentElement.lang = 'ja'
   await loadStyle('/system/tokens/dist/tokens.css')
+  // base.css も読む: p の 80ch（--rd-sizing-measure-max）を command.css が外せているか見る
+  await loadStyle('/system/css/src/base.css')
   await loadStyle('/library/elements/src/command/command.css')
 })
 
@@ -105,6 +107,16 @@ it('empty-text で 0 件の文言を差し替えられる', async () => {
   const el = await fixtureOf(RdCommand, palette({ emptyText: '該当なし' }))
   await type(el, 'zzz')
   expect(empty(el)?.textContent).toBe('該当なし')
+})
+
+it('[part=empty] は base.css の 80ch に止められない', async () => {
+  const el = await fixtureOf(RdCommand, palette())
+  await type(el, 'みつからない')
+  const message = empty(el)
+  if (message === null) {
+    throw new Error('[part=empty] が無い')
+  }
+  expect(getComputedStyle(message).maxInlineSize).toBe('none')
 })
 
 it('入力欄の ↓ で見えている 1 件目、↑ で最後の項目にフォーカスする', async () => {

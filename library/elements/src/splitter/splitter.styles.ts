@@ -35,6 +35,15 @@ export const styles: CSSResult = css`
       overflow: auto;
     }
 
+    /*
+     * 溢れた面には部品が tabindex を付ける（splitter.dom.ts の overflowWatcher）ので、
+     * 焦点環を **内側**に描く。overflow: auto の箱の外に出した outline は親に切られる
+     */
+    :is([part='start'], [part='end']):focus-visible {
+      outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+      outline-offset: calc(-1 * var(--rd-focus-ring-offset));
+    }
+
     /* 見える太さは --rd-splitter-size。当たり領域は part=grip が別に持つ */
     [part='handle'] {
       position: relative;

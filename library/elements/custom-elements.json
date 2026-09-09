@@ -3728,6 +3728,14 @@
             },
             {
               "kind": "field",
+              "name": "#dispose",
+              "privacy": "private",
+              "type": {
+                "text": "() => void"
+              }
+            },
+            {
+              "kind": "field",
               "name": "#drag",
               "privacy": "private"
             },

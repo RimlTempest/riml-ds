@@ -10,7 +10,7 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html, type TemplateResult } from 'lit'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { argTypes } from '@rd-argtypes'
-import { expect, userEvent } from 'storybook/test'
+import { expect, userEvent, waitFor } from 'storybook/test'
 import './splitter.define.js'
 import './splitter.css'
 import { type SplitterMarkupProps, splitterMarkup } from './index.js'
@@ -19,6 +19,9 @@ type Args = SplitterMarkupProps
 
 const START = '<h2>一覧</h2><p>左の面。狭くしても中身は面ごと転がる。</p>'
 const END = '<h2>本文</h2><p>右の面。つまみを動かすと両方の割合が変わる。</p>'
+
+/** 低い枠には収まらない長さ。`Overflow` の始端側に入れる */
+const LONG = '<h2>一覧</h2>' + '<p>低い枠には収まらないので、面ごと転がる。</p>'.repeat(10)
 
 /** つまみは shadow にしか無いので、story の検査も shadow から掴む（`splitter.test.ts` と同じ形） */
 const handleOf = (canvas: HTMLElement, index = 0): HTMLElement => {
@@ -103,6 +106,25 @@ export const Nested: Story = {
   render: (args) => framed(splitterMarkup(args), 8),
   play: async ({ canvasElement }) => {
     await expect(canvasElement.querySelectorAll('rd-splitter')).toHaveLength(2)
+  },
+}
+
+/** 面の中に入れた `part` を掴む（`tabindex` は部品が付け外しする） */
+const paneOf = (canvas: HTMLElement, part: 'start' | 'end'): Element | null | undefined =>
+  canvas.querySelector('rd-splitter')?.shadowRoot?.querySelector(`[part=${part}]`)
+
+/**
+ * 中身が溢れた面**だけ**が Tab で止まる（axe `scrollable-region-focusable`）。
+ * 溢れていない面に `tabindex` を残すと、Tab の止まる所が増えるだけなので部品が外す。
+ */
+export const Overflow: Story = {
+  args: { label: '溢れる面', start: LONG, end: END },
+  render: (args) => framed(splitterMarkup(args), 4),
+  play: async ({ canvasElement }) => {
+    await waitFor(async () => {
+      await expect(paneOf(canvasElement, 'start')).toHaveAttribute('tabindex', '0')
+    })
+    await expect(paneOf(canvasElement, 'end')).not.toHaveAttribute('tabindex')
   },
 }
 
