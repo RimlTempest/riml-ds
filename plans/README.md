@@ -83,7 +83,7 @@
 | 031 | [rd-toggle-group（`<fieldset>` + `<button aria-pressed>` の列。単一／複数選択と roving focus）](031-toggle-group.md) | P1 | M | 024 | DONE（c138e37） |
 | 032 | [rd-carousel（`<ul><li>` を包み「前へ／次へ」と枚数を足す。scroll-snap + IntersectionObserver）](032-carousel.md) | P2 | M | 020 | DONE（3318c57） |
 | 033 | [rd-calendar（`<label>` + `<input type="date">` を包み、JS で light DOM に `role="grid"` の月表を描くティア A）](033-calendar.md) | P1 | L | 023 | DONE（41acedc） |
-| 034 | [rd-calendar の `picker`（月表を `[popover]` に入れ、44px のボタン 1 つで開く Date Picker）](034-date-picker.md) | P1 | M | 033, 022, 027 | TODO |
+| 034 | [rd-calendar の `picker`（月表を `[popover]` に入れ、44px のボタン 1 つで開く Date Picker）](034-date-picker.md) | P1 | M | 033, 022, 027 | DONE（b5e08c5） |
 | 035 | [小さな追随 2（command の空表示幅・splitter の溢れた面に tabindex・menu の Variants story・.rd-table th の nowrap・splitter proposal の入れ子メモ）](035-small-follow-ups-2.md) | P2 | S | 028, 030 | DONE（fb263a7） |
 | 036 | [rd-number-field（`<input type=number>` を包む。− / + の 44px ボタンと刻みの丸め）](036-number-field.md) | P1 | M | 004, 009, 019 | DONE（688317c） |
 
@@ -436,4 +436,13 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - 計画からの逸脱（すべて受け入れ）: 150 行を守るため `attach` / `viewOf` も `number-field.dom.ts` へ（`rd-calendar` と同じ形）、`firstUpdated` ではなく `willUpdate`（Lit の change-in-update 警告）、強制配色の枠は longhand、`:active` は影ではなく沈んだ面（stylelint のトークン規則）、4 FW の e2e は echo ではなく `<input>` に直接リスナ
 - 検証（reviewer 再走）: check 0、test 1789 passed / 1 skipped、guard 0、vrt 0（新規 50、既存の変更 0）、pe 101、e2e:frameworks 218、a11y 53、lint:html 0、release:check 0。main 側: build/gen 0、guard 0
 - 宿題（advisor）: 長押しの連続刻みと `unit` は**入れていない**（proposal「決めたこと」）。要望が出たら時計の注入から設計する
+
+### 034 の実行メモ（2026-09-10）
+
+- `feat/date-picker` を `b5e08c5` で `--no-ff` マージ（executor 6 コミット `d7a3b65`〜`7eb0b3e` + reviewer の merge コミット）。036 と並行
+- **新しい要素を作らず `rd-calendar` に `picker` 属性を足した**。`picker` のとき header + grid が `<div part="popover" popover role="dialog">` に入り、`<input>` の右に 44px の開くボタン（`popovertarget`）が 1 つ増える。JS 無しでは `<input type="date">` だけに縮退（ティア A のまま）
+- 開くのは UA（`popovertarget`）、閉じるのも Escape / light dismiss は UA。部品が呼ぶのは「日を選んだあとの `hidePopover()`」1 行だけで、**`showPopover()` は 0 件**。閉じたあとのフォーカス復帰も UA の hide popover algorithm に任せる（`toggle.focus()` を書かない）。`aria-modal` は付けない（非モーダル）。`:state(open)` を追加。`calendar/define` 9.03 kB / 15 kB
+- ホスト属性を **`picker`** にした理由: `popover` は HTML のグローバル属性で、`<rd-calendar popover>` と書くとホスト自身が popover になって消える（`docs/proposals/calendar.md`「034 の結果」）
+- 計画からの逸脱（すべて受け入れ）: ①`position-area` を `block-end span-inline-end` → **`span-inline-start`**（ボタンが行末にあるとアンカー帯が 44px しか無く、月表が溢れて Chromium が `flip-block` を採らない。実測値付きで proposal に記録）②JS 無しの frameworks e2e は `compareMarkup` ではなく属性と縮退の姿を見る（真偽属性の書き出しが react は `picker=""`、他は `picker="true"` になる既存のラッパー生成器の性質。`tools/cem/src/**` はレーン外）③`<svg focusable="false">` を落とした（markuplint `invalid-attr`。他の inline SVG と同じく `aria-hidden` だけ）④`#run` / `#view` の `dom.ts` への抽出を Step 1 で先に済ませた（150 行を守るため。計画 §3 のスケッチどおりの形）
+- 検証（main マージ後の worktree、reviewer 再走）: check 0、test 1809 passed / 1 skipped、guard 0、vrt 0（新規 12、既存の変更 0）、pe 104、e2e:frameworks 226、a11y 56、lint:html 0、release:check 0。main 側: build/gen 0、guard 0
 
