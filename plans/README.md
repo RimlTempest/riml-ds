@@ -82,7 +82,7 @@
 | 030 | [rd-splitter（`role="separator"` のハンドルで 2 面をドラッグ・キーボードで分割するティア B）](030-splitter.md) | P2 | M | 020 | DONE（`855b4d2`） |
 | 031 | [rd-toggle-group（`<fieldset>` + `<button aria-pressed>` の列。単一／複数選択と roving focus）](031-toggle-group.md) | P1 | M | 024 | DONE（c138e37） |
 | 032 | [rd-carousel（`<ul><li>` を包み「前へ／次へ」と枚数を足す。scroll-snap + IntersectionObserver）](032-carousel.md) | P2 | M | 020 | DONE（3318c57） |
-| 033 | [rd-calendar（`<label>` + `<input type="date">` を包み、JS で light DOM に `role="grid"` の月表を描くティア A）](033-calendar.md) | P1 | L | 023 | TODO |
+| 033 | [rd-calendar（`<label>` + `<input type="date">` を包み、JS で light DOM に `role="grid"` の月表を描くティア A）](033-calendar.md) | P1 | L | 023 | DONE（41acedc） |
 | 035 | [小さな追随 2（command の空表示幅・splitter の溢れた面に tabindex・menu の Variants story・.rd-table th の nowrap・splitter proposal の入れ子メモ）](035-small-follow-ups-2.md) | P2 | S | 028, 030 | DONE（fb263a7） |
 | 036 | [rd-number-field（`<input type=number>` を包む。− / + の 44px ボタンと刻みの丸め）](036-number-field.md) | P1 | M | 004, 009, 019 | TODO |
 
@@ -415,4 +415,14 @@ executor は完了時にこの表の自分の行だけを書き換える（revie
 - 計画からの逸脱（すべて受け入れ）: `firstUpdated` ではなく `willUpdate` + `hasUpdated` ガードで契約検査（初回描画から操作が出る）、`dom.ts` のヘルパー名（`readTrack` / `labelSlides` / `watchVisible` / `syncButtons` / `controlsTemplate`）が計画の名前と一部違う
 - executor は API 制限（HTTP 429）で Step 3 の直後に落ちたため、**Step 4（VRT 40 枚）と Step 5（proposal + changeset）のコミット、main の取り込み、全ゲートは advisor が引き取った**
 - 検証（main マージ後の worktree）: check 0、test 1653 passed / 1 skipped、guard 0、vrt 0（新規 40 枚、既存の変更 0）、pe 95、e2e:frameworks 190、a11y 46、release:check 0。main 側: build/gen 0、guard 0
+
+### 033 の実行メモ（2026-09-10）
+
+- `feat/calendar` を `41acedc` で `--no-ff` マージ（executor 3 コミット `7b6c331`〜`8d92575` + reviewer が引き取った Step 4・5 と 3 つの修正 + merge コミット 3 つ）。031・032・035 と並行
+- `rd-calendar`（experimental、ティア A、light DOM）: 利用側が書いた `<label for>` + `<input type="date">` を包み、**JS が無ければ入力欄がそのまま送信・検証される**（`min` / `max` / `required` は `<input>` の属性なので JS 無しでもネイティブ検証が効く）。JS が来ると同じ light DOM の末尾に `role="grid"` の月表を足し、grid は `<label>` を `aria-labelledby` で指す（名前の出どころが 1 つ）
+- 値の真実は `<input>`（部品は `value` を持たず `input` イベントで追随）。日付計算は `Date.UTC` + `getUTC*` だけ（`Temporal` / `getWeekInfo` は Baseline 外）。「今日」は `today` 属性で注入でき、実時刻を読むのは element の 1 箇所だけ。`Intl.DateTimeFormat` は必ず `timeZone: 'UTC'`。`calendar/define` 8.12 kB / 15 kB
+- 計画からの逸脱（すべて受け入れ）: `#run` の分岐が計画どおり element に残った（150 行ちょうど。034 で `dom.perform` に出す）、`willUpdate` で契約検査
+- reviewer が直したもの: ①選択日の文字色が `--rd-color-accent-text`（リンク色。`accent-default` と同じ値）だったので `--rd-color-text-on-accent` に（`224b2d8`）②main 取り込み後の `markup.test.tsx` の重複 import（`5630e7a`）③`<td role="gridcell">` は `<table role="grid">` の中では暗黙の役割なので削除（`6ac862d`。**CI の `lint:html` は `bun run check` に入っていない**ので、マージ前に `bun run render && bun run lint:html` を回して見つけた。032 の `<li>` に `role` を書かない判断と同じ）
+- 検証（main マージ後の worktree）: check 0、test 1736 passed / 1 skipped、guard 0、vrt 0（新規 46、既存の変更 0）、pe 98、e2e:frameworks 206、a11y 50、lint:html 0、release:check 0。main 側: build/gen 0、guard 0
+- 宿題（advisor）: 034（Date Picker）はこの部品に `picker` 属性を足し、header + grid を `[popover]` に入れる形で作る（`docs/proposals/calendar.md`「034 への道筋」）
 
