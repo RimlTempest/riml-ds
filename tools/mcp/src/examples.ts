@@ -40,6 +40,7 @@ import {
   otpCellsMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/input-otp/contract'
 import { markup as meterMarkup } from '@rimltempest/riml-ds-elements/experimental/meter/contract'
+import { markup as numberFieldMarkup } from '@rimltempest/riml-ds-elements/experimental/number-field/contract'
 import { markup as popoverMarkup } from '@rimltempest/riml-ds-elements/experimental/popover/contract'
 import {
   markup as radioGroupMarkup,
@@ -330,6 +331,21 @@ const CAROUSEL = {
     .join(''),
 } as const
 
+/**
+ * 値の真実は `<input type="number">`。`min` / `max` / `step` も `<input>` の属性なので、
+ * JS が無くてもネイティブの送信・検証・↑↓ の刻みがそのまま働く。部品は − / + と丸めだけを足す。
+ */
+const NUMBER_FIELD = {
+  id: 'copies',
+  label: '枚数',
+  name: 'copies',
+  defaultValue: '1',
+  min: '1',
+  max: '99',
+  step: '1',
+  hint: '1 から 99 まで',
+} as const
+
 export const elementExamples = {
   'rd-button': { html: buttonMarkup(BUTTON), props: BUTTON },
   'rd-text-field': { html: textFieldMarkup(TEXT_FIELD), props: TEXT_FIELD },
@@ -355,6 +371,7 @@ export const elementExamples = {
   'rd-toast': { html: '<rd-toast></rd-toast>', props: TOAST },
   'rd-toggle': { html: toggleMarkup(TOGGLE), props: TOGGLE },
   'rd-toggle-group': { html: toggleGroupMarkup(TOGGLE_GROUP), props: TOGGLE_GROUP },
+  'rd-number-field': { html: numberFieldMarkup(NUMBER_FIELD), props: NUMBER_FIELD },
   'rd-tooltip': {
     html:
       '<button id="save" type="button" title="⌘S で保存します">保存</button>'

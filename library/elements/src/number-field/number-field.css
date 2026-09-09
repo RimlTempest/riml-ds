@@ -1,0 +1,178 @@
+@layer rd.components {
+  /* 行 1 = ラベル、行 2 = 入力欄と刻みのボタン、その下に hint / error。
+     light DOM の並びは label → input → hint → error → stepper（部品が足すノードは末尾）なので、
+     stepper だけ grid の位置指定で入力欄の横に戻す */
+  rd-number-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--rd-number-field-gap, var(--rd-space-1)) var(--rd-space-2);
+  }
+
+  rd-number-field > label {
+    grid-column: 1 / -1;
+    color: var(--rd-color-text-default);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  /* 入力欄は rd-text-field と同じ見た目。値が数字なので桁を揃える（.rd-numeric と同じ 1 行） */
+  rd-number-field > input {
+    display: block;
+    grid-row: 2;
+    grid-column: 1;
+    inline-size: 100%;
+    min-block-size: var(--rd-sizing-target-min);
+    padding-block: var(--rd-space-2);
+    padding-inline: var(--rd-space-3);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-radius: var(--rd-radius-md);
+    background: var(--rd-color-surface-raised);
+    color: var(--rd-color-text-default);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    line-height: var(--rd-line-height-body);
+  }
+
+  /* ブラウザの spinner は 44px に届かない（WCAG 2.2 Target Size）。部品の − / + が
+     出てからだけ消す——JS が無ければネイティブの spinner が唯一の刻む手段として残る */
+  rd-number-field:defined > input {
+    appearance: textfield;
+  }
+
+  rd-number-field:defined > input::-webkit-inner-spin-button,
+  rd-number-field:defined > input::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+
+  rd-number-field > input:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* JS が無くても検証表示が出る。入力中には怒らない（:user-invalid） */
+  rd-number-field > input:user-invalid {
+    border-color: var(--rd-color-status-danger-default);
+  }
+
+  @supports selector(:state(invalid)) {
+    rd-number-field:state(invalid) > input {
+      border-color: var(--rd-color-status-danger-default);
+    }
+  }
+
+  /* 「枕」は .rd-input-group / rd-toggle-group [part='options'] と同じ丸い面 */
+  rd-number-field > [part='stepper'] {
+    display: inline-flex;
+    grid-row: 2;
+    grid-column: 2;
+    gap: var(--rd-space-1);
+    padding: var(--rd-space-1);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: transparent;
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-surface-sunken);
+  }
+
+  /* rd-button は使わない（部品が部品を描くと定義順に依存する。rd-data-table の part="sort" と同じ） */
+  rd-number-field [part='stepper'] > button {
+    inline-size: var(--rd-sizing-target-min);
+    block-size: var(--rd-sizing-target-min);
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: transparent;
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-surface-raised);
+    box-shadow: var(--rd-shadow-raised);
+    color: var(--rd-color-text-default);
+    font: inherit;
+    font-size: var(--rd-type-heading-4-font-size);
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  @media (hover: hover) {
+    /* :where() で :enabled を包むのは詳細度を上げないため（stylelint） */
+    rd-number-field [part='stepper'] > button:hover:where(:enabled) {
+      background: var(--rd-color-surface-hover);
+    }
+  }
+
+  rd-number-field [part='stepper'] > button:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* 押している間と無効のときは浮きを外す。影は形なので、色だけに頼らない */
+  rd-number-field [part='stepper'] > button:active:where(:enabled) {
+    background: var(--rd-color-surface-sunken);
+  }
+
+  rd-number-field [part='stepper'] > button:disabled {
+    background: var(--rd-color-surface-sunken);
+    color: var(--rd-color-text-muted);
+    cursor: not-allowed;
+  }
+
+  rd-number-field > [part='hint'] {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+  }
+
+  /* 色だけに頼らない：太字と縦罫で「エラー」を形でも示す（accessibility.md 9） */
+  rd-number-field > [part='error'] {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding-inline-start: var(--rd-space-2);
+    border-inline-start: var(--rd-focus-ring-width) solid var(--rd-color-status-danger-default);
+    color: var(--rd-color-status-danger-text);
+    font: var(--rd-type-small);
+    font-weight: var(--rd-font-weight-bold);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    rd-number-field > input {
+      transition: border-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+    }
+
+    rd-number-field [part='stepper'] > button {
+      transition: background-color var(--rd-motion-duration-fast) var(--rd-motion-easing-standard);
+    }
+  }
+
+  @media (forced-colors: active) {
+    rd-number-field > input {
+      border-color: FieldText;
+    }
+
+    rd-number-field > input:focus-visible {
+      outline-color: Highlight;
+    }
+
+    rd-number-field > [part='stepper'] {
+      border-color: CanvasText;
+      background: Canvas;
+    }
+
+    rd-number-field [part='stepper'] > button {
+      border-color: ButtonText;
+      background: ButtonFace;
+      color: ButtonText;
+    }
+
+    rd-number-field [part='stepper'] > button:disabled {
+      border-color: GrayText;
+      color: GrayText;
+    }
+
+    rd-number-field > [part='error'] {
+      border-inline-start-color: MarkText;
+      color: MarkText;
+    }
+  }
+}

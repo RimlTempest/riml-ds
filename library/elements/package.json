@@ -319,6 +319,19 @@
       "default": "./dist/menu/menu.define.js"
     },
     "./experimental/menu/style.css": "./dist/menu/menu.css",
+    "./experimental/number-field": {
+      "types": "./dist/experimental/number-field/index.d.ts",
+      "default": "./dist/experimental/number-field/index.js"
+    },
+    "./experimental/number-field/contract": {
+      "types": "./dist/number-field/number-field.contract.d.ts",
+      "default": "./dist/number-field/number-field.contract.js"
+    },
+    "./experimental/number-field/define": {
+      "types": "./dist/number-field/number-field.define.d.ts",
+      "default": "./dist/number-field/number-field.define.js"
+    },
+    "./experimental/number-field/style.css": "./dist/number-field/number-field.css",
     "./experimental/popover": {
       "types": "./dist/experimental/popover/index.d.ts",
       "default": "./dist/experimental/popover/index.js"
