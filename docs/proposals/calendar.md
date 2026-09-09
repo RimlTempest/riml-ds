@@ -9,23 +9,24 @@ riml-ds には日付を扱う部品が 1 つも無く、利用側（noter の期
 
 `rd-calendar` は `<label for>` + `<input type="date">` を包む**ティア A**（ADR-0012）で、
 JS が来たときだけ同じ light DOM の末尾に `role="grid"` の月表（APG「Date Picker Dialog」の
-Grid の部分）を足す。ポップオーバーに入れた Date Picker は 034 で、この部品に `popover` の姿を
-足して作る。
+Grid の部分）を足す。ポップオーバーに入れた Date Picker は 034 で、この部品に **`picker` 属性**を
+足して作った（下の「034 の結果」）。
 
 ## API
 
 - ティア A。契約は `rd-calendar > label`（必須）、`> input[type="date"]`（必須）。
-  マークアップは `calendarMarkup({ id, label, name?, defaultValue?, today?, weekStart?, min?, max?, required? })`
-- ホスト属性は `today`（`YYYY-MM-DD`）と `week-start`（`0`（日曜、既定）〜 `6`）の 2 つだけ。
-  **どちらも見え方しか決めない**
+  マークアップは `calendarMarkup({ id, label, name?, defaultValue?, today?, weekStart?, min?, max?, required?, picker? })`
+- ホスト属性は `today`（`YYYY-MM-DD`）・`week-start`（`0`（日曜、既定）〜 `6`）・`picker`（034）の 3 つだけ。
+  **どれも見え方しか決めない**
 - **値・範囲・必須は `<input>` の属性**（`value` / `min` / `max` / `required`）。部品は読むだけ
 - 描く木: `[part='header']`（`[part='prev']` / `[part='title']` / `[part='next']`）と
-  `[part='grid']`（`<table role="grid">`。`<td role="gridcell" data-iso>`）
+  `[part='grid']`（`<table role="grid">`。`<td data-iso>`）。`picker` のときは両方が
+  `[part='popover']`（`popover role="dialog"`）の中に入り、`[part='toggle']` が 1 つ増える
 - キーボード（APG Date Picker の Grid）: ← → ±1 日、↑ ↓ ±7 日、Home / End は週の始め・終わり
   （`week-start` 基準）、PageUp / PageDown ±1 か月、Shift 付きで ±1 年、Enter / Space で選ぶ
 - イベント: 日を選ぶと `<input>` に `input` と `change` を投げ、host から `rd-change`
   （`detail: { value }`）を出す。**同じ日をもう一度押しても出す**（解除はしない）
-- `:state()`: `selected` / `empty` / `at-min` / `at-max` / `malformed`
+- `:state()`: `selected` / `empty` / `at-min` / `at-max` / `malformed` / `open`（`picker` で開いている）
 - `value` の getter / setter と `checkValidity()` / `reportValidity()` は `<input>` へ委譲する
 - 日付の計算は `calendar.logic.ts` の純関数（`Date.UTC` の往復だけ）。DOM の読み書きと
   テンプレートは `calendar.dom.ts`。`*.element.ts` は 150 行の殻（ADR-0005）
@@ -103,8 +104,60 @@ light DOM に描けば、利用側が書いた `<label>` に `id` を付けて `
 - **範囲選択・複数選択・時刻・年月のドロップダウン**: この提案には入れない（035 以降）
 - **和暦・他の暦**: `Intl` の `calendar` オプションには触れない。必要になったら別の提案で決める
 
-## 034 への道筋
+## 034 の結果（Date Picker）
 
-034（Date Picker）は **この部品に `popover` 属性を足し、header + grid を `[popover]` に入れて
-開くボタンを 1 つ描く**だけで作る。暦側に「閉じる」責務は足さない（`rd-change` を受けて
-`hidePopover()` するのは 034 の element 側の 1 行）。
+034 は **新しい要素を作らず、この部品に `picker` 属性を足した**。`picker` のとき、header + grid を
+`<div part="popover" popover role="dialog">` に入れ、`<input>` の右に 44px の開くボタン
+（`popovertarget`）を 1 つ描く。JS が無ければ `<input type="date">` だけの普通の入力欄に縮退する
+（ティア A の約束はそのまま。OS のピッカーが出る）。
+
+### なぜ新しい要素ではなく属性か
+
+月表・キーボード・範囲・`rd-change`——`rd-date-picker` に要るものは `rd-calendar` に全部ある。
+別の要素にすると同じ純関数を 2 つの殻が使い、契約とラッパーとテストが二重になる。
+違うのは**月表を常設するか、1 つのボタンで開くか**という見せ方だけなので、属性 1 つで足りる。
+
+### なぜホスト属性の名前が `popover` ではなく `picker` か
+
+`popover` は HTML の**グローバル属性**である。`<rd-calendar popover>` と書くとホスト自身が
+popover になり、`showPopover()` を呼ばない限り **画面から消える**。`date-picker` にすると
+ラッパーの prop が `datePicker` になって部品名と紛れるので、`picker` にした
+（033 の「034 への道筋」では `popover` と書いていたが、この理由で変えた）。
+
+### なぜ `popover`（auto）で `aria-modal` を付けないか
+
+Date Picker に期待されるのは「Escape で閉じる」「外を押したら閉じる」——どちらも
+`popover`（auto）の**ネイティブの light dismiss** がやる。APG「Date Picker Dialog」はモーダル
+（`aria-modal="true"` + フォーカストラップ）だが、モーダルにすると後ろが操作できなくなり
+light dismiss と噛み合わない。`role="dialog"` は残し、名前は `<label>` を `aria-labelledby` で
+指す（grid と同じ出どころ）。
+
+### なぜ閉じたときのフォーカス復帰を UA に任せるか
+
+`popovertarget` で開いた popover は、閉じるときフォーカスが中にあれば UA が invoker
+（開くボタン）へ戻す（HTML 仕様 hide popover algorithm）。自分で `toggle.focus()` を呼ぶと
+UA の復帰と二重になり、**外を押して閉じた人のフォーカスまで奪う**。
+部品が呼ぶのは「日を選んだあとの `hidePopover()`」の 1 行だけで、`showPopover()` は呼ばない
+（開閉の主導権を 2 つにしない）。
+
+### アイコンは inline SVG（絵文字や記号を使わない）
+
+開くボタンはアイコンだけなので `aria-label`（`暦を開く` / `Open calendar`）で名前を付け、
+中身は `currentColor` の inline SVG（`aria-hidden`）にした。`▦` や絵文字は CI の Chromium
+（`fonts-noto-cjk` だけ）に字形が無く、VRT が環境で揺れる。
+
+### 位置決めは `position-area: block-end span-inline-start`
+
+開くボタンは行の**終端**にあるので、月表はその終端に揃えて下へ開く。`span-inline-end`
+（`rd-popover` / `rd-menu` の既定）だと、ボタンの始端から画面の終端までの狭い帯が
+position-area になり、月表（`max-content` で 366px）が**インライン方向に溢れる**。
+溢れると Chromium は `position-try-fallbacks: flip-block` を採らず、下にはみ出したまま留まる
+（画面の下に月の後半が隠れて押せない）。始端側に span させると溢れなくなり、下に入らないときは
+`flip-block` が上へ倒してくれる。anchor positioning が無い環境では `_shared/popover-anchor.ts` が
+`top` / `left` を書く（そちらは元から「入らなければ反対側」を見ている）。
+
+### `[part='header']` / `[part='grid']` の CSS は子結合子を外した
+
+inline のときはホスト直下、`picker` のときは `[part='popover']` の中——同じ宣言が両方に当たる
+必要があるので、`rd-calendar > [part='header']` を `rd-calendar [part='header']` にした。
+**`>` を戻さないこと**（popover に入れた途端に枠と余白が外れる）。

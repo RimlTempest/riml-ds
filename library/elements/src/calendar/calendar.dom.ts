@@ -44,7 +44,7 @@ export type Attached = {
   readonly control: HTMLInputElement | undefined
   /** grid を `aria-labelledby` で結ぶ先。`<label>` に id が無ければ部品が付ける */
   readonly labelId: string
-  /** `picker` のとき、開くボタンの `popovertarget` が指す先（`labelId` と同じ作り） */
+  /** `picker` のとき、開くボタンの invoker 属性が指す先（`labelId` と同じ作り） */
   readonly popoverId: string
   readonly detach: () => void
 }
@@ -370,8 +370,8 @@ const bodyTemplate = (view: CalendarView, names: CalendarNames, ids: CalendarIds
 
 /**
  * `picker` のとき。開くボタンは `<input>` の右、月表は top layer の `[popover]`（**auto**）の中。
- * 開くのは `popovertarget`（UA）、Escape と light dismiss も UA。`aria-modal` は付けない
- * ——非モーダルなので後ろも操作でき、light dismiss と噛み合う。
+ * 開くのはボタンの invoker 属性（UA）、Escape と light dismiss も UA。**モーダルにはしない**
+ * ——後ろも操作できる非モーダルの窓で、そうしないと light dismiss と噛み合わない。
  */
 const pickerTemplate = (
   body: TemplateResult,
