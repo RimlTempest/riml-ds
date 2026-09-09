@@ -16,6 +16,8 @@ import {
   type CalendarView,
   type Cell,
   cellLabel,
+  clampToRange,
+  computeView,
   decideClick,
   decideKey,
   formatIsoDate,
@@ -25,8 +27,10 @@ import {
   type NavCopy,
   navCopy,
   parseIsoDate,
+  parseWeekStart,
   type WeekdayName,
   weekdayNames,
+  type YearMonth,
 } from './calendar.logic.js'
 
 /**
@@ -185,6 +189,73 @@ export const actionOf = (event: Event, view: CalendarView, weekStart: number): C
         states: view.states,
       })
 }
+
+/**
+ * ホストから読む「見え方だけ」の属性（値の真実は `<input>`）。`*.element.ts` を 150 行に
+ * 収める（ADR-0005）ために、見え方の組み立てはここへ出している。
+ */
+export type CalendarHost = HTMLElement & {
+  readonly today: string
+  readonly weekStart: string
+  readonly picker: boolean
+}
+
+/** `<input>` に値が無ければ「今日」（範囲の外なら端）に焦点を置く */
+export const initialFocus = (dates: CalendarDates): IsoDate =>
+  dates.selected ?? clampToRange(dates.today, dates.min, dates.max)
+
+/** `picker` の月表が開いているか。popover が無ければ（`picker` でなければ）常に false */
+export const isOpen = (host: HTMLElement): boolean =>
+  host.querySelector(':scope > [part="popover"]')?.matches(':popover-open') ?? false
+
+/**
+ * `actionOf` が決めた action を実行する。分岐をここに集めて `*.element.ts` を 150 行に収める
+ * （ADR-0005）。`move` だけは element に返して状態を動かしてもらう（`undefined` は「何も変えない」）。
+ */
+export type PerformInput = {
+  readonly host: HTMLElement
+  readonly attached: Attached
+  readonly dates: CalendarDates
+}
+
+/** 焦点の移し先。`focus` は「描き直したあとに升目へフォーカスを戻すか」 */
+export type Move = { readonly iso: IsoDate; readonly focus: boolean }
+
+export const perform = (
+  input: PerformInput,
+  action: CalendarAction,
+  event: Event,
+): Move | undefined => {
+  if (action.kind === 'none') {
+    return undefined
+  }
+  event.preventDefault()
+  if (action.kind === 'move') {
+    return { iso: action.iso, focus: action.focus }
+  }
+  // 範囲の外へ焦点は動けるが選べない（`aria-disabled`。APG と同じ）
+  if (inRange(action.iso, input.dates.min, input.dates.max)) {
+    commitDate(input.host, input.attached.control, action.iso)
+  }
+  return undefined
+}
+
+/** ホストの属性・掴んだ `<input>`・いまの焦点から見え方を組み立てる（判断は純関数が持つ） */
+export const viewOf = (
+  host: CalendarHost,
+  attached: Attached,
+  month: YearMonth,
+  focused: IsoDate,
+): CalendarView =>
+  computeView({
+    ...readDates(attached.control, host.today),
+    month,
+    focused,
+    weekStart: parseWeekStart(host.weekStart),
+    malformed: !attached.ok,
+    picker: host.picker,
+    open: isOpen(host),
+  })
 
 /** 月をまたいだ再描画のあとで焦点を取り戻す。`iso` が無いときは何もしない */
 export const focusCell = (host: HTMLElement, iso: IsoDate | undefined): void => {

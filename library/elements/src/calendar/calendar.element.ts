@@ -16,6 +16,7 @@ import * as logic from './calendar.logic.js'
  * @slot - <label for> と <input type="date">（省略不可）
  * @attr today - 「今日」（YYYY-MM-DD）。省略すると実時刻から決める。テスト・story は必ず書く
  * @attr week-start - 週の始まり。0（日曜、既定）〜 6
+ * @attr picker - 月表を常設せず、<input> の右のボタンで開く [popover] に入れる（JS 無しでは <input type="date"> だけ）
  * @csspart header - 月の見出しと前後の月ボタン
  * @csspart title - 表示している年月
  * @csspart prev - 前の月へ送るボタン
@@ -33,10 +34,12 @@ export class RdCalendar extends LitElement {
   static override properties: PropertyDeclarations = {
     today: {},
     weekStart: { attribute: 'week-start' },
+    picker: { type: Boolean, reflect: false },
   }
 
   declare today: string
   declare weekStart: string
+  declare picker: boolean
   #internals = this.attachInternals()
   #attached = dom.NOT_ATTACHED
   #month: logic.YearMonth = { year: 1970, month: 1 }
@@ -48,6 +51,7 @@ export class RdCalendar extends LitElement {
     super()
     this.today = ''
     this.weekStart = ''
+    this.picker = false
     this.#hostBinding = bindListeners(this, { click: this.#onEvent, keydown: this.#onEvent })
   }
 
@@ -108,8 +112,7 @@ export class RdCalendar extends LitElement {
 
   /** `<input>` の値・範囲に月表を合わせる（打ち込みにも `value` setter にも同じ道） */
   #follow = (): void => {
-    const dates = this.#read()
-    this.#focused = dates.selected ?? logic.clampToRange(dates.today, dates.min, dates.max)
+    this.#focused = dom.initialFocus(this.#read())
     this.#month = logic.monthOf(this.#focused)
     this.requestUpdate()
   }
@@ -119,32 +122,19 @@ export class RdCalendar extends LitElement {
     this.#run(dom.actionOf(event, this.#view(), logic.parseWeekStart(this.weekStart)), event)
   }
 
-  /** 範囲の外へ焦点は動けるが選べない（`aria-disabled`。APG と同じ） */
+  /** 分岐は `dom.perform` が持つ。返ってきた `move` のぶんだけ焦点と表示月を動かす */
   #run = (action: logic.CalendarAction, event: Event): void => {
-    const dates = this.#read()
-    if (action.kind === 'none') {
+    const input = { host: this, attached: this.#attached, dates: this.#read() }
+    const move = dom.perform(input, action, event)
+    if (move === undefined) {
       return
     }
-    event.preventDefault()
-    if (action.kind === 'move') {
-      this.#focused = action.iso
-      this.#month = logic.monthOf(action.iso)
-      this.#pendingFocus = action.focus
-      this.requestUpdate()
-      return
-    }
-    if (logic.inRange(action.iso, dates.min, dates.max)) {
-      dom.commitDate(this, this.#attached.control, action.iso)
-    }
+    this.#focused = move.iso
+    this.#month = logic.monthOf(move.iso)
+    this.#pendingFocus = move.focus
+    this.requestUpdate()
   }
 
   #read = (): dom.CalendarDates => dom.readDates(this.#attached.control, this.today)
-  #view = (): logic.CalendarView =>
-    logic.computeView({
-      ...this.#read(),
-      month: this.#month,
-      focused: this.#focused,
-      weekStart: logic.parseWeekStart(this.weekStart),
-      malformed: !this.#attached.ok,
-    })
+  #view = (): logic.CalendarView => dom.viewOf(this, this.#attached, this.#month, this.#focused)
 }

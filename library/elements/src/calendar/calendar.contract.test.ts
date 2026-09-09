@@ -35,11 +35,17 @@ describe('markup', () => {
     expect(html).toContain('<rd-calendar>')
   })
 
+  it('picker はホストの真偽属性として出る（存在で true）', () => {
+    const html = markup({ id: 'due', label: '期限', today: '2026-09-09', picker: true })
+    expect(html).toContain('<rd-calendar today="2026-09-09" picker>')
+  })
+
   it('省略した prop は属性ごと出さない', () => {
     const html = markup({ id: 'due', label: '期限' })
     expect(html).not.toContain('name=')
     expect(html).not.toContain('required')
     expect(html).not.toContain('week-start')
+    expect(html).not.toContain('picker')
   })
 
   it('文言をエスケープする', () => {

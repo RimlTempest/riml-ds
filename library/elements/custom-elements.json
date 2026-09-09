@@ -237,6 +237,16 @@
             },
             {
               "kind": "field",
+              "name": "picker",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "picker"
+            },
+            {
+              "kind": "field",
               "name": "#internals",
               "privacy": "private"
             },
@@ -329,7 +339,7 @@
               "kind": "field",
               "name": "#run",
               "privacy": "private",
-              "description": "範囲の外へ焦点は動けるが選べない（`aria-disabled`。APG と同じ）"
+              "description": "分岐は `dom.perform` が持つ。返ってきた `move` のぶんだけ焦点と表示月を動かす"
             },
             {
               "kind": "field",
@@ -369,6 +379,15 @@
               },
               "default": "''",
               "fieldName": "weekStart"
+            },
+            {
+              "description": "月表を常設せず、<input> の右のボタンで開く [popover] に入れる（JS 無しでは <input type=\"date\"> だけ）",
+              "name": "picker",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "picker"
             }
           ],
           "cssStates": [
