@@ -9,6 +9,15 @@
     "dependsOn": []
   },
   {
+    "name": "carousel",
+    "tag": "rd-carousel",
+    "pe": "A",
+    "status": "experimental",
+    "summary": "横に並ぶ枚の列。前へ／次へと「n / N」を足す。<ul><li> は利用側が書く",
+    "files": ["carousel/index.js", "carousel/carousel.define.js", "carousel/carousel.css"],
+    "dependsOn": []
+  },
+  {
     "name": "checkbox",
     "tag": "rd-checkbox",
     "pe": "A",

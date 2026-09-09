@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   buttonCopy,
   computeStates,
+  contractProblems,
   counterText,
   pickVisible,
   targetIndex,
@@ -102,5 +103,23 @@ describe('computeStates', () => {
 
   it('label が無ければ unlabeled', () => {
     expect([...computeStates({ ...base, unlabeled: true })]).toEqual(['unlabeled'])
+  })
+})
+
+describe('contractProblems', () => {
+  it('契約も名前も揃っていれば何も言わない', () => {
+    expect(contractProblems([], 'おすすめ')).toEqual([])
+  })
+
+  it('足りない役割を並べて知らせる', () => {
+    expect(contractProblems(['item'], 'おすすめ')).toEqual(['<ul> と <li> が必要（不足: item）'])
+  })
+
+  it('label が空なら名前が要ると知らせる（不足の後ろ）', () => {
+    expect(contractProblems([], '')).toEqual(['label が必要'])
+    expect(contractProblems(['track', 'item'], '')).toEqual([
+      '<ul> と <li> が必要（不足: track, item）',
+      'label が必要',
+    ])
   })
 })

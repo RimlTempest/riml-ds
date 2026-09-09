@@ -159,6 +159,242 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/carousel/carousel.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-carousel",
+          "declaration": {
+            "name": "RdCarousel",
+            "module": "/src/carousel/carousel.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/carousel/carousel.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "横に並ぶ枚の列。利用側が書いた `<ul><li>` を包み、前へ／次へと「n / N」を足す\n（ティア A、ADR-0012）。JS が無ければ `.rd-carousel` と同じ横スクロールできる列のまま。\n自動再生は持たない（WCAG 2.2.2 / AAA 2.3.3。`docs/proposals/carousel.md`）。",
+          "name": "RdCarousel",
+          "cssProperties": [
+            {
+              "description": "1 枚の幅。既定 min(100%, 20rem)",
+              "name": "--rd-carousel-item"
+            },
+            {
+              "description": "端の scroll-padding。既定 0",
+              "name": "--rd-carousel-padding"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "前へ／次へと「n / N」を並べた枕",
+              "name": "controls"
+            },
+            {
+              "description": "前の枚へ",
+              "name": "prev"
+            },
+            {
+              "description": "次の枚へ",
+              "name": "next"
+            },
+            {
+              "description": "「n / N」（<output>。暗黙のライブリージョン）",
+              "name": "counter"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "loop",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "loop",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#index",
+              "privacy": "private",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "#stop",
+              "privacy": "private",
+              "type": {
+                "text": "() => void"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "index",
+              "type": {
+                "text": "number"
+              },
+              "description": "いま見えている枚（0 始まり）。代入は移動だけで、`rd-change` は出さない"
+            },
+            {
+              "kind": "method",
+              "name": "#announce",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "next",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "#onVisible",
+              "privacy": "private",
+              "description": "転がりで見えている枚が変わった。同じ枚なら黙る（プログラムからの移動もここで黙る）"
+            },
+            {
+              "kind": "method",
+              "name": "#step",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "direction",
+                  "type": {
+                    "text": "Direction"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "#prev",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#next",
+              "privacy": "private"
+            }
+          ],
+          "events": [
+            {
+              "name": "rd-change",
+              "type": {
+                "text": "CustomEvent<{ index: number }>"
+              },
+              "description": "見えている枚が変わったときに発火（ボタン・スクロールの両方。index への代入では出さない）"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "label"
+            },
+            {
+              "name": "loop",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "loop"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "at",
+              "description": "start - loop が無く先頭にいる"
+            },
+            {
+              "name": "at",
+              "description": "end - loop が無く末尾にいる"
+            },
+            {
+              "name": "single",
+              "description": "枚が 1 つ以下"
+            },
+            {
+              "name": "unlabeled",
+              "description": "label が無い"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子（<ul> と <li>）が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "横に並ぶ枚の列。前へ／次へと「n / N」を足す。<ul><li> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-carousel",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdCarousel",
+          "declaration": {
+            "name": "RdCarousel",
+            "module": "src/carousel/carousel.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/checkbox-group/checkbox-group.define.ts",
       "declarations": [],
       "exports": [

@@ -1,6 +1,10 @@
 import { buttonMarkup } from '@rimltempest/riml-ds-elements/button'
 import { splitterMarkup } from '@rimltempest/riml-ds-elements/experimental/splitter'
 import {
+  carouselItemMarkup,
+  carouselMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/carousel'
+import {
   commandGroupMarkup,
   commandItemMarkup,
   commandMarkup,
@@ -14,7 +18,7 @@ import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import * as experimental from '../src/experimental.js'
-import { RdCommand, RdDataTable, RdSplitter } from '../src/experimental.js'
+import { RdCarousel, RdCommand, RdDataTable, RdSplitter } from '../src/experimental.js'
 import * as index from '../src/index.js'
 import { RdButton, RdTextField } from '../src/index.js'
 import { normalize } from './normalize.js'
@@ -86,6 +90,7 @@ describe('既定 export の部品', () => {
   it('experimental の部品は root から出ず、./experimental から出る（ADR-0009）', () => {
     expect(Object.keys(index)).not.toContain('RdSelect')
     expect(Object.keys(experimental)).toEqual([
+      'RdCarousel',
       'RdCheckbox',
       'RdCheckboxGroup',
       'RdCombobox',
@@ -126,6 +131,26 @@ describe('既定 export の部品', () => {
           max: 70,
           start: '<p>一覧</p>',
           end: '<p>本文</p>',
+        }),
+      ),
+    )
+  })
+
+  it('RdCarousel の renderToString が carouselMarkup と同じ HTML になる（枚は children で渡す）', () => {
+    const rendered = renderToString(
+      <RdCarousel label="おすすめ" loop>
+        <li>秋の便り</li>
+        <li>冬の支度</li>
+      </RdCarousel>,
+    )
+    expect(normalize(rendered)).toBe(
+      normalize(
+        carouselMarkup({
+          label: 'おすすめ',
+          loop: true,
+          children:
+            carouselItemMarkup({ children: '秋の便り' })
+            + carouselItemMarkup({ children: '冬の支度' }),
         }),
       ),
     )

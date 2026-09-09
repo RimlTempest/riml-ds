@@ -69,3 +69,13 @@ export const computeStates = (input: StateInput): ReadonlySet<string> => {
     ].filter((state) => state !== ''),
   )
 }
+
+/**
+ * 開発者に知らせる問題の文言。契約の不足（`checkContract` の役割名）と、
+ * 名前（`label`）の不足を並べる。何も無ければ空（`console.error` は呼ばれない）。
+ */
+export const contractProblems = (missing: readonly string[], label: string): readonly string[] =>
+  [
+    missing.length === 0 ? '' : `<ul> と <li> が必要（不足: ${missing.join(', ')}）`,
+    label === '' ? 'label が必要' : '',
+  ].filter((problem) => problem !== '')

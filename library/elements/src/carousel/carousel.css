@@ -1,0 +1,113 @@
+@layer rd.components {
+  /* 寸法は `system/css/src/atoms.css` の `.rd-carousel*` と同じ値
+     （保守メモ: 片方を変えたらもう片方も。`docs/proposals/carousel.md`） */
+  rd-carousel {
+    display: block;
+  }
+
+  /* スクロールバーは隠さない——「まだ先がある」の手がかりになる（accessibility.md 9） */
+  rd-carousel > ul {
+    display: flex;
+    gap: var(--rd-space-4);
+    margin: 0;
+    padding: 0 0 var(--rd-space-2);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-padding-inline: var(--rd-carousel-padding, 0);
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    list-style: none;
+  }
+
+  rd-carousel > ul > li {
+    flex: 0 0 var(--rd-carousel-item, min(100%, 20rem));
+    scroll-snap-align: start;
+  }
+
+  /* 横に転がる箱は Tab で届く（契約の `tabindex`）ので、焦点環も要る */
+  rd-carousel > ul:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  rd-carousel [part='controls'] {
+    display: flex;
+    gap: var(--rd-space-2);
+    align-items: center;
+    justify-content: end;
+    margin-block-start: var(--rd-space-2);
+  }
+
+  /* `.rd-icon-button` と同じ寸法。丸くて 44px 角（WCAG 2.5.5 AAA） */
+  rd-carousel [part='prev'],
+  rd-carousel [part='next'] {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--rd-sizing-target-min);
+    block-size: var(--rd-sizing-target-min);
+    padding: 0;
+    border-width: var(--rd-border-width-default);
+    border-style: solid;
+    border-color: var(--rd-color-border-default);
+    border-radius: var(--rd-radius-full);
+    background: var(--rd-color-surface-raised);
+    color: var(--rd-color-text-default);
+    font: inherit;
+  }
+
+  rd-carousel [part='prev']:focus-visible,
+  rd-carousel [part='next']:focus-visible {
+    outline: var(--rd-focus-ring-width) solid var(--rd-focus-ring-color);
+    outline-offset: var(--rd-focus-ring-offset);
+  }
+
+  /* 端では押しても動かない。`disabled` にはしない——フォーカスは受け取れるまま（skill §4） */
+  rd-carousel [part='prev'][aria-disabled='true'],
+  rd-carousel [part='next'][aria-disabled='true'] {
+    color: var(--rd-color-text-muted);
+    cursor: not-allowed;
+  }
+
+  rd-carousel [part='counter'] {
+    color: var(--rd-color-text-muted);
+    font: var(--rd-type-small);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 1 枚しか無ければ前へ／次へも「n / N」も要らない。
+     `:state()` は Newly なので @supports の中だけ（docs/baseline.md）。
+     無いブラウザでは操作が出たままになるが、押しても動かないだけで害は無い */
+  @supports selector(:state(single)) {
+    rd-carousel:state(single) [part='controls'] {
+      display: none;
+    }
+  }
+
+  /* JS は `behavior: 'auto'` で呼ぶので、滑らかさの有無はここだけで決まる */
+  @media (prefers-reduced-motion: no-preference) {
+    rd-carousel > ul {
+      scroll-behavior: smooth;
+    }
+  }
+
+  @media (forced-colors: active) {
+    rd-carousel [part='prev'],
+    rd-carousel [part='next'] {
+      border-color: ButtonText;
+      color: ButtonText;
+    }
+
+    rd-carousel [part='prev'][aria-disabled='true'],
+    rd-carousel [part='next'][aria-disabled='true'] {
+      border-color: GrayText;
+      color: GrayText;
+    }
+
+    rd-carousel > ul:focus-visible,
+    rd-carousel [part='prev']:focus-visible,
+    rd-carousel [part='next']:focus-visible {
+      outline: var(--rd-focus-ring-width) solid Highlight;
+      outline-offset: var(--rd-focus-ring-offset);
+    }
+  }
+}
