@@ -76,6 +76,16 @@
       }
     },
     {
+      "selector": "button[aria-disabled]:not([disabled])",
+      "rules": {
+        "wai-aria": {
+          "options": {
+            "disallowSetImplicitProps": false
+          }
+        }
+      }
+    },
+    {
       "selector": "img",
       "rules": {
         "required-attr": ["alt"]

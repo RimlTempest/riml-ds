@@ -23,7 +23,7 @@ const cards = (count: number): string =>
       carouselItemMarkup({
         children:
           `<article class="rd-card"><div class="rd-card-body">`
-          + `<h3 class="rd-card-title">${title}</h3><p>季節ごとのおすすめ。</p>`
+          + `<h2 class="rd-card-title">${title}</h2><p>季節ごとのおすすめ。</p>`
           + `</div></article>`,
       }),
     )
