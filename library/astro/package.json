@@ -34,6 +34,7 @@
     "./experimental/splitter.astro": "./src/generated/experimental/splitter.astro",
     "./experimental/tabs.astro": "./src/generated/experimental/tabs.astro",
     "./experimental/toggle.astro": "./src/generated/experimental/toggle.astro",
+    "./experimental/toggle-group.astro": "./src/generated/experimental/toggle-group.astro",
     "./experimental/window.astro": "./src/generated/experimental/window.astro",
     "./package.json": "./package.json"
   },

@@ -8,6 +8,7 @@ import {
   navigationSuite,
   radioGroupAndSliderSuite,
   splitterSuite,
+  toggleGroupSuite,
   toggleSuite,
 } from './shared.js'
 
@@ -21,3 +22,4 @@ comboboxSuite('svelte')
 splitterSuite('svelte')
 commandSuite('svelte')
 dataTableSuite('svelte')
+toggleGroupSuite('svelte')

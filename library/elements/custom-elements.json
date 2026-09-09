@@ -4298,6 +4298,214 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/toggle-group/toggle-group.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-toggle-group",
+          "declaration": {
+            "name": "RdToggleGroup",
+            "module": "/src/toggle-group/toggle-group.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/toggle-group/toggle-group.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "押下ボタンの列。`<fieldset>` / `<legend>` と `<button aria-pressed>` を子として包む（ティア A、\nADR-0012）。するのは 3 つだけ：`single` のとき他を戻す、矢印キーで列の中を移動する（roving\ntabindex。APG「Toolbar」）、`rd-change` を投げる。JS が無いときは「押しても変わらない普通の\nボタンの列」に縮退する（害は無い）。**送信に載せる値なら `rd-*-group segmented` を使う**。",
+          "name": "RdToggleGroup",
+          "cssParts": [
+            {
+              "description": "項目の入れ物",
+              "name": "options"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "mode",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'multiple'",
+              "attribute": "mode"
+            },
+            {
+              "kind": "field",
+              "name": "orientation",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'horizontal'",
+              "attribute": "orientation"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "'outline'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#options",
+              "privacy": "private",
+              "type": {
+                "text": "Element | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#contractOk",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "#binding",
+              "privacy": "private",
+              "type": {
+                "text": "Binding | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "#observer",
+              "privacy": "private",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "values",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "description": "プログラムからの変更。`rd-change` は出さない（`rd-select` / `rd-sort` と同じ方針）"
+            },
+            {
+              "kind": "field",
+              "name": "#onClick",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#onKeydown",
+              "privacy": "private",
+              "description": "フォーカスを動かすだけで押さない（APG Toolbar。押すのは Enter / Space = ネイティブの click）"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ values: readonly string[] }>"
+              },
+              "description": "押下で選択が変わったときに発火",
+              "name": "rd-change"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "mode",
+              "type": {
+                "text": "string"
+              },
+              "default": "'multiple'",
+              "fieldName": "mode"
+            },
+            {
+              "name": "orientation",
+              "type": {
+                "text": "string"
+              },
+              "default": "'horizontal'",
+              "fieldName": "orientation"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'outline'",
+              "fieldName": "variant"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "outline",
+              "description": "variant=outline（既定）。丸い面に区画を並べる"
+            },
+            {
+              "name": "ghost",
+              "description": "variant=ghost。面も罫線も持たない"
+            },
+            {
+              "name": "single",
+              "description": "mode=single。1 個だけ押せる"
+            },
+            {
+              "name": "multiple",
+              "description": "mode=multiple（既定）。いくつでも押せる"
+            },
+            {
+              "name": "horizontal",
+              "description": "orientation=horizontal（既定）"
+            },
+            {
+              "name": "vertical",
+              "description": "orientation=vertical。矢印は ↑ ↓"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "押下ボタンの列。単一 / 複数選択と矢印キー移動。<fieldset><legend> と <button aria-pressed> は利用側が書く",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-toggle-group",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdToggleGroup",
+          "declaration": {
+            "name": "RdToggleGroup",
+            "module": "src/toggle-group/toggle-group.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/toggle/toggle.define.ts",
       "declarations": [],
       "exports": [

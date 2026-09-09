@@ -241,6 +241,19 @@
       "default": "./dist/toggle/toggle.define.js"
     },
     "./experimental/toggle/style.css": "./dist/toggle/toggle.css",
+    "./experimental/toggle-group": {
+      "types": "./dist/experimental/toggle-group/index.d.ts",
+      "default": "./dist/experimental/toggle-group/index.js"
+    },
+    "./experimental/toggle-group/contract": {
+      "types": "./dist/toggle-group/toggle-group.contract.d.ts",
+      "default": "./dist/toggle-group/toggle-group.contract.js"
+    },
+    "./experimental/toggle-group/define": {
+      "types": "./dist/toggle-group/toggle-group.define.d.ts",
+      "default": "./dist/toggle-group/toggle-group.define.js"
+    },
+    "./experimental/toggle-group/style.css": "./dist/toggle-group/toggle-group.css",
     "./experimental/window": {
       "types": "./dist/experimental/window/index.d.ts",
       "default": "./dist/experimental/window/index.js"
