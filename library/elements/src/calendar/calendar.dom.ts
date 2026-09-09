@@ -197,6 +197,8 @@ export const focusCell = (host: HTMLElement, iso: IsoDate | undefined): void => 
 /**
  * gridcell は `<td>` 自身が focusable（APG「Date Picker Dialog」と同じ。`<button>` は入れない
  * ——`aria-selected` は gridcell に置く必要がある）。月の外は空欄にして読み上げから外す。
+ * `role="gridcell"` は**書かない**——`<table role="grid">` の中では `<td>` の暗黙の役割が
+ * gridcell なので、書くと markuplint の `wai-aria`（暗黙の役割の明示）に落ちる（032 の `<li>` と同じ判断）。
  */
 const cellTemplate = (cell: Cell, view: CalendarView, locale: string): TemplateResult => {
   if (cell === undefined) {
@@ -204,7 +206,6 @@ const cellTemplate = (cell: Cell, view: CalendarView, locale: string): TemplateR
   }
   const outside = !inRange(cell.iso, view.min, view.max)
   return html`<td
-    role="gridcell"
     data-iso=${cell.iso}
     tabindex=${cell.iso === view.focused ? 0 : -1}
     aria-label=${cellLabel(cell.iso, locale)}
