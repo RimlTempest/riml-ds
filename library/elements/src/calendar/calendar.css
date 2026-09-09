@@ -118,7 +118,9 @@
 
   rd-calendar td[aria-selected='true'] {
     background: var(--rd-color-accent-default);
-    color: var(--rd-color-accent-text);
+
+    /* accent の面に載る文字は on-accent。`accent-text`（リンク色）は accent-default と同じ色で消える */
+    color: var(--rd-color-text-on-accent);
     font-weight: var(--rd-font-weight-bold);
   }
 
