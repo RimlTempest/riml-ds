@@ -9,6 +9,7 @@ import {
   navigationSuite,
   radioGroupAndSliderSuite,
   splitterSuite,
+  toggleGroupSuite,
   toggleSuite,
 } from './shared.js'
 
@@ -22,6 +23,7 @@ comboboxSuite('react')
 splitterSuite('react')
 commandSuite('react')
 dataTableSuite('react')
+toggleGroupSuite('react')
 
 test.describe('react: controlled の再同期', () => {
   test('親が拒否した文字は入力欄から消える（<input> と同じ意味論）', async ({ page }) => {

@@ -8,6 +8,7 @@ import {
   navigationSuite,
   radioGroupAndSliderSuite,
   splitterSuite,
+  toggleGroupSuite,
   toggleSuite,
 } from './shared.js'
 
@@ -21,3 +22,4 @@ comboboxSuite('astro')
 splitterSuite('astro')
 commandSuite('astro')
 dataTableSuite('astro')
+toggleGroupSuite('astro')

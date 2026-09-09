@@ -45,6 +45,10 @@ import {
   tabsPanelMarkup,
 } from '@rimltempest/riml-ds-elements/experimental/tabs'
 import { toggleMarkup } from '@rimltempest/riml-ds-elements/experimental/toggle'
+import {
+  toggleGroupMarkup,
+  toggleItemMarkup,
+} from '@rimltempest/riml-ds-elements/experimental/toggle-group'
 import { textFieldMarkup } from '@rimltempest/riml-ds-elements/text-field'
 
 const AAA_TAGS = ['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag22aa'] as const
@@ -755,6 +759,54 @@ export const dataTableSuite = (framework: string): void => {
       await expect
         .poll(async () =>
           page.locator('rd-data-table').evaluate((element) => element.matches(':state(sorted)')),
+        )
+        .toBe(true)
+    })
+  })
+}
+
+/** 4 フレームワークで同じ項目（`toggleItemMarkup` が唯一の正） */
+const FORMAT_ITEMS =
+  toggleItemMarkup({ label: '強調', value: 'bold', pressed: 'true' })
+  + toggleItemMarkup({ label: '斜体', value: 'italic' })
+
+/**
+ * `rd-toggle-group`（plan 031）。項目は利用側が書く `<button aria-pressed>` のままで、
+ * 部品は `single` の排他・roving tabindex・`rd-change` だけを足す。
+ * JS が無ければ「押しても変わらない普通のボタンの列」に縮退する。
+ */
+export const toggleGroupSuite = (framework: string): void => {
+  test.describe(`${framework}: toggle group`, () => {
+    test.describe('JS 無し', () => {
+      test.use({ javaScriptEnabled: false })
+
+      test('初期 HTML が契約の markup() と一致する', async ({ page }) => {
+        await page.goto('/')
+        await compareMarkup(
+          page,
+          'rd-toggle-group',
+          toggleGroupMarkup({ label: '書式', mode: 'single', children: FORMAT_ITEMS }),
+        )
+      })
+
+      test('JS 無しでは tabindex が付かない（3 個とも Tab で辿れる）', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.locator('rd-toggle-group button[tabindex]')).toHaveCount(0)
+      })
+    })
+
+    test('mode="single" は 2 個目を押すと 1 個目が戻る', async ({ page }) => {
+      await page.goto('/')
+      const group = page.getByRole('group', { name: '書式' })
+      const bold = group.getByRole('button', { name: '強調' })
+      const italic = group.getByRole('button', { name: '斜体' })
+      await expect(bold).toHaveAttribute('aria-pressed', 'true')
+      await italic.click()
+      await expect(italic).toHaveAttribute('aria-pressed', 'true')
+      await expect(bold).toHaveAttribute('aria-pressed', 'false')
+      await expect
+        .poll(async () =>
+          page.locator('rd-toggle-group').evaluate((element) => element.matches(':state(single)')),
         )
         .toBe(true)
     })
