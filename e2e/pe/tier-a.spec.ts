@@ -276,3 +276,29 @@ test('data table: JS 無しの見出しは文字のまま（押せないボタ�
   // 横に溢れる表は部品自身が転がす（WCAG 1.4.10）
   await expect(page.locator('rd-data-table')).toHaveCSS('overflow-x', 'auto')
 })
+
+/**
+ * `rd-calendar`（plan 033）。JS 無しでは **`<input type="date">` がそのまま入力欄**になる
+ * （モバイルなら OS のピッカー）。月表は JS が来てから light DOM の末尾に足される強化ノード。
+ */
+test('calendar: JS 無しでも <input type="date"> が見えて、<label> が名前を付ける', async ({
+  page,
+}) => {
+  await page.goto('/calendar.html')
+  const control = page.getByLabel('期限')
+  await expect(control).toBeVisible()
+  await expect(control).toHaveAttribute('type', 'date')
+  // min / max / required は <input> の属性なので、JS 無しでもネイティブの検証が効く
+  await expect(control).toHaveAttribute('min', '2026-09-01')
+  await expect(control).toHaveJSProperty('required', true)
+  await page.getByRole('button', { name: '送信' }).click()
+  await expect(page).toHaveURL(/due=2026-09-15/u)
+})
+
+test('calendar: JS 無しでは月表が出ない（強化ノードは JS が足す）', async ({ page }) => {
+  await page.goto('/calendar.html')
+  await expect(page.locator("rd-calendar [part='grid']")).toHaveCount(0)
+  await expect(page.locator("rd-calendar [part='header']")).toHaveCount(0)
+  // 枠と入力欄の見た目は calendar.css がそのまま当てる
+  await expect(page.locator('rd-calendar > input')).toHaveCSS('min-block-size', '44px')
+})

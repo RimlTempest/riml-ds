@@ -11,6 +11,7 @@ export default defineConfig({
         'dialog',
         'live-region',
         'text-field',
+        'experimental/calendar',
         'experimental/select',
         'experimental/checkbox',
         'experimental/checkbox-group',

@@ -10,6 +10,7 @@ import { AXE_TAGS } from '../axe-tags.js'
  */
 const PAGES = [
   '/button.html',
+  '/calendar.html',
   '/text-field.html',
   '/select.html',
   '/checkbox.html',

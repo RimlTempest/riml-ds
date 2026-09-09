@@ -1,4 +1,5 @@
 import {
+  calendarSuite,
   comboboxSuite,
   commandSuite,
   dataTableSuite,
@@ -21,3 +22,4 @@ comboboxSuite('svelte')
 splitterSuite('svelte')
 commandSuite('svelte')
 dataTableSuite('svelte')
+calendarSuite('svelte')

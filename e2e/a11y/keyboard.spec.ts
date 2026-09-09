@@ -312,3 +312,53 @@ test('data table: Tab で見出しのボタンに届き、Enter で並ぶ', asyn
   // 行を動かすだけなのでフォーカスは見出しに残る
   await expect(button).toBeFocused()
 })
+
+/**
+ * `rd-calendar`（plan 033）。**JS があるときだけ**月表が出るので、ここ（Storybook）で見る。
+ * Tab 順は自然な DOM 順（`<input>` → 前の月 → 次の月 → 焦点のある gridcell）。
+ */
+const CALENDAR_STORY = 'components-calendar--default'
+
+test('calendar: Tab で入力欄 → 前の月 → 次の月 → 選ばれている日 の順に届く', async ({ page }) => {
+  await page.goto(storyUrl(CALENDAR_STORY))
+  await waitForStoryFinished(page, CALENDAR_STORY)
+  await page.locator('rd-calendar > input').focus()
+  // 日付欄は年・月・日の内部フィールドを持つので、Tab の回数はブラウザに任せて
+  // 「入力欄を出たら前の月ボタンに着く」ことだけを見る（Tab 順は自然な DOM 順）
+  await expect
+    .poll(async () => {
+      await page.keyboard.press('Tab')
+      return page.evaluate(() => document.activeElement?.getAttribute('part') ?? '')
+    })
+    .toBe('prev')
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('button', { name: '次の月' })).toBeFocused()
+  await page.keyboard.press('Tab')
+  await expect(page.locator('rd-calendar [data-iso="2026-09-15"]')).toBeFocused()
+})
+
+test('calendar: → ↓ で tabindex="0" の日が動く（月表の中は矢印で歩く）', async ({ page }) => {
+  await page.goto(storyUrl(CALENDAR_STORY))
+  await waitForStoryFinished(page, CALENDAR_STORY)
+  const focused = page.locator('rd-calendar [data-iso][tabindex="0"]')
+  await page.locator('rd-calendar [data-iso="2026-09-15"]').focus()
+  await page.keyboard.press('ArrowRight')
+  await expect(focused).toHaveAttribute('data-iso', '2026-09-16')
+  await page.keyboard.press('ArrowDown')
+  await expect(focused).toHaveAttribute('data-iso', '2026-09-23')
+  // 焦点を持つ升目は常に 1 つだけ（APG の roving tabindex）
+  await expect(focused).toHaveCount(1)
+})
+
+test('calendar: Enter で <input> の値が選んだ日になる', async ({ page }) => {
+  await page.goto(storyUrl(CALENDAR_STORY))
+  await waitForStoryFinished(page, CALENDAR_STORY)
+  await page.locator('rd-calendar [data-iso="2026-09-15"]').focus()
+  await page.keyboard.press('ArrowRight')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('rd-calendar > input')).toHaveValue('2026-09-16')
+  await expect(page.locator('rd-calendar [data-iso="2026-09-16"]')).toHaveAttribute(
+    'aria-selected',
+    'true',
+  )
+})

@@ -3,6 +3,7 @@ import RdButton from '@rimltempest/riml-ds-astro/button.astro'
 import RdCheckbox from '@rimltempest/riml-ds-astro/experimental/checkbox.astro'
 import RdCheckboxGroup from '@rimltempest/riml-ds-astro/experimental/checkbox-group.astro'
 import RdCombobox from '@rimltempest/riml-ds-astro/experimental/combobox.astro'
+import RdCalendar from '@rimltempest/riml-ds-astro/experimental/calendar.astro'
 import RdCommand from '@rimltempest/riml-ds-astro/experimental/command.astro'
 import RdDataTable from '@rimltempest/riml-ds-astro/experimental/data-table.astro'
 import RdInputOtp from '@rimltempest/riml-ds-astro/experimental/input-otp.astro'
@@ -139,6 +140,7 @@ import RdWindow from '@rimltempest/riml-ds-astro/experimental/window.astro'
             ></tbody
           >
         </RdDataTable>
+        <RdCalendar id="due" label="期限" name="due" defaultValue="2026-09-15" today="2026-09-09" />
         <RdToggle label="太字" pressed="false" />
         <rd-live-region></rd-live-region>
       </main>
