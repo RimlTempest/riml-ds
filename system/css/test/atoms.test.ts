@@ -253,3 +253,10 @@ describe('atoms.css の面と待ち（plan 022）', () => {
     expect(inner).toEqual([])
   })
 })
+
+describe('atoms.css の表（plan 035）', () => {
+  it('表の見出しは折り返さない（td は折り返す）', () => {
+    expect(declsOf(/\.rd-table :where\(th\)/)).toContain('white-space:nowrap')
+    expect(declsOf(/\.rd-table :where\(td\)/)).not.toContain('white-space:nowrap')
+  })
+})
