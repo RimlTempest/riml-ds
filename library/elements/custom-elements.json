@@ -2911,6 +2911,239 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/number-field/number-field.define.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "rd-number-field",
+          "declaration": {
+            "name": "RdNumberField",
+            "module": "/src/number-field/number-field.element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/number-field/number-field.element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "数値を 1 つ。子の `<label for>` と `<input type=\"number\">` を包む（ティア A、ADR-0012）。\n送信・検証（`min` / `max` / `step`）・↑↓ キーの刻みはブラウザが素で行い、部品が足すのは\n**44px の − / + ボタン**と刻みの丸めだけ。押すと `<input>` から `input` → `change` が上がる\n（独自イベントは出さない）。JS が無いときは「ボタンの無い普通の数値入力」に縮退する。",
+          "name": "RdNumberField",
+          "cssProperties": [
+            {
+              "description": "ラベル・入力欄・文言の間隔。既定 var(--rd-space-1)",
+              "name": "--rd-number-field-gap"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "− / + を載せる枕",
+              "name": "stepper"
+            },
+            {
+              "description": "減らすボタン",
+              "name": "decrement"
+            },
+            {
+              "description": "増やすボタン",
+              "name": "increment"
+            },
+            {
+              "description": "補足文言",
+              "name": "hint"
+            },
+            {
+              "description": "エラー文言",
+              "name": "error"
+            }
+          ],
+          "slots": [
+            {
+              "description": "<label for> と <input type=\"number\">（省略不可）",
+              "name": ""
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "hint",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "hint"
+            },
+            {
+              "kind": "field",
+              "name": "error",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "error"
+            },
+            {
+              "kind": "field",
+              "name": "#internals",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#attached",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#touched",
+              "privacy": "private",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "description": "値はネイティブ要素が持つ。部品は委譲するだけ"
+            },
+            {
+              "kind": "field",
+              "name": "valueAsNumber",
+              "type": {
+                "text": "number"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "stepUp",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "description": "ネイティブの同名メソッドと違い、空欄・`any`・丸めを純関数で扱い例外を投げない"
+            },
+            {
+              "kind": "method",
+              "name": "stepDown",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#step",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#redraw",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#setTouched",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#listeners",
+              "privacy": "private",
+              "type": {
+                "text": "Listeners"
+              },
+              "default": "{ input: this.#redraw, change: () => this.#setTouched(true), blur: () => this.#setTouched(true), invalid: (event) => { event.preventDefault() this.#setTouched(true) }, }"
+            },
+            {
+              "kind": "field",
+              "name": "#formListeners",
+              "privacy": "private",
+              "type": {
+                "text": "Listeners"
+              },
+              "default": "{ reset: () => this.#setTouched(false) }"
+            },
+            {
+              "kind": "field",
+              "name": "#view",
+              "privacy": "private"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "hint",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "hint"
+            },
+            {
+              "name": "error",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "error"
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "invalid",
+              "description": "検証に通っていない（操作後、または error 属性がある）"
+            },
+            {
+              "name": "errored",
+              "description": "error 属性で文言を強制表示している"
+            },
+            {
+              "name": "hinted",
+              "description": "hint がある"
+            },
+            {
+              "name": "filled",
+              "description": "値が入っている"
+            },
+            {
+              "name": "malformed",
+              "description": "契約の子（<label for> と <input type=\"number\">）が無い"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "数値を 1 つ。<label for> と <input type=number> は利用側が書く。− / + の 44px ボタンと丸めだけ部品が足す",
+          "status": "experimental",
+          "pe": "A",
+          "tagName": "rd-number-field",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RdNumberField",
+          "declaration": {
+            "name": "RdNumberField",
+            "module": "src/number-field/number-field.element.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/popover/popover.define.ts",
       "declarations": [],
       "exports": [

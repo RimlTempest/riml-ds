@@ -29,6 +29,7 @@
     "./experimental/input-otp.astro": "./src/generated/experimental/input-otp.astro",
     "./experimental/menu.astro": "./src/generated/experimental/menu.astro",
     "./experimental/meter.astro": "./src/generated/experimental/meter.astro",
+    "./experimental/number-field.astro": "./src/generated/experimental/number-field.astro",
     "./experimental/popover.astro": "./src/generated/experimental/popover.astro",
     "./experimental/radio-group.astro": "./src/generated/experimental/radio-group.astro",
     "./experimental/select.astro": "./src/generated/experimental/select.astro",

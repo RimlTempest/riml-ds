@@ -8,6 +8,7 @@ import {
   frameworkSuite,
   meterAndWindowSuite,
   navigationSuite,
+  numberFieldSuite,
   radioGroupAndSliderSuite,
   splitterSuite,
   toggleGroupSuite,
@@ -27,3 +28,4 @@ dataTableSuite('svelte')
 calendarSuite('svelte')
 carouselSuite('svelte')
 toggleGroupSuite('svelte')
+numberFieldSuite('svelte')

@@ -444,3 +444,34 @@ test('toggle group: Space で押下が切り替わる（ネイティブの click
   await page.keyboard.press('Space')
   await expect(underline).toHaveAttribute('aria-pressed', 'true')
 })
+
+/**
+ * `rd-number-field`（plan 036）。− / + は `tabindex="-1"` なので Tab 順に増えない。
+ * キーボードで刻む道はネイティブの ↑↓ で、部品はそれを邪魔しない。
+ */
+const NUMBER_FIELD_STORY = 'components-numberfield--default'
+
+const numberFieldStory = async (page: Page): Promise<void> => {
+  await page.goto(storyUrl(NUMBER_FIELD_STORY))
+  await waitForStoryFinished(page, NUMBER_FIELD_STORY)
+}
+
+test('number field: + をクリックすると値が刻まれる', async ({ page }) => {
+  await numberFieldStory(page)
+  const input = page.getByLabel('枚数')
+  await expect(input).toHaveValue('1')
+  await page.getByRole('button', { name: '増やす' }).click()
+  await expect(input).toHaveValue('2')
+})
+
+test('number field: 入力欄で ↑ を押すとネイティブが刻む（部品は邪魔しない）', async ({ page }) => {
+  await numberFieldStory(page)
+  const input = page.getByLabel('枚数')
+  await input.focus()
+  await page.keyboard.press('ArrowUp')
+  await expect(input).toHaveValue('2')
+  // Tab は入力欄を出たら送信ボタンへ。− / + は Tab 順に居ない（tabindex="-1"）
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('button', { name: '増やす' })).not.toBeFocused()
+  await expect(page.getByRole('button', { name: '減らす' })).not.toBeFocused()
+})

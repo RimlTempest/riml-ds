@@ -11,6 +11,7 @@ import {
   RdInputOtp,
   RdMenu,
   RdMeter,
+  RdNumberField,
   RdPopover,
   RdRadioGroup,
   RdSelect,
@@ -237,6 +238,7 @@ export const App = (): ReactNode => (
         斜体
       </button>
     </RdToggleGroup>
+    <RdNumberField id="copies" label="枚数" name="copies" defaultValue="1" min="1" max="99" />
     <rd-live-region />
   </main>
 )
