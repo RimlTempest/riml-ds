@@ -82,7 +82,7 @@
 | 030 | [rd-splitter（`role="separator"` のハンドルで 2 面をドラッグ・キーボードで分割するティア B）](030-splitter.md) | P2 | M | 020 | DONE（`855b4d2`） |
 | 031 | [rd-toggle-group（`<fieldset>` + `<button aria-pressed>` の列。単一／複数選択と roving focus）](031-toggle-group.md) | P1 | M | 024 | TODO |
 | 032 | [rd-carousel（`<ul><li>` を包み「前へ／次へ」と枚数を足す。scroll-snap + IntersectionObserver）](032-carousel.md) | P2 | M | 020 | TODO |
-| 033 | [rd-calendar（`<label>` + `<input type="date">` を包み、JS で `role="grid"` の月表を描くティア B）](033-calendar.md) | P1 | L | 023 | TODO |
+| 033 | [rd-calendar（`<label>` + `<input type="date">` を包み、JS で light DOM に `role="grid"` の月表を描くティア A）](033-calendar.md) | P1 | L | 023 | TODO |
 
 状態: `TODO` / `IN PROGRESS` / `DONE（マージ SHA）` / `BLOCKED(理由)` / `STALE`。
 executor は完了時にこの表の自分の行だけを書き換える（reviewer が索引を管理すると言った場合は触らない）。
