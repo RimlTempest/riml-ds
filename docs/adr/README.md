@@ -19,6 +19,7 @@
 | 0012 | [Progressive Enhancement を 3 ティアで規約化し、フォーム・ナビ部品は light DOM でネイティブ要素を包む](0012-progressive-enhancement-tiers.md) | Accepted |
 | 0013 | [既定ブランドを riml にし、視覚言語「まど」を全ブランド共通の形にする](0013-riml-brand-and-mado.md) | Accepted |
 | 0014 | [窓の左端の丸 3 つは本物のボタンにする（`rd-window` を部品として追加）](0014-window-controls-are-buttons.md) | Accepted |
+| 0015 | [窓の記号と丸の色を riml のものにする（参考にした画面と重ねない）](0015-window-glyphs-and-dot-colours.md) | Accepted |
 
 ## 書式
 

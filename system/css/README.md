@@ -151,9 +151,13 @@ JS が要らないので部品にしない（[ADR-0012](../../docs/adr/0012-prog
 
 帯は `header`、その中に**見出し要素そのもの**を置く（文書構造と見た目が一致する。
 [ADR-0014](../../docs/adr/0014-window-controls-are-buttons.md) 決定 2）。左端の丸は装飾ではなく
-**本物の `<button>`**（決定 1）。`data-action="close" | "collapse" | "expand"` で印が変わり、
+**本物の `<button>`**（決定 1）。`data-action="close" | "collapse" | "expand"` で**丸の色と印が変わり**（閉じる = ほっぺの桃、
+広げる = 髪の青、たたむ = 紙。[ADR-0015](../../docs/adr/0015-window-glyphs-and-dot-colours.md)）、
 `aria-label` が必須。押したときの動作は利用側が書く（動作まで要るなら `rd-window` 要素）。
-操作が 1 つも無いなら `.rd-window-controls` ごと省く——押せない丸は置かない。帯の色は
+操作が 1 つも無いなら `.rd-window-controls` ごと省く——押せない丸は置かない。
+丸の並びは `.rd-window-bar` に置いた 3 つの変数で調整できる: `--rd-window-control-gap`（間隔。既定 `0`）、
+`--rd-window-control-size`（丸の直径。既定 `1.25rem`）、`--rd-window-glyph-size`（記号。既定 `0.75rem`）。
+既定の `0` でも当たり判定が 2.75rem 四方なので丸の隙間は 1.5rem ある。**負の間隔は使わない**（押せる四角が重なる）。帯の色は
 `data-tone="accent" | "warning" | "danger"` で変わり、文字色は対応する `on-*` が付く。
 `forced-colors: active` では帯が `Canvas` / `CanvasText` の 1px 罫線に置き換わり、丸は `ButtonFace` / `ButtonText` の輪郭で残る（操作だから消さない）。
 

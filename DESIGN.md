@@ -117,6 +117,8 @@ peach（`neutral-200`）。文字は navy のインク（`neutral-700`、色相 
 `accent-500`（= `brand.primary`）と赤目の `signature-500`（= `brand.signature`）は**装飾専用**
 ——窓の丸・区切り・メーターの区分に使い、**文字を載せない・文字色にしない**（非文字 3:1 だけを保証）。
 タイトルバーの帯は `chrome`（ライトはインク、ダークは `neutral-600`）に `chrome-text`（cream）。
+帯の左端の操作の丸は **riml の 3 色**（`chrome-control-close` = ほっぺの桃 / `chrome-control-expand` =
+髪の青 / `chrome-control-collapse` = 紙）。記号は帯の色で抜く。
 
 - テキストと背景の対は **7:1 以上**（AAA）。`text-muted` でも 7:1 を満たす明度に置く。
   補助テキストは「薄く」ではなく「小さく・細く」で階層を作る。
@@ -185,7 +187,8 @@ Zen Maru Gothic → M PLUS Rounded 1c → Hiragino Maru Gothic ProN → … → 
 メーターはピル**（`full`）。入れ子のときは内側を 1 段小さくする。
 
 - **窓（`.rd-window`）**が基本の器：タイトルバーの帯（`chrome`、高さ ≥ 2.75rem、見出し中央、
-  左に装飾の丸 3 つ = `signature` / `brand.primary` / `border`）+ 本体（`surface-raised`）+ `raised` の影。
+  左に**操作の丸**（押せる `<button>`。閉じる / 広げる / たたむ。`chrome-control-*` の 3 色に
+  riml の筆致の × / □ / −）+ 本体（`surface-raised`）+ `raised` の影。
   ダイアログは窓 + `overlay` の影、トーストは小さな窓 + 左端 0.5rem の意味色の帯。
 - 塗りは平坦で枠を持たない（ボタン・帯）。境界線を持つのは入力欄（1px `border`）と `hr`（**2px 点線**）だけ。
   強制配色では帯と塗りに 1px `CanvasText` の境界線を戻す。
