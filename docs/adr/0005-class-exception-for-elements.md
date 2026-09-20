@@ -73,3 +73,6 @@ Custom Elements は `HTMLElement` を継承する **class でしか定義でき�
 - `riml-ds-element` skill の必須構成：`<name>.element.ts` / `.logic.ts` / `.styles.ts` /
   `.define.ts` / `.stories.ts` / `.test.ts` / `.logic.test.ts` / `index.ts`。
 - レビュー観点：`*.element.ts` の行数（目安 150 行以下）と `if` の数（目安 5 以下）。
+  `scripts/guard.sh` はこれを機械的に見るが、**数えるのはコードだけ**（JSDoc / 行コメント / 空行は除く。
+  2026-09-21）。JSDoc は CEM の入力＝公開 API の宣言であって、ロジックの量ではない。
+  以前は全行を数えていたため、`@cssprop` を 1 行足しただけで CI が落ちた（部品の多くが上限ちょうどだった）。

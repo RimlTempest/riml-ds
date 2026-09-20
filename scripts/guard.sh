@@ -82,10 +82,13 @@ for file in library/elements/src/*/*.element.ts; do
   dir="$(dirname "$file")"
   name="$(basename "$file" .element.ts)"
   tier="$(sed -n 's/^[[:space:]]*\*[[:space:]]*@pe[[:space:]]\{1,\}\([ABC]\).*$/\1/p' "$file" | head -1)"
-  lines="$(wc -l < "$file" | tr -d ' ')"
+  # 数えるのはコードだけ（JSDoc / 行コメント / 空行は除く）。JSDoc は CEM の入力であって
+  # ロジックではないので、公開 API（@csspart / @cssprop / @event …）を足したことで
+  # 上限に当たるのは ADR-0005 の「element を薄く保つ」意図に反する
+  lines="$(grep -cvE '^[[:space:]]*(/\*|\*|//|$)' "$file" || true)"
 
   if [ "$lines" -gt 150 ]; then
-    report "$file" "*.element.ts must stay at or under 150 lines (ADR-0005); it has $lines"
+    report "$file" "*.element.ts must stay at or under 150 lines of code (ADR-0005); it has $lines"
   fi
 
   case "$tier" in

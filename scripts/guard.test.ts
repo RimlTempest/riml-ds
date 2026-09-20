@@ -127,12 +127,21 @@ describe('scripts/guard.sh', () => {
     ).not.toBe(0)
   })
 
-  it('*.element.ts が 150 行を超えると落ちる（ADR-0005）', () => {
+  it('*.element.ts のコードが 150 行を超えると落ちる（ADR-0005）', () => {
     expect(
       runGuard((dir) => {
-        write(dir, 'library/elements/src/x/x.element.ts', tierC + '\n'.repeat(200))
+        write(dir, 'library/elements/src/x/x.element.ts', tierC + 'const a = 1\n'.repeat(200))
       }),
     ).not.toBe(0)
+  })
+
+  it('JSDoc と空行は数えない（公開 API を足しただけで落ちない。ADR-0005 の「目安」の意図）', () => {
+    const doc = ' * @cssprop --rd-x-gap - 説明\n'.repeat(200)
+    expect(
+      runGuard((dir) => {
+        write(dir, 'library/elements/src/x/x.element.ts', tierC + doc + '\n'.repeat(200))
+      }),
+    ).toBe(0)
   })
 
   it('.npmrc の _authToken で落ちる', () => {
