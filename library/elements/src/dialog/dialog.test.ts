@@ -159,6 +159,24 @@ const closeControl = (el: RdDialog): HTMLButtonElement | null => {
   return button instanceof HTMLButtonElement ? button : null
 }
 
+it('帯の × は桃の丸に riml の ×（brand.md §7.1 / ADR-0015）', async () => {
+  const el = await fixtureOf(RdDialog, DIALOG)
+  el.show()
+  await el.updateComplete
+  const close = closeControl(el)
+  expect(close).not.toBeNull()
+  if (close === null) {
+    return
+  }
+  const dot = getComputedStyle(close, '::before')
+  const glyph = getComputedStyle(close, '::after')
+  expect(dot.backgroundColor).toBe(resolvedColor('--rd-color-chrome-control-close'))
+  // クリーム（帯の文字色）のままになっていない = 3 色が効いている
+  expect(dot.backgroundColor).not.toBe(resolvedColor('--rd-color-chrome-text'))
+  expect(glyph.maskImage).toContain('rotate(8 8 8)')
+  expect(glyph.backgroundColor).toBe(resolvedColor('--rd-color-chrome-default'))
+})
+
 it('帯の左端に × があり、押すと rd-dismiss { reason: "button" } が上がる', async () => {
   const el = await fixtureOf(RdDialog, DIALOG)
   const listener = vi.fn<(event: Event) => void>()

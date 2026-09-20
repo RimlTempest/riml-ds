@@ -13,17 +13,19 @@ import { type LangHost, usesJapaneseCopy } from './lang.js'
 export type WindowAction = 'close' | 'expand' | 'collapse'
 
 /**
- * 記号は `viewBox 0 0 16 16` / `stroke-width 2` / `stroke-linecap round` の線だけ。
- * `mask` は既定で alpha を見るので、SVG の色は不透明でありさえすればよい。
- * 参考にした画面の絵・アイコン・ロゴは持ち込まない（brand.md §9）。
+ * 記号は `viewBox 0 0 16 16` / `stroke-width 2.4` / `stroke-linecap round` の線だけ。
+ * 幾何のままで riml の筆致にする（brand.md §7.1）: × は 8 度傾けて手で書いた印に寄せ、
+ * □ は角丸を半径の 1/3 まで丸め、− は端を丸く短く取る。太さは 0.75rem の中でも 1 本の線として
+ * 読める 2.4。`mask` は既定で alpha を見るので、SVG の色は不透明でありさえすればよい。
+ * 参考にした画面の絵・アイコン・ロゴ・記号の形は持ち込まない（brand.md §9）。
  */
 export const WINDOW_GLYPHS = {
   close:
-    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 4 12 12'/%3E%3Cpath d='M12 4 4 12'/%3E%3C/svg%3E\")",
+    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cg transform='rotate(8 8 8)'%3E%3Cpath d='M4.6 4.6 11.4 11.4'/%3E%3Cpath d='M11.4 4.6 4.6 11.4'/%3E%3C/g%3E%3C/svg%3E\")",
   expand:
-    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Crect x='3' y='3' width='10' height='10' rx='1'/%3E%3C/svg%3E\")",
+    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.2' y='3.2' width='9.6' height='9.6' rx='3'/%3E%3C/svg%3E\")",
   collapse:
-    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 8 12 8'/%3E%3C/svg%3E\")",
+    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M4.6 8 11.4 8'/%3E%3C/svg%3E\")",
 } as const satisfies Readonly<Record<WindowAction, string>>
 
 const JA: Readonly<Record<WindowAction, string>> = {
@@ -129,6 +131,15 @@ export const dialogBar = (
  * ボタンは `[data-action]` で選ぶ（`rd-dialog` の `<dialog>` が `part="control"` を先に使っている）。
  */
 export const windowChrome: CSSResult = css`
+  /* 帯の見た目を開ける変数の既定値。**:host に置く**——同じ値を [part='controls'] や
+     [data-action] 自身に書くと、利用側が rd-window { --rd-… } と書いても要素自身の宣言が勝ち、
+     外から変えられなくなる。:host のルールは外側のツリーのルールに負けるので上書きが効く */
+  :host {
+    --rd-window-control-gap: 0;
+    --rd-window-control-size: 1.25rem;
+    --rd-window-glyph-size: 0.75rem;
+  }
+
   /* 1 列目 = 操作、2 列目 = 見出し、3 列目 = 空（左右対称の余白）。見出しは短ければ中央 */
   [part='bar'] {
     display: grid;
@@ -147,11 +158,16 @@ export const windowChrome: CSSResult = css`
     color: var(--rd-color-chrome-text);
   }
 
-  /* 操作が 1 つも無いなら要素ごと省く。押せない丸は置かない（ADR-0014 決定 1） */
+  /* 操作が 1 つも無いなら要素ごと省く。押せない丸は置かない（ADR-0014 決定 1）。
+     丸の間隔は --rd-window-control-gap で開ける。既定 0 は「詰める」ではなく
+     当たり判定（2.75rem 四方）どうしが隣り合う状態で、丸と丸の見た目の隙間は
+     2.75rem − 1.25rem = 1.5rem ある。狭めたいなら丸を大きくする（--rd-window-control-size）。
+     負の値は使わない——押せる四角が重なり、当たり判定が食い合う */
   [part='controls'] {
     display: flex;
     grid-column: 1;
     justify-self: start;
+    gap: var(--rd-window-control-gap);
   }
 
   /* 当たり判定は sizing.target-min（2.75rem）四方、見た目の丸は 1.25rem（brand.md §7.1） */
@@ -169,8 +185,9 @@ export const windowChrome: CSSResult = css`
     color: inherit;
     cursor: default;
 
-    --rd-window-control-size: 1.25rem;
-    --rd-window-glyph-size: 0.75rem;
+    /* 丸の色だけは操作ごとに決まるので、ここが既定（利用側は個別の
+       --rd-color-chrome-control-* を差し替える） */
+    --rd-window-control-color: var(--rd-color-chrome-text);
   }
 
   [data-action]::before,
@@ -180,12 +197,13 @@ export const windowChrome: CSSResult = css`
     content: '';
   }
 
-  /* 丸は tone でも chrome.text のまま。塗りの上に文字は置かない（brand.md §9） */
+  /* 丸は操作ごとに 3 色（閉じる = ほっぺ、広げる = 髪の青、たたむ = 紙。brand.md §7.1）。
+     帯の tone を変えても丸の色は動かさない。塗りの上に文字は置かない（brand.md §9） */
   [data-action]::before {
     inline-size: var(--rd-window-control-size);
     block-size: var(--rd-window-control-size);
     border-radius: var(--rd-radius-full);
-    background: var(--rd-color-chrome-text);
+    background: var(--rd-window-control-color);
   }
 
   /* 記号は幾何（× / □ / −）だけ。絵・アイコンフォントは持ち込まない（ADR-0014） */
@@ -198,14 +216,17 @@ export const windowChrome: CSSResult = css`
 
   /* stylelint-disable value-keyword-case -- 補間は postcss-lit が大文字の識別子に置き換える */
   [data-action='close'] {
+    --rd-window-control-color: var(--rd-color-chrome-control-close);
     --rd-window-glyph: ${unsafeCSS(WINDOW_GLYPHS.close)};
   }
 
   [data-action='expand'] {
+    --rd-window-control-color: var(--rd-color-chrome-control-expand);
     --rd-window-glyph: ${unsafeCSS(WINDOW_GLYPHS.expand)};
   }
 
   [data-action='collapse'] {
+    --rd-window-control-color: var(--rd-color-chrome-control-collapse);
     --rd-window-glyph: ${unsafeCSS(WINDOW_GLYPHS.collapse)};
   }
   /* stylelint-enable value-keyword-case */

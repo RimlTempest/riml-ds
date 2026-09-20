@@ -35,13 +35,23 @@
     border-start-end-radius: var(--rd-radius-lg);
     background: var(--rd-color-chrome-default);
     color: var(--rd-color-chrome-text);
+
+    /* 帯の見た目を開ける変数の既定値。丸（.rd-window-control）自身ではなく帯に置く——
+       要素自身の宣言にすると利用側の指定が届かない */
+    --rd-window-control-gap: 0;
+    --rd-window-control-size: 1.25rem;
+    --rd-window-glyph-size: 0.75rem;
   }
 
-  /* 操作が 1 つも無いなら要素ごと省く。押せない丸は置かない（ADR-0014 決定 1） */
+  /* 操作が 1 つも無いなら要素ごと省く。押せない丸は置かない（ADR-0014 決定 1）。
+     丸の間隔は --rd-window-control-gap で開ける。既定 0 は当たり判定（2.75rem 四方）が
+     隣り合う状態で、丸と丸の見た目の隙間は 1.5rem ある。狭めたいなら丸を大きくする
+     （--rd-window-control-size）。負の値は使わない——押せる四角が重なる */
   .rd-window-controls {
     display: flex;
     grid-column: 1;
     justify-self: start;
+    gap: var(--rd-window-control-gap);
   }
 
   /* 見出しは見た目以外の役目を持たない。背景・高さは帯（bar）側 */
@@ -71,8 +81,8 @@
     color: inherit;
     cursor: default;
 
-    --rd-window-control-size: 1.25rem;
-    --rd-window-glyph-size: 0.75rem;
+    /* 丸の色だけは操作ごとに決まるので、ここが既定 */
+    --rd-window-control-color: var(--rd-color-chrome-text);
   }
 
   .rd-window-control::before,
@@ -81,15 +91,17 @@
     content: '';
   }
 
-  /* 丸は tone でも chrome.text のまま。塗りの上に文字は置かない（brand.md §9） */
+  /* 丸は操作ごとに 3 色（閉じる = ほっぺ、広げる = 髪の青、たたむ = 紙。brand.md §7.1）。
+     帯の tone を変えても丸の色は動かさない。塗りの上に文字は置かない（brand.md §9） */
   .rd-window-control::before {
     inline-size: var(--rd-window-control-size);
     block-size: var(--rd-window-control-size);
     border-radius: var(--rd-radius-full);
-    background: var(--rd-color-chrome-text);
+    background: var(--rd-window-control-color);
   }
 
-  /* 記号は幾何（× / □ / −）だけ。絵・アイコンフォントは持ち込まない（ADR-0014） */
+  /* 記号は幾何（× / □ / −）だけ。riml の筆致（傾いた ×・大きい角丸・丸い端）で描き、
+     絵・アイコンフォント・参考にした画面の記号は持ち込まない（ADR-0014 / brand.md §7.1） */
   .rd-window-control::after {
     inline-size: var(--rd-window-glyph-size);
     block-size: var(--rd-window-glyph-size);
@@ -98,15 +110,18 @@
   }
 
   .rd-window-control[data-action='close'] {
-    --rd-window-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 4 12 12'/%3E%3Cpath d='M12 4 4 12'/%3E%3C/svg%3E");
+    --rd-window-control-color: var(--rd-color-chrome-control-close);
+    --rd-window-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cg transform='rotate(8 8 8)'%3E%3Cpath d='M4.6 4.6 11.4 11.4'/%3E%3Cpath d='M11.4 4.6 4.6 11.4'/%3E%3C/g%3E%3C/svg%3E");
   }
 
   .rd-window-control[data-action='expand'] {
-    --rd-window-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Crect x='3' y='3' width='10' height='10' rx='1'/%3E%3C/svg%3E");
+    --rd-window-control-color: var(--rd-color-chrome-control-expand);
+    --rd-window-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.2' y='3.2' width='9.6' height='9.6' rx='3'/%3E%3C/svg%3E");
   }
 
   .rd-window-control[data-action='collapse'] {
-    --rd-window-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 8 12 8'/%3E%3C/svg%3E");
+    --rd-window-control-color: var(--rd-color-chrome-control-collapse);
+    --rd-window-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M4.6 8 11.4 8'/%3E%3C/svg%3E");
   }
 
   /* 既定のリングは当たり判定（2.75rem）の外に出て丸から離れるので、負の offset で

@@ -136,18 +136,61 @@ it('slot="title" の子が無いと console.error して malformed になる', a
   expect(el.matches(':state(malformed)')).toBe(true)
 })
 
-it('丸は chrome.text の塗り、記号は mask の data URI（brand.md §7.1）', async () => {
+it('丸は操作ごとに riml の 3 色、記号は mask の data URI（brand.md §7.1 / ADR-0015）', async () => {
   const el = await fixtureOf(RdWindow, WINDOW())
+  const dots = ['close', 'expand', 'collapse'].map((action) => {
+    const control = controlFor(el, action)
+    return {
+      action,
+      colour: control === undefined ? '' : getComputedStyle(control, '::before').backgroundColor,
+    }
+  })
+  expect(dots).toEqual([
+    { action: 'close', colour: resolvedColor('--rd-color-chrome-control-close') },
+    { action: 'expand', colour: resolvedColor('--rd-color-chrome-control-expand') },
+    { action: 'collapse', colour: resolvedColor('--rd-color-chrome-control-collapse') },
+  ])
+  // 3 つとも違う色（同じトークンを 3 回引いていない）
+  expect(new Set(dots.map((dot) => dot.colour)).size).toBe(3)
+
   const close = controlFor(el, 'close')
   const dot = close === undefined ? undefined : getComputedStyle(close, '::before')
   const glyph = close === undefined ? undefined : getComputedStyle(close, '::after')
-  expect(dot?.backgroundColor).toBe(resolvedColor('--rd-color-chrome-text'))
   expect(dot?.content).not.toBe('none')
   expect(glyph?.maskImage).toContain('data:image/svg+xml')
+  // 記号は帯の色で抜く（丸 ↔ 記号のコントラストは丸 ↔ 帯と同じ対になる）
+  expect(glyph?.backgroundColor).toBe(resolvedColor('--rd-color-chrome-default'))
   // 当たり判定は sizing.target-min（2.75rem = 44px）四方
   const hit = close === undefined ? undefined : getComputedStyle(close)
   expect(hit?.inlineSize).toBe('44px')
   expect(hit?.blockSize).toBe('44px')
+})
+
+it('丸の間隔は --rd-window-control-gap で変えられる（当たり判定は縮まない）', async () => {
+  const el = await fixtureOf(RdWindow, WINDOW())
+  const row = el.shadowRoot?.querySelector('[part=controls]')
+  expect(row).toBeInstanceOf(HTMLElement)
+  if (!(row instanceof HTMLElement)) {
+    return
+  }
+  expect(getComputedStyle(row).columnGap).toBe('0px')
+
+  el.style.setProperty('--rd-window-control-gap', '8px')
+  await el.updateComplete
+  expect(getComputedStyle(row).columnGap).toBe('8px')
+
+  // 間隔を開けてもボタンは 2.75rem 四方のまま（AAA のタップ目標）
+  const close = controlFor(el, 'close')
+  const hit = close === undefined ? undefined : getComputedStyle(close)
+  expect(hit?.inlineSize).toBe('44px')
+  expect(hit?.blockSize).toBe('44px')
+
+  // 丸の直径も外から変えられる（当たり判定は変わらない）
+  el.style.setProperty('--rd-window-control-size', '1.5rem')
+  await el.updateComplete
+  const dot = close === undefined ? undefined : getComputedStyle(close, '::before')
+  expect(dot?.inlineSize).toBe('24px')
+  expect(getComputedStyle(close ?? el).inlineSize).toBe('44px')
 })
 
 it('Tab で当たる輪は丸のすぐ外に 1 本だけ（UA 既定の二重輪を出さない）', async () => {

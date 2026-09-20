@@ -59,6 +59,30 @@ describe('patterns.css の窓の帯（ADR-0014）', () => {
     )
   })
 
+  it('丸の間隔は --rd-window-control-gap で開ける（既定 0 は帯に置く）', () => {
+    expect(declsOf(/^\.rd-window-controls$/)).toContain('gap:var(--rd-window-control-gap)')
+    // 既定値は帯に置く。丸や入れ物自身に書くと利用側の指定が届かない
+    const bar = declsOf(/^\.rd-window-bar$/)
+    expect(bar).toContain('--rd-window-control-gap:0')
+    expect(bar).toContain('--rd-window-control-size:1.25rem')
+    expect(declsOf(/^\.rd-window-control$/)).not.toContain('--rd-window-control-size:1.25rem')
+  })
+
+  it('丸は操作ごとに別の色で塗る（キャラクターの 3 色。brand.md §7.1）', () => {
+    expect(declsOf(/\.rd-window-control\[data-action='close'\]/)).toContain(
+      '--rd-window-control-color:var(--rd-color-chrome-control-close)',
+    )
+    expect(declsOf(/\.rd-window-control\[data-action='expand'\]/)).toContain(
+      '--rd-window-control-color:var(--rd-color-chrome-control-expand)',
+    )
+    expect(declsOf(/\.rd-window-control\[data-action='collapse'\]/)).toContain(
+      '--rd-window-control-color:var(--rd-color-chrome-control-collapse)',
+    )
+    expect(declsOf(/\.rd-window-control::before/)).toContain(
+      'background:var(--rd-window-control-color)',
+    )
+  })
+
   it('強制配色でも丸は消えず ButtonFace / ButtonText で描かれる', () => {
     const forced = css().slice(css().indexOf('@media (forced-colors: active)'))
     expect(forced).toContain('ButtonFace')

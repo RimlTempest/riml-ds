@@ -51,8 +51,38 @@ describe('WINDOW_GLYPHS', () => {
     for (const glyph of glyphs) {
       expect(glyph).toContain('data:image/svg+xml')
       expect(glyph).toContain("viewBox='0 0 16 16'")
-      expect(glyph).toContain("stroke-width='2'")
+      expect(glyph).toContain("stroke-width='2.4'")
       expect(glyph).toContain("stroke-linecap='round'")
+    }
+  })
+
+  it('riml の筆致で描く（× は傾け、□ の角は大きく丸める。brand.md §7.1）', () => {
+    expect(WINDOW_GLYPHS.close).toContain('rotate(8 8 8)')
+    expect(WINDOW_GLYPHS.expand).toContain("width='9.6'")
+    expect(WINDOW_GLYPHS.expand).toContain("rx='3'")
+    expect(WINDOW_GLYPHS.expand).toContain("stroke-linejoin='round'")
+    expect(WINDOW_GLYPHS.collapse).toContain("d='M4.6 8 11.4 8'")
+  })
+
+  it('丸は操作ごとに別のトークンで塗る（キャラクターの 3 色。brand.md §7.1）', () => {
+    const variables = [
+      '--rd-color-chrome-control-close',
+      '--rd-color-chrome-control-expand',
+      '--rd-color-chrome-control-collapse',
+    ]
+    for (const css of [windowChrome.cssText, patternsCss()]) {
+      for (const variable of variables) {
+        expect(css).toContain(`var(${variable})`)
+      }
+      // 丸の色は semantic から引く（base の palette を部品が直接読まない）
+      expect(css).not.toContain('--rd-color-palette-')
+    }
+  })
+
+  it('丸の間隔は --rd-window-control-gap で開ける（2 か所とも同じ既定 0）', () => {
+    for (const css of [windowChrome.cssText, patternsCss()]) {
+      expect(css).toMatch(/gap:\s*var\(--rd-window-control-gap\)/)
+      expect(css).toMatch(/--rd-window-control-gap:\s*0/)
     }
   })
 

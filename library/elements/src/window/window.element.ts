@@ -26,6 +26,9 @@ const BODY_ID = 'rd-window-body'
  * @csspart title - 見出し slot の入れ物
  * @csspart body - 本文の入れ物
  * @cssprop --rd-window-expanded-inset - 広げたときの画面からの余白。既定 var(--rd-space-4)
+ * @cssprop --rd-window-control-gap - 帯の丸どうしの間隔。既定 0（当たり判定 2.75rem が隣り合い、丸の隙間は 1.5rem）。負の値は使わない（ボタンが重なる）
+ * @cssprop --rd-window-control-size - 帯の丸の直径。既定 1.25rem（当たり判定 2.75rem は変わらない）
+ * @cssprop --rd-window-glyph-size - 丸の中の記号の大きさ。既定 0.75rem（丸の 6 割）
  * @event {CustomEvent<{ reason: 'button' }>} rd-dismiss - × を押したとき。preventDefault で hidden を止める
  * @event {CustomEvent<{ collapsed: boolean }>} rd-toggle - たたむ / 戻すたび
  * @event {CustomEvent<{ expanded: boolean }>} rd-expand - 広げる / 戻すたび

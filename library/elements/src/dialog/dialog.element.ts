@@ -34,6 +34,9 @@ const SHADOW_OPTIONS = { ...LitElement.shadowRootOptions, delegatesFocus: true, 
  * @csspart controls - × の入れ物。persistent では描かれない
  * @csspart close - 帯の左端の ×（閉じる）
  * @csspart label - 見出しの入れ物
+ * @cssprop --rd-window-control-gap - 帯の丸どうしの間隔。既定 0。ダイアログは × 1 つなので見た目は変わらないが、窓と同じ変数で揃えられる
+ * @cssprop --rd-window-control-size - 帯の丸の直径。既定 1.25rem（当たり判定 2.75rem は変わらない）
+ * @cssprop --rd-window-glyph-size - 丸の中の記号の大きさ。既定 0.75rem（丸の 6 割）
  * @csspart body - 本文とアクションの入れ物
  * @event {CustomEvent<{ reason: 'esc' | 'backdrop' | 'button' | 'api' }>} rd-dismiss - 閉じたときに発火
  * @state open - 開いている
