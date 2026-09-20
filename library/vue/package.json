@@ -1,6 +1,6 @@
 {
   "name": "@rimltempest/riml-ds-vue",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "riml-ds の Vue 3.5 ラッパーとプラグイン。CEM とマークアップ契約から生成する",
   "license": "MIT",
   "files": [
