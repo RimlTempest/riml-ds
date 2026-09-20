@@ -7,14 +7,16 @@ npm の Trusted Publishing はパッケージが存在してからしか設定�
 ```bash
 bun run release:check                         # 先にゲートを手元で通す
 npm login                                     # ブラウザで認証
-cd system/tokens && npm publish --access public
-cd ../css && npm publish --access public
-cd ../../library/elements && npm publish --access public
-# 依存の向きに沿って react / vue / svelte / astro → tools/lint → tools/mcp も同様（公開 9 パッケージ）
+for d in system/tokens system/css library/elements library/react library/vue \
+         library/svelte library/astro tools/lint tools/mcp; do
+  (cd "$d" && npm publish --access public --provenance=false) || break
+done
 ```
 
-`npm publish` はローカルの provenance を付けない（`publishConfig.provenance: true` は
-CI の OIDC でだけ効く）。手元からの初回だけは来歴無しになるが、以後は CI が付ける。
+**`--provenance=false` を必ず付ける。** `publishConfig.provenance: true` は CI の OIDC でだけ効き、
+手元から publish すると npm が `EUSAGE: Automatic provenance generation not supported for provider: null`
+で**止まる**（2026-09-20 に遭遇）。手元からの初回だけは来歴無しになるが、以後は CI が付ける。
+`package.json` の `publishConfig` は変えない（CI がそれを使う）。
 
 その後 npmjs.com の各パッケージ → Settings → **Trusted Publisher** → GitHub Actions に
 Organization `RimlTempest` / Repository `riml-ds` / Workflow filename `release.yml` を登録する。
