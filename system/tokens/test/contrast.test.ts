@@ -57,8 +57,8 @@ const cases: readonly Case[] = tokensJson.flatMap((leaf) =>
 )
 
 describe('コントラスト（WCAG 2.2 AAA）', () => {
-  it('contrastAgainst を持つトークンが 15 個ある（テキスト 11 + 非テキスト 4）', () => {
-    expect(new Set(cases.map((entry) => entry.foreground)).size).toBe(15)
+  it('contrastAgainst を持つトークンが 18 個ある（テキスト 11 + 非テキスト 7）', () => {
+    expect(new Set(cases.map((entry) => entry.foreground)).size).toBe(18)
   })
 
   it('ライトの本文色は既定・浮いた面・窪んだ面のどれの上でも 7:1 以上（brand.md §3）', () => {

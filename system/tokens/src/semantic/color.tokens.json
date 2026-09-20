@@ -170,6 +170,38 @@
             "contrastAgainst": "color.chrome.default"
           }
         }
+      },
+      "control": {
+        "close": {
+          "$value": "{color.palette.danger.300}",
+          "$description": "帯の「閉じる」の丸。riml のほっぺの色。記号（chrome.default）を載せる面なので 3:1",
+          "$extensions": {
+            "riml-ds": {
+              "contrastAgainst": "color.chrome.default",
+              "nonText": true
+            }
+          }
+        },
+        "expand": {
+          "$value": "{color.palette.accent.300}",
+          "$description": "帯の「広げる」の丸。riml の髪の青。記号（chrome.default）を載せる面なので 3:1",
+          "$extensions": {
+            "riml-ds": {
+              "contrastAgainst": "color.chrome.default",
+              "nonText": true
+            }
+          }
+        },
+        "collapse": {
+          "$value": "{color.palette.neutral.0}",
+          "$description": "帯の「たたむ」の丸。riml の紙の色。記号（chrome.default）を載せる面なので 3:1",
+          "$extensions": {
+            "riml-ds": {
+              "contrastAgainst": "color.chrome.default",
+              "nonText": true
+            }
+          }
+        }
       }
     },
     "status": {

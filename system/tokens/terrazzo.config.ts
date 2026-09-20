@@ -72,7 +72,7 @@ export default defineConfig({
             'color.border.*',
             'color.accent.*',
             'color.brand.*',
-            'color.chrome.*',
+            'color.chrome.**',
             'color.focus.*',
             'color.status.**',
             'space.*',
