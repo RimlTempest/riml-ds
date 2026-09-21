@@ -3,6 +3,11 @@
   "version": "0.3.0",
   "description": "riml-ds のデザイントークン（DTCG 2025.10）。tokens.css / tokens.js / tokens.json",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RimlTempest/riml-ds.git",
+    "directory": "system/tokens"
+  },
   "files": [
     "dist",
     "!dist/types",

@@ -3,6 +3,11 @@
   "version": "0.3.0",
   "description": "riml-ds の共有 lint 設定（oxlint プラグイン / stylelint / browserslist）",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RimlTempest/riml-ds.git",
+    "directory": "tools/lint"
+  },
   "files": [
     "oxlint-plugin",
     "stylelint-plugin",

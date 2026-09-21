@@ -161,6 +161,8 @@ fi
 # 13. 公開パッケージは publishConfig で publish のされ方を宣言する（ADR-0009 / plan 007）。
 #     access: public でないと scope 付きパッケージは private 扱いで publish が落ちる。
 #     provenance: true が無いと Trusted Publishing の来歴が付かない。
+#     repository.url は provenance の検証に使われる——無いと npm が E422 で弾く
+#     （"repository.url is \"\", expected to match ..."。2026-09-21 に遭遇）。
 scan_pkg_dirs=""
 for dir in system library tools apps; do
   [ -d "$dir" ] && scan_pkg_dirs="$scan_pkg_dirs $dir"
@@ -180,6 +182,11 @@ if [ -n "$scan_pkg_dirs" ]; then
       }
       if (config.access !== "public") { problems.push("publishConfig.access must be \"public\"") }
       if (config.provenance !== true) { problems.push("publishConfig.provenance must be true") }
+      const repository = pkg.repository ?? {}
+      const url = typeof repository === "string" ? repository : repository.url
+      if (typeof url !== "string" || !url.includes("github.com/RimlTempest/riml-ds")) {
+        problems.push("repository.url must point at github.com/RimlTempest/riml-ds (provenance checks it)")
+      }
       console.log(problems.join("; "))
     ' "$manifest")
     if [ -n "$message" ]; then

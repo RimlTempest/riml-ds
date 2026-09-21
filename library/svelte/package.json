@@ -3,6 +3,11 @@
   "version": "0.3.0",
   "description": "riml-ds の Svelte 5 部品と svelteHTML 型。CEM とマークアップ契約から生成する",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RimlTempest/riml-ds.git",
+    "directory": "library/svelte"
+  },
   "files": [
     "src/generated",
     "README.md"

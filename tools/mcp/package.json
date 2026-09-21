@@ -3,6 +3,11 @@
   "version": "0.3.0",
   "description": "riml-ds の MCP サーバ（stdio）と design-md CLI。トークン・部品・ガイドラインを同梱データから配る",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RimlTempest/riml-ds.git",
+    "directory": "tools/mcp"
+  },
   "bin": {
     "riml-ds-mcp": "./dist/cli.js"
   },

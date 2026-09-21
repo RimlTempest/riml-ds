@@ -144,6 +144,41 @@ describe('scripts/guard.sh', () => {
     ).toBe(0)
   })
 
+  it('公開パッケージに repository が無いと落ちる（provenance の検証が通らない）', () => {
+    expect(
+      runGuard((dir) => {
+        write(
+          dir,
+          'system/x/package.json',
+          JSON.stringify({
+            name: '@rimltempest/riml-ds-x',
+            publishConfig: { access: 'public', provenance: true },
+          }),
+        )
+      }),
+    ).not.toBe(0)
+  })
+
+  it('repository.url と directory が揃っていれば通る', () => {
+    expect(
+      runGuard((dir) => {
+        write(
+          dir,
+          'system/x/package.json',
+          JSON.stringify({
+            name: '@rimltempest/riml-ds-x',
+            publishConfig: { access: 'public', provenance: true },
+            repository: {
+              type: 'git',
+              url: 'git+https://github.com/RimlTempest/riml-ds.git',
+              directory: 'system/x',
+            },
+          }),
+        )
+      }),
+    ).toBe(0)
+  })
+
   it('.npmrc の _authToken で落ちる', () => {
     expect(
       runGuard((dir) => {

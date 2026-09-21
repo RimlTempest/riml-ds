@@ -3,6 +3,11 @@
   "version": "0.3.0",
   "description": "riml-ds の React 19 ラッパー。CEM とマークアップ契約から生成する",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RimlTempest/riml-ds.git",
+    "directory": "library/react"
+  },
   "files": [
     "dist",
     "!dist/types",

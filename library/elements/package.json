@@ -3,6 +3,11 @@
   "version": "0.3.0",
   "description": "riml-ds の Web Components（Lit）。唯一のソース",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RimlTempest/riml-ds.git",
+    "directory": "library/elements"
+  },
   "files": [
     "dist",
     "!dist/types",

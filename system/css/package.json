@@ -3,6 +3,11 @@
   "version": "0.3.0",
   "description": "riml-ds の基盤 CSS。@layer の順序、リセット、ベース、ユーティリティ、印刷、強制配色",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RimlTempest/riml-ds.git",
+    "directory": "system/css"
+  },
   "files": [
     "dist",
     "README.md"
