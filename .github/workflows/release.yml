@@ -35,18 +35,21 @@ jobs:
     name: version / publish
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # npm の trusted publisher に environment「npm」を登録しておくと、この environment から
+    # 出た OIDC トークンでしか publish できなくなる（docs/publishing.md）。
+    environment: npm
     permissions:
       contents: write # Version PR のコミットとタグ
       pull-requests: write # Version PR の作成・更新
       id-token: write # npm Trusted Publishing（OIDC）。npm のトークンは Secrets に置かない
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           # version は GitHub API 経由で push するので、git の資格情報は残さない
           persist-credentials: false
 
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
         with:
           cache: true
 
@@ -55,11 +58,11 @@ jobs:
       - run: bun install --frozen-lockfile
 
       - id: mode
-        uses: changesets/action/select-mode@v2
+        uses: changesets/action/select-mode@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
 
       # changeset が残っている → Version PR を作る／更新する
       - if: steps.mode.outputs.mode == 'version'
-        uses: changesets/action/version@v2
+        uses: changesets/action/version@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
           commit-message: 'chore(release): version packages'
           pr-title: 'chore(release): version packages'
@@ -69,9 +72,20 @@ jobs:
       - if: steps.mode.outputs.mode == 'publish'
         run: bun run release:check
 
+      # `changeset publish` は bun を知らず `npm publish` を使うので、`workspace:*` を
+      # 書き換えない（0.2.0 / 0.3.0 はそのまま公開され、インストールできなかった）。
+      # 公開の直前に実際の版範囲へ書き換える。書き換えはこの runner の中だけでコミットしない。
+      # scripts/publish-order.test.ts が、この順番（書き換え → publish）を固定している。
+      - if: steps.mode.outputs.mode == 'publish'
+        run: bun scripts/prepare-publish.ts
+
+      # 書き換えた package.json で tarball を作り、`workspace:` などが残っていないかを確かめる
+      - if: steps.mode.outputs.mode == 'publish'
+        run: bun scripts/check-packed.ts
+
       # Version PR がマージされた → publish。
       # provenance は各 package.json の publishConfig.provenance で付く（フラグ不要）。
       - if: steps.mode.outputs.mode == 'publish'
-        uses: changesets/action/publish@v2
+        uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
           create-github-releases: true
