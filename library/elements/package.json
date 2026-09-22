@@ -1,6 +1,6 @@
 {
   "name": "@rimltempest/riml-ds-elements",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "riml-ds の Web Components（Lit）。唯一のソース",
   "license": "MIT",
   "repository": {

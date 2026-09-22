@@ -1,5 +1,11 @@
 # @rimltempest/riml-ds-tokens
 
+## 0.3.1
+
+### Patch Changes
+
+- [#4](https://github.com/RimlTempest/riml-ds/pull/4) [`feac890`](https://github.com/RimlTempest/riml-ds/commit/feac89018dacbc645ffacd9fb1596740885e4eba) Thanks [@RimlTempest](https://github.com/RimlTempest)! - 公開物の修正。0.2.0 / 0.3.0 は `package.json` の依存に `workspace:*` が残ったまま公開され、`@rimltempest/riml-ds-{css,elements,react,vue,svelte,astro,mcp}` はどのパッケージマネージャからもインストールできなかった（`Workspace dependency "@rimltempest/riml-ds-elements" not found`）。0.3.1 から、ほかの riml-ds パッケージへの依存は実際の版範囲（peer は `^0.3.1`）で公開する。利用側は 0.3.1 に上げるだけでよい。コードと見た目の変更は無い。
+
 ## 0.3.0
 
 ### Minor Changes
