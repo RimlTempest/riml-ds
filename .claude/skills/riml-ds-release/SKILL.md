@@ -59,6 +59,7 @@ bunx changeset
 | `size-limit`  | 予算超過                                       | 依存を見直す。上げるなら PR に理由                  |
 | `knip`        | 未使用 export / 依存                            | 消す。生成物は `knip.json` の `ignore` に            |
 | `sherif`      | ワークスペース間の依存バージョン不一致          | `catalog:` に寄せる                                 |
+| `check-packed` | 公開する tarball に `workspace:` / `link:` / `file:` / `catalog:` が残っている | `scripts/prepare-publish.ts` の規則を確認。手動で `npm publish` するときも先に `bun scripts/prepare-publish.ts`（docs/publishing.md） |
 
 ## 5. 初回 publish と Trusted Publishing
 
