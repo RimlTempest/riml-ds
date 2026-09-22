@@ -32,3 +32,6 @@ pages/
 
 # archify visual-check の副産物
 docs/architecture/*.visual-check.*
+
+# scripts/check-packed.ts --out（公開物の smoke。docs/publishing.md）
+.packed/
