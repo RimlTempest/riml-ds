@@ -68,6 +68,11 @@ riml-ds の既定の色（accent hue 175 の青緑・neutral hue 200）は足場
 - テーマ（qrcc / noter）は引き続き `color.palette.*` だけを上書きする。**新しい palette 段を足したら、qrcc / noter の
   テーマにも同じ段を足す**（足し忘れると riml の色が混ざる。`invariants.test.ts` で「既定が持つ palette 段を
   テーマも全部持つ」ことを固定する）。
+- **（2026-09-24 の確認）テーマの正は riml-ds 側にある。** テーマはプロダクトの実装を写す場所ではなく、
+  riml-ds が承認したブランドのパレットを置く場所として扱う。プロダクトの既存値から出発してよいのは
+  移行のときだけで、AAA はテーマにも等しくかかる（通らなければそのブランドの色を直す）。
+  プロダクト固有の名前・段・例外は足さない。原則は `docs/brand.md` §10、手順は
+  `.claude/skills/riml-ds-tokens/SKILL.md` §4。
 - 部品 CSS は `--rd-color-palette-*` を直接参照しない（stylelint `no-palette-token`）。丸 3 つも `--rd-color-brand-*` /
   `--rd-color-border-default` 経由。
 - `brand.*` の上に文字を置く CSS は書かない。レビュー観点として `.claude/skills/riml-ds-css/SKILL.md` に載せる。

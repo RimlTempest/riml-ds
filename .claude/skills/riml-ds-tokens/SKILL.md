@@ -82,9 +82,17 @@ modes/compact.tokens.json         space.* と sizing.* を 0.75 倍
 
 ## 4. ブランドテーマ
 
-`themes/<brand>/color.tokens.json`。semantic の色だけ。名前を足さない。
-qrcc / noter の現在値を再現するときは、既存の `--qrcc-*` の値を oklch に変換して置き、
-`terrazzo check` の AAA を通す。通らない色は**そのブランドの色を直す**（DS 側で緩めない）。
+`themes/<brand>/color.tokens.json`。差し替えられるのは **`color.palette.*` の値だけ**で、
+名前（semantic の構造）も形・影・文字も riml-ds が決める（ADR-0013）。
+
+**正は常に riml-ds 側**。テーマはプロダクトの実装を写す場所ではなく、
+**riml-ds が承認したブランドのパレット**を置く場所（brand.md §10）。
+
+- プロダクトの既存値から出発してよいのは**移行のときだけ**。その場合も oklch に直し、
+  `terrazzo check` の AAA を通す。通らない色は**そのブランドの色を直す**（riml-ds 側で緩めない）
+- プロダクト固有の名前・段・例外を足さない（`system/tokens/test/invariants.test.ts` が
+  「テーマは `color.palette.*` だけ」「既定が持つ段を全部持つ」を固定する）
+- 迷ったら: **riml-ds がプロダクトに合わせるのではなく、プロダクトが riml-ds に合わせる**
 
 ## 5. 手順
 
