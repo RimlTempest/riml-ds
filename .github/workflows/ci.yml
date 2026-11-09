@@ -104,7 +104,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v5
         with: { cache: true }
       - run: bun install --frozen-lockfile
       - run: bun run fmt:check
@@ -119,7 +119,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v5
         with: { cache: true }
       - run: bun install --frozen-lockfile
       # tsc --build は library/*/src/generated と各 dist の型を読む。生成物はコミットしないので先に作る
@@ -134,7 +134,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v5
         with: { cache: true }
       - run: bun install --frozen-lockfile
       # node/react project は system/tokens/dist・library/elements/dist・library/react/src/generated を読む
@@ -159,7 +159,7 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends fonts-noto-cjk unzip
           rm -rf /var/lib/apt/lists/*
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v5
         with: { cache: true }
       # コンテナ内では checkout 先の所有者が実行ユーザーと違い、prepare（lefthook install）の
       # git rev-parse が "dubious ownership" で落ちる。作業ディレクトリだけ信頼する
@@ -193,7 +193,7 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends fonts-noto-cjk unzip
           rm -rf /var/lib/apt/lists/*
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v5
         with: { cache: true }
       # コンテナ内では checkout 先の所有者が実行ユーザーと違い、prepare（lefthook install）の
       # git rev-parse が "dubious ownership" で落ちる。作業ディレクトリだけ信頼する
@@ -221,7 +221,7 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends fonts-noto-cjk unzip
           rm -rf /var/lib/apt/lists/*
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v5
         with: { cache: true }
       # コンテナ内では checkout 先の所有者が実行ユーザーと違い、prepare（lefthook install）の
       # git rev-parse が "dubious ownership" で落ちる。作業ディレクトリだけ信頼する
@@ -256,7 +256,7 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends fonts-noto-cjk unzip
           rm -rf /var/lib/apt/lists/*
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v5
         with: { cache: true }
       # コンテナ内では checkout 先の所有者が実行ユーザーと違い、prepare（lefthook install）の
       # git rev-parse が "dubious ownership" で落ちる。作業ディレクトリだけ信頼する
@@ -282,7 +282,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v5
         with: { cache: true }
       - run: bun install --frozen-lockfile
       # release:check の最後で、公開する tarball に `workspace:` などが残っていないかも見る
@@ -299,7 +299,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v5
         with: { cache: true }
       - run: bun install --frozen-lockfile
       # mcp のテストは system/tokens/dist と library/elements/dist（contract サブパス）を読む。
